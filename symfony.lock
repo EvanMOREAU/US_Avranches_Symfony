@@ -103,6 +103,18 @@
             "./config/routes.yaml"
         ]
     },
+    "symfony/security-bundle": {
+        "version": "5.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "5.3",
+            "ref": "98f1f2b0d635908c2b40f3675da2d23b1a069d30"
+        },
+        "files": [
+            "./config/packages/security.yaml"
+        ]
+    },
     "symfony/twig-bundle": {
         "version": "5.4",
         "recipe": {
@@ -114,6 +126,19 @@
         "files": [
             "./config/packages/twig.yaml",
             "./templates/base.html.twig"
+        ]
+    },
+    "symfony/web-profiler-bundle": {
+        "version": "5.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "5.3",
+            "ref": "24bbc3d84ef2f427f82104f766014e799eefcc3e"
+        },
+        "files": [
+            "./config/packages/web_profiler.yaml",
+            "./config/routes/web_profiler.yaml"
         ]
     }
 }

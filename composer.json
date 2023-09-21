@@ -15,7 +15,8 @@
         "symfony/flex": "^1.17|^2",
         "symfony/framework-bundle": "5.4.*",
         "symfony/runtime": "5.4.*",
-        "symfony/twig-bundle": "5.4.*",
+        "symfony/security-bundle": "5.4.*",
+        "symfony/twig-bundle": "^5.4",
         "symfony/yaml": "5.4.*"
     },
     "config": {
@@ -69,6 +70,8 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
-        "symfony/maker-bundle": "^1.50"
+        "symfony/maker-bundle": "^1.50",
+        "symfony/stopwatch": "5.4.*",
+        "symfony/web-profiler-bundle": "5.4.*"
     }
 }
