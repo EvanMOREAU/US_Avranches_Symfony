@@ -1,0 +1,37 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    align-items: flex-start; /* Alignez en haut de l'écran */
+    justify-content: center;
+}
+
+.button-nav {
+    display: inline-block;
+    position: relative;
+    color: #fff;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 15px 30px;
+    text-align: center;
+    border: none;
+    clip-path: polygon(7% 0, 93% 0, 100% 50%, 93% 100%, 7% 100%, 0 50%);
+    background-color: #212153;
+    background-image: radial-gradient(200% 70% at center 20%, #222B64 -30%, #2A3872 49%, #212153 50%, #212153 150%);
+    background-repeat: no-repeat;
+    transition: background-position-y ease-in-out 250ms;
+   }
+   
+   .button-nav:hover {
+    background-position-y: -50px;
+   }
+   
+   .button-nav:active {
+    transform: scale(0.99);
+   }

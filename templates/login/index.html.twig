@@ -1,303 +1,32 @@
-{% block title %}Login{% endblock %}
-
+<title>{% block title %}US Avranches Connexion{% endblock %}</title>
 {% block body %}
     {% if error %}
         <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
-    
-    <style>
-        html {
-        height: 100%;
-        }
-        body {
-        margin:0;
-        padding:0;
-        font-family: sans-serif;
-        background: linear-gradient(#30142b, #a12727);
-        }
-
-        .login-box {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 400px;
-        padding: 40px;
-        transform: translate(-50%, -50%);
-        background: rgba(0,0,0,.5);
-        box-sizing: border-box;
-        box-shadow: 0 15px 25px rgba(0,0,0,.6);
-        border-radius: 10px;
-        }
-
-        .login-box h2 {
-        margin: 0 0 30px;
-        padding: 0;
-        color: #fff;
-        text-align: center;
-        }
-
-        .login-box .user-box {
-        position: relative;
-        }
-
-        .login-box .user-box input {
-        width: 100%;
-        padding: 10px 0;
-        font-size: 16px;
-        color: #fff;
-        margin-bottom: 30px;
-        border: none;
-        border-bottom: 1px solid #fff;
-        outline: none;
-        background: transparent;
-        }
-        .login-box .user-box label {
-        position: absolute;
-        top:0;
-        left: 0;
-        padding: 10px 0;
-        font-size: 16px;
-        color: #fff;
-        pointer-events: none;
-        transition: .5s;
-        }
-
-        .login-box .user-box input:focus ~ label,
-        .login-box .user-box input:valid ~ label {
-        top: -20px;
-        left: 0;
-        color: #f68e44;
-        font-size: 12px;
-        }
-
-                 form a {
-        position: relative;
-        display: inline-block;
-        padding: 10px 20px;
-        color: #b79726;
-        font-size: 16px;
-        text-decoration: none;
-        text-transform: uppercase;
-        overflow: hidden;
-        transition: .5s;
-        margin-top: 40px;
-        letter-spacing: 4px
-        }
-
-         a:hover {
-        background: rgb(255, 135, 0);
-        color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgb(255, 135, 0),
-                    0 0 25px rgb(255, 135, 0),
-                    0 0 50px rgb(255, 135, 0),
-                    0 0 100px rgb(255, 135, 0);
-        }
-
-         a span {
-        position: absolute;
-        display: block;
-        }
-
-         a span:nth-child(1) {
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, rgb(255, 135, 0));
-        animation: btn-anim1 1s linear infinite;
-        }
-
-
-         a span:nth-child(2) {
-        top: +100%;
-        right: 0;
-        width: 2px;
-        height: 100%;
-        background: linear-gradient(180deg, transparent, rgb(255, 135, 0));
-        animation: btn-anim2 1s linear infinite;
-        animation-delay: .25s
-        }
-
-         a span:nth-child(3) {
-        bottom: 0;
-        right: +100%;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(270deg, transparent, rgb(255, 135, 0));
-        animation: btn-anim3 1s linear infinite;
-        animation-delay: .5s
-        }
-
-         a span:nth-child(4) {
-        bottom: +100%;
-        left: 0;
-        width: 2px;
-        height: 100%;
-        background: linear-gradient(360deg, transparent, rgb(255, 135, 0));
-        animation: btn-anim4 1s linear infinite;
-        animation-delay: .75s
-        }
-
-        .transparent-a {
-        background-color: transparent;
-        border: none;
-        color: #000; /* Couleur du texte */
-        /* Ajoutez d'autres propriétés de style selon vos besoins */
-        }
-
-        .login-box form button {
-        position: relative;
-        display: inline-block;
-        padding: 10px 20px;
-        color: rgb(58, 150, 0);
-        font-size: 16px;
-        text-decoration: none;
-        text-transform: uppercase;
-        overflow: hidden;
-        transition: .5s;
-        margin-top: 40px;
-        letter-spacing: 4px
-        }
-
-        .login-box button:hover {
-        background: rgb(58, 150, 0);
-        color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgb(58, 150, 0),
-                    0 0 25px rgb(58, 150, 0),
-                    0 0 50px rgb(58, 150, 0),
-                    0 0 100px rgb(58, 150, 0);
-        }
-
-        .login-box button span {
-        position: absolute;
-        display: block;
-        }
-
-        .login-box button span:nth-child(1) {
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, rgb(58, 150, 0));
-        animation: btn-anim1 1s linear infinite;
-        }
-
-        @keyframes btn-anim1 {
-        0% {
-            left: -100%;
-        }
-        50%,100% {
-            left: 100%;
-        }
-        }
-
-        .login-box button span:nth-child(2) {
-        top: -100%;
-        right: 0;
-        width: 2px;
-        height: 100%;
-        background: linear-gradient(180deg, transparent, rgb(58, 150, 0));
-        animation: btn-anim2 1s linear infinite;
-        animation-delay: .25s
-        }
-
-        @keyframes btn-anim2 {
-        0% {
-            top: -100%;
-        }
-        50%,100% {
-            top: 100%;
-        }
-        }
-
-        .login-box button span:nth-child(3) {
-        bottom: 0;
-        right: -100%;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(270deg, transparent, rgb(58, 150, 0));
-        animation: btn-anim3 1s linear infinite;
-        animation-delay: .5s
-        }
-
-        @keyframes btn-anim3 {
-        0% {
-            right: -100%;
-        }
-        50%,100% {
-            right: 100%;
-        }
-        }
-
-        .login-box button span:nth-child(4) {
-        bottom: -100%;
-        left: 0;
-        width: 2px;
-        height: 100%;
-        background: linear-gradient(360deg, transparent, rgb(58, 150, 0));
-        animation: btn-anim4 1s linear infinite;
-        animation-delay: .75s
-        }
-
-        @keyframes btn-anim4 {
-        0% {
-            bottom: -100%;
-        }
-        50%,100% {
-            bottom: 100%;
-        }
-        }
-
-        .transparent-button {
-        background-color: transparent;
-        border: none;
-        color: #000; /* Couleur du texte */
-        /* Ajoutez d'autres propriétés de style selon vos besoins */
-        }
-
-    </style>
-
-    <div class="login-box">
-        <h2>Connexion</h2>
+    <link rel="icon" href="/img/logo_usa.ico">
+    <link href="/css/login.css" rel="stylesheet" />
+<div class="container">
+    <div class="card">
         <form action="{{ path('app_login') }}" method="post">
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-            <div class="user-box">
-                <input type="text" class="form-control" id="username" name="_username" placeholder="name@example.com" value="{{ last_username }}">
-                <label>Email</label>
+            <img src='/img/logo_usa_140x171.png'>
+            <div class="field">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <svg class="input-icon" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M207.8 20.73c-93.45 18.32-168.7 93.66-187 187.1c-27.64 140.9 68.65 266.2 199.1 285.1c19.01 2.888 36.17-12.26 36.17-31.49l.0001-.6631c0-15.74-11.44-28.88-26.84-31.24c-84.35-12.98-149.2-86.13-149.2-174.2c0-102.9 88.61-185.5 193.4-175.4c91.54 8.869 158.6 91.25 158.6 183.2l0 16.16c0 22.09-17.94 40.05-40 40.05s-40.01-17.96-40.01-40.05v-120.1c0-8.847-7.161-16.02-16.01-16.02l-31.98 .0036c-7.299 0-13.2 4.992-15.12 11.68c-24.85-12.15-54.24-16.38-86.06-5.106c-38.75 13.73-68.12 48.91-73.72 89.64c-9.483 69.01 43.81 128 110.9 128c26.44 0 50.43-9.544 69.59-24.88c24 31.3 65.23 48.69 109.4 37.49C465.2 369.3 496 324.1 495.1 277.2V256.3C495.1 107.1 361.2-9.332 207.8 20.73zM239.1 304.3c-26.47 0-48-21.56-48-48.05s21.53-48.05 48-48.05s48 21.56 48 48.05S266.5 304.3 239.1 304.3z"></path>
+                </svg>
+                <input autocomplete="off" id="username" name="_username" placeholder="Nom d'utilisateur" class="input-field" type="text" value="{{ last_username }}">
             </div>
-            <div class="user-box">
-                <input type="password" class="form-control" id="password" placeholder="******" name="_password">
-                <label>Password</label>
+            <div class="field">
+                <svg class="input-icon" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                 <path d="M80 192V144C80 64.47 144.5 0 224 0C303.5 0 368 64.47 368 144V192H384C419.3 192 448 220.7 448 256V448C448 483.3 419.3 512 384 512H64C28.65 512 0 483.3 0 448V256C0 220.7 28.65 192 64 192H80zM144 192H304V144C304 99.82 268.2 64 224 64C179.8 64 144 99.82 144 144V192z"></path>
+                </svg>
+                <input id="password" placeholder="Mot de passe" class="input-field" name="_password" type="password">
             </div>
-            <button align=""class="transparent-button" type="submit" >                
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                Connexion Administrateur
-            </button>
-            <br>
-            <a href="#">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <p align='center'>Retour sur la page d'accueil</p>
-            </a>
-
+            <button class="btn" type="submit">Connexion</button>
         </form>
-  </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        var submitButton = document.getElementById('submit-button');
-        submitButton.addEventListener('click', function(e) {
-            e.preventDefault(); // Empêche le comportement par défaut du lien
+    </div>
+</div>
 
-            // Effectuez l'action souhaitée ici, par exemple, soumettez un formulaire
-            document.getElementById('my-form').submit();
-        });
-        });
-    </script>
+
+    
 {% endblock %}

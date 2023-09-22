@@ -8,6 +8,8 @@
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
         <link href="/css/tests.css" rel="stylesheet" />
+        <link href="/css/navbar.css" rel="stylesheet" />
+
             {{ encore_entry_link_tags('app') }}
             
         {% endblock %}
@@ -18,6 +20,10 @@
         {% endblock %}
     </head>
     <body>
+        <div class='container'>
+        <button class='button-nav'> Coach</button>
+        <button class='button-nav'> Joueur </button>
+        </div>
         {% block body %}
             <a href="{{ path('app_logout') }}">Déconnexion</a>
         {% endblock %}
