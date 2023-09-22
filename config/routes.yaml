@@ -2,3 +2,7 @@
 index:
     path: /
     controller: App\Controller\DefaultController::index
+    
+attendance:
+    path: /attendance
+    controller: App\Controller\AttendanceController::index
