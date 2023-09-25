@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\TblTeams;
+use App\Entity\TblTeam;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<TblTeams>
+ * @extends ServiceEntityRepository<TblTeam>
  *
- * @method TblTeams|null find($id, $lockMode = null, $lockVersion = null)
- * @method TblTeams|null findOneBy(array $criteria, array $orderBy = null)
- * @method TblTeams[]    findAll()
- * @method TblTeams[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method TblTeam|null find($id, $lockMode = null, $lockVersion = null)
+ * @method TblTeam|null findOneBy(array $criteria, array $orderBy = null)
+ * @method TblTeam[]    findAll()
+ * @method TblTeam[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TblTeamsRepository extends ServiceEntityRepository
+class TblTeamRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TblTeams::class);
+        parent::__construct($registry, TblTeam::class);
     }
 
 //    /**
-//     * @return TblTeams[] Returns an array of TblTeams objects
+//     * @return TblTeam[] Returns an array of TblTeam objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -36,7 +36,7 @@ class TblTeamsRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?TblTeams
+//    public function findOneBySomeField($value): ?TblTeam
 //    {
 //        return $this->createQueryBuilder('t')
 //            ->andWhere('t.exampleField = :val')

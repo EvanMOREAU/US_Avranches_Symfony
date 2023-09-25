@@ -4,5 +4,21 @@ index:
     controller: App\Controller\DefaultController::index
     
 attendance:
-    path: /attendance
+    path: /appel
     controller: App\Controller\AttendanceController::index
+
+attendance_U10:
+    path: /appel/U10
+    controller: App\Controller\AttendanceController::U10
+
+attendance_U11:
+    path: /appel/U11
+    controller: App\Controller\AttendanceController::U11
+
+attendance_U12:
+    path: /appel/U12
+    controller: App\Controller\AttendanceController::U12
+
+attendance_U13:
+    path: /appel/U13
+    controller: App\Controller\AttendanceController::U13
