@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\TblPlayerRepository;
+use App\Repository\PlayerRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TblPlayerRepository::class)]
-class TblPlayer
+#[ORM\Entity(repositoryClass: PlayerRepository::class)]
+#[ORM\Table(name: 'tbl_player')]
+class Player
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,9 +24,12 @@ class TblPlayer
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $birthdate = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tblPlayers')]
+    #[ORM\ManyToOne(inversedBy: 'Players')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?TblTeam $team = null;
+    private ?Team $team = null;
+
+    #[ORM\Column]
+    private ?int $matches_played = null;
 
     public function getId(): ?int
     {
@@ -68,14 +72,26 @@ class TblPlayer
         return $this;
     }
 
-    public function getTeam(): ?TblTeam
+    public function getTeam(): ?Team
     {
         return $this->team;
     }
 
-    public function setTeam(?TblTeam $team): static
+    public function setTeam(?Team $team): static
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getMatchesPlayed(): ?int
+    {
+        return $this->matches_played;
+    }
+
+    public function setMatchesPlayed(int $matches_played): static
+    {
+        $this->matches_played = $matches_played;
 
         return $this;
     }

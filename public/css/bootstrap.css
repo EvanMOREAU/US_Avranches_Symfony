@@ -12066,12 +12066,15 @@ textarea.form-control-lg {
 }
 
 .zoom {
-  transition: transform 0.4s, box-shadow 0.3s;
+  transition: transform 0.4s;
 }
 
 .zoom:hover {
   transform: scale(1.03);
-  box-shadow: 0 0 30px rgba(33,33,33,0.3); 
+}
+
+.selected-card img {
+  filter: grayscale(100%) brightness(50%); /* Change this to the desired image effect */
 }
 
 /*# sourceMappingURL=bootstrap.css.map */

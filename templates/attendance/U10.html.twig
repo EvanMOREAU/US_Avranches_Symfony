@@ -11,19 +11,72 @@
 			<h1 class="h1 mb-2">Page d'appel - U10</h1>
 		</div>
 
-		{% set team = 10 %}
-
-		<div class="row row-cols-1 row-cols-md-2 g-4 pt-5">
+		<div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
 			{% for tbl_player in tbl_player %}
-				<div class="card">
-					<img src="/images/U{{ team }}.png" alt="1">
-					<div class="card-footer text-center">
-						{{ tbl_player.firstName }}&nbsp;{{ tbl_player.lastName }}
+				<div class="col">
+					<div class="card zoom" data-player-id="{{ tbl_player.id }}">
+						<img src="/images/{{ tbl_player.firstName }}-{{ tbl_player.lastName }}.png" class="card-img-top" alt="...">
+						<div class="card-body">
+							<p class="card-text text-center">{{ tbl_player.firstName }}
+								{{ tbl_player.lastName }}</p>
+						</div>
 					</div>
 				</div>
 			{% endfor %}
 		</div>
+
+		<div class="g-4 pt-5 text-center">
+			<button class="btn btn-primary" id="finaliserAppel">Finaliser l'appel</button>
+		</div>
 	</div>
 
+	<script>
+    // JavaScript to add click event listeners to each card
+    document.addEventListener('DOMContentLoaded', function () {
+        const cards = document.querySelectorAll('.card');
+
+        cards.forEach(card => {
+            card.addEventListener('click', function () { // Toggle the 'selected-card' class to change the color
+                card.classList.toggle('selected-card');
+            });
+        });
+
+        // Add click event listener to the "Finaliser l'appel" button
+        const finaliserAppel = document.getElementById('finaliserAppel');
+        finaliserAppel.addEventListener('click', function () {
+            // Create an array to store the player IDs that should be incremented
+            const playerIdsToIncrement = [];
+
+            // Iterate through cards to find non-selected players
+            cards.forEach(card => {
+                if (!card.classList.contains('selected-card')) {
+                    const playerId = card.getAttribute('data-player-id'); // Get the player ID from data attribute
+                    playerIdsToIncrement.push(playerId);
+                }
+            });
+
+            // Send a POST request to the server to increment matches_played for selected players
+            // You would need to set up a server endpoint to handle this request.
+            // For simplicity, I'll use a placeholder URL here.
+            fetch('/increment-matches-played', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ playerIds: playerIdsToIncrement })
+            }).then(response => {
+                if (response.ok) {
+                    // Redirect to "/appel" after the update is complete
+                    window.location.href = '/appel';
+                } else {
+                    // Handle any errors here
+                    console.error('Error updating matches played');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
 {% endblock %}
 

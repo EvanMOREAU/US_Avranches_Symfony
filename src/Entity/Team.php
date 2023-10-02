@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\TblTeamRepository;
+use App\Repository\TeamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TblTeamRepository::class)]
-class TblTeam
+#[ORM\Entity(repositoryClass: TeamRepository::class)]
+#[ORM\Table(name: 'tbl_team')]
+class Team
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,12 +22,12 @@ class TblTeam
     #[ORM\Column]
     private ?int $matches_played = null;
 
-    #[ORM\OneToMany(mappedBy: 'team', targetEntity: TblPlayer::class)]
-    private Collection $tblPlayers;
+    #[ORM\OneToMany(mappedBy: 'team', targetEntity: Player::class)]
+    private Collection $Players;
 
     public function __construct()
     {
-        $this->tblPlayers = new ArrayCollection();
+        $this->Players = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -59,29 +60,29 @@ class TblTeam
     }
 
     /**
-     * @return Collection<int, TblPlayer>
+     * @return Collection<int, Player>
      */
-    public function getTblPlayers(): Collection
+    public function getPlayers(): Collection
     {
-        return $this->tblPlayers;
+        return $this->Players;
     }
 
-    public function addTblPlayer(TblPlayer $tblPlayer): static
+    public function addPlayer(Player $Player): static
     {
-        if (!$this->tblPlayers->contains($tblPlayer)) {
-            $this->tblPlayers->add($tblPlayer);
-            $tblPlayer->setTeam($this);
+        if (!$this->Players->contains($Player)) {
+            $this->Players->add($Player);
+            $Player->setTeam($this);
         }
 
         return $this;
     }
 
-    public function removeTblPlayer(TblPlayer $tblPlayer): static
+    public function removePlayer(Player $Player): static
     {
-        if ($this->tblPlayers->removeElement($tblPlayer)) {
+        if ($this->Players->removeElement($Player)) {
             // set the owning side to null (unless already changed)
-            if ($tblPlayer->getTeam() === $this) {
-                $tblPlayer->setTeam(null);
+            if ($Player->getTeam() === $this) {
+                $Player->setTeam(null);
             }
         }
 

@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\TblPlayer;
+use App\Entity\Player;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<TblPlayer>
+ * @extends ServiceEntityRepository<Player>
  *
- * @method TblPlayer|null find($id, $lockMode = null, $lockVersion = null)
- * @method TblPlayer|null findOneBy(array $criteria, array $orderBy = null)
- * @method TblPlayer[]    findAll()
- * @method TblPlayer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Player|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Player|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Player[]    findAll()
+ * @method Player[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TblPlayerRepository extends ServiceEntityRepository
+class PlayerRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TblPlayer::class);
+        parent::__construct($registry, Player::class);
     }
 
 //    /**
-//     * @return TblPlayer[] Returns an array of TblPlayer objects
+//     * @return Player[] Returns an array of Player objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -36,7 +36,7 @@ class TblPlayerRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?TblPlayer
+//    public function findOneBySomeField($value): ?Player
 //    {
 //        return $this->createQueryBuilder('t')
 //            ->andWhere('t.exampleField = :val')
