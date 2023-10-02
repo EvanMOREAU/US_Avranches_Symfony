@@ -7,7 +7,7 @@
         
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
-        <link href="/css/tests.css" rel="stylesheet" />
+        {# <link href="/css/tests.css" rel="stylesheet" /> #}
         <link href="/css/navbar.css" rel="stylesheet" />
         <link href="/css/pagebase.css" rel="stylesheet" />
 
@@ -39,8 +39,12 @@
       <li><a class="menu__item" href="#">Liste des joueurs</a></li>
       <li><a class="menu__item" href="#">#</a></li>
       <li><a class="menu__item" href="#">#</a></li>
+      <li><a class="menu__item" href="#">#</a></li>
     </ul>
   </div>
   {% endblock %}
+          {% if app.user %}
+            {{ app.user.getCategory() }}
+        {% endif %}
     </body>
 </html>

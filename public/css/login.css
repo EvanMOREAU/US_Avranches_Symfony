@@ -135,9 +135,9 @@ html, body {
 }
 
 /* Styles hover et focus pour le dropdown */
-.field select:hover,
+/* .field select:hover,
 .field select:focus {
-    /* Ajoutez les styles de survol et de focus ici */
-}
+    /* Ajoutez les styles de survol et de focus ici 
+} */
 
 /* Autres styles restent inchangés */

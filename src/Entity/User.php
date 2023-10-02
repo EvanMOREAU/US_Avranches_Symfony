@@ -159,4 +159,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getCategory(){
+        $now = new \DateTime();
+        $diff = $now->diff($this->date_naissance);
+        return $diff->y;
+    }
 }

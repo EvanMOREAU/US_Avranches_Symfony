@@ -8,7 +8,7 @@
     <div class="container">
         <div class="card">
             <form action="{{ path('app_register') }}" method="post">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                {{ form_row(registrationForm._token) }}
                 <img src='/img/logo_usa_140x171.png'>
                 <div class="field">
                     <svg class="input-icon" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
@@ -40,6 +40,10 @@
                     </svg>
                     {{ form_row(registrationForm.date_naissance, { 'attr': { 'class': 'input-field date-input', 'autocomplete': 'off', 'placeholder': 'Date de naissance' } }) }}
                 </div>
+                <div class="checkbox-wrapper">
+                    {{ form_row(registrationForm.agreeTerms, { 'attr': { 'class': '_checkbox-26', 'autocomplete': 'off'} }) }}
+                </div>
+
                 <button class="btn" type="submit">S'inscrire</button>
             </form>
         </div>
