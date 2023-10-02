@@ -64,17 +64,5 @@ class Pdf
         return $this;
     }
 
-    function getImageFileName(): ?string
-    {
-        return $this->image_file_name;
-    }
-
-    function setImageFileName(?string $image_file_name)
-    {
-        $this->image_file_name = $image_file_name;
-
-        return $this;
-    }
-
     }
 }
