@@ -1,0 +1,143 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #171D4A;
+}
+
+    .card {
+        width: 210px;
+        padding: 1.9rem 1.2rem;
+        text-align: center;
+        background: #171D4A;
+    }
+   
+   /*Inputs*/
+   .field {
+    margin-top: .5rem;
+    display: flex;
+    position: float;
+    align-items: center;
+    justify-content: center;
+    gap: .5em;
+    background-color: #ffffff;
+    border-radius: 4px;
+    padding: .5em 1em;
+   }
+   
+   .input-icon {
+    height: 1em;
+    width: 1em;
+    fill: #F5B420;
+   }
+   
+   .input-field {
+    background: none;
+    border: none;
+    outline: none;
+    position: float;
+    width: 100%;
+    color: #212153;
+   }
+
+   .date-input {
+        display: flex;
+        align-items: center;
+        gap: 0.15em; /* Espacement horizontal entre les champs */
+    }
+
+    .date-input select {
+        padding: 0.3em; /* Ajustez la valeur selon votre préférence */
+    }
+    
+    /* Augmentez légèrement la largeur du champ de l'année */
+    .date-input select[name$="[year]"] {
+        width: 70px; /* Ajustez la largeur selon votre préférence */
+    }
+
+   /*Text*/
+   .title {
+    margin-bottom: 1rem;
+    font-size: 1.5em;
+    font-weight: 500;
+    color: #f5f5f5;
+   }
+   
+   /*Buttons*/
+   .btn {
+    margin: 1rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: .8em;
+    text-transform: uppercase;
+    padding: 0.6em 1.2em;
+    background-color: #F5B420;
+    color: #ffffff;
+    box-shadow: 0 8px 24px 0 rgb(255 235 167 / 20%);
+    transition: all .3s ease-in-out;
+   }
+   
+   .btn-link {
+    color: #f5f5f5;
+    display: block;
+    font-size: .75em;
+    transition: color .3s ease-out;
+   }
+   
+   /*Hover & focus*/
+   .field input:focus::placeholder {
+    opacity: 0;
+    transition: opacity .3s;
+   }
+   
+   .btn:hover {
+    background-color: #6D82B7;
+    color: #F5B420;
+    box-shadow: 0 8px 24px 0 rgb(16 39 112 / 20%);
+   }
+   
+   .btn-link:hover {
+    color: #F5B420;
+   }
+   
+   /* Autres styles restent inchangés */
+
+/* Dropdown de date de naissance */
+.field select {
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+    color: #212153;
+    /* Ajoutez d'autres styles spécifiques au dropdown ici */
+}
+
+/* Placeholder dans le dropdown */
+.field select option[disabled] {
+    color: #888; /* Couleur du texte du placeholder */
+}
+
+/* Flèche du dropdown (icône) */
+.field select::-ms-expand {
+    display: none; /* Masque la flèche dans IE 10+ */
+}
+
+.field select::-webkit-outer-spin-button,
+.field select::-webkit-inner-spin-button {
+    display: none; /* Masque la flèche dans les navigateurs Webkit */
+}
+
+/* Styles hover et focus pour le dropdown */
+/* .field select:hover,
+.field select:focus {
+    /* Ajoutez les styles de survol et de focus ici 
+} */
+
+/* Autres styles restent inchangés */
