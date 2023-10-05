@@ -2,16 +2,22 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use TCPDF;
+use App\Entity\Player;
+use App\Repository\PlayerRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PdfController extends AbstractController
 {
     #[Route('/pdf', name: 'app_pdf')]
-    public function index(): Response
+    public function pdf(PlayerRepository $playerRepository): Response
     {
         $pdf = new \TCPDF();
+
+        $players = $playerRepository->find(1);
 
         $pdf->SetAuthor('SIO TEAM ! 💻');
         $pdf->SetTitle('Fiche joueur');
@@ -24,11 +30,31 @@ class PdfController extends AbstractController
         $pdf->AddPage();
         $pdf->setJPEGQuality(75);
         
+        
+        $largeurPage = $pdf->getPageWidth() + 120;
+        $hauteurPage = $pdf->getPageHeight()+ -100;
+
+        $pdf->Image(
+        $backgroundImage = 'img/US-Avranches.jpg',  // Chemin vers l'image
+        0,                 // Position X de l'image
+        0,                 // Position Y de l'image
+        $largeurPage,      // Largeur de l'image (largeur de la page)
+        $hauteurPage,      // Hauteur de l'image (hauteur de la page)
+        '',                // Lien associé à l'image (vide dans cet exemple)
+        '',                // Lien alternatif (vide dans cet exemple)
+        '',                // Texte alternatif (vide dans cet exemple)
+        false,             // Image est un lien (false dans cet exemple)
+        300,               // Qualité de l'image
+        '',                // Format de l'image (vide dans cet exemple)
+        false,             // Compression (false dans cet exemple)
+        false,             // Masque (false dans cet exemple)
+        0                  // Positionnement de l'image
+        );
+
         $pdf->SetFont('helvetica', 'B', 25);
 
         $pdf->SetXY(0, 1);
         $pdf->Image('img/logo_usa.jpg', '', '', 20, 20, '', '', '', false, 100, '', false, false, 0, false, false, false);
-       // $pdf->Image('img/usavranches.jpg', 15, 140, 75, 113, 'JPG', 'http://localhost:8000/pdf', '', true, 150, '', false, false, 1, false, false, false);
        
         $pdf->SetFillColor(31,40,97);
         $pdf->SetTextColor(255,255,255);
@@ -36,8 +62,8 @@ class PdfController extends AbstractController
 
         $pdf->SetFont('helvetica', 'B', 17);
         $pdf->SetFillColor(255,255,255);
-        $pdf->SetTextColor(0,0,0);
-        $pdf->MultiCell(187, 10, 'Arthur DELACOUR', 0, 'C', 1, 1, '', '', true);
+        $pdf->SetTextColor(255,255,255);
+        $pdf->MultiCell(187, 10, $players->getFirstName(), 0, 'C', 1, 1, '', '', true);
         
         $pdf->SetTextColor(255,255,255);
         $pdf->setCellPaddings(1,1,1,1);
@@ -87,14 +113,14 @@ Site Web : <span class="link">https://ndlpavranches.fr/fc-pro/</span>
         $textd = '
         <style>hr { color: rgb(0, 63,144); }</style>
         <b>Prérequis necessaire / public visé</b>
-        <hr>'. '$pdf->getContent()' .'
+        '. '$pdf->getContent()' .'
         <b>Modalités d\'accès et d\'inscription</b>
-        <hr><br><div></div>
+        <br><div></div>
 <br><br>
 
 <b>Moyens pédagogiques et techniques</b>
 <b>Modalité d\'évaluation</b>
-        <hr>'.' $pdf->getStats()' .'
+        '.' $pdf->getStats()' .'
         ';
 
         $pdf->SetFont('helvetica', '', 10);
