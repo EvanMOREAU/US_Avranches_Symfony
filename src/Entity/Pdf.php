@@ -24,8 +24,6 @@ class Pdf
     private ?int $stats = null;
 
 
-
-
     public function getId(): ?int
     {
         return $this->id;

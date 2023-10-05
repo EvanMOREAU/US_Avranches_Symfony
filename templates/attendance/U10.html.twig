@@ -12,13 +12,14 @@
 		</div>
 
 		<div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
-			{% for tbl_player in tbl_player %}
+			{% for user in users %}
 				<div class="col">
-					<div class="card zoom" data-player-id="{{ tbl_player.id }}">
-						<img src="/images/{{ tbl_player.firstName }}-{{ tbl_player.lastName }}.png" class="card-img-top" alt="...">
+					<div class="card zoom" data-user-id="{{ user.id }}">
+						{# <img src="/images/{{ tbl_user.firstName }}-{{ tbl_user.lastName }}.png" class="card-img-top" alt="..."> #}
+                        <img src="/images/arthur-delacour.png" class="card-img-top" alt="...">
 						<div class="card-body">
-							<p class="card-text text-center">{{ tbl_player.firstName }}
-								{{ tbl_player.lastName }}</p>
+							<p class="card-text text-center">{{ user.firstName }}
+								{{ user.lastName }}</p>
 						</div>
 					</div>
 				</div>

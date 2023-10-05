@@ -40,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $last_name = null;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Team $team = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -164,5 +167,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $now = new \DateTime();
         $diff = $now->diff($this->date_naissance);
         return 'U'.$diff->y;
+    }
+
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): static
+    {
+        $this->team = $team;
+
+        return $this;
     }
 }
