@@ -31,8 +31,8 @@ class PdfController extends AbstractController
         $pdf->setJPEGQuality(75);
         
         
-        $largeurPage = $pdf->getPageWidth() + 120;
-        $hauteurPage = $pdf->getPageHeight()+ -100;
+        $largeurPage = $pdf->getPageWidth() + 25;
+        $hauteurPage = $pdf->getPageHeight()- 25;
 
         $pdf->Image(
         $backgroundImage = 'img/US-Avranches.jpg',  // Chemin vers l'image
@@ -49,7 +49,7 @@ class PdfController extends AbstractController
         false,             // Compression (false dans cet exemple)
         false,             // Masque (false dans cet exemple)
         0                  // Positionnement de l'image
-        );
+        ); 
 
         $pdf->SetFont('helvetica', 'B', 25);
 
@@ -58,12 +58,13 @@ class PdfController extends AbstractController
        
         $pdf->SetFillColor(31,40,97);
         $pdf->SetTextColor(255,255,255);
-        $pdf->MultiCell(187, 20, "FICHE D'UN JOUEUR", 0, 'C', 1, 1, '', '', true, 0, false, true, 20, 'M');
+        $pdf->MultiCell(187, 10, "FICHE DU JOUEUR : ", 0, 'C', 1, 1, '', '', true, 0, false, true, 20, 'M');
+        $pdf->MultiCell(187, 10, $players->getFirstName().' '.$players->getLastName(), 0, 'C', 1, 1, '', '', true);
 
         $pdf->SetFont('helvetica', 'B', 17);
         $pdf->SetFillColor(255,255,255);
         $pdf->SetTextColor(255,255,255);
-        $pdf->MultiCell(187, 10, $players->getFirstName(), 0, 'C', 1, 1, '', '', true);
+
         
         $pdf->SetTextColor(255,255,255);
         $pdf->setCellPaddings(1,1,1,1);
@@ -71,39 +72,35 @@ class PdfController extends AbstractController
         <style> .black { color: rgb(255,255,255); } .link { color: rgb(100,0,0); }</style>
         <br>
         <p class="black">
-<b>A remplir :</b></p>
-'.' A remplir
+        <b>A remplir :</b></p>
+        '.' A remplir
         <br>
         <p class="black">
-<b>A remplir :</b>
+        <b>A remplir :</b>
         </p>
-'. 'A remplir '. '
+        '. 'A remplir '. '
         <div></div>
         <p class="black">
-<b>A remplir:</b>
-</p><p>
-<b>A remplir</b> :<br>
-A remplir.<br>
-<br>
-<b>A remplir</b> :<br>
-A remplir
+        <b>A remplir:</b>
+        </p><p>
+        <b>A remplir</b> :<br>
+        A remplir.<br>
+        <br>
+        <b>A remplir</b> :<br>
+        A remplir
         </p><br>
         <p class="black">
-<b>Contact :</b>
+        <b>Contact :</b>
         </p><p>
-<b>Contact club : Christelle DELARUE</b><br>
-Service de Formation Professionnelle<br>
-Continue de l’OGEC Notre Dame de la Providence<br>
-<br>
-Club House US Avranches MSM, Allée Jacques Anquetil, 50300 AVRANCHES.<br>
-Tel 02 33 48 30 78<br>
-mail :  <span class="link">communication@us-avranches.fr</span><br>
+        <b>Contact club : Christelle DELARUE</b><br>
+        Service de Formation Professionnelle<br>
+        Continue de l’OGEC Notre Dame de la Providence<br>
+        <br>
+        Club House US Avranches MSM, Allée Jacques Anquetil, 50300 AVRANCHES.<br>
+        Tel 02 33 48 30 78<br>
+        mail :  <span class="link">communication@us-avranches.fr</span><br>
         <span class="link">partenaires@us-avranches.fr</span><br>
         <span class="link">us.avranches@orange.fr</span><br>
-<br>    
-OF certifié QUALIOPI pour les actions de formations<br>
-<br>
-Site Web : <span class="link">https://ndlpavranches.fr/fc-pro/</span>
         </p>';
 
         $pdf->SetFont('helvetica', '', 10);
@@ -116,10 +113,10 @@ Site Web : <span class="link">https://ndlpavranches.fr/fc-pro/</span>
         '. '$pdf->getContent()' .'
         <b>Modalités d\'accès et d\'inscription</b>
         <br><div></div>
-<br><br>
+        <br><br>
 
-<b>Moyens pédagogiques et techniques</b>
-<b>Modalité d\'évaluation</b>
+        <b>Moyens pédagogiques et techniques</b>
+        <b>Modalité d\'évaluation</b>
         '.' $pdf->getStats()' .'
         ';
 
