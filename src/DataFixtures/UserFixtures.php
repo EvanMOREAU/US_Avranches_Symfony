@@ -34,6 +34,30 @@ class UserFixtures extends Fixture
             "ROLE_SUPER_ADMIN",
         ]);
         $manager->persist($superAdmin);
+
+
+        $faker = \Faker\Factory::create();
+
+        for ($i = 0; $i < 150; $i++) {
+            $randomBirthdate = $faker->dateTimeBetween('-10 years', '-6 years');
+            $player = new User();
+            $player->setUsername($faker->userName);
+            $player->setFirstName($faker->firstName);
+            $player->setLastName($faker->lastName);
+            $player->setDateNaissance($randomBirthdate);
+            $plaintextPassword = "admin";
+            $hashedPassword = $this->passwordHasher->hashPassword(
+                $player,
+                $plaintextPassword
+            );
+            $player->setRoles([
+                "ROLE_PLAYER",
+            ]);
+            $player->setPassword($hashedPassword);
+            $manager->persist($player);
+
+        }
+        
         $manager->flush();
 
 

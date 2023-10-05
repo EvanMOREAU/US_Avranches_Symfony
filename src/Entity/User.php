@@ -163,6 +163,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getCategory(){
         $now = new \DateTime();
         $diff = $now->diff($this->date_naissance);
-        return $diff->y;
+        return 'U'.$diff->y;
     }
 }
