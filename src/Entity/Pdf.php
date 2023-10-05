@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PdfRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: PdfRepository::class)]
 class Pdf
@@ -11,6 +12,7 @@ class Pdf
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -22,7 +24,7 @@ class Pdf
     private ?int $stats = null;
 
 
-    private ?int $id = null;
+
 
     public function getId(): ?int
     {
