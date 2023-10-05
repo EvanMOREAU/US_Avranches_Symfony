@@ -20,8 +20,9 @@
         "symfony/runtime": "5.4.*",
         "symfony/twig-bundle": "5.4.*",
         "symfony/yaml": "5.4.*",
-        "tecnickcom/tcpdf": "^6.6"
+        "tecnickcom/tcpdf": "^6.6",
         "symfony/validator": "5.4.*",
+        "symfony/security-bundle": "^5.4"
     },
     "config": {
         "allow-plugins": {
