@@ -1,8 +1,4 @@
 index:
     path: /
     controller: App\Controller\DefaultController::index
-app_login:
-    path: /login
-    controller: App\Controller\SecurityController::login
-app_logout:
-    path: /logout
+

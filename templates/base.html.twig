@@ -2,23 +2,24 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Les Tests{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="images\logo.svg" sizes="any" type="image/svg+xml">
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
         {# <link href="/css/tests.css" rel="stylesheet" /> #}
         <link href="/css/navbar.css" rel="stylesheet" />
         <link href="/css/pagebase.css" rel="stylesheet" />
-
-
             {{ encore_entry_link_tags('app') }}
-            
+            <!--Styles.css-->
+			<link
+			rel="stylesheet" href="/css/bootstrap.css">
         {% endblock %}
 
         {% block javascripts %}
         <script type="text/javascript" src="/js/tests.js"></script>
             {{ encore_entry_script_tags('app') }}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
         {% endblock %}
     </head>
     {% block body %}
@@ -32,16 +33,14 @@
     <label class="menu__btn" for="menu__toggle">
       <span></span>
     </label>
-    {% if is_granted('ROLE_ADMIN') %}
-      <ul class="menu__box">
-        <li><a class="menu__item" href="#">Tableau de bord</a></li>
-        <li><a class="menu__item" href="#">Faire l'appel</a></li>
-        <li><a class="menu__item" href="#">Liste des joueurs</a></li>
-        <li><a class="menu__item" href="#">#</a></li>
-        <li><a class="menu__item" href="#">#</a></li>
-        <li><a class="menu__item" href="#">#</a></li>
-      </ul>
-    {% endif %}
+    <ul class="menu__box">
+      <li><a class="menu__item" href="#">Tableau de bord</a></li>
+      <li><a class="menu__item" href="#">Faire l'appel</a></li>
+      <li><a class="menu__item" href="#">Liste des joueurs</a></li>
+      <li><a class="menu__item" href="#">Les Tests</a></li>
+      <li><a class="menu__item" href="#">Supertests</a></li>
+      <li><a class="menu__item" href="#">#</a></li>
+    </ul>
   </div>
   {% endblock %}
           {% if app.user %}
