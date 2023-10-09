@@ -2,24 +2,28 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\PlayerPDF;
+use App\Entity\Pdf;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 class PdfController extends AbstractController
 {
     #[Route('/pdf', name: 'app_pdf')]
     public function index(): Response
     {
-        $pdf = new \TCPDF();
+        // $pdf = new \TCPDF;
+        $pdf = new Pdf();
 
         $pdf->SetAuthor('SIO TEAM ! 💻');
         $pdf->SetTitle('Fiche joueur');
         $pdf->SetFont('times', '', 14);
-        $pdf->setCellPaddings(1, 1, 1, 1);
-        $pdf->setCellMargins(1, 1, 1, 1);
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
+        // $pdf->setCellPaddings(1, 1, 1, 1);
+        // $pdf->setCellMargins(1, 1, 1, 1);
+        // $pdf->setPrintHeader(false);
+        // $pdf->setPrintFooter(false);
 
         $pdf->AddPage();
         $pdf->setJPEGQuality(75);
@@ -27,7 +31,7 @@ class PdfController extends AbstractController
         $pdf->SetFont('helvetica', 'B', 25);
 
         $pdf->SetXY(0, 1);
-        $pdf->Image('img/logo_usa.jpg', '', '', 20, 20, '', '', '', false, 100, '', false, false, 0, false, false, false);
+        // $pdf->Image('img/logo_usa.jpg', '', '', 20, 20, '', '', '', false, 100, '', false, false, 0, false, false, false);
        // $pdf->Image('img/usavranches.jpg', 15, 140, 75, 113, 'JPG', 'http://localhost:8000/pdf', '', true, 150, '', false, false, 1, false, false, false);
        
         $pdf->SetFillColor(31,40,97);

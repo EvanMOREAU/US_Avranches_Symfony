@@ -2,67 +2,24 @@
 
 namespace App\Entity;
 
-use App\Repository\PdfRepository;
-use Doctrine\ORM\Mapping as ORM;
+class Pdf extends \TCPDF
+ {
 
-#[ORM\Entity(repositoryClass: PdfRepository::class)]
-class Pdf
-{
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $content = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $stats = null;
-
-
-    private ?int $id = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-
-    function getName(): ?string
-    {
-        return $this->name;
+    //Page header
+    public function Header() {
+        // get the current page break margin
+        $bMargin = $this->getBreakMargin();
+        // get current auto-page-break mode
+        $auto_page_break = $this->AutoPageBreak;
+        // disable auto-page-break
+        $this->SetAutoPageBreak( false, 0 );
+        // set bacground image
+        $img_file = 'img/usavranches.jpg';
+        $this->Image( $img_file, 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0 );
+        // restore auto-page-break status
+        $this->SetAutoPageBreak( $auto_page_break, $bMargin );
+        // set the starting point for the page content
+        $this->setPageMark();
     }
 
-    function setName(string $name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    function getContent(): ?string
-    {
-        return $this->content;
-    }
-
-    function setContent(?string $content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    function getStats(): ?int
-    {
-        return $this->stats;
-    }
-
-    function SetStats(?int $stats)
-    {
-        $this->stats = $stats;
-
-        return $this;
-    }
-
-    }
 }
