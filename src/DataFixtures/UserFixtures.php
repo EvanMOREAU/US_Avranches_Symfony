@@ -40,7 +40,7 @@ class UserFixtures extends Fixture
         $faker = \Faker\Factory::create();
 
         for ($i = 0; $i < 150; $i++) {
-            $randomBirthdate = $faker->dateTimeBetween('-10 years', '-6 years');
+            $randomBirthdate = $faker->dateTimeBetween('-12 years', '-9 years');
             $player = new User();
             $player->setUsername($faker->userName);
             $player->setFirstName($faker->firstName);

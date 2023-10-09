@@ -49,32 +49,83 @@ class AttendanceController extends AbstractController
     // }
 
     #[Route('/appel/U11', name: 'app_attendance_U11')]
-    public function U11(TeamRepository $TeamRepository, PlayerRepository $PlayerRepository): Response
+    public function U11(UserRepository $UserRepository): Response
     {
+        // Get all users from the repository
+        $allUsers = $UserRepository->findAll();
+
+        // Filter users who belong to the 'U11' category
+        $usersInU11 = array_filter($allUsers, function ($user) {
+            return $user->getCategory() === 'U11';
+        });
+
         return $this->render('attendance/U11.html.twig', [
             'controller_name' => 'AttendanceController',
-            'tbl_team' => $TeamRepository->findAll(),
-            'tbl_player' => $PlayerRepository->findByTeam(2),
+            'users' => $usersInU11,
         ]);
     }
+
+    // #[Route('/appel/U11', name: 'app_attendance_U11')]
+    // public function U11(TeamRepository $TeamRepository, PlayerRepository $PlayerRepository): Response
+    // {
+    //     return $this->render('attendance/U11.html.twig', [
+    //         'controller_name' => 'AttendanceController',
+    //         'tbl_team' => $TeamRepository->findAll(),
+    //         'tbl_player' => $PlayerRepository->findByTeam(2),
+    //     ]);
+    // }
 
     #[Route('/appel/U12', name: 'app_attendance_U12')]
-    public function U12(TeamRepository $TeamRepository, PlayerRepository $PlayerRepository): Response
+    public function U12(UserRepository $UserRepository): Response
     {
+        // Get all users from the repository
+        $allUsers = $UserRepository->findAll();
+
+        // Filter users who belong to the 'U12' category
+        $usersInU12 = array_filter($allUsers, function ($user) {
+            return $user->getCategory() === 'U12';
+        });
+
         return $this->render('attendance/U12.html.twig', [
             'controller_name' => 'AttendanceController',
-            'tbl_team' => $TeamRepository->findAll(),
-            'tbl_player' => $PlayerRepository->findByTeam(3),
+            'users' => $usersInU12,
         ]);
     }
 
+    // #[Route('/appel/U12', name: 'app_attendance_U12')]
+    // public function U12(TeamRepository $TeamRepository, PlayerRepository $PlayerRepository): Response
+    // {
+    //     return $this->render('attendance/U12.html.twig', [
+    //         'controller_name' => 'AttendanceController',
+    //         'tbl_team' => $TeamRepository->findAll(),
+    //         'tbl_player' => $PlayerRepository->findByTeam(3),
+    //     ]);
+    // }
+
     #[Route('/appel/U13', name: 'app_attendance_U13')]
-    public function U13(TeamRepository $TeamRepository, PlayerRepository $PlayerRepository): Response
+    public function U13(UserRepository $UserRepository): Response
     {
+        // Get all users from the repository
+        $allUsers = $UserRepository->findAll();
+
+        // Filter users who belong to the 'U13' category
+        $usersInU13 = array_filter($allUsers, function ($user) {
+            return $user->getCategory() === 'U13';
+        });
+
         return $this->render('attendance/U13.html.twig', [
             'controller_name' => 'AttendanceController',
-            'tbl_team' => $TeamRepository->findAll(),
-            'tbl_player' => $PlayerRepository->findByTeam(4),
+            'users' => $usersInU13,
         ]);
     }
+
+    // #[Route('/appel/U13', name: 'app_attendance_U13')]
+    // public function U13(TeamRepository $TeamRepository, PlayerRepository $PlayerRepository): Response
+    // {
+    //     return $this->render('attendance/U13.html.twig', [
+    //         'controller_name' => 'AttendanceController',
+    //         'tbl_team' => $TeamRepository->findAll(),
+    //         'tbl_player' => $PlayerRepository->findByTeam(4),
+    //     ]);
+    // }
 }

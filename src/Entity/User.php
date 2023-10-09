@@ -164,10 +164,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function getCategory(){
-        $now = new \DateTime();
-        $diff = $now->diff($this->date_naissance);
-        return 'U'.$diff->y;
+        $this_year = new \DateTime('first day of January next year');
+        $diff = $this_year->diff($this->date_naissance);
+        return 'U'.$diff->y + 1;
     }
+    
 
     public function getTeam(): ?Team
     {
