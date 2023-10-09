@@ -1,14 +1,43 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello TestsController!{% endblock %}
+{% block title %}Tests index{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <h1>Tests index</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Vma</th>
+                <th>Cooper</th>
+                <th>Jongle_gauche</th>
+                <th>Jongle_droit</th>
+                <th>Jongle_tete</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for test in tests %}
+            <tr>
+                <td>{{ test.id }}</td>
+                <td>{{ test.vma }}</td>
+                <td>{{ test.cooper ? test.cooper|date('H:i:s') : '' }}</td>
+                <td>{{ test.jongleGauche }}</td>
+                <td>{{ test.jongleDroit }}</td>
+                <td>{{ test.jongleTete }}</td>
+                <td>
+                    <a href="{{ path('app_tests_show', {'id': test.id}) }}">show</a>
+                    <a href="{{ path('app_tests_edit', {'id': test.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_tests_new') }}">Create new</a>
 {% endblock %}
