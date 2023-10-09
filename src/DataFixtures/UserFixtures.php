@@ -25,6 +25,7 @@ class UserFixtures extends Fixture
         $superAdmin->setFirstName('SIO');
         $superAdmin->setLastName('2');
         $superAdmin->setDateNaissance($dateNaissance);
+        $superAdmin->setMatchesPlayed(0);
         $plaintextPassword = "admin";
         $hashedPassword = $this->passwordHasher->hashPassword(
             $superAdmin,
@@ -39,13 +40,14 @@ class UserFixtures extends Fixture
 
         $faker = \Faker\Factory::create();
 
-        for ($i = 0; $i < 150; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $randomBirthdate = $faker->dateTimeBetween('-12 years', '-9 years');
             $player = new User();
             $player->setUsername($faker->userName);
             $player->setFirstName($faker->firstName);
             $player->setLastName($faker->lastName);
             $player->setDateNaissance($randomBirthdate);
+            $player->setMatchesPlayed(0);
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $player,

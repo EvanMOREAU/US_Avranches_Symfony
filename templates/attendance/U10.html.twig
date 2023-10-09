@@ -59,27 +59,6 @@ const playerId = abs.getAttribute('data-player-id'); // Get the player ID from d
 playerIdsToIncrement.push(playerId);
 }
 });
-
-// Send a POST request to the server to increment matches_played for selected players
-// You would need to set up a server endpoint to handle this request.
-// For simplicity, I'll use a placeholder URL here.
-fetch('/increment-matches-played', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json'
-},
-body: JSON.stringify(
-{playerIds: playerIdsToIncrement}
-)
-}).then(response => {
-if (response.ok) { // Redirect to "/appel" after the update is complete
-window.location.href = '/appel';
-} else { // Handle any errors here
-console.error('Error updating matches played');
-}
-}).catch(error => {
-console.error('Error:', error);
-});
 });
 });
 	</script>

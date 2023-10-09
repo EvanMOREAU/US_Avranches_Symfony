@@ -43,6 +43,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Team $team = null;
 
+    #[ORM\Column]
+    private ?int $matches_played = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -178,6 +181,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTeam(?Team $team): static
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getMatchesPlayed(): ?int
+    {
+        return $this->matches_played;
+    }
+
+    public function setMatchesPlayed(int $matches_played): static
+    {
+        $this->matches_played = $matches_played;
 
         return $this;
     }
