@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\TeamRepository;
+use App\Repository\UserRepository;
+use App\Repository\PlayerRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\PlayerRepository;
-use App\Repository\UserRepository;
-use App\Repository\TeamRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AttendanceController extends AbstractController
 {
@@ -19,7 +22,6 @@ class AttendanceController extends AbstractController
             'teams' => $TeamRepository->findAll(),
         ]);
     }
-
 
     #[Route('/appel/U10', name: 'app_attendance_U10')]
     public function U10(UserRepository $UserRepository): Response
@@ -127,5 +129,36 @@ class AttendanceController extends AbstractController
     //         'tbl_team' => $TeamRepository->findAll(),
     //         'tbl_player' => $PlayerRepository->findByTeam(4),
     //     ]);
+    // }
+
+    #[Route('/update-matches-played', name: 'update_matches_played', methods: ['POST'])]
+    public function updateMatchesPlayed(Request $request, UserRepository $userRepository): RedirectResponse
+    {
+        // Get the selected user IDs from the POST data
+        $selectedUserIds = json_decode($request->getContent())->selectedUserIds;
+
+        // Update matches_played for users who are not selected
+        $userRepository->incrementMatchesPlayedForUnselectedUsers($selectedUserIds);
+
+        // Add a flash message to indicate success
+        $this->addFlash('success', 'Matches played updated successfully!');
+
+        return $this->redirectToRoute('app_attendance_U10'); // Redirect to the U10 page or the appropriate route
+    }
+
+    // #[Route('/update-matches-played', name: 'update_matches_played', methods: ['POST'])]
+    // public function updateMatchesPlayed(Request $request, UserRepository $userRepository): RedirectResponse
+    // {
+    //     // Get the selected user IDs from the POST data
+    //     $selectedUserIds = json_decode($request->getContent())->selectedUserIds;
+    //     $category = 'U10'; // Replace with the actual category of the users
+
+    //     // Update matches_played for users who are not selected in their respective category
+    //     $userRepository->incrementMatchesPlayedForUnselectedUsers($selectedUserIds, $category);
+
+    //     // Add a flash message to indicate success
+    //     $this->addFlash('success', 'Matches played updated successfully!');
+
+    //     return $this->redirectToRoute('app_attendance_U10'); // Redirect to the U10 page or the appropriate route
     // }
 }
