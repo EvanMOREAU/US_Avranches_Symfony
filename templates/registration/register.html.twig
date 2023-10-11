@@ -1,10 +1,11 @@
-{% extends 'base.html.twig' %}
 
 {% block title %}Register{% endblock %}
 
 {% block body %}
      <link rel="icon" href="/img/logo_usa.ico">
     <link href="/css/login.css" rel="stylesheet" />
+    <link href="/css/register.css" rel="stylesheet" />
+
     <div class="container">
         <div class="card">
             <form action="{{ path('app_register') }}" method="post">
@@ -40,9 +41,31 @@
                     </svg>
                     {{ form_row(registrationForm.date_naissance, { 'attr': { 'class': 'input-field date-input', 'autocomplete': 'off', 'placeholder': 'Date de naissance' } }) }}
                 </div>
-                <div class="checkbox-wrapper">
+                {# <div class="checkbox-wrapper">
                     {{ form_row(registrationForm.agreeTerms, { 'attr': { 'class': '_checkbox-26', 'autocomplete': 'off'} }) }}
-                </div>
+                </div> #}
+                {# <br>
+                <div class="checkbox-wrapper-31">
+                    {{ form_widget(registrationForm.agreeTerms, { 'attr': { 'class': 'checked', 'label': 'Conditions D\'utilisation' } }) }}
+                    <svg viewBox="0 0 35.6 35.6">
+                        <circle class="background" cx="17.8" cy="17.8" r="17.8"></circle>
+                        <circle class="stroke" cx="17.8" cy="17.8" r="14.37"></circle>
+                        <polyline class="check" points="11.78 18.12 15.55 22.23 25.17 12.87"></polyline>
+                    </svg>
+                    <span>Accepter les termes et conditions</span>
+
+                </div><br> #}
+                    {# <div class="containercheckbox">
+                        {{ form_widget(registrationForm.agreeTerms, { 'attr': {'class': 'checkbox'} }) }}
+                        <div class="checkmark"></div>
+                    </div>
+                    <label for="{{ registrationForm.agreeTerms.vars.id }}">Votre texte ici</label> #}
+                    <br>
+                    <label class="checkbox-container">
+                        {{ form_widget(registrationForm.agreeTerms, { 'attr': {'class': 'custom-checkbox', 'type': 'checkbox'} }) }}
+                        <span class="checkmark"></span>
+                    </label><br><br>
+                    <label for="{{ registrationForm.agreeTerms.vars.id }}" style='color: white;'>J'ai lu et j'accepte les conditions d'utilisation </label>
 
                 <button class="btn" type="submit">S'inscrire</button>
             </form>
