@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Charts index{% endblock %}
+
+{% block body %}
+    <h1>Charts index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Type</th>
+                <th>Data</th>
+                <th>Source_data</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for chart in charts %}
+            <tr>
+                <td>{{ chart.id }}</td>
+                <td>{{ chart.type }}</td>
+                <td>{{ chart.data }}</td>
+                <td>{{ chart.sourceData }}</td>
+                <td>
+                    <a href="{{ path('app_charts_show', {'id': chart.id}) }}">show</a>
+                    <a href="{{ path('app_charts_edit', {'id': chart.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_charts_new') }}">Create new</a>
+{% endblock %}
