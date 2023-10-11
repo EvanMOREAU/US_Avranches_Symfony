@@ -17,8 +17,8 @@ class Tests
     #[ORM\Column(nullable: true)]
     private ?int $vma = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $cooper = null;
+    #[ORM\Column(length: 255)]
+    private ?string $cooper = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $jongle_gauche = null;
@@ -28,6 +28,9 @@ class Tests
 
     #[ORM\Column(nullable: true)]
     private ?int $jongle_tete = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $date = null;
 
     public function getId(): ?int
     {
@@ -46,12 +49,12 @@ class Tests
         return $this;
     }
 
-    public function getCooper(): ?\DateTimeInterface
+    public function getCooper(): ?string
     {
         return $this->cooper;
     }
 
-    public function setCooper(?\DateTimeInterface $cooper): static
+    public function setCooper(?string $cooper): self
     {
         $this->cooper = $cooper;
 
@@ -90,6 +93,18 @@ class Tests
     public function setJongleTete(?int $jongle_tete): static
     {
         $this->jongle_tete = $jongle_tete;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTimeInterface $date): static
+    {
+        $this->date = $date;
 
         return $this;
     }

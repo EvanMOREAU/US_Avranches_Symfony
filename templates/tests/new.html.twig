@@ -1,0 +1,17 @@
+{# templates/tests/form.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Nouveau</h1>
+    <style>
+    body{
+        color: white;
+    }
+    </style>
+
+    {{ form_start(form) }}
+        
+        <button type="submit" class="btn btn-primary">Save</button>
+    {{ form_end(form) }}
+{% endblock %}
