@@ -91,9 +91,7 @@ class TestsFormType extends AbstractType
                     'maxMessage' => 'Le nombre de jongles de la tête doit être inférieur à 30.',
                 ]),
             ],
-        ])
-        ->add('date', DateTimeType::class, [
-            'label' => 'Date du tests',]);
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
