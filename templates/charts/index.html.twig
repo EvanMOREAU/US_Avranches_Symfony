@@ -3,32 +3,51 @@
 {% block title %}Charts index{% endblock %}
 
 {% block body %}
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    
+    <div>
         {% for chart in charts %}
-        <canvas id='{{ chart.id }}' width="10%"></canvas><br />
+        {% if chart.id < 3 %}
 
-        <script>
-        const ctx{{ chart.id }} = document.getElementById('{{ chart.id }}');
-        new Chart(ctx{{ chart.id }}, {
-            type: '{{ chart.type }}',
-            data: {
-            labels: ['2024-01-11', '2024-09-11', '2025-10-11'],
-            datasets: [{
-                data: [{{ chart.source_data }}],
-                borderWidth: 1
-            }]
-            },
-            options: {
-            scales: {
-                y: {
-                beginAtZero: true
-                }
-            }
-            }
-        });
-        </script>
-        {% else %}
-                <td colspan="5">no records found</td>
+            <div>
+            <h1>Graphe n°{{ chart.id }}</h1>
+            <p>[{{ chart.source_data | raw }}]</p>
+            <canvas id="{{ chart.id }}" width="400" height="200"></canvas>
+            <hr/>
+            </div>
+            <script>
+                const ctx{{ chart.id }} = document.getElementById('{{ chart.id }}');
+                new Chart(ctx{{ chart.id }}, {
+                    type: '{{ chart.type }}',
+                    data: {
+                        labels: ['2024-01-11', '2024-09-11', '2025-10-11'],
+                        datasets: [{
+                            label: '{{ chart.id }}',
+                            data: [{{ chart.source_data | raw }}],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            {% if chart.type == 'line' %}
+                            y: {
+                                beginAtZero: true
+                            }
+                            {% elseif chart.type == 'radar' %}
+                            r: { 
+                                min: 0, 
+                                max: 10
+                            }
+                            {% endif %}   
+                        }
+                    }
+                });
+            </script>
+        {% endif %}
         {% endfor %}
+
+    </div>
+    
     <a href="{{ path('app_charts_new') }}">Create new</a>
 {% endblock %}
