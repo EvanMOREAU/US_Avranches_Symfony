@@ -3,29 +3,32 @@
 {% block title %}Liste des tests{% endblock %}
 
 {% block body %}
-        <link href="/css/tests.css" rel="stylesheet" />
-	<div class="col-lg-8 mx-auto p-5 py-md-5">
-		<div class="mt-3 text-center">
-			<h1 class="h1 mb-2">Liste des tests</h1>
-		</div>
+    <link href="/css/tests.css" rel="stylesheet" />
 
+    <div class="mt-4 text-center">
+        <h1 class="h1 mb-5">Liste des tests</h1>
+    </div>
+	<div class="text-center mt-4">
+        <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
+    </div>
+	<br>
+    <div class="cards">
+        {% for test in tests %}
+            <div class="card green">
+                <p class="tip">ID : {{ test.id }}<br>VMA : {{ test.vma }}
+                    <br>Cooper : {{ test.cooper|date('i:s') }}
+                    <br> Jongle Gauche : {{ test.jonglegauche }}
+                    <br>Jongle Droit : {{ test.jongledroit }}
+                    <br> Jongle Tête : {{ test.jongletete }}
+                    <br> Date du test : {{ test.date|date('Y-m-d H:i:s') }}</p>
+            </div>
+        {% else %}
+            <div class="card" style="background-color: #ccc;">
+                <p class="tip">Il n'y a aucun test !</p>
+            </div>
+        {% endfor %}
+    </div>
+	<br>
 
-		<table>
-			{% for test in tests %}
-				
-			<div class="cards">
-				<div class="card green">
-					<p class="tip">ID : {{test.id}}	<br>VMA : {{test.vma}}<br>Cooper : {{test.cooper|date('H:i:s')}}
-													<br> Jongle Gauche : {{test.jonglegauche}}
-													<br>Jongle Droit : {{test.jongledroit}}
-													<br> Jongle Tête : {{test.jongletete}}</p>
-					</div>
-			</div>
-				
-			{% else %}
-				<div colspan="9">Il n'y a aucun test !</div>
-			{% endfor %}
-	</div>
-
+    
 {% endblock %}
-

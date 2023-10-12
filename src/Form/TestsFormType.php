@@ -33,10 +33,10 @@ class TestsFormType extends AbstractType
                     'message' => 'Please enter a VMA value',
                 ]),
                 new Range([
-                    'min' => 1,
-                    'max' => 16,
-                    'minMessage' => 'The VMA should be at least {{ limit }}',
-                    'maxMessage' => 'The VMA should not exceed {{ limit }}',
+                    'min' => 0,
+                    'max' => 30,
+                    'minMessage' => 'La VMA ne doit pas être négative.',
+                    'maxMessage' => 'La VMA ne doit pas dépasser les 30.',
                 ]),
             ],
         ])        
@@ -93,20 +93,7 @@ class TestsFormType extends AbstractType
             ],
         ])
         ->add('date', DateTimeType::class, [
-            'label' => 'Jongle Tête',
-            'attr' => [
-                'min' => 0,   // Valeur minimale
-                'max' => 30,  // Valeur maximale
-            ],
-            'constraints' => [
-                new Range([
-                    'min' => 0,
-                    'max' => 30,
-                    'minMessage' => 'Le nombre de jongles de la tête ne doit pas être négatif.',
-                    'maxMessage' => 'Le nombre de jongles de la tête doit être inférieur à 30.',
-                ]),
-            ],
-        ]);
+            'label' => 'Date du tests',]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
