@@ -8,19 +8,28 @@
     <div class="mt-4 text-center">
         <h1 class="h1 mb-5">Liste des tests</h1>
     </div>
-	<div class="text-center mt-4">
+    <div class="text-center mt-4">
         <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
     </div>
-	<br>
+    <br>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
     <div class="cards">
         {% for test in tests %}
-            <div class="card green">
+            <div class="card green" style="position: relative;">
                 <p class="tip">ID : {{ test.id }}<br>VMA : {{ test.vma }}
                     <br>Cooper : {{ test.cooper|date('i:s') }}
                     <br> Jongle Gauche : {{ test.jonglegauche }}
                     <br>Jongle Droit : {{ test.jongledroit }}
                     <br> Jongle Tête : {{ test.jongletete }}
                     <br> Date du test : {{ test.date|date('Y-m-d H:i:s') }}</p>
+                {% if is_granted("ROLE_COACH") %}
+					<a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger button-right">Supprimer</a>
+					<a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary button-left">Éditer</a>
+            	{% endif %}
             </div>
         {% else %}
             <div class="card" style="background-color: #ccc;">
@@ -28,7 +37,5 @@
             </div>
         {% endfor %}
     </div>
-	<br>
-
-    
+    <br>
 {% endblock %}

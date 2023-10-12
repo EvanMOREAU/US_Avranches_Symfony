@@ -20,7 +20,7 @@ body {
   justify-content: center;
   flex-direction: column;
   text-align: center;
-  height: 250px;
+  height: 220px;
   border-radius: 15px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -50,4 +50,15 @@ body {
   color: #fff;
 }
 
+/* Style pour les boutons d'édition et de suppression */
+.button-left {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
 
+.button-right {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}

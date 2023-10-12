@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Annotation\IsGranted;
+
 
 #[Route('/tests')]
 class TestsController extends AbstractController
@@ -52,28 +54,54 @@ class TestsController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_tests_edit', methods: ['GET', 'POST'])]
-    function edit(Request $request, TestsRepository $testsRepository, $id): Response
+    #[Route('/tests/{id}/edit', name: 'app_tests_edit', methods: ['GET', 'POST'])]
+    #[IsGranted("ROLE_COACH")]
+    public function edit(Request $request, TestsRepository $testsRepository, $id): Response
     {
-        $test = $testsRepository->find($id); // Récupérez l'entité Tests en fonction de l'ID
+        $test = $testsRepository->find($id);
 
         if (!$test) {
             throw $this->createNotFoundException('Test non trouvé');
         }
 
-        $form = $this->createForm(TestsFormType::class, $test); // Lier le formulaire aux données de l'entité
+        $form = $this->createForm(TestsFormType::class, $test);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $testsRepository->save($test, true); // Utilisez l'entité $test au lieu du formulaire
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush(); // Enregistrez les modifications
 
-            // Redirigez l'utilisateur ou effectuez d'autres actions ici
+            // Ajoutez un message flash pour indiquer que la modification a réussi
+            $this->addFlash('success', 'La modification a été réalisée avec succès.');
+
+            // Redirigez l'utilisateur vers une autre page, par exemple la liste des tests
+            return $this->redirectToRoute('app_tests_index');
         }
 
         return $this->renderForm('tests/edit.html.twig', [
-            'tests' => $test, // Utilisez $test au lieu de $tests
+            'test' => $test,
             'form' => $form,
         ]);
+    }
+    #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET'])]
+    #[IsGranted("ROLE_COACH")]
+    public function delete(Request $request, TestsRepository $testsRepository, $id): Response
+    {
+        $test = $testsRepository->find($id);
+
+        if (!$test) {
+            throw $this->createNotFoundException('Test non trouvé');
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($test);
+        $entityManager->flush();
+
+        // Ajoutez un message flash pour la suppression réussie
+        $this->addFlash('success', 'La suppression a été réalisée avec succès.');
+
+        // Redirigez l'utilisateur vers une autre page, par exemple la liste des tests
+        return $this->redirectToRoute('app_tests_index');
     }
 }
