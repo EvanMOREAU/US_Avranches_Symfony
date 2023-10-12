@@ -16,9 +16,8 @@
         new Chart(ctx, {
             type: '{{ chart.type }}',
             data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: ['Red', 'Blue', 'Yellow'],
             datasets: [{
-                label: '# of Votes',
                 data: [{{ chart.source_data }}],
                 borderWidth: 1
             }]

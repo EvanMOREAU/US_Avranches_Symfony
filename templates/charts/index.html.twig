@@ -3,37 +3,32 @@
 {% block title %}Charts index{% endblock %}
 
 {% block body %}
-    <h1>Charts index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Type</th>
-                <th>Data</th>
-                <th>Source_data</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         {% for chart in charts %}
-            <tr>
-                <td>{{ chart.id }}</td>
-                <td>{{ chart.type }}</td>
-                <td>{{ chart.data }}</td>
-                <td>{{ chart.sourceData }}</td>
-                <td>
-                    <a href="{{ path('app_charts_show', {'id': chart.id}) }}">show</a>
-                    <a href="{{ path('app_charts_edit', {'id': chart.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <canvas id='{{ chart.id }}' width="10%"></canvas><br />
 
+        <script>
+        const ctx{{ chart.id }} = document.getElementById('{{ chart.id }}');
+        new Chart(ctx{{ chart.id }}, {
+            type: '{{ chart.type }}',
+            data: {
+            labels: ['2024-01-11', '2024-09-11', '2025-10-11'],
+            datasets: [{
+                data: [{{ chart.source_data }}],
+                borderWidth: 1
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+        </script>
+        {% else %}
+                <td colspan="5">no records found</td>
+        {% endfor %}
     <a href="{{ path('app_charts_new') }}">Create new</a>
 {% endblock %}
