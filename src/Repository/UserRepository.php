@@ -39,15 +39,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function incrementMatchesPlayedForUnselectedUsers(array $selectedUserIds): void
-    {
-        $qb = $this->createQueryBuilder('u');
-        $qb->update()
-            ->set('u.matches_played', 'u.matches_played + 1')
-            ->where($qb->expr()->notIn('u.id', $selectedUserIds))
-            ->getQuery()
-            ->execute();
-    }
+    // public function incrementMatchesPlayedForSelectedUsers(array $selectedUserIds): void
+    // {
+    //     $qb = $this->createQueryBuilder('user');
+    //     $qb->update()
+    //         ->set('user.matches_played', 'user.matches_played + 1')
+    //         ->where($qb->expr()->in('user.id', $selectedUserIds))
+    //         ->getQuery()
+    //         ->execute();
+    // }
 
     // public function incrementMatchesPlayedForUnselectedUsers(array $selectedUserIds, $category): void
     // {

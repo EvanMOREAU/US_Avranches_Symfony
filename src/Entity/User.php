@@ -172,7 +172,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return 'U'.$diff->y + 1;
     }
     
-
     public function getTeam(): ?Team
     {
         return $this->team;

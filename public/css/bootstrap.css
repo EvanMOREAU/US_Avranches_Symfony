@@ -12072,8 +12072,16 @@ textarea.form-control-lg {
   transform: scale(1.03);
 }
 
-.selected-abs img {
+img {
   filter: grayscale(100%) brightness(50%); /* Change this to the desired image effect */
 }
+
+.present img {
+  filter: grayscale(0%) brightness(100%); /* Change this to the desired image effect */
+}
+
+/* .selected-abs img {
+  filter: grayscale(100%) brightness(50%); /* Change this to the desired image effect
+} */
 
 /*# sourceMappingURL=bootstrap.css.map */
