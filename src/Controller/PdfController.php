@@ -52,7 +52,7 @@ class PdfController extends AbstractController
 
                 // Configuration de la police et des couleurs pour le contenu du joueur
                 $pdf->SetFont('helvetica', 'B', 20);
-                $pdf->SetTextColor(255, 255, 255);
+                $pdf->SetTextColor(0, 0, 0);
 
                 // Contenu du joueur (avec HTML)
                 $textg = '
