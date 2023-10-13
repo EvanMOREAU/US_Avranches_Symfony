@@ -31,6 +31,12 @@ class Player
     #[ORM\Column]
     private ?int $matches_played = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $postePrincipal = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $posteSecondaire = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +98,30 @@ class Player
     public function setMatchesPlayed(int $matches_played): static
     {
         $this->matches_played = $matches_played;
+
+        return $this;
+    }
+
+    public function getPostePrincipal(): ?string
+    {
+        return $this->postePrincipal;
+    }
+
+    public function setPostePrincipal(?string $postePrincipal): static
+    {
+        $this->postePrincipal = $postePrincipal;
+
+        return $this;
+    }
+
+    public function getPosteSecondaire(): ?string
+    {
+        return $this->posteSecondaire;
+    }
+
+    public function setPosteSecondaire(?string $posteSecondaire): static
+    {
+        $this->posteSecondaire = $posteSecondaire;
 
         return $this;
     }
