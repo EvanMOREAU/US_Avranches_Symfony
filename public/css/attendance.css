@@ -1,0 +1,11 @@
+.zoom {
+    transition: transform 0.4s;
+  }
+  
+  .zoom:hover {
+    transform: scale(1.03);
+  }
+  
+  .present img {
+    filter: grayscale(0%) brightness(100%); /* Change this to the desired image effect */
+  }

@@ -12064,22 +12064,6 @@ textarea.form-control-lg {
   }
 }
 
-.zoom {
-  transition: transform 0.4s;
-}
-
-.zoom:hover {
-  transform: scale(1.03);
-}
-
-img {
-  filter: grayscale(100%) brightness(50%); /* Change this to the desired image effect */
-}
-
-.present img {
-  filter: grayscale(0%) brightness(100%); /* Change this to the desired image effect */
-}
-
 /* .selected-abs img {
   filter: grayscale(100%) brightness(50%); /* Change this to the desired image effect
 } */
