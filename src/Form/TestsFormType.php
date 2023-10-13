@@ -46,6 +46,7 @@ class TestsFormType extends AbstractType
             'input_format' => 'h:i:s',
             'widget' => 'single_text', // Utilisation du widget "single_text"
             'with_seconds' => true,
+            'data' => '00:00:00', // Définir la valeur par défaut à 00:00
         ])          
         ->add('jongle_gauche', NumberType::class, [
             'label' => 'Jongle Gauche',

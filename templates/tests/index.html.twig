@@ -1,9 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.htmltests.twig' %}
 
 {% block title %}Liste des tests{% endblock %}
 
 {% block body %}
-    <link href="/css/tests.css" rel="stylesheet" />
+    <link href="/css/tests.css" rel="stylesheet"/>
+    <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
+
 
     <div class="mt-4 text-center">
         <h1 class="h1 mb-5">Liste des tests</h1>
@@ -26,9 +28,10 @@
                     <br>Jongle Droit : {{ test.jongledroit }}
                     <br> Jongle Tête : {{ test.jongletete }}
                     <br> Date du test : {{ test.date|date('Y-m-d H:i:s') }}</p>
-                {% if is_granted("ROLE_COACH") %}
-					<a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger button-right">Supprimer</a>
-					<a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary button-left">Éditer</a>
+                {% if is_granted("ROLE_SUPER_ADMIN") %}
+					<a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger button-right"><i class="fa fa-trash"></i></a>
+                    <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary button-left"><i class="fa fa-pencil"></i></a>
+
             	{% endif %}
             </div>
         {% else %}

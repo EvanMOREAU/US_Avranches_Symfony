@@ -55,7 +55,7 @@ class TestsController extends AbstractController
     }
 
     #[Route('/tests/{id}/edit', name: 'app_tests_edit', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_COACH")]
+    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function edit(Request $request, TestsRepository $testsRepository, $id): Response
     {
         $test = $testsRepository->find($id);
@@ -85,7 +85,7 @@ class TestsController extends AbstractController
         ]);
     }
     #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET'])]
-    #[IsGranted("ROLE_COACH")]
+    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function delete(Request $request, TestsRepository $testsRepository, $id): Response
     {
         $test = $testsRepository->find($id);

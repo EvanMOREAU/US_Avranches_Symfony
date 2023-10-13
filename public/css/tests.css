@@ -24,13 +24,14 @@ body {
   border-radius: 15px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
+  transition: 0.1s;
   cursor: pointer;
 }
 
 .cards .card:hover {
-  transform: scale(1.02);
+  transform: scale(1.01);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  border: 2px solid #333; /* Couleur de la bordure au survol */
 }
 
 .cards .card p.tip {
@@ -46,7 +47,7 @@ body {
 }
 
 .cards .card.green {
-  background-color: #22c55e;
+  background-color: #ccc;
   color: #fff;
 }
 

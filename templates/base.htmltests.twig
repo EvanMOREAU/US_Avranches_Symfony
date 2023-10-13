@@ -10,8 +10,6 @@
           {# <link href="/css/tests.css" rel="stylesheet" /> #}
           <link href="/css/navbar.css" rel="stylesheet" />
           <link href="/css/pagebase.css" rel="stylesheet" />
-          <link href="/css/nav2.css" rel="stylesheet" />
-          <link href="/css/hello.css" rel="stylesheet" />
           {{ encore_entry_link_tags('app') }}
           <!--Styles.css-->
 			    <link rel="stylesheet" href="/css/bootstrap.css">
@@ -45,12 +43,10 @@
     </ul>
   </div>
    <div class='containerbtnbht'>
-   {% if app.user %}
         <button data-text="Awesome" class="buttonh">
             <span class="actual-text">&nbsp;Bienvenue {{ app.user.getFirstName() }}&nbsp;</span>
             <span class="hover-text" aria-hidden="true">&nbsp;Bienvenue&nbsp;</span>
         </button>
-    {% endif %}
           <div class="btnbht-group">
             <button class="btnbht" {#onClick='redirectToPage/)'#}>Statistiques</button>
             <button class="btnbht">Matchs</button>
@@ -62,9 +58,6 @@
           <div class="btnbht-group">
             <button class="btnbht">Paramètres</button>
             <button class="btnbht">Fiche PDF</button>
-          </div>
-          <div class="btnbht-group">
-            <button class="btnbht" onClick='redirectToPage("/tests")'>Les Tests</button>
           </div>
         </div>
   {% endblock %}
