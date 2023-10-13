@@ -64,7 +64,7 @@ class PdfController extends AbstractController
                 <br><hr><br><div></div>
                 <b>Catégorie : </b>U' . $user->getCategory() . '
                 <br><hr><br><div></div>
-                Nombre de matchs joués :
+                <b>Nombre de matchs joués :</b>
                 <br><hr><br><div></div>
                 </p>
 
