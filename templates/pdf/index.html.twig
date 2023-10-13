@@ -1,20 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PdfController!{% endblock %}
+{% block title %}Page d'accueil{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div>
+        <div class="col-lg-8 mx-auto p-5 py-md-5">
+            <div class="mt-3 text-center">
+                <h1 class="h1 mb-2">Page d'accueil</h1>
+            </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+            <a class="btn btn-primary" href="/appel">Page d'appel</a>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/lefatri/Documents/US_Avranches_Symfony/src/Controller/PdfController.php'|file_link(0) }}">src/Controller/PdfController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/lefatri/Documents/US_Avranches_Symfony/templates/pdf/index.html.twig'|file_link(0) }}">templates/pdf/index.html.twig</a></code></li>
-    </ul>
-</div>
+        </div>
+    </div>
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+    <button id="downloadButton" class="btn btn-primary">Télécharger l'image JPG du graphique</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                datasets: [{
+                    label: 'prout alexandre',
+                    data: [15, 15, 10, 4, 7, 9],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const downloadButton = document.getElementById('downloadButton');
+        downloadButton.addEventListener('click', () => {
+        html2canvas(ctx).then(canvas => {
+        const dataURL = canvas.toDataURL('image/jpeg');
+        const fileName = 'graph_' + '{{ user.getFirstName }}' + '.jpg'; // Utilisez la variable Twig pour obtenir le prénom
+        const a = document.createElement('a');
+        a.href = dataURL;
+        a.download = fileName;
+        a.click();
+    });
+});
+
+    </script>
+
 {% endblock %}

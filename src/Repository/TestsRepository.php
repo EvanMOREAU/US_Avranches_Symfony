@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\TestEntity;
+use App\Entity\Tests;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<TestEntity>
+ * @extends ServiceEntityRepository<Tests>
  *
- * @method TestEntity|null find($id, $lockMode = null, $lockVersion = null)
- * @method TestEntity|null findOneBy(array $criteria, array $orderBy = null)
- * @method TestEntity[]    findAll()
- * @method TestEntity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Tests|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Tests|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Tests[]    findAll()
+ * @method Tests[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TestEntityRepository extends ServiceEntityRepository
+class TestsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TestEntity::class);
+        parent::__construct($registry, Tests::class);
     }
 
 //    /**
-//     * @return TestEntity[] Returns an array of TestEntity objects
+//     * @return Tests[] Returns an array of Tests objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -36,7 +36,7 @@ class TestEntityRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?TestEntity
+//    public function findOneBySomeField($value): ?Tests
 //    {
 //        return $this->createQueryBuilder('t')
 //            ->andWhere('t.exampleField = :val')

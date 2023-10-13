@@ -62,9 +62,13 @@ class PdfController extends AbstractController
                 <br><br>
                 <p><b>Date de naissance : </b>' . $user->getDateNaissance()->format('d/m/Y') . '
                 <br><hr><br><div></div>
-                <b>Catégorie : </b>U' . $user->getCategory() . '
+                <b>Catégorie : </b>' . $user->getCategory() . '
                 <br><hr><br><div></div>
                 <b>Nombre de matchs joués :</b>
+                <br><hr><br><div></div>
+                <b>Poids : </b>
+                <br><hr><br><div></div>
+                <b>Taille : </b>
                 <br><hr><br><div></div>
                 </p>
 
@@ -86,7 +90,7 @@ class PdfController extends AbstractController
                 $pdf->writeHTMLCell(65, 230, '', '', $textg, 0, 0, 0, true, '', true);
 
                 // Ajout d'une image au PDF
-                $pdf->Image('img/chartTest.jpg', 95, 150, 100, 100, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                $pdf->Image('img/graph_'. $user->getFirstName() .'.jpg', 95, 150, 100, 100, '', '', '', false, 300, '', false, false, 1, false, false, false);
 
                 // Ajout d'une image au PDF
                 $pdf->Image('img/anonyme.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
@@ -98,5 +102,16 @@ class PdfController extends AbstractController
 
         // Gestion des cas d'erreur
         return new Response('Erreur');
+    }
+
+    #[Route('/pdftest', name: 'app_pdftest')]
+    public function pdfTest(): Response
+    {
+        $user = $this->getUser(); // Récupérez l'utilisateur actuellement connecté
+
+        return $this->render('/pdf/index.html.twig', [
+            'controller_name' => 'DefaultController',
+            'user' => $user, // Assurez-vous que 'user' est correctement défini
+        ]);
     }
 }
