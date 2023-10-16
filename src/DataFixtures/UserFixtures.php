@@ -37,7 +37,6 @@ class UserFixtures extends Fixture
         ]);
         $manager->persist($superAdmin);
 
-
         $faker = \Faker\Factory::create();
 
         for ($i = 0; $i < 50; $i++) {

@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Charts index{% endblock %}
+
+{% block body %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <div class="row">
+        <div class="col-md-6">
+            {% set chartsLeft = charts[:5] %}
+            <div class="row">
+                {% for chart in chartsLeft %}
+                    <div class="col-md-12">
+                        <h2>Graph {{ chart.data }}</h2>
+                        <p>[{{ chart.source_data | raw }}]</p>
+                        <canvas id="{{ chart.id }}" width="400" height="200"></canvas>
+                        <hr/>
+                        <script>
+                            const ctx{{ chart.id }} = document.getElementById('{{ chart.id }}');
+                            new Chart(ctx{{ chart.id }}, {
+                                type: '{{ chart.type }}',
+                                data: {
+                                    labels: ['2024-01-11', '2024-09-11', '2025-10-11', ''],
+                                    datasets: [{
+                                        label: '{{ chart.id }}',
+                                        data: [{{ chart.source_data | raw }}],
+                                        backgroundColor: '#F1C40F',
+                                        borderColor: '#F1C40F',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        {% if chart.type == 'line' %}
+                                        y: {
+                                            min: 0, 
+                                            max: 50
+                                        }
+                                        {% elseif chart.type == 'radar' %}
+                                        r: { 
+                                            min: 0, 
+                                            max: 50
+                                        }
+                                        {% endif %}   
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            {% set chartsRight = charts[5:] %}
+            <div class="row">
+                {% for chart in chartsRight %}
+                    <div class="col-md-12">
+                        <h2>Graph {{ chart.data }}</h2>
+                        <p>[{{ chart.source_data | raw }}]</p>
+                        <canvas id="{{ chart.id }}" width="400" height="200"></canvas>
+                        <hr/>
+                        <script>
+                            const ctx{{ chart.id }} = document.getElementById('{{ chart.id }}');
+                            new Chart(ctx{{ chart.id }}, {
+                                type: '{{ chart.type }}',
+                                data: {
+                                    labels: ['2024-01-11', '2024-09-11', '2025-10-11', ''],
+                                    datasets: [{
+                                        label: '{{ chart.id }}',
+                                        data: [{{ chart.source_data | raw }}],
+                                        backgroundColor: '#F1C40F',
+                                        borderColor: '#F1C40F',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        {% if chart.type == 'line' %}
+                                        y: {
+                                            min: 0, 
+                                            max: 50
+                                        }
+                                        {% elseif chart.type == 'radar' %}
+                                        r: { 
+                                            min: 0, 
+                                            max: 50
+                                        }
+                                        {% endif %}   
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
