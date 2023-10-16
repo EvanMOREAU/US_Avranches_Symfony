@@ -7,6 +7,7 @@ body {
     background: linear-gradient(90deg, rgba(33,33,83,1) 0%, rgba(13,82,139,1) 35%, rgba(22,61,116,1) 100%);
 }
 
+/* Fond bouton de selection (base de la page) */
 td {
     background-color: #6382fc;
     width: 16em;
@@ -14,27 +15,28 @@ td {
     height: 7em;
 }
 
+/* Div des bouton de selection (base de la page) */
 .poste{
     margin: 5px;
     padding: 1%;
     color: white;
-    /* font-size: 0.85vw;
-    font-size: min(2px);
-    font-size: max(12px); */
     font-size: 1.5vw;
     font-size: min(2px);
     font-size: max(14px);
 }
 
+/* Div de l'image + boutons du terrain */
 .terrain {
     position: relative;
     display: inline-block;
 }
 
+/* Image du terrain */
 .terrain img {
     max-width: 82%;
 }
 
+/* Bouton de selection (base de la page) */
 .poste-selec-button {
     background-color: #6382fc;
     color: #fff;
@@ -54,6 +56,7 @@ td {
     cursor: pointer;
 }
 
+/* Bouton du terrain */
 .poste-button {
     position: absolute;
     background-color: #6382fc;
@@ -72,38 +75,39 @@ td {
     background-color: #3654ff;
 }
 
-#gardien {
+/* Position de chaque bouton du terrain */
+#gardien { /* Gardien */
     top: 93%;
     left: 44%;
 }
 
-#defenseurg {
+#defenseurg { /* Defenseur gauche */
     top: 80%;
     left: 16%;
 }
-#defenseurd {
+#defenseurd { /* Defenseur droit */
     top: 80%;
     left: 64%;
 }
 
-#milieug {
+#milieug { /* Milieu guache */
     top: 48.3%;
     left: 15%;
 }
-#milieuoff {
+#milieuoff { /* Milieu offensif */
     top: 38%;
     left: 41%;
 }
-#milieudef {
+#milieudef { /* Milieu defensif */
     top: 59%;
     left: 41%;
 }
-#milieud {
+#milieud { /* Milieu droit */
     top: 48.3%;
     left: 68.5%;
 }
 
-#attaquant {
+#attaquant { /* Attaquant */
     top: 26%;
     left: 44%;
 }

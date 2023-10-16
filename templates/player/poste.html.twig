@@ -6,9 +6,11 @@
 
 {% block body %}
 
+
 <link rel="stylesheet" href="/css/poste.css">
 
 <center>
+
     <div class="terrain">
         <img src="/images/terrain.jpg" alt="terrain">
         <button id="gardien" class="poste-button">Gardien</button>
@@ -20,14 +22,18 @@
         <button id="milieud" class="poste-button">Milieu Droit</button>
         <button id="attaquant" class="poste-button">Attaquant</button>
     </div>
+    
     <table>
         <tr>
             <td align="center"><div class="poste"><p><button id="selec-pri" class="poste-selec-button">POSTE PRINCIPALE</button><br>Poste sélectionné : <span id="poste-pri">{% if player.postePrincipal != null %}{{ player.postePrincipal }}{% else %}Aucun{% endif %}</span></p></div></td>
             <td align="center"><div class="poste"><p><button id="selec-sec" class="poste-selec-button">POSTE SECONDAIRE</button><br>Poste sélectionné : <span id="poste-sec">{% if player.posteSecondaire != null %}{{ player.posteSecondaire }}{% else %}Aucun{% endif %}</span></p></div></td>
         </tr>
     </table>
+
 </center>
+
 <script src="/js/poste.js"></script>
+
 
 {% endblock %}
 

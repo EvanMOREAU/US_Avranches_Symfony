@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const bouttonPrincipale = document.getElementById("selec-pri"); // Boutton du poste principale
     const bouttonSecondaire = document.getElementById("selec-sec"); // Boutton du poste secondaire
 
+    // Recuperation des boutons du terrains
     const gardien = document.getElementById("gardien");
     const defenseurd = document.getElementById("defenseurd");
     const defenseurg = document.getElementById("defenseurg");
