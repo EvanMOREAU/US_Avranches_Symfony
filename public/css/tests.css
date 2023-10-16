@@ -29,9 +29,9 @@ body {
 }
 
 .cards .card:hover {
-  transform: scale(1.01);
+  transform: scale(1.02);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  border: 2px solid #333; /* Couleur de la bordure au survol */
+  border: 3px solid #333; /* Couleur de la bordure au survol */
 }
 
 .cards .card p.tip {
