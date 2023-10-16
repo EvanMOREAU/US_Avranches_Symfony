@@ -1,14 +1,44 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.htmltests.twig' %}
 
-{% block title %}Hello TestsController!{% endblock %}
+{% block title %}Liste des tests{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <link href="/css/tests.css" rel="stylesheet"/>
+    <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-</div>
+
+    <div class="mt-4 text-center">
+        <h1 class="h1 mb-5">Liste des tests</h1>
+    </div>
+    <div class="text-center mt-4">
+        <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
+    </div>
+    <br>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="cards">
+        {% for test in tests %}
+            <div class="card green" style="position: relative;">
+                <p class="tip">ID : {{ test.id }}<br>VMA : {{ test.vma }}
+                    <br>Cooper : {{ test.cooper|date('i:s') }}
+                    <br> Jongle Gauche : {{ test.jonglegauche }}
+                    <br>Jongle Droit : {{ test.jongledroit }}
+                    <br> Jongle Tête : {{ test.jongletete }}
+                    <br> Date du test : {{ test.date|date('Y-m-d H:i:s') }}</p>
+                {% if is_granted("ROLE_SUPER_ADMIN") %}
+					<a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger button-right"><i class="fa fa-trash"></i></a>
+                    <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary button-left"><i class="fa fa-pencil"></i></a>
+
+            	{% endif %}
+            </div>
+        {% else %}
+            <div class="card" style="background-color: #ccc;">
+                <p class="tip">Il n'y a aucun test !</p>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
 {% endblock %}
