@@ -47,10 +47,10 @@
   </div>
    <div class='containerbtnbht'>
    {% if app.user %}
-        <button data-text="Awesome" class="buttonh">
-            <span class="actual-text">&nbsp;Bienvenue {{ app.user.getFirstName() }}&nbsp;</span>
-            <span class="hover-text" aria-hidden="true">&nbsp;Bienvenue&nbsp;</span>
-        </button>
+      <button data-text="Awesome" class="buttonh">
+          <span class="actual-text">&nbsp;Bienvenue {{ app.user.getFirstName() }}&nbsp;</span>
+          <span class="hover-text" aria-hidden="true">&nbsp;Bienvenue&nbsp;</span>
+      </button>
     {% endif %}
           <div class="btnbht-group">
             <button class="btnbht" {#onClick='redirectToPage/)'#}>Statistiques</button>
@@ -62,7 +62,7 @@
           </div>
           <div class="btnbht-group">
             <button class="btnbht">Paramètres</button>
-            <button class="btnbht">Fiche PDF</button>
+            <button class="btnbht" onClick='redirectToPage("/pdf")'>Fiche PDF</button>
           </div>
           <div class="btnbht-group">
             <button class="btnbht" onClick='redirectToPage("/tests")'>Les Tests</button>
