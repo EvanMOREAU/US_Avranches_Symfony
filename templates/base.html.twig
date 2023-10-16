@@ -24,7 +24,7 @@
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
         {% endblock %}
     </head>
-    
+
     {% block body %}
     <body>
         {# <div class='container'>
@@ -45,11 +45,13 @@
       <li><a class="menu__item" href="#">#</a></li>
     </ul>
   </div>
+
    <div class='containerbtnbht'>
-        <button data-text="Awesome" class="buttonh">
-            <span class="actual-text">&nbsp;Bienvenue {{ app.user.getFirstName() }}&nbsp;</span>
-            <span class="hover-text" aria-hidden="true">&nbsp;Bienvenue&nbsp;</span>
-        </button>
+      <p>
+        <span>
+          Bienvenue {{ app.user.getFirstName() }}
+        </span>
+      </p>
           <div class="btnbht-group">
             <button class="btnbht" {#onClick='redirectToPage/)'#}>Statistiques</button>
             <button class="btnbht">Matchs</button>
