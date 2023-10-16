@@ -2,105 +2,116 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use TCPDF;
+use App\Entity\Pdf;
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PdfController extends AbstractController
 {
     #[Route('/pdf', name: 'app_pdf')]
-    public function index(): Response
+    public function pdf(UserRepository $userRepository): Response
     {
-        $pdf = new \TCPDF();
+        // Récupérez le token d'authentification de l'utilisateur actuellement connecté.
+        $token = $this->get('security.token_storage')->getToken();
 
-        $pdf->SetAuthor('SIO TEAM ! 💻');
-        $pdf->SetTitle('Fiche joueur');
-        $pdf->SetFont('times', '', 14);
-        $pdf->setCellPaddings(1, 1, 1, 1);
-        $pdf->setCellMargins(1, 1, 1, 1);
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
+        // Créez une nouvelle instance de la classe PDF.
+        $pdf = new Pdf();
 
-        $pdf->AddPage();
-        $pdf->setJPEGQuality(75);
-        
-        $pdf->SetFont('helvetica', 'B', 25);
+        if ($token instanceof TokenInterface) {
+            // Récupérez l'utilisateur à partir du token d'authentification.
+            $user = $token->getUser();
 
-        $pdf->SetXY(0, 1);
-        $pdf->Image('img/logo_usa.jpg', '', '', 20, 20, '', '', '', false, 100, '', false, false, 0, false, false, false);
-       // $pdf->Image('img/usavranches.jpg', 15, 140, 75, 113, 'JPG', 'http://localhost:8000/pdf', '', true, 150, '', false, false, 1, false, false, false);
-       
-        $pdf->SetFillColor(31,40,97);
-        $pdf->SetTextColor(255,255,255);
-        $pdf->MultiCell(187, 20, "FICHE D'UN JOUEUR", 0, 'C', 1, 1, '', '', true, 0, false, true, 20, 'M');
+            if ($user instanceof User) {
+                // Configuration du PDF
+                $pdf->SetAuthor('SIO TEAM ! 💻');
+                $pdf->SetTitle('Fiche joueur');
+                $pdf->SetFont('times', '', 14);
 
-        $pdf->SetFont('helvetica', 'B', 17);
-        $pdf->SetFillColor(255,255,255);
-        $pdf->SetTextColor(0,0,0);
-        $pdf->MultiCell(187, 10, 'Arthur DELACOUR', 0, 'C', 1, 1, '', '', true);
-        
-        $pdf->SetTextColor(255,255,255);
-        $pdf->setCellPaddings(1,1,1,1);
-        $textg = '
-        <style> .black { color: rgb(255,255,255); } .link { color: rgb(100,0,0); }</style>
-        <br>
-        <p class="black">
-<b>A remplir :</b></p>
-'.' A remplir
-        <br>
-        <p class="black">
-<b>A remplir :</b>
-        </p>
-'. 'A remplir '. '
-        <div></div>
-        <p class="black">
-<b>A remplir:</b>
-</p><p>
-<b>A remplir</b> :<br>
-A remplir.<br>
-<br>
-<b>A remplir</b> :<br>
-A remplir
-        </p><br>
-        <p class="black">
-<b>Contact :</b>
-        </p><p>
-<b>Contact club : Christelle DELARUE</b><br>
-Service de Formation Professionnelle<br>
-Continue de l’OGEC Notre Dame de la Providence<br>
-<br>
-Club House US Avranches MSM, Allée Jacques Anquetil, 50300 AVRANCHES.<br>
-Tel 02 33 48 30 78<br>
-mail :  <span class="link">communication@us-avranches.fr</span><br>
-        <span class="link">partenaires@us-avranches.fr</span><br>
-        <span class="link">us.avranches@orange.fr</span><br>
-<br>    
-OF certifié QUALIOPI pour les actions de formations<br>
-<br>
-Site Web : <span class="link">https://ndlpavranches.fr/fc-pro/</span>
-        </p>';
+                // Ajout d'une nouvelle page
+                $pdf->AddPage();
+                $pdf->setJPEGQuality(75);
 
-        $pdf->SetFont('helvetica', '', 10);
-        $pdf->SetFillColor(3,29,68);
-        $pdf->writeHTMLCell(65, 230, "", "", $textg, 0, 0, 1, true, '', true);
+                // Calcul des dimensions de la page
+                $largeurPage = $pdf->getPageWidth() + 30;
+                $hauteurPage = $pdf->getPageHeight() - 25;
 
-        $textd = '
-        <style>hr { color: rgb(0, 63,144); }</style>
-        <b>Prérequis necessaire / public visé</b>
-        <hr>'. '$pdf->getContent()' .'
-        <b>Modalités d\'accès et d\'inscription</b>
-        <hr><br><div></div>
-<br><br>
+                // Configuration de la police et des couleurs
+                $pdf->SetFont('helvetica', '', 20);
+                $pdf->SetTextColor(0, 0, 0);
 
-<b>Moyens pédagogiques et techniques</b>
-<b>Modalité d\'évaluation</b>
-        <hr>'.' $pdf->getStats()' .'
-        ';
+                // Ajout du titre de la fiche du joueur
+                $pdf->MultiCell(80, 10, "FICHE DU JOUEUR", 0, '', 0, 1, '', '', false, 0, false, false, 0, '');
 
-        $pdf->SetFont('helvetica', '', 10);
-        $pdf->SetFillColor(255,255,255);
-        $pdf->writeHTMLCell(120, 230, "", "", $textd, 0, 0, 1, true, '', true);
+                // Ajout du nom du joueur
+                $pdf->MultiCell(70, 10, $user->getFirstName() . ' ' . $user->getLastName() . ' (' . $user->getId() . ')', 0, 'C', 0, 1, '', '', true);
 
-        return $pdf->Output('US-Avranches-' . '.pdf','I');
-    
-    }}
+                // Configuration de la police et des couleurs pour le contenu du joueur
+                $pdf->SetFont('helvetica', 'B', 20);
+                $pdf->SetTextColor(0, 0, 0);
+
+                // Contenu du joueur (avec HTML)
+                $textg = '
+                <style>.link { color: rgb(42, 56, 114) }</style>
+                <br><br><br><br>
+                <b><i>Informations concernant le joueur : </i></b>
+                <br><br>
+                <p><b>Date de naissance : </b>' . $user->getDateNaissance()->format('d/m/Y') . '
+                <br><hr><br><div></div>
+                <b>Catégorie : </b>' . $user->getCategory() . '
+                <br><hr><br><div></div>
+                <b>Nombre de matchs joués :</b>
+                <br><hr><br><div></div>
+                <b>Poids : </b>
+                <br><hr><br><div></div>
+                <b>Taille : </b>
+                <br><hr><br><div></div>
+                </p>
+
+                <p><b> Contact :</b>
+                <br> Christelle DELARUE<br>
+                <br>
+                Club House US Avranches MSM<br>
+                Allée Jacques Anquetil<br>
+                50300 Avranches.<br><br>
+                <b>Téléphone</b> : 02.33.48.30.78 <br><br>
+                <b>Mails</b> :<br>
+                <span class="link"><u>communication@us-avranches.fr</u></span><br>
+                <span class="link"><u>partenaires@us-avranches.fr</u></span><br>
+                <span class="link"><u>us.avranches@orange.fr</u></span>
+                </p>';
+
+                // Ajout du contenu du joueur au PDF
+                $pdf->SetFont('helvetica', '', 10);
+                $pdf->writeHTMLCell(65, 230, '', '', $textg, 0, 0, 0, true, '', true);
+
+                // Ajout d'une image au PDF
+                $pdf->Image('img/graph_'. $user->getFirstName() .'.jpg', 95, 150, 100, 100, '', '', '', false, 300, '', false, false, 1, false, false, false);
+
+                // Ajout d'une image au PDF
+                $pdf->Image('img/anonyme.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+
+                // Génération du PDF et envoi en réponse
+                return $pdf->Output('US-Avranches-' . '.pdf', 'I');
+            }
+        }
+
+        // Gestion des cas d'erreur
+        return new Response('Erreur');
+    }
+
+    #[Route('/pdftest', name: 'app_pdftest')]
+    public function pdfTest(): Response
+    {
+        $user = $this->getUser(); // Récupérez l'utilisateur actuellement connecté
+
+        return $this->render('/pdf/index.html.twig', [
+            'controller_name' => 'DefaultController',
+            'user' => $user, // Assurez-vous que 'user' est correctement défini
+        ]);
+    }
+}
