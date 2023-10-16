@@ -22,8 +22,8 @@
     </div>
     <table>
         <tr>
-            <td align="center"><div class="poste"><p><button id="selec-pri" class="poste-selec-button">POSTE PRINCIPALE</button><br>Poste sélectionné : <span id="poste-pri">Aucun</span></p></div></td>
-            <td align="center"><div class="poste"><p><button id="selec-sec" class="poste-selec-button">POSTE SECONDAIRE</button><br>Poste sélectionné : <span id="poste-sec">Aucun</span></p></div></td>
+            <td align="center"><div class="poste"><p><button id="selec-pri" class="poste-selec-button">POSTE PRINCIPALE</button><br>Poste sélectionné : <span id="poste-pri">{% if player.postePrincipal != null %}{{ player.postePrincipal }}{% else %}Aucun{% endif %}</span></p></div></td>
+            <td align="center"><div class="poste"><p><button id="selec-sec" class="poste-selec-button">POSTE SECONDAIRE</button><br>Poste sélectionné : <span id="poste-sec">{% if player.posteSecondaire != null %}{{ player.posteSecondaire }}{% else %}Aucun{% endif %}</span></p></div></td>
         </tr>
     </table>
 </center>
