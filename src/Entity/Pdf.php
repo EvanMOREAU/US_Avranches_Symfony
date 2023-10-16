@@ -20,39 +20,6 @@ class Pdf extends \TCPDF
         $this->SetAutoPageBreak( $auto_page_break, $bMargin );
         // set the starting point for the page content
         $this->setPageMark();
-// =======
-// use App\Repository\PdfRepository;
-// use Doctrine\ORM\Mapping as ORM;
-// use Doctrine\DBAL\Types\Types;
-
-// #[ORM\Entity(repositoryClass: PdfRepository::class)]
-// class Pdf
-// {
-//     #[ORM\Id]
-//     #[ORM\GeneratedValue]
-//     #[ORM\Column]
-//     private ?int $id = null;
-
-//     #[ORM\Column(length: 255)]
-//     private ?string $name = null;
-
-//     #[ORM\Column(type: Types::TEXT, nullable: true)]
-//     private ?string $content = null;
-
-//     #[ORM\Column(nullable: true)]
-//     private ?int $stats = null;
-
-
-
-
-//     public function getId(): ?int
-//     {
-//         return $this->id;
-
-//     function getName(): ?string
-//     {
-//         return $this->name;
-// >>>>>>> 831052605a9ca53b3ac394f58c01e99ab12b35e8
     }
 
 }
