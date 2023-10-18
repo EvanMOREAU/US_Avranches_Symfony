@@ -3,6 +3,13 @@
 {% block title %}Charts index{% endblock %}
 
 {% block body %}
+<style>
+    body{
+        color: white;
+        margin: 10%;
+    }
+</style>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <div class="row">
@@ -14,7 +21,8 @@
                         <h2>Graph {{ chart.data }}</h2>
                         <p>[{{ chart.source_data | raw }}]</p>
                         <canvas id="{{ chart.id }}" width="400" height="200"></canvas>
-                        <hr/>
+                        <br />
+                        <br />
                         <script>
                             const ctx{{ chart.id }} = document.getElementById('{{ chart.id }}');
                             new Chart(ctx{{ chart.id }}, {
@@ -26,6 +34,7 @@
                                         data: [{{ chart.source_data | raw }}],
                                         backgroundColor: '#F1C40F',
                                         borderColor: '#F1C40F',
+                                        labelColor:'#F1C40F',
                                         borderWidth: 1
                                     }]
                                 },
@@ -58,13 +67,14 @@
                         <h2>Graph {{ chart.data }}</h2>
                         <p>[{{ chart.source_data | raw }}]</p>
                         <canvas id="{{ chart.id }}" width="400" height="200"></canvas>
-                        <hr/>
+                        <br />
+                        <br />
                         <script>
                             const ctx{{ chart.id }} = document.getElementById('{{ chart.id }}');
                             new Chart(ctx{{ chart.id }}, {
                                 type: '{{ chart.type }}',
                                 data: {
-                                    labels: ['2024-01-11', '2024-09-11', '2025-10-11', ''],
+                                    labels: ['2024-01-11', '2024-09-11', '2025-10-11', '2025-10-11'],
                                     datasets: [{
                                         label: '{{ chart.id }}',
                                         data: [{{ chart.source_data | raw }}],
