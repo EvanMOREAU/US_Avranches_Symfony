@@ -1,4 +1,4 @@
-{% extends 'base.htmltests.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Liste des tests{% endblock %}
 
@@ -16,18 +16,19 @@
     <br>
     {% for message in app.flashes('success') %}
         <div class="alert alert-success">
-            {{ message }}
-        </div>
+        {{ message }}
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
     {% endfor %}
     <div class="cards">
         {% for test in tests %}
             <div class="card green" style="position: relative;">
-                <p class="tip">ID : {{ test.id }}<br>VMA : {{ test.vma }}
+                <p class="tip">VMA : {{ test.vma }}
                     <br>Cooper : {{ test.cooper|date('i:s') }}
                     <br> Jongle Gauche : {{ test.jonglegauche }}
                     <br>Jongle Droit : {{ test.jongledroit }}
                     <br> Jongle Tête : {{ test.jongletete }}
-                    <br> Date du test : {{ test.date|date('Y-m-d H:i:s') }}</p>
+                    <br> Date du test : {{ test.date|date('d-m-Y H:i:s') }}</p>
                 {% if is_granted("ROLE_SUPER_ADMIN") %}
 					<a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger button-right"><i class="fa fa-trash"></i></a>
                     <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary button-left"><i class="fa fa-pencil"></i></a>

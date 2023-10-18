@@ -63,3 +63,12 @@ body {
   bottom: 10px;
   right: 10px;
 }
+
+/* Ajouter un style pour le bouton de fermeture */
+.close-btn {
+  color: red;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
