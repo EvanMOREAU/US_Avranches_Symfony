@@ -3,6 +3,11 @@
 {% block title %}Charts index{% endblock %}
 
 {% block body %}
+<style>
+    body{
+        color: white;
+    }
+</style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <div class="row">
@@ -24,8 +29,8 @@
                                     datasets: [{
                                         label: '{{ chart.id }}',
                                         data: [{{ chart.source_data | raw }}],
-                                        backgroundColor: '#F1C40F',
-                                        borderColor: '#F1C40F',
+                                        backgroundColor: 'white',
+                                        borderColor: 'white',
                                         borderWidth: 1
                                     }]
                                 },
@@ -68,8 +73,8 @@
                                     datasets: [{
                                         label: '{{ chart.id }}',
                                         data: [{{ chart.source_data | raw }}],
-                                        backgroundColor: '#F1C40F',
-                                        borderColor: '#F1C40F',
+                                        backgroundColor: 'white',
+                                        borderColor: 'white',
                                         borderWidth: 1
                                     }]
                                 },
