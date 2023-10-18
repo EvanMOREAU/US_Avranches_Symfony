@@ -88,3 +88,22 @@ body {
   font-size: 0.8em;
   margin-top: 5px;
 }
+/* Style pour entourer la cellule avec une bordure rouge en cas d'erreur */
+.has-error {
+  position: relative; /* Permet de positionner l'erreur par rapport à ce conteneur */
+
+  /* Style de la bordure d'erreur */
+  border: 2px solid #f43f5e; /* Couleur rouge pour la bordure */
+  border-radius: 5px;
+}
+
+/* Style pour les messages d'erreur */
+.error-message {
+  color: #f43f5e; /* Couleur rouge pour le message d'erreur */
+  font-size: 0.8em;
+  position: absolute; /* Position absolue par rapport au conteneur parent */
+  top: 100%; /* Place le message en dessous du champ de saisie */
+  left: 0; /* Alignement à gauche par rapport au conteneur parent */
+  width: 100%; /* Remplit toute la largeur du conteneur parent */
+}
+
