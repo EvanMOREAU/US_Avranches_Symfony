@@ -10,7 +10,8 @@
           {# <link href="/css/tests.css" rel="stylesheet" /> #}
           <link href="/css/navbar.css" rel="stylesheet" />
           <link href="/css/pagebase.css" rel="stylesheet" />
-
+          <link href="/css/param.css" rel="stylesheet" />
+          <link href="/css/nav2.css" rel="stylesheet" />
           <link href="/css/hello.css" rel="stylesheet" />
           {{ encore_entry_link_tags('app') }}
           <!--Styles.css-->
@@ -23,9 +24,8 @@
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
         {% endblock %}
     </head>
-    
+
     {% block body %}
-              <link href="/css/nav2.css" rel="stylesheet" />
     <body>
         {# <div class='container'>
         <button class='button-nav'> Tableau de bord</button>
@@ -36,24 +36,16 @@
     <label class="menu__btnbht" for="menu__toggle">
       <span></span>
     </label>
-    <ul class="menu__box">
-      <li><a class="menu__item" href="/">Tableau de bord</a></li>
-      <li><a class="menu__item" href="/appel">Faire l'appel</a></li>
-      <li><a class="menu__item" href="#">Liste des joueurs</a></li>
-      <li><a class="menu__item" href="/tests">Les Tests</a></li>
-      <li><a class="menu__item" href="#">Supertests</a></li>
-      <li><a class="menu__item" href="#">#</a></li>
-    </ul>
-  </div>
    <div class='containerbtnbht'>
-   {% if app.user %}
-        <button data-text="Awesome" class="buttonh">
-            <span class="actual-text">&nbsp;Bienvenue {{ app.user.getFirstName() }}&nbsp;</span>
-            <span class="hover-text" aria-hidden="true">&nbsp;Bienvenue&nbsp;</span>
-        </button>
+    {% if app.user %}
+      <p>
+        <span>
+          Bienvenue {{ app.user.getFirstName() }}
+        </span>
+      </p>
     {% endif %}
           <div class="btnbht-group">
-            <button class="btnbht" {#onClick='redirectToPage/)'#}>Statistiques</button>
+            <button class="btnbht" onClick='redirectToPage("/charts")'>Statistiques</button>
             <button class="btnbht">Matchs</button>
           </div>
           <div class="btnbht-group">
@@ -61,14 +53,19 @@
             <button class="btnbht" onClick='redirectToPage("/team")'>Mon équipe</button>
           </div>
           <div class="btnbht-group">
-            <button class="btnbht">Paramètres</button>
-            <button class="btnbht">Fiche PDF</button>
+            <button class="btnbht" onClick='redirectToPage("/appel")'>Appel</button>
+            <button class="btnbht" onClick='redirectToPage("/pdf")'>Fiche PDF</button>
           </div>
           <div class="btnbht-group">
-            <button class="btnbht" onClick='redirectToPage("/tests")'>Les Tests</button>
+            <button class="btnbht" onClick='redirectToPage("/profile")'>Administration</button>
+            <button class="btnbht" onClick='redirectToPage("/pdf")'>Fiche PDF</button>
+          </div>
+          <div class="btnbht-group">
+            <button class="btnbht" onClick='redirectToPage("/profile")'>Paramètres</button>
+            <button class="btnbht" onClick='redirectToPage("/pdf")'>Fiche PDF</button>
           </div>
         </div>
   {% endblock %}
-       
+        
     </body>
 </html>
