@@ -1,0 +1,74 @@
+body {
+  background-color: #f4f4f4;
+  color: #FFFFFF;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.cards .card {
+  flex-basis: calc(33.33% - 30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  height: 220px;
+  border-radius: 15px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  transition: 0.1s;
+  cursor: pointer;
+}
+
+.cards .card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  border: 3px solid #333; /* Couleur de la bordure au survol */
+}
+
+.cards .card p.tip {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #333;
+  margin: 10px 0;
+}
+
+.cards .card p.second-text {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.cards .card.green {
+  background-color: #ccc;
+  color: #fff;
+}
+
+/* Style pour les boutons d'édition et de suppression */
+.button-left {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+.button-right {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+/* Ajouter un style pour le bouton de fermeture */
+.close-btn {
+  color: red;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
