@@ -36,16 +36,6 @@
     <label class="menu__btnbht" for="menu__toggle">
       <span></span>
     </label>
-    <ul class="menu__box">
-      <li><a class="menu__item" href="/">Tableau de bord</a></li>
-      <li><a class="menu__item" href="/appel">Faire l'appel</a></li>
-      <li><a class="menu__item" href="#">Liste des joueurs</a></li>
-      <li><a class="menu__item" href="/tests">Les Tests</a></li>
-      <li><a class="menu__item" href="#">Supertests</a></li>
-      <li><a class="menu__item" href="#">#</a></li>
-    </ul>
-  </div>
-
    <div class='containerbtnbht'>
     {% if app.user %}
       <p>
@@ -76,12 +66,6 @@
           </div>
         </div>
   {% endblock %}
-          <button class="buttonparam" onClick='redirectToPage("/profile")'>
-            <span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-pie-chart-fill" viewBox="0 0 16 16">
-                <path d="M15.985 8.5H8.207l-5.5 5.5a8 8 0 0 0 13.277-5.5zM2 13.292A8 8 0 0 1 7.5.015v7.778l-5.5 5.5zM8.5.015V7.5h7.485A8.001 8.001 0 0 0 8.5.015z"/>
-              </svg>  
-            </span>
-          </button>
+        
     </body>
 </html>
