@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -45,6 +47,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?int $matches_played = null;
+
+    #[ORM\ManyToMany(targetEntity: Gathering::class, mappedBy: 'Players')]
+    private Collection $gatherings;
+
+    public function __construct()
+    {
+        $this->gatherings = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -192,6 +202,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMatchesPlayed(int $matches_played): static
     {
         $this->matches_played = $matches_played;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Gathering>
+     */
+    public function getGatherings(): Collection
+    {
+        return $this->gatherings;
+    }
+
+    public function addGathering(Gathering $gathering): static
+    {
+        if (!$this->gatherings->contains($gathering)) {
+            $this->gatherings->add($gathering);
+            $gathering->addPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGathering(Gathering $gathering): static
+    {
+        if ($this->gatherings->removeElement($gathering)) {
+            $gathering->removePlayer($this);
+        }
 
         return $this;
     }
