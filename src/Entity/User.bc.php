@@ -190,7 +190,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function setMatchesPlayed(int $matches_played): static
-    {
+    {   if(!isset($matches_played)){
+            $matches_played = 0;
+        }
         $this->matches_played = $matches_played;
 
         return $this;
