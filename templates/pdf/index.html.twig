@@ -47,7 +47,9 @@
         downloadButton.addEventListener('click', () => {
         html2canvas(ctx).then(canvas => {
         const dataURL = canvas.toDataURL('image/jpeg');
+        {% if app.user %}
         const fileName = 'graph_' + '{{ user.getFirstName }}' + '.jpg'; // Utilisez la variable Twig pour obtenir le prénom
+        {% endif %}
         const a = document.createElement('a');
         a.href = dataURL;
         a.download = fileName;
