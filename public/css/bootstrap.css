@@ -12065,16 +12065,4 @@ textarea.form-control-lg {
   }
 }
 
-.zoom {
-  transition: transform 0.4s;
-}
-
-.zoom:hover {
-  transform: scale(1.03);
-}
-
-.selected-card img {
-  filter: grayscale(100%) brightness(50%); /* Change this to the desired image effect */
-}
-
 /*# sourceMappingURL=bootstrap.css.map */

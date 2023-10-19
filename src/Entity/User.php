@@ -40,6 +40,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $last_name = null;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Team $team = null;
+
+    #[ORM\Column]
+    private ?int $matches_played = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -161,8 +167,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function getCategory(){
-        $now = new \DateTime();
-        $diff = $now->diff($this->date_naissance);
-        return 'U'.$diff->y;
+        $this_year = new \DateTime('first day of January next year');
+        $diff = $this_year->diff($this->date_naissance);
+        return 'U'.$diff->y + 1;
+    }
+    
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): static
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    public function getMatchesPlayed(): ?int
+    {
+        return $this->matches_played;
+    }
+
+    public function setMatchesPlayed(int $matches_played): static
+    {
+        $this->matches_played = $matches_played;
+
+        return $this;
     }
 }

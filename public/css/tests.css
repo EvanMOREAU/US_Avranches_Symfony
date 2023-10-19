@@ -29,9 +29,9 @@ body {
 }
 
 .cards .card:hover {
-  transform: scale(1.01);
+  transform: scale(1.02);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  border: 2px solid #333; /* Couleur de la bordure au survol */
+  border: 3px solid #333; /* Couleur de la bordure au survol */
 }
 
 .cards .card p.tip {
@@ -62,4 +62,13 @@ body {
   position: absolute;
   bottom: 10px;
   right: 10px;
+}
+
+/* Ajouter un style pour le bouton de fermeture */
+.close-btn {
+  color: red;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
 }
