@@ -37,6 +37,7 @@ class TestsController extends AbstractController
         $test = new Tests();
         $form = $this->createForm(TestsFormType::class, $test);
         
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -45,6 +46,7 @@ class TestsController extends AbstractController
             $data = $form->getData();
             $test->setDate(new \DateTime());
             
+            $test->setUser($this->getUser());
             $testsRepository->save($test, true);
 
 

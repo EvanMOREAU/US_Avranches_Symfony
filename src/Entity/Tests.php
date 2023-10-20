@@ -41,6 +41,10 @@ class Tests
     #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $vitesse = null;
 
+    #[ORM\ManyToOne(inversedBy: 'tests')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -150,6 +154,18 @@ class Tests
     public function setVitesse(?\DateTimeInterface $vitesse): static
     {
         $this->vitesse = $vitesse;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

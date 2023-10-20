@@ -20,27 +20,29 @@
         </div>
     {% endfor %}
     <div class="cards">
-        {% for test in tests %}
-            {% if is_granted("ROLE_SUPER_ADMIN") or User.user == app.user %}
-                <div class="card green" style="position: relative;">
-                    <p class="tip">VMA : {{ test.vma }} km/h
-                        <br>Cooper : {{ test.demicooper }} m
-                        <br>Cooper : {{ test.cooper }} m
-                        <br> Jongle Gauche : {{ test.jonglegauche }}
-                        <br>Jongle Droit : {{ test.jongledroit }}
-                        <br> Jongle Tête : {{ test.jongletete }}
-                        <br> Date du test : {{ test.date|date('d-m-Y H:i:s') }}</p>
-                    {% if is_granted("ROLE_SUPER_ADMIN") %}
-                        <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger button-right"><i class="fa fa-trash"></i></a>
-                        <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary button-left"><i class="fa fa-pencil"></i></a>
-                    {% endif %}
-                </div>
-            {% endif %}
-        {% else %}
+        {% if tests is empty %}
             <div class="card" style="background-color: #ccc;">
                 <p class="tip">Il n'y a aucun test !</p>
             </div>
-        {% endfor %}
+        {% else %}
+            {% for test in tests %}
+                {% if is_granted("ROLE_SUPER_ADMIN") or test.user == app.user %}
+                    <div class="card green" style="position: relative;">
+                        <p class="tip">VMA : {{ test.vma }} km/h
+                            <br>Cooper : {{ test.demicooper }} m
+                            <br>Cooper : {{ test.cooper }} m
+                            <br> Jongle Gauche : {{ test.jonglegauche }}
+                            <br>Jongle Droit : {{ test.jongledroit }}
+                            <br> Jongle Tête : {{ test.jongletete }}
+                            <br> Date du test : {{ test.date|date('d-m-Y H:i:s') }}</p>
+                        {% if is_granted("ROLE_SUPER_ADMIN") %}
+                            <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger button-right"><i class="fa fa-trash"></i></a>
+                            <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary button-left"><i class="fa fa-pencil"></i></a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     </div>
     <br>
 {% endblock %}
