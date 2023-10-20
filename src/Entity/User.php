@@ -48,12 +48,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $matches_played = null;
 
-    #[ORM\ManyToMany(targetEntity: Gathering::class, mappedBy: 'Players')]
-    private Collection $gatherings;
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
+    private Collection $attendances;
 
     public function __construct()
     {
-        $this->gatherings = new ArrayCollection();
+        $this->attendances = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -207,27 +207,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Gathering>
+     * @return Collection<int, Attendance>
      */
-    public function getGatherings(): Collection
+    public function getAttendances(): Collection
     {
-        return $this->gatherings;
+        return $this->attendances;
     }
 
-    public function addGathering(Gathering $gathering): static
+    public function addAttendance(Attendance $attendance): static
     {
-        if (!$this->gatherings->contains($gathering)) {
-            $this->gatherings->add($gathering);
-            $gathering->addPlayer($this);
+        if (!$this->attendances->contains($attendance)) {
+            $this->attendances->add($attendance);
+            $attendance->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeGathering(Gathering $gathering): static
+    public function removeAttendance(Attendance $attendance): static
     {
-        if ($this->gatherings->removeElement($gathering)) {
-            $gathering->removePlayer($this);
+        if ($this->attendances->removeElement($attendance)) {
+            // set the owning side to null (unless already changed)
+            if ($attendance->getUser() === $this) {
+                $attendance->setUser(null);
+            }
         }
 
         return $this;

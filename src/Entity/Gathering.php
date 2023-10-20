@@ -24,12 +24,13 @@ class Gathering
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $Category = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'gatherings')]
-    private Collection $Players;
+
+    #[ORM\OneToMany(mappedBy: 'Gathering', targetEntity: Attendance::class)]
+    private Collection $attendances;
 
     public function __construct()
     {
-        $this->Players = new ArrayCollection();
+        $this->attendances = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -62,25 +63,31 @@ class Gathering
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Attendance>
      */
-    public function getPlayers(): Collection
+    public function getAttendances(): Collection
     {
-        return $this->Players;
+        return $this->attendances;
     }
 
-    public function addPlayer(User $player): static
+    public function addAttendance(Attendance $attendance): static
     {
-        if (!$this->Players->contains($player)) {
-            $this->Players->add($player);
+        if (!$this->attendances->contains($attendance)) {
+            $this->attendances->add($attendance);
+            $attendance->setGathering($this);
         }
 
         return $this;
     }
 
-    public function removePlayer(User $player): static
+    public function removeAttendance(Attendance $attendance): static
     {
-        $this->Players->removeElement($player);
+        if ($this->attendances->removeElement($attendance)) {
+            // set the owning side to null (unless already changed)
+            if ($attendance->getGathering() === $this) {
+                $attendance->setGathering(null);
+            }
+        }
 
         return $this;
     }

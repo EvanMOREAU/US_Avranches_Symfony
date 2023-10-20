@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Team;
 use App\Entity\User;
+use App\Entity\Attendance;
 use Psr\Log\LoggerInterface;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
@@ -37,235 +38,59 @@ class AttendanceController extends AbstractController
         ]);
     }
 
-    #[Route('/appel/U10', name: 'app_attendance_U10')]
-    public function U10(UserRepository $UserRepository): Response
+    #[Route('/appel/{category}', name: 'app_attendance_u')]
+    public function attendance(string $category, UserRepository $UserRepository): Response
     {
-        // Get all users from the repository
-        $allUsers = $UserRepository->findAll();
-        // TODO replace findAll() by findAllByCategorie('U10')
+        // Get all users from the repository for the given category
+        $allUsers = $UserRepository->findAll($category);
 
-        // if user choose training {
-        //     $training = new training;
-        // }
-
-        // else if user choose match {
-        // $match = new match;
-        // }
-
-        // Filter users who belong to the 'U10' category
-        $usersInU10 = array_filter($allUsers, function ($user) {
-            return $user->getCategory() === 'U10';
+        // Filter users who belong to the specified category
+        $usersInCategory = array_filter($allUsers, function ($user) use ($category) {
+            return $user->getCategory() === $category;
         });
 
-        return $this->render('attendance/U10.html.twig', [
+        // Render the template based on the category
+        return $this->render('attendance/' . $category . '.html.twig', [
             'controller_name' => 'AttendanceController',
-            'users' => $usersInU10,
+            'category' => $category,
+            'users' => $usersInCategory,
         ]);
     }
 
-    #[Route('/appel/U11', name: 'app_attendance_U11')]
-    public function U11(UserRepository $UserRepository): Response
-    {
-        // Get all users from the repository
-        $allUsers = $UserRepository->findAll();
-        // TODO replace findAll() by findAllByCategorie('U11')
-
-        // if user choose training {
-        //     $training = new training;
-        // }
-
-        // else if user choose match {
-        // $match = new match;
-        // }
-
-        // Filter users who belong to the 'U11' category
-        $usersInU11 = array_filter($allUsers, function ($user) {
-            return $user->getCategory() === 'U11';
-        });
-
-        return $this->render('attendance/U11.html.twig', [
-            'controller_name' => 'AttendanceController',
-            'users' => $usersInU11,
-        ]);
-    }
-
-    #[Route('/appel/U12', name: 'app_attendance_U12')]
-    public function U12(UserRepository $UserRepository): Response
-    {
-        // Get all users from the repository
-        $allUsers = $UserRepository->findAll();
-        // TODO replace findAll() by findAllByCategorie('U12')
-
-        // if user choose training {
-        //     $training = new training;
-        // }
-
-        // else if user choose match {
-        // $match = new match;
-        // }
-
-        // Filter users who belong to the 'U12' category
-        $usersInU12 = array_filter($allUsers, function ($user) {
-            return $user->getCategory() === 'U12';
-        });
-
-        return $this->render('attendance/U12.html.twig', [
-            'controller_name' => 'AttendanceController',
-            'users' => $usersInU12,
-        ]);
-    }
-
-    #[Route('/appel/U13', name: 'app_attendance_U13')]
-    public function U13(UserRepository $UserRepository): Response
-    {
-        // Get all users from the repository
-        $allUsers = $UserRepository->findAll();
-        // TODO replace findAll() by findAllByCategorie('U13')
-
-        // if user choose training {
-        //     $training = new training;
-        // }
-
-        // else if user choose match {
-        // $match = new match;
-        // }
-
-        // Filter users who belong to the 'U13' category
-        $usersInU13 = array_filter($allUsers, function ($user) {
-            return $user->getCategory() === 'U13';
-        });
-
-        return $this->render('attendance/U13.html.twig', [
-            'controller_name' => 'AttendanceController',
-            'users' => $usersInU13,
-        ]);
-    }
-
-    #[Route('/update-matches-played-u10', name: 'update_matches_played_u10', methods: ['POST'])]
-    public function updateMatchesPlayedU10(Request $request): Response
+    #[Route('/update-matches-played-{category}', name: 'update_matches_played', methods: ['POST'])]
+    public function updateMatchesPlayed(string $category, Request $request, EntityManagerInterface $entityManager): Response
     {
         $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
-        $team = $this->entityManager->getRepository(Team::class)->find(5);
-        $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
 
-        // // Log the request content
-        // $content = $request->getContent();
-        // $this->logger->info('PHP Selected User IDs: ' . json_encode($selectedUserIds));
+        // Determine the team ID based on the category
+        $teamId = $entityManager->getRepository(Team::class)->findOneBy(['category' => $category]);
 
-        // Update the matches_played field for each selected user
-        foreach ($selectedUserIds as $userId) {
-            // Find the user entity by its ID
-            $user = $this->entityManager->getRepository(User::class)->find($userId);
+        if ($teamId !== null) {
+            $team = $entityManager->getRepository(Team::class)->find($teamId);
 
-            // Update the matches_played field
-            $user->setMatchesPlayed($user->getMatchesPlayed() + 1);
+            if ($team) {
+                $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
 
-            // Persist the changes to the database
-            $this->entityManager->persist($user);
+                // Create Attendance records for selected users
+                foreach ($selectedUserIds as $userId) {
+                    $user = $entityManager->getRepository(User::class)->find($userId);
+
+                    if ($user) {
+                        $attendance = new Attendance();
+                        $attendance->setUser($user);
+                        $attendance->setGathering($team->getGathering()); // Adjust this part based on your structure
+                        $attendance->setIsPresent(true); // Set the attendance status
+                        $entityManager->persist($attendance);
+                    }
+                }
+
+                // Flush the changes to the database
+                $entityManager->flush();
+
+                return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
+            }
         }
 
-        // Flush the changes to the database
-        $this->entityManager->flush();
-
-        // $this->logger->info("updateMatchesPlayed()");
-
-        // Return a JSON response indicating the success of the update
-        return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
-    }
-
-    #[Route('/update-matches-played-u11', name: 'update_matches_played_u11', methods: ['POST'])]
-    public function updateMatchesPlayedU11(Request $request): Response
-    {
-        $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
-        $team = $this->entityManager->getRepository(Team::class)->find(6);
-        $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
-
-        // // Log the request content
-        // $content = $request->getContent();
-        // $this->logger->info('PHP Selected User IDs: ' . json_encode($selectedUserIds));
-
-        // Update the matches_played field for each selected user
-        foreach ($selectedUserIds as $userId) {
-            // Find the user entity by its ID
-            $user = $this->entityManager->getRepository(User::class)->find($userId);
-
-            // Update the matches_played field
-            $user->setMatchesPlayed($user->getMatchesPlayed() + 1);
-
-            // Persist the changes to the database
-            $this->entityManager->persist($user);
-        }
-
-        // Flush the changes to the database
-        $this->entityManager->flush();
-
-        // $this->logger->info("updateMatchesPlayed()");
-
-        // Return a JSON response indicating the success of the update
-        return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
-    }
-
-    #[Route('/update-matches-played-u12', name: 'update_matches_played_u12', methods: ['POST'])]
-    public function updateMatchesPlayedU12(Request $request): Response
-    {
-        $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
-        $team = $this->entityManager->getRepository(Team::class)->find(7);
-        $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
-
-        // // Log the request content
-        // $content = $request->getContent();
-        // $this->logger->info('PHP Selected User IDs: ' . json_encode($selectedUserIds));
-
-        // Update the matches_played field for each selected user
-        foreach ($selectedUserIds as $userId) {
-            // Find the user entity by its ID
-            $user = $this->entityManager->getRepository(User::class)->find($userId);
-
-            // Update the matches_played field
-            $user->setMatchesPlayed($user->getMatchesPlayed() + 1);
-
-            // Persist the changes to the database
-            $this->entityManager->persist($user);
-        }
-
-        // Flush the changes to the database
-        $this->entityManager->flush();
-
-        // $this->logger->info("updateMatchesPlayed()");
-
-        // Return a JSON response indicating the success of the update
-        return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
-    }
-
-    #[Route('/update-matches-played-u13', name: 'update_matches_played_u13', methods: ['POST'])]
-    public function updateMatchesPlayedU13(Request $request): Response
-    {
-        $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
-        $team = $this->entityManager->getRepository(Team::class)->find(7);
-        $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
-
-        // // Log the request content
-        // $content = $request->getContent();
-        // $this->logger->info('PHP Selected User IDs: ' . json_encode($selectedUserIds));
-
-        // Update the matches_played field for each selected user
-        foreach ($selectedUserIds as $userId) {
-            // Find the user entity by its ID
-            $user = $this->entityManager->getRepository(User::class)->find($userId);
-
-            // Update the matches_played field
-            $user->setMatchesPlayed($user->getMatchesPlayed() + 1);
-
-            // Persist the changes to the database
-            $this->entityManager->persist($user);
-        }
-
-        // Flush the changes to the database
-        $this->entityManager->flush();
-
-        // $this->logger->info("updateMatchesPlayed()");
-
-        // Return a JSON response indicating the success of the update
-        return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
+        return new JsonResponse(['error' => 'Invalid category'], Response::HTTP_BAD_REQUEST);
     }
 }
