@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Tests;
 use App\Form\DataTransformer\CooperTimeTransformer;
+use App\Repository\UserRepository;
 use App\Form\TestsFormType;
 use Doctrine\ORM\EntityManager;
 use App\Repository\TestsRepository;
@@ -19,12 +20,13 @@ use Symfony\Component\Security\Core\Annotation\IsGranted;
 class TestsController extends AbstractController
 {
     #[Route('/', name: 'app_tests_index')]
-    public function index(TestsRepository $TestsRepository): Response
+    public function index(TestsRepository $TestsRepository, UserRepository $userRepository): Response
     {
         $tests = $TestsRepository->findAll();
         
         return $this->render('tests/index.html.twig', [
             'controller_name' => 'TestsController',
+            'users' => $userRepository->findAll(),
             'tests' => $tests,
         ]);
     }

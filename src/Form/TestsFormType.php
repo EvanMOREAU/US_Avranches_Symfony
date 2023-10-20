@@ -25,8 +25,8 @@ class TestsFormType extends AbstractType
         ->add('vma', NumberType::class, [
             'label' => 'VMA',
             'attr' => [
-                'min' => 1,   // Valeur minimale
-                'max' => 16,  // Valeur maximale
+                'min' => 0,   // Valeur minimale
+                'max' => 20,  // Valeur maximale
             ],
             'constraints' => [
                 new NotBlank([
@@ -34,19 +34,25 @@ class TestsFormType extends AbstractType
                 ]),
                 new Range([
                     'min' => 0,
-                    'max' => 30,
+                    'max' => 20,
                     'minMessage' => 'La VMA ne doit pas être négative.',
-                    'maxMessage' => 'La VMA ne doit pas dépasser les 30.',
+                    'maxMessage' => 'La VMA ne doit pas dépasser les 20.',
                 ]),
             ],
-        ])        
-        ->add('cooper', TimeType::class, [
-            'label' => 'Cooper (MM:SS)',
-            'input' => 'string', // Utiliser l'entrée sous forme de chaîne
-            'input_format' => 'h:i:s',
-            'widget' => 'single_text', // Utilisation du widget "single_text"
-            'with_seconds' => true,
-            'data' => '00:00:00', // Définir la valeur par défaut à 00:00
+        ])  
+        ->add('demicooper', NumberType::class, [
+            'label' => 'Demi-Cooper',
+            'attr' => [
+                'min' => 0,   // Valeur minimale
+                'max' => 10000,  // Valeur maximale
+            ],
+        ])       
+        ->add('cooper', NumberType::class, [
+            'label' => 'Cooper',
+            'attr' => [
+                'min' => 0,   // Valeur minimale
+                'max' => 10000,  // Valeur maximale
+            ],
         ])          
         ->add('jongle_gauche', NumberType::class, [
             'label' => 'Jongle Gauche',

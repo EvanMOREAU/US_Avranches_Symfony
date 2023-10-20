@@ -15,7 +15,7 @@ class Tests
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $vma = null;
+    private ?float $vma = null;
 
     #[ORM\Column(length: 255)]
     private ?string $cooper = null;
@@ -32,17 +32,26 @@ class Tests
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $demicooper = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $conduiteballe = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $vitesse = null;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getVma(): ?int
+    public function getVma(): ?float
     {
         return $this->vma;
     }
 
-    public function setVma(?int $vma): static
+    public function setVma(?float $vma): static
     {
         $this->vma = $vma;
 
@@ -105,6 +114,42 @@ class Tests
     public function setDate(?\DateTimeInterface $date): static
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getDemicooper(): ?int
+    {
+        return $this->demicooper;
+    }
+
+    public function setDemicooper(?int $demicooper): static
+    {
+        $this->demicooper = $demicooper;
+
+        return $this;
+    }
+
+    public function getConduiteballe(): ?\DateTimeInterface
+    {
+        return $this->conduiteballe;
+    }
+
+    public function setConduiteballe(?\DateTimeInterface $conduiteballe): static
+    {
+        $this->conduiteballe = $conduiteballe;
+
+        return $this;
+    }
+
+    public function getVitesse(): ?\DateTimeInterface
+    {
+        return $this->vitesse;
+    }
+
+    public function setVitesse(?\DateTimeInterface $vitesse): static
+    {
+        $this->vitesse = $vitesse;
 
         return $this;
     }
