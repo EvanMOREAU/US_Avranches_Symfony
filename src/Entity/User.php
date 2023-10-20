@@ -46,6 +46,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $matches_played = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $weight = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $profile_image = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -192,6 +198,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMatchesPlayed(int $matches_played): static
     {
         $this->matches_played = $matches_played;
+
+        return $this;
+    }
+
+    public function getWeight(): ?float
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?float $weight): static
+    {
+        $this->weight = $weight;
+
+        return $this;
+    }
+
+    public function getProfileImage(): ?string
+    {
+        return $this->profile_image;
+    }
+
+    public function setProfileImage(?string $profile_image): static
+    {
+        $this->profile_image = $profile_image;
 
         return $this;
     }
