@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class ProfileType extends AbstractType
 {
@@ -14,7 +15,7 @@ class ProfileType extends AbstractType
         $builder
             ->add('weight')
             ->add('profile_image', FileType::class, [
-                'label' => 'Image de profil'/*$this->translator->trans('Illustration')*/,
+                'label' => 'Image de profil',
     
                 // unmapped means that this field is not associated to any entity property
                 'mapped' => false,
@@ -33,7 +34,7 @@ class ProfileType extends AbstractType
                             'image/jpeg',
                             'image/png',
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid image file'/*$this->translator->trans('Please upload a valid image file')*/,
+                        'mimeTypesMessage' => 'Please upload a valid image file',
                     ])
                 ],
             ]);

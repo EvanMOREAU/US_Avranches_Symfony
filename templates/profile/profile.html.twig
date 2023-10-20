@@ -1,0 +1,66 @@
+{% block body %}
+<link rel="stylesheet" href="/css/template-form-admin.css">
+
+{{ form_start(form) }}
+
+<div class="form-group">
+<br><br><br><br><br><br>
+  <div class="drop-container" id="dropContainer">
+    <span class="drop-title">Déposez le fichier ici</span>
+    ou
+    {{ form_widget(form.profile_image, { 'id': form.profile_image.vars.id, 'attr': {'class': 'form-control', 'onchange': 'handleFileSelect(event)'} }) }}
+  </div>
+  <p id="file-name" class="file-name">
+    {% if form.profile_image.vars.value is not empty %}
+      {{ form.profile_image.vars.value.name }}
+    {% endif %}
+  </p>
+    <button class="buttonsend">
+        <div class="svg-wrapper-1">
+            <div class="svg-wrapper">
+            <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z" fill="currentColor"></path>
+            </svg>
+            </div>
+        </div>
+        <span>Enregistrer</span>
+    </button>
+</div>
+
+
+{{ form_end(form) }}
+
+<script>
+  const dropContainer = document.getElementById('dropContainer');
+  const fileInput = document.getElementById('{{ form.profile_image.vars.id }}');
+
+  dropContainer.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropContainer.classList.add('drag-over');
+  });
+
+  dropContainer.addEventListener('dragleave', () => {
+    dropContainer.classList.remove('drag-over');
+  });
+
+  dropContainer.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropContainer.classList.remove('drag-over');
+    const files = e.dataTransfer.files;
+    fileInput.files = files;
+    handleFileSelect(e);
+  });
+
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    const fileNameElement = document.getElementById('file-name');
+    if (file) {
+      fileNameElement.textContent = file.name;
+    } else {
+      fileNameElement.textContent = '';
+    }
+  }
+</script>
+
+{% endblock %}
