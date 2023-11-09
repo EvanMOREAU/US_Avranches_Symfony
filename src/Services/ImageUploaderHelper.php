@@ -20,7 +20,7 @@ class ImageUploaderHelper {
 
     public function uploadImage($form, $user): String {
         $errorMessage = "";
-        $imageFile = $form->get('image')->getData();
+        $imageFile = $form->get('profile_image')->getData();
 
         if ($imageFile) {
             $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -41,7 +41,7 @@ class ImageUploaderHelper {
             } catch (FileException $e) {
                $errorMessage = $e->getMessage();
             }
-            $user->setimageFilename($newFilename);
+            $user->setProfileImage($newFilename);
             
         }
         return $errorMessage;

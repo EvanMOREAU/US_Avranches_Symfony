@@ -4,7 +4,30 @@
 {{ form_start(form) }}
 
 <div class="form-group">
+<style>
+.profile-picture {
+	border-radius: 100%;
+	overflow: hidden;
+	-webkit-box-sizing: content-box;
+  	-moz-box-sizing: content-box;
+  	box-sizing: content-box;	
+}
+.big-profile-picture {
+  margin: 0 auto;		
+  border: 5px solid #50597b;
+  width: 150px;
+  height: 150px;
+}
+.small-profile-picture {
+  border: 2px solid #50597b;
+  width: 40px;
+  height: 40px;
+}
+</style>
 <br><br><br><br><br><br>
+  <div class="profile-picture big-profile-picture">
+      <img width="100%" alt="Anne Hathaway picture" src="/uploads/images/{{ app.user.getProfileImage() }}">
+  </div>
   <div class="drop-container" id="dropContainer">
     <span class="drop-title">Déposez le fichier ici</span>
     ou

@@ -3,14 +3,16 @@
 namespace App\Controller;
 
 use App\Form\ProfileType;
+use App\Repository\UserRepository;
 use App\Services\ImageUploaderHelper;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/profile', name: 'app_profile')]
 class ProfileController extends AbstractController
-{   
+{
     #[Route('/', name: 'app_profile_index')]
     public function index(): Response
     {
@@ -18,14 +20,14 @@ class ProfileController extends AbstractController
             'controller_name' => 'ProfileController',
         ]);
     }
-
-    #[Route('/personnal', name: 'app_profile_personnal')]
-    public function personnal(ImageUploaderHelper $imageUploaderHelper): Response
-    {
+    #[Route('/personnal', name: 'app_profile_personnal', methods: ['GET', 'POST'])]
+    public function personnal(Request $request, ImageUploaderHelper $imageUploaderHelper,UserRepository $userRepository): Response
+        {
         $user = $this->getUser(); // Récupère l'utilisateur actuellement connecté
 
         $form = $this->createForm(ProfileType::class);
         $form->handleRequest($request);
+        $formView = $form->createView();
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -38,19 +40,14 @@ class ProfileController extends AbstractController
             return $this->render('/profile/profile.html.twig', [
                 'connected_user' => $user,
                 'controller_name' => 'ProfileController',
-                'form' => $form,
+                'form' => $formView,
             ]);
         }
 
         return $this->render('profile/profile.html.twig', [
             'connected_user' => $user,
             'controller_name' => 'ProfileController',
-            'form' => $form,
+            'form' => $formView,
         ]);
-    }
-
-
-
-
-
+    }    
 }
