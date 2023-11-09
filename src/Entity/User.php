@@ -42,18 +42,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $last_name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Team $team = null;
-
-    #[ORM\Column]
-    private ?int $matches_played = null;
-
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
     private Collection $attendances;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Category $Category = null;
+
+    #[ORM\OneToMany(mappedBy: 'MadeBy', targetEntity: Gathering::class)]
+    private Collection $gatherings;
 
     public function __construct()
     {
         $this->attendances = new ArrayCollection();
+        $this->gatherings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -181,30 +182,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $diff = $this_year->diff($this->date_naissance);
         return 'U'.$diff->y + 1;
     }
-    
-    public function getTeam(): ?Team
-    {
-        return $this->team;
-    }
-
-    public function setTeam(?Team $team): static
-    {
-        $this->team = $team;
-
-        return $this;
-    }
-
-    public function getMatchesPlayed(): ?int
-    {
-        return $this->matches_played;
-    }
-
-    public function setMatchesPlayed(int $matches_played): static
-    {
-        $this->matches_played = $matches_played;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Attendance>
@@ -230,6 +207,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($attendance->getUser() === $this) {
                 $attendance->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function setCategory(?Category $Category): static
+    {
+        $this->Category = $Category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Gathering>
+     */
+    public function getGatherings(): Collection
+    {
+        return $this->gatherings;
+    }
+
+    public function addGathering(Gathering $gathering): static
+    {
+        if (!$this->gatherings->contains($gathering)) {
+            $this->gatherings->add($gathering);
+            $gathering->setMadeBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGathering(Gathering $gathering): static
+    {
+        if ($this->gatherings->removeElement($gathering)) {
+            // set the owning side to null (unless already changed)
+            if ($gathering->getMadeBy() === $this) {
+                $gathering->setMadeBy(null);
             }
         }
 

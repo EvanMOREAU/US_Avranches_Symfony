@@ -47,7 +47,7 @@
 
             abss.forEach(abs => {
                 selectedUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
-                abs.addEventListener('click', function () { // Toggle the 'present' class to change the color
+                abs.addEventListener('click', function () { // Toggle the 'present' class to change the color and selectedUserIds
                     abs.classList.toggle('present');
 
                     // Update the selectedUserIds array

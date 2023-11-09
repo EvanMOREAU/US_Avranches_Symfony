@@ -28,6 +28,10 @@ class Gathering
     #[ORM\OneToMany(mappedBy: 'Gathering', targetEntity: Attendance::class)]
     private Collection $attendances;
 
+    #[ORM\ManyToOne(inversedBy: 'gatherings')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $MadeBy = null;
+
     public function __construct()
     {
         $this->attendances = new ArrayCollection();
@@ -88,6 +92,18 @@ class Gathering
                 $attendance->setGathering(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMadeBy(): ?User
+    {
+        return $this->MadeBy;
+    }
+
+    public function setMadeBy(?User $MadeBy): static
+    {
+        $this->MadeBy = $MadeBy;
 
         return $this;
     }
