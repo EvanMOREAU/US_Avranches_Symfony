@@ -48,7 +48,7 @@ class AttendanceController extends AbstractController
         });
 
         // Render the template based on the category
-        return $this->render('attendance/appel.html.twig', [
+        return $this->render('attendance/attendance.html.twig', [
             'controller_name' => 'AttendanceController',
             'category' => $category,
             'users' => $usersInCategory,
