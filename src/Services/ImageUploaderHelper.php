@@ -22,13 +22,14 @@ class ImageUploaderHelper {
         $errorMessage = "";
         $imageFile = $form->get('profile_image')->getData();
 
+        
         if ($imageFile) {
             $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
            
             // dump($originalFilename);
 
-            $safeFilename = $this->slugger->slug($originalFilename);
-            $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+            $safeFilename = $user->getId();
+            $newFilename = $safeFilename.'.'.$imageFile->guessExtension();
         
             // dump($safeFilename);
             // dump($newFilename);
