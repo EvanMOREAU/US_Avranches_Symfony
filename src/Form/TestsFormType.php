@@ -98,6 +98,10 @@ class TestsFormType extends AbstractType
                     'maxMessage' => 'Le nombre de jongles de la tête doit être inférieur à 30.',
                 ]),
             ],
+        ])
+        ->add('conduiteballe', TextType::class, [
+            'label' => 'Conduite de balle (Ex: 5s 300ms)',
+            'attr' => ['class' => 'form-input'],
         ]);
     }
 

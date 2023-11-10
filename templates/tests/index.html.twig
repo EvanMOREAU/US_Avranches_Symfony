@@ -1,13 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des tests{% endblock %}
+{% block title %}Liste de vos tests{% endblock %}
 
 {% block body %}
     <link href="/css/tests.css" rel="stylesheet"/>
     <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            flatpickr(".flatpickr-date", {
+                enableTime: false, // Désactive la sélection de l'heure si nécessaire
+                dateFormat: "s SSS", // Format pour les secondes et les millisecondes
+                allowInput: true, // Permet à l'utilisateur d'entrer le texte directement
+                time_24hr: true, // Utilise le format 24 heures
+            });
+        });
+    </script>
 
     <div class="mt-4 text-center">
-        <h1 class="h1 mb-5">Liste des tests</h1>
+        <h1 class="h1 mb-5">Liste de vos tests, {{ app.user.getFirstName() }} </h1>
     </div>
     <div class="text-center mt-4">
         <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
@@ -20,28 +33,32 @@
         </div>
     {% endfor %}
     <div class="cards">
-        {% if tests is empty %}
-            <div class="card" style="background-color: #ccc;">
-                <p class="tip">Il n'y a aucun test !</p>
-            </div>
-        {% else %}
-            {% for test in tests %}
-                {% if is_granted("ROLE_SUPER_ADMIN") or test.user == app.user %}
-                    <div class="card green" style="position: relative;">
-                        <p class="tip">VMA : {{ test.vma }} km/h
-                            <br>Cooper : {{ test.demicooper }} m
-                            <br>Cooper : {{ test.cooper }} m
-                            <br> Jongle Gauche : {{ test.jonglegauche }}
-                            <br>Jongle Droit : {{ test.jongledroit }}
-                            <br> Jongle Tête : {{ test.jongletete }}
-                            <br> Date du test : {{ test.date|date('d-m-Y H:i:s') }}</p>
+        {% set hasTests = false %}
+        {% for test in tests %}
+            {% if is_granted("ROLE_SUPER_ADMIN") or test.user == app.user %}
+                <div class="card green" style="position: relative;">
+                    <p class="tip">VMA : {{ test.vma }} km/h
+                        <br>Cooper : {{ test.demicooper }} m
+                        <br>Demi-Cooper : {{ test.cooper }} m
+                        <br> Jongle Gauche : {{ test.jonglegauche }}
+                        <br>Jongle Droit : {{ test.jongledroit }}
+                        <br> Jongle Tête : {{ test.jongletete }}
+                        <br> Date du test : {{ test.date|date('d-m-Y H:i:s') }}
+                        <br> Conduite de balle : {{ test.conduiteballe|date('s') }} secondes et {{ test.conduiteballe|date('v') }} millisecondes
                         {% if is_granted("ROLE_SUPER_ADMIN") %}
+                            <div class="test-owner">Joueur : {{ test.user.getFirstName() }}</div>
                             <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger button-right"><i class="fa fa-trash"></i></a>
                             <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary button-left"><i class="fa fa-pencil"></i></a>
                         {% endif %}
-                    </div>
-                {% endif %}
-            {% endfor %}
+                    </p>
+                    {% set hasTests = true %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if not hasTests %}
+            <div class="card" style="background-color: #ccc;">
+                <p class="tip">Il n'y a aucun test !</p>
+            </div>
         {% endif %}
     </div>
     <br>

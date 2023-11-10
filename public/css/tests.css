@@ -16,22 +16,25 @@ body {
 .cards .card {
   flex-basis: calc(33.33% - 30px);
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
   text-align: center;
-  height: 220px;
+  height: 250px;
   border-radius: 15px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   transition: 0.1s;
   cursor: pointer;
+  position: relative;
 }
 
 .cards .card:hover {
   transform: scale(1.02);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  border: 3px solid #333; /* Couleur de la bordure au survol */
+  border: 3px solid #333;
+}
+
+.cards .card p {
+  flex: 1; /* Pour centrer verticalement le texte dans la carte */
 }
 
 .cards .card p.tip {
@@ -67,8 +70,17 @@ body {
 /* Ajouter un style pour le bouton de fermeture */
 .close-btn {
   color: red;
-  float: right;
   font-size: 20px;
   font-weight: bold;
   cursor: pointer;
+  float: right;
+}
+
+.cards .card .test-owner {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #1a0af8;
 }

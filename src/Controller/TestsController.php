@@ -42,6 +42,7 @@ class TestsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             
+            
             // Récupérer les données du formulaire
             $data = $form->getData();
             $test->setDate(new \DateTime());
