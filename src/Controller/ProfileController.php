@@ -17,6 +17,16 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[Route('/profile', name: 'app_profile')]
 class ProfileController extends AbstractController
 {
+
+    private $passwordEncoder;
+
+    public function __construct(UserPasswordHasherInterface $passwordEncoder)
+    {
+        $this->passwordEncoder = $passwordEncoder;
+    }
+
+
+
     #[Route('/', name: 'app_profile_index')]
     public function index(): Response
     {
@@ -24,36 +34,7 @@ class ProfileController extends AbstractController
             'controller_name' => 'ProfileController',
         ]);
     }
-    #[Route('/personnal', name: 'app_profile_personnal', methods: ['GET', 'POST'])]
-    public function personnal(Request $request, ImageUploaderHelper $imageUploaderHelper,UserRepository $userRepository): Response
-        {
-        $user = $this->getUser(); // Récupère l'utilisateur actuellement connecté
-
-        $form = $this->createForm(ProfileType::class);
-        $form->handleRequest($request);
-        $formView = $form->createView();
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $errorMessage = $imageUploaderHelper->uploadImage($form, $user);
-            if (!empty($errorMessage)) {
-                $this->addFlash ('danger', 'An error has occured: '. $errorMessage);
-            }
-            $userRepository->save($user, true);
-            
-            return $this->render('/profile/profile.html.twig', [
-                'connected_user' => $user,
-                'controller_name' => 'ProfileController',
-                'form' => $formView,
-            ]);
-        }
-
-        return $this->render('profile/profile.html.twig', [
-            'connected_user' => $user,
-            'controller_name' => 'ProfileController',
-            'form' => $formView,
-        ]);
-    }    
+   
 
     #[Route('/password', name: 'app_profile_password', methods: ['GET', 'POST'])]
     public function password(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder){
@@ -65,8 +46,8 @@ class ProfileController extends AbstractController
         $formView = $form->createView();
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $form->get('password')->getData();
-            $confirmPassword = $form->get('confirmPassword')->getData();
+            $password = $formView->get('password')->getData();
+            $confirmPassword = $formView->get('confirmPassword')->getData();
 
             if ($password === $confirmPassword) {
                 // Hash the password and set it on the user object

@@ -3,9 +3,9 @@
 {% block title %}User{% endblock %}
 
 {% block body %}
-    <link href="/css/usercard.css" rel="stylesheet" />
+    <h1>User</h1>
 
-    {# <table class="table">
+    <table class="table">
         <tbody>
             <tr>
                 <th>Id</th>
@@ -35,19 +35,24 @@
                 <th>Last_name</th>
                 <td>{{ user.lastName }}</td>
             </tr>
+            <tr>
+                <th>Matches_played</th>
+                <td>{{ user.matchesPlayed }}</td>
+            </tr>
+            <tr>
+                <th>Weight</th>
+                <td>{{ user.weight }}</td>
+            </tr>
+            <tr>
+                <th>Profile_image</th>
+                <td>{{ user.profileImage }}</td>
+            </tr>
         </tbody>
-    </table> #}
+    </table>
 
-           
-<div class="card">
-  <div class="img"></div>
-  <span>{{ user.firstName }} {{ user.lastName }}</span>
-  <p class="info"><b>ID Base de données :</b> {{ user.id }} <br><b>Date de naissance :</b> {{ user.dateNaissance ? user.dateNaissance|date('d-m-Y') : '' }}<br></p>
-  <button>Resume</button>
-</div>
-    {# <a href="{{ path('app_user_index') }}">back to list</a>
+    <a href="{{ path('app_user_index') }}">back to list</a>
 
     <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
 
-    {{ include('user/_delete_form.html.twig') }} #}
+    {{ include('user/_delete_form.html.twig') }}
 {% endblock %}

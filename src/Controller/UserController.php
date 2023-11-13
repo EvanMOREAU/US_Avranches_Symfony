@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\User1Type;
+use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,11 +26,10 @@ class UserController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
-        $form = $this->createForm(User1Type::class, $user);
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -50,14 +49,52 @@ class UserController extends AbstractController
             'user' => $user,
         ]);
     }
+    // #[Route('/personnal', name: 'app_profile_personnal', methods: ['GET', 'POST'])]
+    // public function personnal(Request $request, ImageUploaderHelper $imageUploaderHelper,UserRepository $userRepository): Response
+    //     {
+    //     $user = $this->getUser(); // Récupère l'utilisateur actuellement connecté
+
+    //     $form = $this->createForm(ProfileType::class);
+    //     $form->handleRequest($request);
+    //     $formView = $form->createView();
+
+    //     if ($form->isSubmitted() && $form->isValid()) {
+
+    //         if (!empty($errorMessage)) {
+    //             $this->addFlash ('danger', 'An error has occured: '. $errorMessage);
+    //         }
+    //         $userRepository->save($user, true);
+            
+    //         return $this->render('/profile/profile.html.twig', [
+    //             'connected_user' => $user,
+    //             'controller_name' => 'ProfileController',
+    //             'form' => $formView,
+    //         ]);
+    //     }
+
+    //     return $this->render('profile/profile.html.twig', [
+    //         'connected_user' => $user,
+    //         'controller_name' => 'ProfileController',
+    //         'form' => $formView,
+    //     ]);
+    // }    
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
-        $form = $this->createForm(User1Type::class, $user);
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $profimg = $form->get('profile_image')->getData();
+            if(isset($profimg)){
+                $errorMessage = $imageUploaderHelper->uploadImage($form, $user);
+                if (!empty($errorMessage)) {
+                    $this->addFlash ('danger', 'An error has occured: '. $errorMessage);
+                }
+                $userRepository->save($user, true);
+           
+            }
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
