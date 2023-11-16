@@ -94,14 +94,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         reasonSelectors.forEach((select) => {
             const userId = select.closest('.img').getAttribute('data-user-id');
-            const test = select.closest('.abs');
             const reason = select.value;
 
-            if (abs.classList.contains('present')) {
+            if (select.classList.contains('present')) {
                 presentUserIds.push({ userId: userId });
             }
 
-            if (abs.classList.contains('absent')) {
+            if (select.classList.contains('absent')) {
                 absentUserIds.push({ userId: userId, reason: reason });
             }
         });
