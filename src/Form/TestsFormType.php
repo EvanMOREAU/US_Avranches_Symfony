@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -46,12 +47,28 @@ class TestsFormType extends AbstractType
                 'min' => 0,   // Valeur minimale
                 'max' => 10000,  // Valeur maximale
             ],
+            'constraints' => [
+                new Range([
+                    'min' => 0,
+                    'max' => 100000,
+                    'minMessage' => 'La distance parcourue ne doit pas être négative.',
+                    'maxMessage' => 'La distance parcourue ne doit pas être supérieure à 100000 mètres.',
+                ]),
+            ],
         ])       
         ->add('cooper', NumberType::class, [
             'label' => 'Cooper',
             'attr' => [
                 'min' => 0,   // Valeur minimale
                 'max' => 10000,  // Valeur maximale
+            ],
+            'constraints' => [
+                new Range([
+                    'min' => 0,
+                    'max' => 100000,
+                    'minMessage' => 'La distance parcourue ne doit pas être négative.',
+                    'maxMessage' => 'La distance parcourue ne doit pas être supérieure à 100000 mètres.',
+                ]),
             ],
         ])          
         ->add('jongle_gauche', NumberType::class, [
@@ -100,8 +117,10 @@ class TestsFormType extends AbstractType
             ],
         ])
         ->add('conduiteballe', TextType::class, [
-            'label' => 'Conduite de balle (Ex: 5s 300ms)',
-            'attr' => ['class' => 'form-input'],
+            'label' => 'Conduite de balle (en millisecondes)',
+        ])
+        ->add('vitesse', TextType::class, [
+            'label' => 'Vitesse (en millisecondes)',
         ]);
     }
 

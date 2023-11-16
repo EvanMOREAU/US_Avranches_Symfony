@@ -2,64 +2,162 @@
 
 {% block title %}Liste de vos tests{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
+    {{ parent() }}
     <link href="/css/tests.css" rel="stylesheet"/>
-    <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block body %}
+    <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            flatpickr(".flatpickr-date", {
-                enableTime: false, // Désactive la sélection de l'heure si nécessaire
-                dateFormat: "s SSS", // Format pour les secondes et les millisecondes
-                allowInput: true, // Permet à l'utilisateur d'entrer le texte directement
-                time_24hr: true, // Utilise le format 24 heures
+            const userDropdown = document.getElementById('userDropdown');
+
+            function getParameterByName(name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            }
+
+            userDropdown.addEventListener('change', function () {
+                const selectedUserId = this.value;
+                const currentUrl = window.location.href;
+
+                const updatedUrl = updateQueryStringParameter(currentUrl, 'userId', selectedUserId);
+                window.location.href = updatedUrl;
             });
+
+            function updateQueryStringParameter(uri, key, value) {
+                const re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+                const separator = uri.indexOf('?') !== -1 ? "&" : "?";
+                if (uri.match(re)) {
+                    return uri.replace(re, '$1' + key + "=" + value + '$2');
+                } else {
+                    return uri + separator + key + "=" + value;
+                }
+            }
         });
     </script>
 
-    <div class="mt-4 text-center">
-        <h1 class="h1 mb-5">Liste de vos tests, {{ app.user.getFirstName() }} </h1>
-    </div>
-    <div class="text-center mt-4">
-        <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
-    </div>
-    <br>
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">
-            {{ message }}
-            <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
-        </div>
-    {% endfor %}
-    <div class="cards">
-        {% set hasTests = false %}
-        {% for test in tests %}
-            {% if is_granted("ROLE_SUPER_ADMIN") or test.user == app.user %}
-                <div class="card green" style="position: relative;">
-                    <p class="tip">VMA : {{ test.vma }} km/h
-                        <br>Cooper : {{ test.demicooper }} m
-                        <br>Demi-Cooper : {{ test.cooper }} m
-                        <br> Jongle Gauche : {{ test.jonglegauche }}
-                        <br>Jongle Droit : {{ test.jongledroit }}
-                        <br> Jongle Tête : {{ test.jongletete }}
-                        <br> Date du test : {{ test.date|date('d-m-Y H:i:s') }}
-                        <br> Conduite de balle : {{ test.conduiteballe|date('s') }} secondes et {{ test.conduiteballe|date('v') }} millisecondes
-                        {% if is_granted("ROLE_SUPER_ADMIN") %}
-                            <div class="test-owner">Joueur : {{ test.user.getFirstName() }}</div>
-                            <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger button-right"><i class="fa fa-trash"></i></a>
-                            <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary button-left"><i class="fa fa-pencil"></i></a>
-                        {% endif %}
-                    </p>
-                    {% set hasTests = true %}
+    <div class="container-fluid">
+        {% if app.user %}
+            <div class="text-center">
+                <h1 class="h1">Liste de vos tests, {{ app.user.getFirstName() }}</h1>
+                <a href="{{ path('app_tests_new') }}" class="btn btn-primary mt-3">Créer un nouveau test</a>
+            </div>
+
+            <div class="user-dropdown-container mt-3">
+                {% if is_granted("ROLE_SUPER_ADMIN") %}
+                    <label for="userDropdown" class="user-dropdown-label">Sélectionner un utilisateur :</label>
+                    <select class="form-select" id="userDropdown" name="userDropdown">
+                        <option value="" selected>Tous les utilisateurs</option>
+                        {% for user in users %}
+                            <option value="{{ user.getId() }}" {% if selectedUserId == user.getId() %}selected{% endif %}>
+                                {{ user.getFirstName() }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="tests-container mt-4">
+                {% if tests|length > 0 %}
+                    <div class="row row-cols-1 row-cols-md-4 g-4"> {# Utilisation de row-cols-md-4 pour afficher 4 cartes par ligne #}
+                        {% set hasTests = false %}
+                        {% for test in tests %}
+                            {% if selectedUserId and test.user.getId() == selectedUserId %}
+                                <div class="col">
+                                    <div class="card green" style="position: relative;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Test de {{ test.user.getFirstName() }}</h5>
+                                            <p class="card-text">
+                                                VMA : {{ test.vma }} km/h<br>
+                                                Cooper (12min) : {{ test.demicooper }} m<br>
+                                                Demi-Cooper (6min) : {{ test.cooper }} m<br>
+                                                Jongle Gauche : {{ test.jonglegauche }}<br>
+                                                Jongle Droit : {{ test.jongledroit }}<br>
+                                                Jongle Tête : {{ test.jongletete }}<br>
+                                                Conduite de balle : {{ test.conduiteballe|split('.')|first }}.{{ test.conduiteballe|split('.')|last|default('000') }}s<br>
+                                                Vitesse : {{ test.vitesse|split('.')|first }}.{{ test.vitesse|split('.')|last|default('000') }}s<br>
+                                                Date du test : {{ test.date|date('d-m-Y H:i:s') }}
+                                            </p>
+                                            {% if is_granted("ROLE_SUPER_ADMIN") %}
+                                                <div class="test-owner">Joueur : {{ test.user.getFirstName() }}</div>
+                                                <div class="d-flex justify-content-between mt-3">
+                                                    <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Supprimer</a>
+                                                    <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i> Modifier</a>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% set hasTests = true %}
+                            {% elseif not selectedUserId %}
+                                <div class="col">
+                                    <div class="card green" style="position: relative;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Test de {{ test.user.getFirstName() }}</h5>
+                                            <p class="card-text">
+                                                {% if is_granted("ROLE_SUPER_ADMIN") %}
+                                                    <div class="test-owner">Joueur : {{ test.user.getFirstName() }}</div>
+                                                    <div class="d-flex justify-content-between mt-3">
+                                                        <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Supprimer</a>
+                                                        <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i> Modifier</a>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% set hasTests = true %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {% if not hasTests %}
+                        <div class="row mt-4">
+                            <div class="col">
+                                <div class="text-center">
+                                    <p>Il n'y a aucun test !</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="row mt-4">
+                    <div class="col">
+                        <div class="text-center">
+                            <p>Ce joueur n'a aucun test !</p>
+                        </div>
+                    </div>
                 </div>
             {% endif %}
-        {% endfor %}
-        {% if not hasTests %}
-            <div class="card" style="background-color: #ccc;">
-                <p class="tip">Il n'y a aucun test !</p>
+        {% else %}
+            <h1 class="h1 mb-5">Bienvenue sur la liste des tests</h1>
+            <div class="text-center">
+                <p>Connectez-vous pour voir vos tests.</p>
+                <p><a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter</a></p>
             </div>
         {% endif %}
     </div>
-    <br>
+
+    <!-- Script Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
