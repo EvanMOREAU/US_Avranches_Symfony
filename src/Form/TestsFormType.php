@@ -3,7 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Tests;
+use App\Repository\UserRepository;
 use App\Form\Type\MinutesSecondesType;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Time;
@@ -12,14 +14,22 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class TestsFormType extends AbstractType
 {
+
+    public function __construct(UserRepository $userRepository, Security $security)
+    {
+        $this->userRepository = $userRepository;
+        $this->security = $security;
+    }
+    
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -122,6 +132,13 @@ class TestsFormType extends AbstractType
         ->add('vitesse', TextType::class, [
             'label' => 'Vitesse (en millisecondes)',
         ]);
+        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
+            $builder->add('user', ChoiceType::class, [
+                'choices' => $this->getUserChoices(),
+                'label' => 'Sélectionner un utilisateur',
+                'required' => true,
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -129,5 +146,17 @@ class TestsFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Tests::class,
         ]);
+    }
+    
+    private function getUserChoices()
+    {
+        $users = $this->userRepository->findAll();
+
+        $choices = [];
+        foreach ($users as $user) {
+            $choices[$user->getFirstName()] = $user;
+        }
+
+        return $choices;
     }
 }

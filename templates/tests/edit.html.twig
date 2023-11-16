@@ -59,8 +59,16 @@
             {{ form_errors(form.vitesse, {'attr': {'class': 'error-message'}}) }}
         </div>
 
+        {% if is_granted("ROLE_SUPER_ADMIN") %}
+            <div class="form-group {% if form.user.vars.errors|length > 0 %}has-error{% endif %}">
+                {{ form_label(form.user, 'Joueur', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.user, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !'}}) }}
+                {{ form_errors(form.user, {'attr': {'class': 'error-message'}}) }}
+            </div>
+        {% endif %}
         <br>
-        <button type="submit" class="form-button">Save</button>
+        <button type="submit" class="form-button">Enregistrer</button>
+        <button onClick='redirectToPage("/tests")' class="form-button">Retour</button>
         
         {{ form_end(form) }}
     </div>

@@ -1,3 +1,5 @@
+{# templates/tests/list.html.twig #}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Liste de vos tests{% endblock %}
@@ -50,7 +52,7 @@
         {% if app.user %}
             <div class="text-center">
                 <h1 class="h1">Liste de vos tests, {{ app.user.getFirstName() }}</h1>
-                <a href="{{ path('app_tests_new') }}" class="btn btn-primary mt-3">Créer un nouveau test</a>
+                <a href="{{ path('app_tests_new', {'userId': app.user.getId()}) }}" class="btn btn-primary mt-3">Créer un nouveau test</a>
             </div>
 
             <div class="user-dropdown-container mt-3">
@@ -78,10 +80,10 @@
 
             <div class="tests-container mt-4">
                 {% if tests|length > 0 %}
-                    <div class="row row-cols-1 row-cols-md-4 g-4"> {# Utilisation de row-cols-md-4 pour afficher 4 cartes par ligne #}
+                    <div class="row row-cols-1 row-cols-md-4 g-4">
                         {% set hasTests = false %}
                         {% for test in tests %}
-                            {% if selectedUserId and test.user.getId() == selectedUserId %}
+                            {% if is_granted("ROLE_SUPER_ADMIN") or (app.user == test.user) %}
                                 <div class="col">
                                     <div class="card green" style="position: relative;">
                                         <div class="card-body">
@@ -104,24 +106,6 @@
                                                     <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i> Modifier</a>
                                                 </div>
                                             {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                                {% set hasTests = true %}
-                            {% elseif not selectedUserId %}
-                                <div class="col">
-                                    <div class="card green" style="position: relative;">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Test de {{ test.user.getFirstName() }}</h5>
-                                            <p class="card-text">
-                                                {% if is_granted("ROLE_SUPER_ADMIN") %}
-                                                    <div class="test-owner">Joueur : {{ test.user.getFirstName() }}</div>
-                                                    <div class="d-flex justify-content-between mt-3">
-                                                        <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Supprimer</a>
-                                                        <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i> Modifier</a>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

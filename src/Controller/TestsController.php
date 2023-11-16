@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Annotation\IsGranted;
 
@@ -54,33 +55,34 @@ class TestsController extends AbstractController
     }
     
     #[Route('/new', name: 'app_tests_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TestsRepository $testsRepository): Response
+    public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository): Response
     {
         $test = new Tests();
-        $form = $this->createForm(TestsFormType::class, $test);
         
+        // Assurez-vous que le champ user n'est pas requis
+        // $test->setUser($this->getUser()); // Ne pas définir l'utilisateur ici
+
+        $form = $this->createForm(TestsFormType::class, $test);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer les données du formulaire
-            $data = $form->getData();
+            $entityManager = $this->getDoctrine()->getManager();
+            
+            // Si l'utilisateur est superadmin, attribuez le test à l'utilisateur sélectionné depuis le formulaire
+            if ($this->isGranted("ROLE_SUPER_ADMIN")) {
+                $selectedUser = $form->get('user')->getData();
 
-            // Assurez-vous de récupérer correctement l'utilisateur actuellement connecté
-            $user = $this->getUser();
-
-            if (!$user) {
-                // Gérer le cas où l'utilisateur n'est pas connecté
-                throw new AccessDeniedException('Vous devez être connecté pour créer un test.');
+                if ($selectedUser) {
+                    $test->setUser($selectedUser);
+                }
+            } else {
+                // Si l'utilisateur n'est pas superadmin, attribuez le test à l'utilisateur connecté
+                $test->setUser($this->getUser());
             }
 
-            // Associer le test à l'utilisateur connecté
-            $test->setUser($user);
-            $test->setDate(new \DateTime());
-
-            // Enregistrez le test dans la base de données
-            $testsRepository->save($test, true);
-
-            $this->addFlash('success', 'Le test a été créé avec succès.');
+            $entityManager->persist($test);
+            $entityManager->flush();
 
             return $this->redirectToRoute('app_tests_index');
         }
