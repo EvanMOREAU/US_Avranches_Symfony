@@ -77,17 +77,17 @@ td {
 
 /* Position de chaque bouton du terrain */
 #gardien { /* Gardien */
-    top: 93%;
-    left: 44%;
+    top: 78%;
+    left: 45%;
 }
 
 #defenseurg { /* Defenseur gauche */
-    top: 80%;
-    left: 16%;
+    top: 70%;
+    left: 21%;
 }
 #defenseurd { /* Defenseur droit */
-    top: 80%;
-    left: 64%;
+    top: 70%;
+    left: 62%;
 }
 
 #milieug { /* Milieu guache */
@@ -95,19 +95,19 @@ td {
     left: 15%;
 }
 #milieuoff { /* Milieu offensif */
-    top: 38%;
-    left: 41%;
+    top: 41%;
+    left: 52%;
 }
 #milieudef { /* Milieu defensif */
-    top: 59%;
-    left: 41%;
+    top: 55%;
+    left: 35%;
 }
 #milieud { /* Milieu droit */
     top: 48.3%;
-    left: 68.5%;
+    left: 72%;
 }
 
 #attaquant { /* Attaquant */
-    top: 26%;
-    left: 44%;
+    top: 29%;
+    left: 42%;
 }
