@@ -20,10 +20,18 @@
         {% for user in users %}
             <div class="col">
                 <div class="img card-attendance-u zoom" data-user-id="{{ user.id }}">
-                    <div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top" alt="..."></div>
+                    <div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top" alt="..." onClick="reason()"></div>
                     <div class="card-body">
                         <h5 class="card-title text-center pt-1">{{ user.firstName }} {{ user.lastName }}</h5>
-                    </div>        
+                    </div>
+                    
+                    <div class="reason-selector" id="reasonSelector">
+                        <select class="form-select">
+                        <option value="malade">Malade</option>
+                        <option value="blessé">Blessé</option>
+                        <option value="sport">Sport</option>
+                    </select>
+                    </div>
                 </div>
             </div>
         {% endfor %}
@@ -45,32 +53,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const presentUserIds = [];
     const absentUserIds = [];
 
+    function change() {
+        document.getElementById("reasonSelector").style.display = "none";
+    }
+
     abss.forEach(abs => {
         presentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
         abs.addEventListener('click', function () {
             abs.classList.toggle('present');
             abs.classList.toggle('absent');
 
-            // Get the user ID
-            const userId = abs.closest('.img').getAttribute('data-user-id');
+             // Check if the "reason-selector" element exists
+            const reasonSelector = document.getElementById('reasonSelector');
 
-            if (abs.classList.contains('present')) {
-                presentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
-
-                const reasonSelector = document.getElementById('reasonSelector' + userId);
-                reasonSelector.remove();
-            } else {
-                const index = presentUserIds.indexOf(abs.closest('.img').getAttribute('data-user-id'));
-                if (index !== -1) {
-                    presentUserIds.splice(index, 1);
-                }
-            }
+            // If the element is absent and the "reason-selector" doesn't exist, create and append it
             if (abs.classList.contains('absent')) {
-                absentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
-
                 const reasonSelectorDiv = document.createElement('div');
                 reasonSelectorDiv.classList.add('reason-selector');
-                reasonSelectorDiv.id = 'reasonSelector' + userId;
+                reasonSelectorDiv.id = 'reasonSelector';
                 reasonSelectorDiv.innerHTML = `
                     <select class="form-select">
                         <option value="malade">Malade</option>
@@ -79,6 +79,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     </select>
                 `;
                 abs.closest('.img').appendChild(reasonSelectorDiv);
+            }
+
+            // Modifier la suite pour supprimer reasonSelector si "abs.classList.contains('present')"
+            if (abs.classList.contains('present')) {
+                abs.closest('.img').removeChild(reasonSelectorDiv);
+            } 
+
+            if (abs.classList.contains('present')) {
+                presentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
+            } else {
+                const index = presentUserIds.indexOf(abs.closest('.img').getAttribute('data-user-id'));
+                if (index !== -1) {
+                    presentUserIds.splice(index, 1);
+                }
+            }
+            if (abs.classList.contains('absent')) {
+                absentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
             } else {
                 const index = absentUserIds.indexOf(abs.closest('.img').getAttribute('data-user-id'));
                 if (index !== -1) {
@@ -92,20 +109,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const updateMatchesPlayedURL = '{{ path('update_matches_played', {'category': category}) }}';
         const reasonSelectors = document.querySelectorAll('.reason-selector select');
 
-        reasonSelectors.forEach((select) => {
-            const userId = select.closest('.img').getAttribute('data-user-id');
-            const test = select.closest('.abs');
+        reasonSelectors.forEach((select, index) => {
+            const userId = abss[index].closest('.img').getAttribute('data-user-id');
             const reason = select.value;
-
-            if (abs.classList.contains('present')) {
+            if (abss[index].classList.contains('present')) {
                 presentUserIds.push({ userId: userId });
             }
-
-            if (abs.classList.contains('absent')) {
+            if (abss[index].classList.contains('absent')) {
                 absentUserIds.push({ userId: userId, reason: reason });
             }
         });
-
 
         fetch(updateMatchesPlayedURL, {
             method: 'POST',
