@@ -63,6 +63,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     */
     private $plainPassword;
 
+    #[ORM\Column]
+    private ?bool $isCodeValidated = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -245,6 +248,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword($password): self
     {
         $this->plainPassword = $password;
+
+        return $this;
+    }
+
+    public function isIsCodeValidated(): ?bool
+    {
+        return $this->isCodeValidated;
+    }
+
+    public function setIsCodeValidated(bool $isCodeValidated): static
+    {
+        $this->isCodeValidated = $isCodeValidated;
 
         return $this;
     }
