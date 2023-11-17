@@ -59,99 +59,73 @@ class AttendanceController extends AbstractController
 
     // TO DO, changer le code pour que les "selectedUserIds" aient "is_present=true" dans la base de données et "reason=null" dans la base de données puis "unselectedUserIds" aient "is_present=false" dans la base de données et "reason=La Raison à récupérer depuis la page" dans la base de données, puis que ça crée un nouveau gathering dans la table tbl_gathering avec la date et la catégorie qui a joué.
 
-    // #[Route('/update-matches-played-{category}', name: 'update_matches_played', methods: ['POST'])]
-    // public function updateMatchesPlayed(string $category, Request $request, EntityManagerInterface $entityManager): Response
-    // {
-    //     $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
-    //     $unselectedUserIds = json_decode($request->getContent(), true)['unselectedUserIds'];
-
-    //     // Determine the category ID based on the category
-    //     $categoryId = $entityManager->getRepository(Category::class)->findOneBy(['category' => $category]);
-
-    //     if ($categoryId !== null) {
-    //         $category = $entityManager->getRepository(Category::class)->find($categoryId);
-
-    //         if ($category) {
-    //             // Create Attendance records for selected users
-    //             foreach ($selectedUserIds as $userId) {
-    //                 $user = $entityManager->getRepository(User::class)->find($userId);
-
-    //                 if ($user) {
-    //                     $attendance = new Attendance();
-    //                     $attendance->setUser($user);
-    //                     $attendance->setGathering($category->getGathering()); // Adjust this part based on your structure
-    //                     $attendance->setIsPresent(true); // Set the attendance status
-    //                     $entityManager->persist($attendance);
-    //                 }
-    //             }
-
-    //             // Flush the changes to the database
-    //             $entityManager->flush();
-
-    //             return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
-    //         }
-    //     }
-
-    //     return new JsonResponse(['error' => 'Invalid category'], Response::HTTP_BAD_REQUEST);
-    // }
-
-    // TO DO, changer le code pour que les "selectedUserIds" aient "is_present=true" dans la base de données et "reason=null" dans la base de données puis "unselectedUserIds" aient "is_present=false" dans la base de données et "reason=La Raison à récupérer depuis la page" dans la base de données, puis que ça crée un nouveau gathering dans la table tbl_gathering avec la date et la catégorie qui a joué.
-
     #[Route('/update-matches-played-{category}', name: 'update_matches_played', methods: ['POST'])]
     public function updateMatchesPlayed(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $presentUserIds = json_decode($request->getContent(), true)['presentUserIds'];
-        $absentUserIds = json_decode($request->getContent(), true)['absentUserIds'];
-        $category = json_decode($request->getContent(), true)['category'];
+        $requestData = json_decode($request->getContent(), true);
+
+        $presentUserIds = $requestData['presentUserIds'];
+        $absentUserIds = $requestData['absentUserIds'];
+        $categoryName = $requestData['category'];
+
+        // Find the Category entity by name
+        $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $categoryName]);
+
+        if (!$category) {
+            return new JsonResponse(['error' => 'Invalid category'], Response::HTTP_BAD_REQUEST);
+        }
 
         // Create a new gathering
         $gathering = new Gathering();
         $gathering->setGatheringDate(new \DateTime());
-        $gathering->setCategory($category);
+        $gathering->setCategory($category); // Use the Category entity instance
+
+        // Find the user (MadeBy) - You may need to adjust this based on your logic
+        $madeByUserId = 1; // Assuming you have the ID of the user who made the gathering
+        $madeByUser = $entityManager->getRepository(User::class)->find($madeByUserId);
+
+        if ($madeByUser) {
+            $gathering->setMadeBy($madeByUser);
+        } else {
+            return new JsonResponse(['error' => 'Invalid user for MadeBy'], Response::HTTP_BAD_REQUEST);
+        }
+
         $entityManager->persist($gathering);
 
-        // Determine the category ID based on the category
-        $categoryId = $entityManager->getRepository(Category::class)->findOneBy(['category' => $category]);
+        // Update Attendance records for present users
+        foreach ($presentUserIds as $userId) {
+            $user = $entityManager->getRepository(User::class)->find($userId);
 
-        if ($categoryId !== null) {
-            $category = $entityManager->getRepository(Category::class)->find($categoryId);
-
-            if ($category) {
-                // Update Attendance records for present users
-                foreach ($presentUserIds as $userId) {
-                    $user = $entityManager->getRepository(User::class)->find($userId);
-
-                    if ($user) {
-                        $attendance = new Attendance();
-                        $attendance->setUser($user);
-                        $attendance->setGathering($gathering);
-                        $attendance->setIsPresent(true);
-                        $attendance->setReason(null);
-                        $entityManager->persist($attendance);
-                    }
-                }
-
-                // Update Attendance records for absent users
-                foreach ($absentUserIds as $userId) {
-                    $user = $entityManager->getRepository(User::class)->find($userId);
-
-                    if ($user) {
-                        $attendance = new Attendance();
-                        $attendance->setUser($user);
-                        $attendance->setGathering($gathering);
-                        $attendance->setIsPresent(false);
-                        $attendance->setReason('La Raison à récupérer depuis la page');
-                        $entityManager->persist($attendance);
-                    }
-                }
-
-                // Flush the changes to the database
-                $entityManager->flush();
-
-                return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
+            if ($user) {
+                $attendance = new Attendance();
+                $attendance->setUser($user);
+                $attendance->setGathering($gathering);
+                $attendance->setIsPresent(true);
+                $attendance->setReason(null);
+                $entityManager->persist($attendance);
             }
         }
 
-        return new JsonResponse(['error' => 'Invalid category'], Response::HTTP_BAD_REQUEST);
+        // Update Attendance records for absent users
+        foreach ($absentUserIds as $userData) {
+            $userId = $userData['userId'];
+            $reason = $userData['reason'];
+
+            $user = $entityManager->getRepository(User::class)->find($userId);
+
+            if ($user) {
+                $attendance = new Attendance();
+                $attendance->setUser($user);
+                $attendance->setGathering($gathering);
+                $attendance->setIsPresent(false);
+                $attendance->setReason($reason);
+                $entityManager->persist($attendance);
+            }
+        }
+
+        // Flush the changes to the database
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Matches played updated successfully']);
     }
 }
