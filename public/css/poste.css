@@ -29,6 +29,7 @@ td {
 .terrain {
     position: relative;
     display: inline-block;
+    z-index: 1;
 }
 
 /* Image du terrain */

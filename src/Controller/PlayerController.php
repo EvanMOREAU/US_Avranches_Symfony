@@ -123,6 +123,49 @@ class PlayerController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/poste-cache', name: 'app_player_poste', methods: ['GET'])]
+    public function poste_cache(Player $player, LoggerInterface $logger): Response
+    {
+        // $logger->debug('poste() player->getFirstname() = ' . $player->getFirstname());
+        return $this->render('player/hiddenposte.html.twig', [
+            'player' => $player,
+        ]);
+    }
+
+    #[Route('/poste/set-poste-cache-x/{id}', name: 'app_set_poste_cache_x')]
+    public function setPosteCacheX(Player $player, Request $request, LoggerInterface $logger): Response
+    {
+        $logger->debug('setPosteCacheX() player->getFirstname() = ' . $player->getFirstname());
+
+        // Récupérez les données de la requête AJAX
+        $coord = $_POST["coordX"];
+        $logger->debug('setPosteCoordX() PosteCoordX = ' . $coord);
+
+        // Mettez à jour l'entité Player
+        $player->setPosteCoordX($coord);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($player);
+        $entityManager->flush();
+    }
+
+    #[Route('/poste/set-poste-cache-y/{id}', name: 'app_set_poste_cache_y')]
+    public function setPosteCacheY(Player $player, Request $request, LoggerInterface $logger): Response
+    {
+        $logger->debug('setPosteCacheY() player->getFirstname() = ' . $player->getFirstname());
+
+        // Récupérez les données de la requête AJAX
+        $coord = $_POST["coordY"];
+        $logger->debug('setPosteCoordY() PosteCoordY = ' . $coord);
+
+        // Mettez à jour l'entité Player
+        $player->setPosteCordY($coord);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($player);
+        $entityManager->flush();
+    }
+
     //////////////////////////////
 
 

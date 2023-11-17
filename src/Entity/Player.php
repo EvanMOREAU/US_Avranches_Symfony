@@ -37,6 +37,12 @@ class Player
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $posteSecondaire = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $posteCoordX = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $posteCordY = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -122,6 +128,30 @@ class Player
     public function setPosteSecondaire(?string $posteSecondaire): static
     {
         $this->posteSecondaire = $posteSecondaire;
+
+        return $this;
+    }
+
+    public function getPosteCoordX(): ?int
+    {
+        return $this->posteCoordX;
+    }
+
+    public function setPosteCoordX(?int $posteCoordX): static
+    {
+        $this->posteCoordX = $posteCoordX;
+
+        return $this;
+    }
+
+    public function getPosteCordY(): ?int
+    {
+        return $this->posteCordY;
+    }
+
+    public function setPosteCordY(?int $posteCordY): static
+    {
+        $this->posteCordY = $posteCordY;
 
         return $this;
     }
