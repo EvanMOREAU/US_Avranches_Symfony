@@ -2,3 +2,37 @@
     {{ form_widget(form) }}
     <button class="btn">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}
+
+{# {{ form_start(form) }}
+<div class="row">
+	<div>
+		{{ form_row(form.name, { 
+    'label': 'Nom', 
+    'attr': { 'class': 'form-control mb-4', 'id': 'name', 'name': '_name', 'aria-label': 'name' }, 
+    'label_attr': {'class': 'form-label text-white'}, 
+    'separator': '<br><br>' 
+}) }}
+	</div>
+</div>
+
+<div class="mb-4"></div>
+
+<div class="row row-cols-1 row-cols-md-2">
+	<div class="col">
+		{{ form_row(form.image, { 
+    'label': 'Image', 
+    'attr': { 'class': 'form-control mb-4', 'id': 'image', 'name': '_image', 'aria-label': 'image' }, 
+    'label_attr': {'class': 'form-label text-white'},
+    'separator': '<br><br>' 
+}) }}
+	</div>
+	<div class="col mb-4">
+		{% if category.image %}
+			<center><img style="max-width: 15em; width: auto;" src="{{ asset('uploads/images/' ~ category.image) }}"></center>
+		{% endif %}
+	</div>
+</div>
+
+<button class="btn btn-primary btn-sm mt-2">{{ button_label|default('Créer') }}</button>
+<a class="btn btn-secondary btn-sm mt-2" href="{{ path('app_category_index') }}">Revenir à la liste</a>
+{{ form_end(form) }} #}

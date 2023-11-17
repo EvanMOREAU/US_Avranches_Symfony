@@ -128,7 +128,7 @@
                 }).then(response => {
                     if (response.ok) {
                         alert('Appel effectué avec succès!');
-                        window.location.href = '{{ path('app_attendance', {'category': category}) }}';
+                        window.location.href = '{{ path('app_attendance') }}';
                     } else {
                         alert('Erreur, l\'appel n\'a pas pu être effectué !');
                     }
