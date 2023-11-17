@@ -23,6 +23,12 @@ class Charts
     #[ORM\Column(type: Types::TEXT)]
     private ?string $source_data = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $datascale_min = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $datascale_max = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -65,6 +71,30 @@ class Charts
     public function setSourceData(string $source_data): static
     {
         $this->source_data = $source_data;
+
+        return $this;
+    }
+
+    public function getDatascaleMin(): ?string
+    {
+        return $this->datascale_min;
+    }
+
+    public function setDatascaleMin(string $datascale_min): static
+    {
+        $this->datascale_min = $datascale_min;
+
+        return $this;
+    }
+
+    public function getDatascaleMax(): ?string
+    {
+        return $this->datascale_max;
+    }
+
+    public function setDatascaleMax(string $datascale_max): static
+    {
+        $this->datascale_max = $datascale_max;
 
         return $this;
     }
