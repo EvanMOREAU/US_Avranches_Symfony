@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
@@ -39,6 +40,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $last_name = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Team $team = null;
+
+    #[ORM\Column]
+    private ?int $matches_played = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $weight = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $profile_image = null;
+
+    /**
+    * @Assert\NotBlank(groups={"registration", "resetPassword"})
+    * @Assert\Length(
+    *     min=6,
+    *     minMessage="Votre mot de passe doit comporter au moins {{ limit }} caractères",
+    *     groups={"registration", "resetPassword"}
+    * )
+    */
+    private $plainPassword;
+
+    #[ORM\Column]
+    private ?bool $isCodeValidated = false;
 
     public function getId(): ?int
     {
@@ -161,8 +187,80 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function getCategory(){
-        $now = new \DateTime();
-        $diff = $now->diff($this->date_naissance);
-        return 'U'.$diff->y;
+        $this_year = new \DateTime('first day of January next year');
+        $diff = $this_year->diff($this->date_naissance);
+        return 'U'.$diff->y + 1;
+    }
+    
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): static
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    public function getMatchesPlayed(): ?int
+    {
+        return $this->matches_played;
+    }
+
+    public function setMatchesPlayed(int $matches_played): static
+    {
+        $this->matches_played = $matches_played;
+
+        return $this;
+    }
+
+    public function getWeight(): ?float
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?float $weight): static
+    {
+        $this->weight = $weight;
+
+        return $this;
+    }
+
+    public function getProfileImage(): ?string
+    {
+        return $this->profile_image;
+    }
+
+    public function setProfileImage(?string $profile_image): static
+    {
+        $this->profile_image = $profile_image;
+
+        return $this;
+    }
+
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($password): self
+    {
+        $this->plainPassword = $password;
+
+        return $this;
+    }
+
+    public function isIsCodeValidated(): ?bool
+    {
+        return $this->isCodeValidated;
+    }
+
+    public function setIsCodeValidated(bool $isCodeValidated): static
+    {
+        $this->isCodeValidated = $isCodeValidated;
+
+        return $this;
     }
 }

@@ -1,25 +1,71 @@
 body, html {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  height: 100%;
+  width: auto;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
   
-  .containerbtn {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+p {
+	text-transform: uppercase;
+	letter-spacing: .5em;
+	/* border: 4px double rgba(255,255,255,.25); */
+	position: absolute;
+	top: 18%;
+	left: 50%;
+	width: 40em;
+	margin: 0 0 0 -17em;
+}
+  span {
+
+  	font: 700 4em/1 "Oswald", sans-serif;
+  	letter-spacing: 0;
+  	padding: .25em 0 .325em;
+	  display: flex;
+	  margin: 0 auto;
+  	text-shadow: 0 0 80px rgba(255,255,255,.5);
+
+/* Clip Background Image */
+
+	  background: url(/img/animated-text-fill.png) repeat-y;
+	  -webkit-background-clip: text;
+	  background-clip: text;
+
+/* Animate Background Image */
+
+	  -webkit-text-fill-color: transparent;
+	  -webkit-animation: aitf 80s linear infinite;
+
+/* Activate hardware acceleration for smoother animations */
+
+	  -webkit-transform: translate3d(0,0,0);
+	  -webkit-backface-visibility: hidden;
+
   }
+
+
+/* Animate Background Image */
+
+@-webkit-keyframes aitf {
+	0% { background-position: 0% 50%; }
+	100% { background-position: 100% 50%; }
+}
+
+.containerbtn {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
   
-  .btnbht-group {
-    display: flex;
-    flex-basis: calc(100% - 10px); /* Chaque groupe de boutons occupe 50% de la largeur du conteneur */
-  }  
+.btnbht-group {
+  display: flex;
+  flex-basis: calc(100% - 10px); /* Chaque groupe de boutons occupe 50% de la largeur du conteneur */
+}  
 
 body .containerbtn .btnbht { /* permet de définir la couleur du texte du bouton en Blanc */
-    color: #ffffff;
+  color: #ffffff;
 }
   
   
@@ -31,7 +77,7 @@ body .containerbtn .btnbht { /* permet de définir la couleur du texte du bouton
     --bg: #171D4A;
     color: #fff;
       /* use position: relative; so that BG is only for .btnbht */
-      width: 150px; /* Vous pouvez ajuster cette valeur selon votre préférence */
+      width: 180px; /* Vous pouvez ajuster cette valeur selon votre préférence */
 
     position: relative;
     isolation: isolate;

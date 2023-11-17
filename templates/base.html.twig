@@ -7,13 +7,14 @@
         <link rel="icon" href="images\logo.svg" sizes="any" type="image/svg+xml">
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
-        {# <link href="/css/tests.css" rel="stylesheet" /> #}
-        <link href="/css/navbar.css" rel="stylesheet" />
-        <link href="/css/pagebase.css" rel="stylesheet" />
-            {{ encore_entry_link_tags('app') }}
-            <!--Styles.css-->
-			<link
-			rel="stylesheet" href="/css/bootstrap.css">
+
+          {# <link href="/css/tests.css" rel="stylesheet" /> #}
+          <link href="/css/navbar.css" rel="stylesheet" />
+          <link href="/css/pagebase.css" rel="stylesheet" />
+          <link href="/css/param.css" rel="stylesheet" />
+          {{ encore_entry_link_tags('app') }}
+          <!--Styles.css-->
+			    <link rel="stylesheet" href="/css/bootstrap.css">
         {% endblock %}
 
         {% block javascripts %}
@@ -23,29 +24,43 @@
         {% endblock %}
     </head>
 
+    {% block body %}
+    <link href="/css/nav2.css" rel="stylesheet" />
+
     <body>
         {# <div class='container'>
         <button class='button-nav'> Tableau de bord</button>
         </div> #}
-
-        <div class="hamburger-menu">
-    <input id="menu__toggle" type="checkbox" />
-    <label class="menu__btn" for="menu__toggle">
-      <span></span>
-    </label>
-    <ul class="menu__box">
-      <li><a class="menu__item" href="#">Tableau de bord</a></li>
-      <li><a class="menu__item" href="/appel">Faire l'appel</a></li>
-      <li><a class="menu__item" href="#">Liste des joueurs</a></li>
-      <li><a class="menu__item" href="#">Les Tests</a></li>
-      <li><a class="menu__item" href="#">Supertests</a></li>
-      <li><a class="menu__item" href="#">#</a></li>
-    </ul>
-  </div>
-  {% block body %}
+   <div class='containerbtnbht'>
+    {% if app.user %}
+      <p>
+        <span>
+          Bienvenue {{ app.user.getFirstName() }}
+        </span>
+      </p>
+    {% endif %}
+          <div class="btnbht-group">
+            <button class="btnbht" onClick='redirectToPage("/charts")'>Statistiques</button>
+            <button class="btnbht">Matchs</button>
+          </div>
+          <div class="btnbht-group">
+            <button class="btnbht">Absences</button>
+            <button class="btnbht" onClick='redirectToPage("/team")'>Mon équipe</button>
+          </div>
+          <div class="btnbht-group">
+            <button class="btnbht" onClick='redirectToPage("/appel")'>Appel</button>
+            <button class="btnbht" onClick='redirectToPage("/pdf")'>Fiche PDF</button>
+          </div>
+          <div class="btnbht-group">
+            <button class="btnbht" onClick='redirectToPage("/profile")'>Administration</button>
+            <button class="btnbht" onClick='redirectToPage("/pdf")'>2</button>
+          </div>
+          <div class="btnbht-group">
+            <button class="btnbht" onClick='redirectToPage("/profile")'>Paramètres</button>
+            <button class="btnbht" onClick='redirectToPage("user/{{ app.user.getId() }}/edit")'>3</button>
+          </div>
+        </div>
   {% endblock %}
-          {% if app.user %}
-            {{ app.user.getCategory() }}
-        {% endif %}
+        
     </body>
 </html>

@@ -42,6 +42,7 @@ class TestsController extends AbstractController
             // Récupérer les données du formulaire
             $data = $form->getData();
             $test->setDate(new \DateTime());
+            
             $testsRepository->save($test, true);
 
 
