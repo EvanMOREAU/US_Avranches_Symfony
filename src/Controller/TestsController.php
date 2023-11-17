@@ -24,33 +24,45 @@ class TestsController extends AbstractController
     #[Route('/', name: 'app_tests_index')]
     public function index(Request $request, UserRepository $userRepository): Response
     {
-        // Récupérez l'utilisateur actuellement connecté
         $user = $this->getUser();
-
-        // Déclarez la variable selectedUserId et initialisez-la à null
-        $selectedUserId = null;
-
-        // Récupérez l'ID de l'utilisateur à partir des paramètres de l'URL
         $selectedUserId = $request->query->get('userId');
+        $selectedCategory = $request->query->get('category');
+        $usersByCategory = null;
 
-        // Vérifiez si l'ID de l'utilisateur sélectionné existe
         if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Récupérez l'utilisateur correspondant à l'ID sélectionné
             $selectedUser = $userRepository->find($selectedUserId);
-
-            // Utilisez la méthode getTests() pour récupérer tous les tests associés à l'utilisateur sélectionné
             $tests = $selectedUser ? $selectedUser->getTests() : [];
+        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
+            if ($selectedCategory) {
+                $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
+                $tests = $this->getTestsByCategory($userRepository, $selectedCategory);
+            } else {
+                $usersByCategory = $this->getUsersGroupedByCategory($userRepository);
+                $tests = $this->getDoctrine()->getRepository(Tests::class)->findAll();
+            }
         } else {
-            // Si aucun ID d'utilisateur sélectionné ou si l'utilisateur n'est pas superadmin, utilisez les tests de l'utilisateur connecté
             $tests = $user ? $user->getTests() : [];
         }
 
+        $testsArray = is_array($tests) ? $tests : $tests->toArray();
+        $order = $request->query->get('order', 'desc');
+
+        usort($testsArray, function ($a, $b) use ($order) {
+            if ($order === 'asc') {
+                return $a->getDate() <=> $b->getDate();
+            } else {
+                return $b->getDate() <=> $a->getDate();
+            }
+        });
+
         return $this->render('tests/index.html.twig', [
             'controller_name' => 'TestsController',
-            'tests' => $tests,
+            'tests' => $testsArray,
             'users' => $userRepository->findAll(),
             'user' => $user,
             'selectedUserId' => $selectedUserId,
+            'usersByCategory' => $usersByCategory,
         ]);
     }
     
@@ -68,6 +80,10 @@ class TestsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            
+            // Ajoutez ces lignes pour définir la date actuelle
+            $currentDate = new \DateTime();
+            $test->setDate($currentDate);
             
             // Si l'utilisateur est superadmin, attribuez le test à l'utilisateur sélectionné depuis le formulaire
             if ($this->isGranted("ROLE_SUPER_ADMIN")) {
@@ -143,5 +159,66 @@ class TestsController extends AbstractController
 
         // Redirigez l'utilisateur vers une autre page, par exemple la liste des tests
         return $this->redirectToRoute('app_tests_index');
+    }
+
+    private function getTestsByCategory(UserRepository $userRepository, string $category): array
+    {
+        $usersGroupedByCategory = $this->getUsersGroupedByCategory($userRepository);
+        
+        if (isset($usersGroupedByCategory[$category])) {
+            $usersInCategory = $usersGroupedByCategory[$category];
+            
+            $tests = [];
+            
+            foreach ($usersInCategory as $user) {
+                $tests = array_merge($tests, $user->getTests()->toArray());
+            }
+            
+            return $tests;
+        } else {
+            return [];
+        }
+    }
+
+    private function getUsersGroupedByCategory(UserRepository $userRepository): array
+    {
+        $users = $userRepository->findAll();
+        $groupedUsers = [];
+
+        foreach ($users as $user) {
+            $ageCategory = $this->getAgeCategory($user->getDateNaissance()); // Vous devez implémenter getAgeCategory
+
+            if (!isset($groupedUsers[$ageCategory])) {
+                $groupedUsers[$ageCategory] = [];
+            }
+
+            $groupedUsers[$ageCategory][] = $user;
+        }
+
+        return $groupedUsers;
+    }
+
+    private function getAgeCategory(\DateTime $birthDate): string
+    {
+        // Implémentez la logique pour déterminer la catégorie d'âge en fonction de la date de naissance
+        // Par exemple, pour un découpage en U10, U11, U12, U13, vous pouvez utiliser l'année actuelle moins l'année de naissance
+        $currentYear = (int) date('Y');
+        $age = $currentYear - $birthDate->format('Y');
+
+        if ($age < 10) {
+            return 'U10';
+        } elseif ($age < 11) {
+            return 'U11';
+        } elseif ($age < 12) {
+            return 'U12';
+        } elseif ($age < 13) {
+            return 'U13';
+        } else {
+            // Ajoutez des conditions pour d'autres catégories si nécessaire
+            // ...
+
+            // Par défaut, retournez une catégorie générique
+            return 'Other';
+        }
     }
 }

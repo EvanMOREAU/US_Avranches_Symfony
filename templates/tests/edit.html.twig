@@ -67,8 +67,9 @@
             </div>
         {% endif %}
         <br>
-        <button type="submit" class="form-button">Enregistrer</button>
-        <button onClick='redirectToPage("/tests")' class="form-button">Retour</button>
+        <button onClick='redirectToPage("/tests")' class="form-button btn-gray"><i class="fas fa-arrow-left"></i> Retour</button>
+        <button type="submit" class="form-button"><i class="fas fa-save"></i> Enregistrer</button>
+        
         
         {{ form_end(form) }}
     </div>
