@@ -201,26 +201,26 @@ to {
     color: #444;
     cursor: pointer;
     transition: background .2s ease-in-out, border .2s ease-in-out;
-    }
+}
 
-    .drop-container:hover {
+.drop-container:hover {
     background: rgba(0, 140, 255, 0.164);
     border-color: rgba(17, 17, 17, 0.616);
-    }
+}
 
-    .drop-container:hover .drop-title {
+.drop-container:hover .drop-title {
     color: #222;
-    }
+}
 
-    .drop-title {
+.drop-title {
     color: #444;
     font-size: 20px;
     font-weight: bold;
     text-align: center;
     transition: color .2s ease-in-out;
-    }
+}
 
-    #file-input {
+#file-input {
     width: 350px;
     max-width: 100%;
     color: #444;
@@ -228,9 +228,9 @@ to {
     background: #fff;
     border-radius: 10px;
     border: 1px solid rgba(8, 8, 8, 0.288);
-    }
+}
 
-    #file-input::file-selector-button {
+#file-input::file-selector-button {
     margin-right: 20px;
     border: none;
     background: #084cdf;
@@ -239,8 +239,8 @@ to {
     color: #fff;
     cursor: pointer;
     transition: background .2s ease-in-out;
-    }
+}
 
-    #file-input::file-selector-button:hover {
+#file-input::file-selector-button:hover {
     background: #0d45a5;
-    }
+}

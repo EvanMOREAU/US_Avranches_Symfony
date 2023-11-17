@@ -1,4 +1,4 @@
 .container-team {
-    display: flex;
-    flex-basis: calc(10% - 5px); /* Chaque groupe de boutons occupe 50% de la largeur du conteneur */
-  }
+  display: flex;
+  flex-basis: calc(10% - 5px); /* Chaque groupe de boutons occupe 50% de la largeur du conteneur */
+}
