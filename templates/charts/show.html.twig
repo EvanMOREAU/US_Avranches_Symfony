@@ -9,7 +9,7 @@
     <br />
     {# {% for chart in charts %} #}
     
-        <canvas id='{{ chart.data }}'></canvas>
+        <canvas id='{{ chart.data }}' role:"img"></canvas>
         <script>
         const ctx = document.getElementById('{{ chart.data }}');
 
