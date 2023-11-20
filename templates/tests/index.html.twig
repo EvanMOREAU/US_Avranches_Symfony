@@ -62,36 +62,52 @@
                 {% if is_granted("ROLE_SUPER_ADMIN") %}
                     <label for="userDropdown" class="user-dropdown-label">Sélectionner un utilisateur :</label>
                     <select class="form-select" id="userDropdown" name="userDropdown">
-                        <option value="" selected>Tous les utilisateurs</option>
+                        <option value="" {% if selectedUserId is null %}selected{% endif %}>Tous les utilisateurs</option>
+
+                        {% set allUsers = usersByCategory is defined and usersByCategory is not null ? usersByCategory : [users] %}
                         
-                        {% if usersByCategory is defined and usersByCategory is not null %}
-                            {% for category, users in usersByCategory %}
-                                <optgroup label="{{ category }}">
-                                    {% for user in users %}
-                                        <option value="{{ user.getId() }}" {% if selectedUserId == user.getId() %}selected{% endif %}>
-                                            {{ user.getFirstName() }}
-                                        </option>
-                                    {% endfor %}
-                                </optgroup>
-                            {% endfor %}
-                        {% else %}
-                            {% for user in users %}
+                        {% set mergedUsers = [] %}
+
+                        {% for category, users in allUsers %}
+                            {% set mergedUsers = mergedUsers|merge(users) %}
+                        {% endfor %}
+
+                        {% set sortedUsers = mergedUsers|sort((a, b) => a.getCategory() <=> b.getCategory() == 0 ? a.getFirstName() <=> b.getFirstName() : a.getCategory() <=> b.getCategory()) %}
+
+                        {% set currentCategory = '' %}
+
+                        {% for user in sortedUsers %}
+                            {% if user.getCategory() != currentCategory %}
+                                {% if currentCategory != '' %}
+                                    </optgroup>
+                                {% endif %}
+                                <optgroup label="{{ user.getCategory() }}">
+                                    {% set currentCategory = user.getCategory() %}
+                                {% endif %}
                                 <option value="{{ user.getId() }}" {% if selectedUserId == user.getId() %}selected{% endif %}>
                                     {{ user.getFirstName() }}
                                 </option>
                             {% endfor %}
-                        {% endif %}
+                                </optgroup>
                     </select>
                 {% endif %}
             </div>
 
+            
             <div class="mt-4">
                 {# Boutons de tri #}
                 <div class="btn-group" role="group" aria-label="Basic example">
-                    <a href="{{ path('app_tests_index', {'order': 'asc'}) }}" class="btn btn-secondary">Plus ancien d'abord</a>
-                    <a href="{{ path('app_tests_index', {'order': 'desc'}) }}" class="btn btn-secondary">Plus récent d'abord</a>
+                    <a href="{{ path('app_tests_index', {'order': 'asc'}) }}" class="btn btn-secondary {% if app.request.query.get('order') == 'asc' %}active{% endif %}">
+                        <i class="fas fa-sort-amount-up"></i> Plus ancien d'abord
+                    </a>
+                    <a href="{{ path('app_tests_index', {'order': 'desc'}) }}" class="btn btn-secondary {% if app.request.query.get('order') == 'desc' %}active{% endif %}">
+                        <i class="fas fa-sort-amount-down"></i> Plus récent d'abord
+                    </a>
                 </div>
             </div>
+
+
+
 
             <div class="mt-4">
                 {% for message in app.flashes('success') %}
