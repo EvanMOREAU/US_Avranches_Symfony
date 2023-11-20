@@ -8,13 +8,16 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class CategoryType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
+            ->add('name', ChoiceType::class, [
+                'choices' => range(1, 99)
+            ])
         ;
         $builder->add('image', FileType::class, [
             'label' => 'Image',
@@ -24,7 +27,7 @@ class CategoryType extends AbstractType
 
             // make it optional so you don't have to re-upload the image file
             // every time you edit the item
-            'required' => false,
+            'required' => true,
 
             // unmapped fields can't define their validation using annotations
             // in the associated entity, so you can use the PHP constraint classes

@@ -16,28 +16,29 @@ class ImageUploaderHelper {
     public function __construct(SluggerInterface $slugger, ParameterBagInterface $params) {
         $this->slugger = $slugger;
         $this->params = $params;
-        }
+    }
 
-    public function uploadImage($form, $category): String {
+    public function uploadImageCategory($form, $category): String {
         $errorMessage = "";
         $imageFile = $form->get('image')->getData();
 
         if ($imageFile) {
             $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-
             $safeFilename = $this->slugger->slug($originalFilename);
             $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-            
+
             try {
                 $imageFile->move(
                     $this->params->get('images_directory'),
                     $newFilename
                 );
+
+                $category->setImage($newFilename);
             } catch (FileException $e) {
-               $errorMessage = $e->getMessage();
+                $errorMessage = $e->getMessage();
             }
-            $category->setImage($newFilename);
         }
+
         return $errorMessage;
     }
 }

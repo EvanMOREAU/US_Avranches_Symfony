@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AttendanceController extends AbstractController
 {
@@ -41,15 +41,24 @@ class AttendanceController extends AbstractController
     #[Route('/appel/{category}', name: 'app_attendance_u')]
     public function attendance(string $category, UserRepository $UserRepository): Response
     {
-        // Get all users from the repository for the given category
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+             if (!$this->isGranted('ROLE_COACH')) {
+                 // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                 throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+             }
+         }
+         
+        // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
         $allUsers = $UserRepository->findAll($category);
 
-        // Filter users who belong to the specified category
+        // Filtrer les utilisateurs qui appartiennent à la catégorie spécifiée
         $usersInCategory = array_filter($allUsers, function ($user) use ($category) {
             return $user->getCategory() === $category;
         });
 
-        // Render the template based on the category
+        // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/attendance.html.twig', [
             'controller_name' => 'AttendanceController',
             'category' => $category,
@@ -57,7 +66,10 @@ class AttendanceController extends AbstractController
         ]);
     }
 
-    // TO DO, changer le code pour que les "selectedUserIds" aient "is_present=true" dans la base de données et "reason=null" dans la base de données puis "unselectedUserIds" aient "is_present=false" dans la base de données et "reason=La Raison à récupérer depuis la page" dans la base de données, puis que ça crée un nouveau gathering dans la table tbl_gathering avec la date et la catégorie qui a joué.
+    // À FAIRE : changer le code pour que les "selectedUserIds" aient "is_present=true" dans la base de données
+    // et "reason=null" dans la base de données puis "unselectedUserIds" aient "is_present=false" dans la base de données
+    // et "reason=La Raison à récupérer depuis la page" dans la base de données, puis que ça crée un nouveau gathering
+    // dans la table tbl_gathering avec la date et la catégorie qui a joué.
 
     #[Route('/update-matches-played-{category}', name: 'update_matches_played', methods: ['POST'])]
     public function updateMatchesPlayed(Request $request, EntityManagerInterface $entityManager): Response
@@ -68,31 +80,31 @@ class AttendanceController extends AbstractController
         $absentUserIds = $requestData['absentUserIds'];
         $categoryName = $requestData['category'];
 
-        // Find the Category entity by name
+        // Trouver l'entité Category par le nom
         $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $categoryName]);
 
         if (!$category) {
-            return new JsonResponse(['error' => 'Invalid category'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => 'Catégorie invalide'], Response::HTTP_BAD_REQUEST);
         }
 
-        // Create a new gathering
+        // Créer un nouveau gathering
         $gathering = new Gathering();
         $gathering->setGatheringDate(new \DateTime());
-        $gathering->setCategory($category); // Use the Category entity instance
+        $gathering->setCategory($category); // Utilise l'instance de l'entité Category
 
-        // Find the user (MadeBy) - You may need to adjust this based on your logic
-        $madeByUserId = 1; // Assuming you have the ID of the user who made the gathering
+        // Trouver l'utilisateur (MadeBy) - Vous devrez peut-être ajuster cela en fonction de votre logique
+        $madeByUserId = 1; // En supposant que vous avez l'ID de l'utilisateur qui a créé la rencontre
         $madeByUser = $entityManager->getRepository(User::class)->find($madeByUserId);
 
         if ($madeByUser) {
             $gathering->setMadeBy($madeByUser);
         } else {
-            return new JsonResponse(['error' => 'Invalid user for MadeBy'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => 'Utilisateur invalide pour MadeBy'], Response::HTTP_BAD_REQUEST);
         }
 
         $entityManager->persist($gathering);
 
-        // Update Attendance records for present users
+        // Mettre à jour les enregistrements de présence pour les utilisateurs présents
         foreach ($presentUserIds as $userId) {
             $user = $entityManager->getRepository(User::class)->find($userId);
 
@@ -106,7 +118,7 @@ class AttendanceController extends AbstractController
             }
         }
 
-        // Update Attendance records for absent users
+        // Mettre à jour les enregistrements de présence pour les utilisateurs absents
         foreach ($absentUserIds as $userData) {
             $userId = $userData['userId'];
             $reason = $userData['reason'];
@@ -123,7 +135,7 @@ class AttendanceController extends AbstractController
             }
         }
 
-        // Flush the changes to the database
+        // Envoyer les modifications à la base de données
         $entityManager->flush();
 
         return new JsonResponse(['message' => 'Matches played updated successfully']);
