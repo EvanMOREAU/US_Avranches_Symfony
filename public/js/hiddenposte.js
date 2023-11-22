@@ -1,15 +1,15 @@
-var url = window.location.pathname; // Récupère le chemin de l'URL, c'est-à-dire "/player/3/poste"
-var parts = url.split('/'); // Divise le chemin en segments en utilisant le caractère "/"
+var url2 = window.location.pathname; // Récupère le chemin de l'URL, c'est-à-dire "/player/3/poste"
+var parts = url2.split('/'); // Divise le chemin en segments en utilisant le caractère "/"
 var id = parts[2]; // L'ID se trouve à la position 2 dans cet exemple
 
 console.log(id); // Ceci affichera l'ID (dans ce cas, 3) dans la console
 
 function handleClick(event) {
-    var windowWidth = window.innerWidth;
-    var windowHeight = window.innerHeight;
+    var terrain = document.querySelector('.terrain');
 
-    var x = (event.clientX / windowWidth) * 100;
-    var y = (event.clientY / windowHeight) * 100;
+    var terrainRect = terrain.getBoundingClientRect();
+    var x = ((event.clientX - terrainRect.left) / terrainRect.width) * 100;
+    var y = ((event.clientY - terrainRect.top) / terrainRect.height) * 100;
 
     // Affichage des coordonnées en pourcentage dans la console
     console.log('Coordonnées du Clic :', 'X:', x.toFixed(2) + '%', 'Y:', y.toFixed(2) + '%');
@@ -17,17 +17,22 @@ function handleClick(event) {
     var coord = {
         coordX: x.toFixed(2)
     };
-    
+
     coordX(coord);
 
     var coord2 = {
         coordY: y.toFixed(2)
     };
-    
+
     coordY(coord2);
+
+    window.location.reload();
 }
 
-document.getElementById('terrain').addEventListener('click', handleClick);
+document.querySelector('.terrain').addEventListener('click', handleClick);
+
+// ... (le reste de votre script)
+
 
 function coordX(coord){
     var options = {

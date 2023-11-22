@@ -123,12 +123,22 @@ class PlayerController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/poste-cache', name: 'app_player_poste', methods: ['GET'])]
+    #[Route('/{id}/poste-cache', name: 'app_player_cacheposte', methods: ['GET'])]
     public function poste_cache(Player $player, LoggerInterface $logger): Response
     {
         // $logger->debug('poste() player->getFirstname() = ' . $player->getFirstname());
         return $this->render('player/hiddenposte.html.twig', [
             'player' => $player,
+        ]);
+    }
+
+    #[Route('/poste/poste-coach', name: 'app_player_coach', methods: ['GET'])]
+    public function poste_coach(LoggerInterface $logger): Response
+    {
+        $players = $this->getDoctrine()->getRepository(Player::class)->findAll();
+
+        return $this->render('player/coachposte.html.twig', [
+            'players' => $players,
         ]);
     }
 
