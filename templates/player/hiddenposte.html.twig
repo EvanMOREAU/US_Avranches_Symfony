@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Selection du poste
+
+{% endblock %}
+
+{% block body %}
+
+<link rel="stylesheet" href="/css/poste.css">
+
+<style>
+.terrain #cercle {
+    position: absolute;
+    max-width: 2%;
+    z-index: 2;
+}
+
+</style>
+
+<script>
+    var cercle = document.getElementById("cercle");
+    var playerCoordX = {{ player.posteCoordX|default(0) }};
+    var playerCoordY = {{ player.posteCoordY|default(0) }};
+
+    cercle.style.left = playerCoordX + "%";
+    cercle.style.top = playerCordY + "%";
+</script>
+
+<center>
+
+    <div class="terrain">
+        <img src="/images/terrain.jpg" alt="terrain" id="terrain">
+        <img src="/images/cercle.png" alt="cercle" id="cercle" {% if player.posteCoordX != null %}style="visibility:visible;"{% else %}style="visibility:hidden;"{% endif %}>
+    </div>
+
+</center>
+
+<script src="/js/hiddenposte.js"></script>
+
+
+{% endblock %}
+
