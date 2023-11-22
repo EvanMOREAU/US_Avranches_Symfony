@@ -25,7 +25,6 @@ class UserFixtures extends Fixture
         $superAdmin->setFirstName('SIO');
         $superAdmin->setLastName('2');
         $superAdmin->setDateNaissance($dateNaissance);
-        $superAdmin->setMatchesPlayed(0);
         $plaintextPassword = "admin";
         $hashedPassword = $this->passwordHasher->hashPassword(
             $superAdmin,
@@ -46,7 +45,6 @@ class UserFixtures extends Fixture
             $player->setFirstName($faker->firstName);
             $player->setLastName($faker->lastName);
             $player->setDateNaissance($randomBirthdate);
-            $player->setMatchesPlayed(0);
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $player,

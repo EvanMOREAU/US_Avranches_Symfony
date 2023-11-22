@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Team;
 use App\Entity\User;
+use App\Entity\Category;
+use App\Entity\Gathering;
+use App\Entity\Attendance;
 use Psr\Log\LoggerInterface;
-use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
-use App\Repository\PlayerRepository;
-use App\Service\UserVerificationService;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,295 +16,128 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AttendanceController extends AbstractController
 {
     private $logger;
     private $entityManager;
-    private $userVerificationService;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, UserVerificationService $userVerificationService)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
-        $this->userVerificationService = $userVerificationService;
     }
 
     #[Route('/appel', name: 'app_attendance')]
-    public function index(TeamRepository $TeamRepository): Response
+    public function index(CategoryRepository $CategoryRepository): Response
     {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
         return $this->render('attendance/index.html.twig', [
             'controller_name' => 'AttendanceController',
-            'teams' => $TeamRepository->findAll(),
+            'categories' => $CategoryRepository->findAll(),
         ]);
     }
 
-    #[Route('/appel/U10', name: 'app_attendance_U10')]
-    public function U10(UserRepository $UserRepository): Response
+    #[Route('/appel/{category}', name: 'app_attendance_u')]
+    public function attendance(string $category, UserRepository $UserRepository): Response
     {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-        
-        // Get all users from the repository
-        $allUsers = $UserRepository->findAll();
-        // TODO replace findAll() by findAllByCategorie('U10')
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+             if (!$this->isGranted('ROLE_COACH')) {
+                 // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                 throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+             }
+         }
+         
+        // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
+        $allUsers = $UserRepository->findAll($category);
 
-        // if user choose training {
-        //     $training = new training;
-        // }
-
-        // else if user choose match {
-        // $match = new match;
-        // }
-
-        // Filter users who belong to the 'U10' category
-        $usersInU10 = array_filter($allUsers, function ($user) {
-            return $user->getCategory() === 'U10';
+        // Filtrer les utilisateurs qui appartiennent à la catégorie spécifiée
+        $usersInCategory = array_filter($allUsers, function ($user) use ($category) {
+            return $user->getCategory() === $category;
         });
 
-        return $this->render('attendance/U10.html.twig', [
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/attendance.html.twig', [
             'controller_name' => 'AttendanceController',
-            'users' => $usersInU10,
+            'category' => $category,
+            'users' => $usersInCategory,
         ]);
     }
 
-    #[Route('/appel/U11', name: 'app_attendance_U11')]
-    public function U11(UserRepository $UserRepository): Response
+    // À FAIRE : changer le code pour que les "selectedUserIds" aient "is_present=true" dans la base de données
+    // et "reason=null" dans la base de données puis "unselectedUserIds" aient "is_present=false" dans la base de données
+    // et "reason=La Raison à récupérer depuis la page" dans la base de données, puis que ça crée un nouveau gathering
+    // dans la table tbl_gathering avec la date et la catégorie qui a joué.
+
+    #[Route('/update-matches-played-{category}', name: 'update_matches_played', methods: ['POST'])]
+    public function updateMatchesPlayed(Request $request, EntityManagerInterface $entityManager): Response
     {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        $requestData = json_decode($request->getContent(), true);
+
+        $presentUserIds = $requestData['presentUserIds'];
+        $absentUserIds = $requestData['absentUserIds'];
+        $categoryName = $requestData['category'];
+
+        // Trouver l'entité Category par le nom
+        $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $categoryName]);
+
+        if (!$category) {
+            return new JsonResponse(['error' => 'Catégorie invalide'], Response::HTTP_BAD_REQUEST);
         }
 
-        // Get all users from the repository
-        $allUsers = $UserRepository->findAll();
-        // TODO replace findAll() by findAllByCategorie('U11')
+        // Créer un nouveau gathering
+        $gathering = new Gathering();
+        $gathering->setGatheringDate(new \DateTime());
+        $gathering->setCategory($category); // Utilise l'instance de l'entité Category
 
-        // if user choose training {
-        //     $training = new training;
-        // }
+        // Trouver l'utilisateur (MadeBy) - Vous devrez peut-être ajuster cela en fonction de votre logique
+        $madeByUserId = 1; // En supposant que vous avez l'ID de l'utilisateur qui a créé la rencontre
+        $madeByUser = $entityManager->getRepository(User::class)->find($madeByUserId);
 
-        // else if user choose match {
-        // $match = new match;
-        // }
-
-        // Filter users who belong to the 'U11' category
-        $usersInU11 = array_filter($allUsers, function ($user) {
-            return $user->getCategory() === 'U11';
-        });
-
-        return $this->render('attendance/U11.html.twig', [
-            'controller_name' => 'AttendanceController',
-            'users' => $usersInU11,
-        ]);
-    }
-
-    #[Route('/appel/U12', name: 'app_attendance_U12')]
-    public function U12(UserRepository $UserRepository): Response
-    {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        if ($madeByUser) {
+            $gathering->setMadeBy($madeByUser);
+        } else {
+            return new JsonResponse(['error' => 'Utilisateur invalide pour MadeBy'], Response::HTTP_BAD_REQUEST);
         }
 
-        // Get all users from the repository
-        $allUsers = $UserRepository->findAll();
-        // TODO replace findAll() by findAllByCategorie('U12')
+        $entityManager->persist($gathering);
 
-        // if user choose training {
-        //     $training = new training;
-        // }
+        // Mettre à jour les enregistrements de présence pour les utilisateurs présents
+        foreach ($presentUserIds as $userId) {
+            $user = $entityManager->getRepository(User::class)->find($userId);
 
-        // else if user choose match {
-        // $match = new match;
-        // }
-
-        // Filter users who belong to the 'U12' category
-        $usersInU12 = array_filter($allUsers, function ($user) {
-            return $user->getCategory() === 'U12';
-        });
-
-        return $this->render('attendance/U12.html.twig', [
-            'controller_name' => 'AttendanceController',
-            'users' => $usersInU12,
-        ]);
-    }
-
-    #[Route('/appel/U13', name: 'app_attendance_U13')]
-    public function U13(UserRepository $UserRepository): Response
-    {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+            if ($user) {
+                $attendance = new Attendance();
+                $attendance->setUser($user);
+                $attendance->setGathering($gathering);
+                $attendance->setIsPresent(true);
+                $attendance->setReason(null);
+                $entityManager->persist($attendance);
+            }
         }
 
-        // Get all users from the repository
-        $allUsers = $UserRepository->findAll();
-        // TODO replace findAll() by findAllByCategorie('U13')
+        // Mettre à jour les enregistrements de présence pour les utilisateurs absents
+        foreach ($absentUserIds as $userData) {
+            $userId = $userData['userId'];
+            $reason = $userData['reason'];
 
-        // if user choose training {
-        //     $training = new training;
-        // }
+            $user = $entityManager->getRepository(User::class)->find($userId);
 
-        // else if user choose match {
-        // $match = new match;
-        // }
-
-        // Filter users who belong to the 'U13' category
-        $usersInU13 = array_filter($allUsers, function ($user) {
-            return $user->getCategory() === 'U13';
-        });
-
-        return $this->render('attendance/U13.html.twig', [
-            'controller_name' => 'AttendanceController',
-            'users' => $usersInU13,
-        ]);
-    }
-
-    #[Route('/update-matches-played-u10', name: 'update_matches_played_u10', methods: ['POST'])]
-    public function updateMatchesPlayedU10(Request $request): Response
-    {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+            if ($user) {
+                $attendance = new Attendance();
+                $attendance->setUser($user);
+                $attendance->setGathering($gathering);
+                $attendance->setIsPresent(false);
+                $attendance->setReason($reason);
+                $entityManager->persist($attendance);
+            }
         }
 
-        $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
-        $team = $this->entityManager->getRepository(Team::class)->find(5);
-        $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
+        // Envoyer les modifications à la base de données
+        $entityManager->flush();
 
-        // // Log the request content
-        // $content = $request->getContent();
-        // $this->logger->info('PHP Selected User IDs: ' . json_encode($selectedUserIds));
-
-        // Update the matches_played field for each selected user
-        foreach ($selectedUserIds as $userId) {
-            // Find the user entity by its ID
-            $user = $this->entityManager->getRepository(User::class)->find($userId);
-
-            // Update the matches_played field
-            $user->setMatchesPlayed($user->getMatchesPlayed() + 1);
-
-            // Persist the changes to the database
-            $this->entityManager->persist($user);
-        }
-
-        // Flush the changes to the database
-        $this->entityManager->flush();
-
-        // $this->logger->info("updateMatchesPlayed()");
-
-        // Return a JSON response indicating the success of the update
-        return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
-    }
-
-    #[Route('/update-matches-played-u11', name: 'update_matches_played_u11', methods: ['POST'])]
-    public function updateMatchesPlayedU11(Request $request): Response
-    {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
-        $team = $this->entityManager->getRepository(Team::class)->find(6);
-        $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
-
-        // // Log the request content
-        // $content = $request->getContent();
-        // $this->logger->info('PHP Selected User IDs: ' . json_encode($selectedUserIds));
-
-        // Update the matches_played field for each selected user
-        foreach ($selectedUserIds as $userId) {
-            // Find the user entity by its ID
-            $user = $this->entityManager->getRepository(User::class)->find($userId);
-
-            // Update the matches_played field
-            $user->setMatchesPlayed($user->getMatchesPlayed() + 1);
-
-            // Persist the changes to the database
-            $this->entityManager->persist($user);
-        }
-
-        // Flush the changes to the database
-        $this->entityManager->flush();
-
-        // $this->logger->info("updateMatchesPlayed()");
-
-        // Return a JSON response indicating the success of the update
-        return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
-    }
-
-    #[Route('/update-matches-played-u12', name: 'update_matches_played_u12', methods: ['POST'])]
-    public function updateMatchesPlayedU12(Request $request): Response
-    {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
-        $team = $this->entityManager->getRepository(Team::class)->find(7);
-        $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
-
-        // // Log the request content
-        // $content = $request->getContent();
-        // $this->logger->info('PHP Selected User IDs: ' . json_encode($selectedUserIds));
-
-        // Update the matches_played field for each selected user
-        foreach ($selectedUserIds as $userId) {
-            // Find the user entity by its ID
-            $user = $this->entityManager->getRepository(User::class)->find($userId);
-
-            // Update the matches_played field
-            $user->setMatchesPlayed($user->getMatchesPlayed() + 1);
-
-            // Persist the changes to the database
-            $this->entityManager->persist($user);
-        }
-
-        // Flush the changes to the database
-        $this->entityManager->flush();
-
-        // $this->logger->info("updateMatchesPlayed()");
-
-        // Return a JSON response indicating the success of the update
-        return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
-    }
-
-    #[Route('/update-matches-played-u13', name: 'update_matches_played_u13', methods: ['POST'])]
-    public function updateMatchesPlayedU13(Request $request): Response
-    {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
-        $team = $this->entityManager->getRepository(Team::class)->find(7);
-        $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
-
-        // // Log the request content
-        // $content = $request->getContent();
-        // $this->logger->info('PHP Selected User IDs: ' . json_encode($selectedUserIds));
-
-        // Update the matches_played field for each selected user
-        foreach ($selectedUserIds as $userId) {
-            // Find the user entity by its ID
-            $user = $this->entityManager->getRepository(User::class)->find($userId);
-
-            // Update the matches_played field
-            $user->setMatchesPlayed($user->getMatchesPlayed() + 1);
-
-            // Persist the changes to the database
-            $this->entityManager->persist($user);
-        }
-
-        // Flush the changes to the database
-        $this->entityManager->flush();
-
-        // $this->logger->info("updateMatchesPlayed()");
-
-        // Return a JSON response indicating the success of the update
-        return new JsonResponse(['message' => 'PHP Matches played updated successfully']);
+        return new JsonResponse(['message' => 'Matches played updated successfully']);
     }
 }
