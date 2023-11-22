@@ -62,6 +62,14 @@ body {
   cursor: pointer;
   transition: background-color 0.3s;
 }
+/* Ajoute cette règle pour la classe btn-gray */
+.form-button.btn-gray {
+  background-color: grey;
+}
+
+.form-button.btn-gray:hover {
+  background-color: rgb(112, 112, 112);
+}
 
 .form-button:hover {
   background-color: #216fd9;

@@ -12,6 +12,7 @@
           <link href="/css/navbar.css" rel="stylesheet" />
           <link href="/css/pagebase.css" rel="stylesheet" />
           <link href="/css/param.css" rel="stylesheet" />
+
           {{ encore_entry_link_tags('app') }}
           <!--Styles.css-->
 			    <link rel="stylesheet" href="/css/bootstrap.css">
@@ -20,6 +21,7 @@
         {% block javascripts %}
         <script type="text/javascript" src="/js/tests.js"></script>
             {{ encore_entry_script_tags('app') }}
+            <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
         {% endblock %}
     </head>
@@ -49,7 +51,7 @@
           </div>
           <div class="btnbht-group">
             <button class="btnbht" onClick='redirectToPage("/appel")'>Appel</button>
-            <button class="btnbht" onClick='redirectToPage("/pdf")'>Fiche PDF</button>
+            <button class="btnbht" onClick='redirectToPage("/tests")'>Tests</button>
           </div>
           <div class="btnbht-group">
             <button class="btnbht" onClick='redirectToPage("/profile")'>Administration</button>
