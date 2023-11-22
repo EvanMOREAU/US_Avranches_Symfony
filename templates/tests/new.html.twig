@@ -44,7 +44,7 @@
     <div class="container">
         <h1>Nouveau Test</h1>
 
-        {{ form_start(form) }}
+       {{ form_start(form, {'method': 'POST'}) }}
         
         <div class="form-group {% if form.vma.vars.errors|length > 0 %}has-error{% endif %}">
             {{ form_label(form.vma, 'VMA (0 à 20 km/h)', {'label_attr': {'class': 'form-label'}}) }}

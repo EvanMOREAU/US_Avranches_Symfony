@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\Annotation\IsGranted;
 #[Route('/tests')]
 class TestsController extends AbstractController
 {
-    #[Route('/', name: 'app_tests_index')]
+    #[Route('/', name: 'app_tests_index', methods: ['GET', 'POST'])]
     public function index(Request $request, UserRepository $userRepository): Response
     {
         $user = $this->getUser();
@@ -140,7 +140,7 @@ class TestsController extends AbstractController
             'form' => $form,
         ]);
     }
-    #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET'])]
+    #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_SUPER_ADMIN")]
     public function delete(Request $request, TestsRepository $testsRepository, $id): Response
     {
