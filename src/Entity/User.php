@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -46,6 +48,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?int $matches_played = null;
+
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tests::class)]
+    private Collection $tests;
+
+    public function __construct()
+    {
+        $this->tests = new ArrayCollection();
+    }
 
     #[ORM\Column(nullable: true)]
     private ?float $weight = null;
@@ -216,6 +227,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+
+    /**
+     * @return Collection<int, Tests>
+     */
+    public function getTests(): Collection
+    {
+        return $this->tests;
+    }
+
+    public function addTest(Tests $test): static
+    {
+        if (!$this->tests->contains($test)) {
+            $this->tests->add($test);
+            $test->setUser($this);
+        }
+      
     public function getWeight(): ?float
     {
         return $this->weight;
@@ -225,9 +252,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->weight = $weight;
 
+
         return $this;
     }
 
+
+    public function removeTest(Tests $test): static
+    {
+        if ($this->tests->removeElement($test)) {
+            // set the owning side to null (unless already changed)
+            if ($test->getUser() === $this) {
+                $test->setUser(null);
+            }
+        }
+      
     public function getProfileImage(): ?string
     {
         return $this->profile_image;
@@ -260,6 +298,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsCodeValidated(bool $isCodeValidated): static
     {
         $this->isCodeValidated = $isCodeValidated;
+
 
         return $this;
     }
