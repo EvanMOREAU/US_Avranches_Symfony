@@ -51,7 +51,7 @@
             <span class="hover-text" aria-hidden="true">&nbsp;Bienvenue&nbsp;</span>
         </button>
           <div class="btnbht-group">
-            <button class="btnbht" {#onClick='redirectToPage/)'#}>Statistiques</button>
+            <button class="btnbht" {#onClick=('redirectToPage/)'#}>Statistiques</button>
             <button class="btnbht">Matchs</button>
           </div>
           <div class="btnbht-group">
@@ -60,7 +60,7 @@
           </div>
           <div class="btnbht-group">
             <button class="btnbht">Paramètres</button>
-            <button class="btnbht">Fiche PDF</button>
+            <button class="btnbht" onClick='redirectToPage("/pdf")'>Fiche PDF</button>
           </div>
         </div>
   {% endblock %}
