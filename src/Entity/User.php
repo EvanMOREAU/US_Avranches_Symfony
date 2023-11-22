@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
@@ -48,6 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $matches_played = null;
 
+
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tests::class)]
     private Collection $tests;
 
@@ -55,6 +57,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->tests = new ArrayCollection();
     }
+
+    #[ORM\Column(nullable: true)]
+    private ?float $weight = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $profile_image = null;
+
+    /**
+    * @Assert\NotBlank(groups={"registration", "resetPassword"})
+    * @Assert\Length(
+    *     min=6,
+    *     minMessage="Votre mot de passe doit comporter au moins {{ limit }} caractères",
+    *     groups={"registration", "resetPassword"}
+    * )
+    */
+    private $plainPassword;
+
+    #[ORM\Column]
+    private ?bool $isCodeValidated = false;
 
     public function getId(): ?int
     {
@@ -200,13 +221,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function setMatchesPlayed(int $matches_played): static
-    {   if(!isset($matches_played)){
-            $matches_played = 0;
-        }
+    {
         $this->matches_played = $matches_played;
 
         return $this;
     }
+
 
     /**
      * @return Collection<int, Tests>
@@ -222,9 +242,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->tests->add($test);
             $test->setUser($this);
         }
+      
+    public function getWeight(): ?float
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?float $weight): static
+    {
+        $this->weight = $weight;
+
 
         return $this;
     }
+
 
     public function removeTest(Tests $test): static
     {
@@ -234,6 +265,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $test->setUser(null);
             }
         }
+      
+    public function getProfileImage(): ?string
+    {
+        return $this->profile_image;
+    }
+
+    public function setProfileImage(?string $profile_image): static
+    {
+        $this->profile_image = $profile_image;
+
+        return $this;
+    }
+
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($password): self
+    {
+        $this->plainPassword = $password;
+
+        return $this;
+    }
+
+    public function isIsCodeValidated(): ?bool
+    {
+        return $this->isCodeValidated;
+    }
+
+    public function setIsCodeValidated(bool $isCodeValidated): static
+    {
+        $this->isCodeValidated = $isCodeValidated;
+
 
         return $this;
     }

@@ -34,7 +34,7 @@ class PdfController extends AbstractController
 
                 // Ajout d'une nouvelle page
                 $pdf->AddPage();
-                $pdf->setJPEGQuality(75);
+                $pdf->setJPEGQuality(75); 
 
                 // Calcul des dimensions de la page
                 $largeurPage = $pdf->getPageWidth() + 30;
@@ -64,16 +64,16 @@ class PdfController extends AbstractController
                 <br><hr><br><div></div>
                 <b>Catégorie : </b>' . $user->getCategory() . '
                 <br><hr><br><div></div>
-                <b>Nombre de matchs joués :</b>
+                <b>Nombre de matchs joués : 2</b>
                 <br><hr><br><div></div>
-                <b>Poids : </b>
+                <b>Poids : 61kg</b>
                 <br><hr><br><div></div>
-                <b>Taille : </b>
+                <b>Taille : 173cm</b>
                 <br><hr><br><div></div>
                 </p>
 
                 <p><b> Contact :</b>
-                <br> Christelle DELARUE<br>
+                <br> ChristelleGamer DELARUE<br>
                 <br>
                 Club House US Avranches MSM<br>
                 Allée Jacques Anquetil<br>
@@ -93,7 +93,7 @@ class PdfController extends AbstractController
                 $pdf->Image('img/graph_'. $user->getFirstName() .'.jpg', 95, 150, 100, 100, '', '', '', false, 300, '', false, false, 1, false, false, false);
 
                 // Ajout d'une image au PDF
-                $pdf->Image('img/anonyme.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                $pdf->Image('img/joueur.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
 
                 // Génération du PDF et envoi en réponse
                 return $pdf->Output('US-Avranches-' . '.pdf', 'I');
