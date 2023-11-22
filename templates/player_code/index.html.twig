@@ -3,7 +3,6 @@
 
 {% block body %}
 <link rel="stylesheet" href="/css/PlayerCode.css">
-
     <div class="center-container">
         {% for player_code in player_codes %}
             <button class='buttoncode' onClick='redirectToPage("{{ path('app_player_code_edit', {'id': player_code.id}) }}")'>

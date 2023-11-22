@@ -45,4 +45,12 @@ class PlayerCodeRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+   public function findCurrentCode(): ?PlayerCode
+   {
+       return $this->createQueryBuilder('p')
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
 }

@@ -3,24 +3,37 @@
 namespace App\Controller;
 
 use App\Entity\Tests;
-use App\Form\DataTransformer\CooperTimeTransformer;
 use App\Form\TestsFormType;
 use Doctrine\ORM\EntityManager;
 use App\Repository\TestsRepository;
+use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Form\DataTransformer\CooperTimeTransformer;
 use Symfony\Component\Security\Core\Annotation\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
 #[Route('/tests')]
 class TestsController extends AbstractController
 {
+
+    private $userVerificationService;
+
+    public function __construct(UserVerificationService $userVerificationService)
+    {
+        $this->userVerificationService = $userVerificationService;
+    }
+    
     #[Route('/', name: 'app_tests_index')]
     public function index(TestsRepository $TestsRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $tests = $TestsRepository->findAll();
         
         return $this->render('tests/index.html.twig', [
@@ -32,6 +45,10 @@ class TestsController extends AbstractController
     #[Route('/new', name: 'app_tests_new', methods: ['GET', 'POST'])]
     public function new(Request $request, TestsRepository $testsRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $test = new Tests();
         $form = $this->createForm(TestsFormType::class, $test);
         
@@ -59,6 +76,10 @@ class TestsController extends AbstractController
     #[IsGranted("ROLE_SUPER_ADMIN")]
     public function edit(Request $request, TestsRepository $testsRepository, $id): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $test = $testsRepository->find($id);
 
         if (!$test) {
@@ -89,6 +110,10 @@ class TestsController extends AbstractController
     #[IsGranted("ROLE_SUPER_ADMIN")]
     public function delete(Request $request, TestsRepository $testsRepository, $id): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $test = $testsRepository->find($id);
 
         if (!$test) {

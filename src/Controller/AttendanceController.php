@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use App\Repository\PlayerRepository;
+use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,16 +22,22 @@ class AttendanceController extends AbstractController
 {
     private $logger;
     private $entityManager;
+    private $userVerificationService;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, UserVerificationService $userVerificationService)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
+        $this->userVerificationService = $userVerificationService;
     }
 
     #[Route('/appel', name: 'app_attendance')]
     public function index(TeamRepository $TeamRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('attendance/index.html.twig', [
             'controller_name' => 'AttendanceController',
             'teams' => $TeamRepository->findAll(),
@@ -40,6 +47,10 @@ class AttendanceController extends AbstractController
     #[Route('/appel/U10', name: 'app_attendance_U10')]
     public function U10(UserRepository $UserRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+        
         // Get all users from the repository
         $allUsers = $UserRepository->findAll();
         // TODO replace findAll() by findAllByCategorie('U10')
@@ -66,6 +77,10 @@ class AttendanceController extends AbstractController
     #[Route('/appel/U11', name: 'app_attendance_U11')]
     public function U11(UserRepository $UserRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         // Get all users from the repository
         $allUsers = $UserRepository->findAll();
         // TODO replace findAll() by findAllByCategorie('U11')
@@ -92,6 +107,10 @@ class AttendanceController extends AbstractController
     #[Route('/appel/U12', name: 'app_attendance_U12')]
     public function U12(UserRepository $UserRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         // Get all users from the repository
         $allUsers = $UserRepository->findAll();
         // TODO replace findAll() by findAllByCategorie('U12')
@@ -118,6 +137,10 @@ class AttendanceController extends AbstractController
     #[Route('/appel/U13', name: 'app_attendance_U13')]
     public function U13(UserRepository $UserRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         // Get all users from the repository
         $allUsers = $UserRepository->findAll();
         // TODO replace findAll() by findAllByCategorie('U13')
@@ -144,6 +167,10 @@ class AttendanceController extends AbstractController
     #[Route('/update-matches-played-u10', name: 'update_matches_played_u10', methods: ['POST'])]
     public function updateMatchesPlayedU10(Request $request): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
         $team = $this->entityManager->getRepository(Team::class)->find(5);
         $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
@@ -176,6 +203,10 @@ class AttendanceController extends AbstractController
     #[Route('/update-matches-played-u11', name: 'update_matches_played_u11', methods: ['POST'])]
     public function updateMatchesPlayedU11(Request $request): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
         $team = $this->entityManager->getRepository(Team::class)->find(6);
         $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
@@ -208,6 +239,10 @@ class AttendanceController extends AbstractController
     #[Route('/update-matches-played-u12', name: 'update_matches_played_u12', methods: ['POST'])]
     public function updateMatchesPlayedU12(Request $request): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
         $team = $this->entityManager->getRepository(Team::class)->find(7);
         $team->setMatchesPlayed($team->getMatchesPlayed() + 1);
@@ -240,6 +275,10 @@ class AttendanceController extends AbstractController
     #[Route('/update-matches-played-u13', name: 'update_matches_played_u13', methods: ['POST'])]
     public function updateMatchesPlayedU13(Request $request): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $selectedUserIds = json_decode($request->getContent(), true)['selectedUserIds'];
         $team = $this->entityManager->getRepository(Team::class)->find(7);
         $team->setMatchesPlayed($team->getMatchesPlayed() + 1);

@@ -6,6 +6,7 @@ use TCPDF;
 use App\Entity\Pdf;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\UserVerificationService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,9 +14,20 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PdfController extends AbstractController
 {
+    private $userVerificationService;
+
+    public function __construct(UserVerificationService $userVerificationService)
+    {
+        $this->userVerificationService = $userVerificationService;
+    }
+    
     #[Route('/pdf', name: 'app_pdf')]
     public function pdf(UserRepository $userRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         // Récupérez le token d'authentification de l'utilisateur actuellement connecté.
         $token = $this->get('security.token_storage')->getToken();
 
@@ -107,6 +119,10 @@ class PdfController extends AbstractController
     #[Route('/pdftest', name: 'app_pdftest')]
     public function pdfTest(): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $user = $this->getUser(); // Récupérez l'utilisateur actuellement connecté
 
         return $this->render('/pdf/index.html.twig', [

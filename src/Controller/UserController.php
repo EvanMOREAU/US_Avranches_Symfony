@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Services\ImageUploaderHelper;
+use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,9 +17,20 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[Route('/user')]
 class UserController extends AbstractController
 {
+    private $userVerificationService;
+
+    public function __construct(UserVerificationService $userVerificationService)
+    {
+        $this->userVerificationService = $userVerificationService;
+    }
+    
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
         ]);
@@ -27,6 +39,10 @@ class UserController extends AbstractController
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -47,43 +63,22 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);
     }
-    // #[Route('/personnal', name: 'app_profile_personnal', methods: ['GET', 'POST'])]
-    // public function personnal(Request $request, ImageUploaderHelper $imageUploaderHelper,UserRepository $userRepository): Response
-    //     {
-    //     $user = $this->getUser(); // Récupère l'utilisateur actuellement connecté
-
-    //     $form = $this->createForm(ProfileType::class);
-    //     $form->handleRequest($request);
-    //     $formView = $form->createView();
-
-    //     if ($form->isSubmitted() && $form->isValid()) {
-
-    //         if (!empty($errorMessage)) {
-    //             $this->addFlash ('danger', 'An error has occured: '. $errorMessage);
-    //         }
-    //         $userRepository->save($user, true);
-            
-    //         return $this->render('/profile/profile.html.twig', [
-    //             'connected_user' => $user,
-    //             'controller_name' => 'ProfileController',
-    //             'form' => $formView,
-    //         ]);
-    //     }
-
-    //     return $this->render('profile/profile.html.twig', [
-    //         'connected_user' => $user,
-    //         'controller_name' => 'ProfileController',
-    //         'form' => $formView,
-    //     ]);
-    // }    
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserRepository $userRepository, ImageUploaderHelper $imageUploaderHelper, UserPasswordHasherInterface $passwordHasher): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
@@ -122,6 +117,10 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $entityManager->remove($user);
             $entityManager->flush();

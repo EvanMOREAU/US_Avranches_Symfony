@@ -6,6 +6,7 @@ use App\Form\ProfileType;
 use App\Repository\UserRepository;
 use App\Services\ImageUploaderHelper;
 use Symfony\Component\Form\FormError;
+use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,17 +20,21 @@ class ProfileController extends AbstractController
 {
 
     private $passwordEncoder;
+    private $userVerificationService;
 
-    public function __construct(UserPasswordHasherInterface $passwordEncoder)
+    public function __construct(UserPasswordHasherInterface $passwordEncoder, UserVerificationService $userVerificationService)
     {
         $this->passwordEncoder = $passwordEncoder;
+        $this->userVerificationService = $userVerificationService;
     }
-
-
 
     #[Route('/', name: 'app_profile_index')]
     public function index(): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('profile/index.html.twig', [
             'controller_name' => 'ProfileController',
         ]);
@@ -38,6 +43,10 @@ class ProfileController extends AbstractController
 
     #[Route('/password', name: 'app_profile_password', methods: ['GET', 'POST'])]
     public function password(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder){
+
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
 
         $this->denyAccessUnlessGranted('ROLE_USER');
         $user = $this->getUser();
