@@ -43,11 +43,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $last_name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Team $team = null;
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
+    private Collection $attendances;
 
-    #[ORM\Column]
-    private ?int $matches_played = null;
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Category $Category = null;
+
+    #[ORM\OneToMany(mappedBy: 'MadeBy', targetEntity: Gathering::class)]
+    private Collection $gatherings;
+
+    public function __construct()
+    {
+        $this->attendances = new ArrayCollection();
+        $this->gatherings = new ArrayCollection();
+    }
 
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tests::class)]
@@ -202,27 +211,70 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $diff = $this_year->diff($this->date_naissance);
         return 'U'.$diff->y + 1;
     }
-    
-    public function getTeam(): ?Team
+
+    /**
+     * @return Collection<int, Attendance>
+     */
+    public function getAttendances(): Collection
     {
-        return $this->team;
+        return $this->attendances;
     }
 
-    public function setTeam(?Team $team): static
+    public function addAttendance(Attendance $attendance): static
     {
-        $this->team = $team;
+        if (!$this->attendances->contains($attendance)) {
+            $this->attendances->add($attendance);
+            $attendance->setUser($this);
+        }
 
         return $this;
     }
 
-    public function getMatchesPlayed(): ?int
+    public function removeAttendance(Attendance $attendance): static
     {
-        return $this->matches_played;
+        if ($this->attendances->removeElement($attendance)) {
+            // set the owning side to null (unless already changed)
+            if ($attendance->getUser() === $this) {
+                $attendance->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
-    public function setMatchesPlayed(int $matches_played): static
+    public function setCategory(?Category $Category): static
     {
-        $this->matches_played = $matches_played;
+        $this->Category = $Category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Gathering>
+     */
+    public function getGatherings(): Collection
+    {
+        return $this->gatherings;
+    }
+
+    public function addGathering(Gathering $gathering): static
+    {
+        if (!$this->gatherings->contains($gathering)) {
+            $this->gatherings->add($gathering);
+            $gathering->setMadeBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGathering(Gathering $gathering): static
+    {
+        if ($this->gatherings->removeElement($gathering)) {
+            // set the owning side to null (unless already changed)
+            if ($gathering->getMadeBy() === $this) {
+                $gathering->setMadeBy(null);
+            }
+        }
 
         return $this;
     }
@@ -242,7 +294,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->tests->add($test);
             $test->setUser($this);
         }
-      
+    }
     public function getWeight(): ?float
     {
         return $this->weight;
@@ -251,7 +303,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setWeight(?float $weight): static
     {
         $this->weight = $weight;
-
 
         return $this;
     }
@@ -265,7 +316,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $test->setUser(null);
             }
         }
-      
+    }
     public function getProfileImage(): ?string
     {
         return $this->profile_image;
