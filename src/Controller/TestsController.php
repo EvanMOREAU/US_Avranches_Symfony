@@ -30,13 +30,13 @@ class TestsController extends AbstractController
     }
     
     #[Route('/', name: 'app_tests_index')]
-    public function index(Request $request, UserRepository $userRepository): Response
+    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository): Response
     {
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
 
-        $tests = $TestsRepository->findAll();
+        $tests = $testsRepository->findAll();
         
         $user = $this->getUser();
         $selectedUserId = $request->query->get('userId');

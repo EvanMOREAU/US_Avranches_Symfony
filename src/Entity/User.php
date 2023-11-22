@@ -242,7 +242,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->tests->add($test);
             $test->setUser($this);
         }
-      
+    }
     public function getWeight(): ?float
     {
         return $this->weight;
@@ -251,7 +251,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setWeight(?float $weight): static
     {
         $this->weight = $weight;
-
 
         return $this;
     }
@@ -265,7 +264,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $test->setUser(null);
             }
         }
-      
+    }
     public function getProfileImage(): ?string
     {
         return $this->profile_image;
