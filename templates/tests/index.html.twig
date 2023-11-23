@@ -144,7 +144,7 @@
                                 <div class="col">
                                     <div class="card green" style="position: relative;">
                                         <div class="card-body">
-                                            <h5 class="card-title">Test de {{ test.user.getFirstName() }}</h5>
+                                            <h5 class="card-title">Test de {{ test.user.getFirstName() }} ({{ test.user.getCategory() }})</h5>
                                             <p class="card-text">
                                                 VMA : {{ test.vma }} km/h<br>
                                                 Cooper (12min) : {{ test.demicooper }} m<br>
@@ -157,7 +157,7 @@
                                                 Date du test : {{ test.date|date('d-m-Y H:i:s') }}
                                             </p>
                                             {% if is_granted("ROLE_SUPER_ADMIN") %}
-                                                <div class="test-owner">Joueur : {{ test.user.getFirstName() }}</div>
+                                                <div class="test-owner">Joueur : {{ test.user.getFirstName() }} ({{ test.user.getCategory() }})</div>
                                                 <div class="d-flex justify-content-between mt-3">
                                                     <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Supprimer</a>
                                                     <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i> Modifier</a>
