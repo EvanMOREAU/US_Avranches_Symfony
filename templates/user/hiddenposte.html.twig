@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Selection du poste
+
+{% endblock %}
+
+{% block body %}
+<script>
+    var url2 = window.location.pathname; // Récupère le chemin de l'URL, c'est-à-dire "/user/3/poste"
+    var parts = url2.split('/'); // Divise le chemin en segments en utilisant le caractère "/"
+    var id = parts[2]; // L'ID se trouve à la position 2 dans cet exemple
+    var coordX = {{ user.posteCoordX }};
+    var coordY = {{ user.posteCordY }};
+
+    if (coordX !== null && coordY !== null) {
+        window.location.href = "/user/"+id+"/poste";
+    }
+</script>
+
+<link rel="stylesheet" href="/css/poste.css">
+
+<style>
+h1{
+    color: white;
+}
+#cercle:hover + .texte {
+    visibility: visible;
+}
+.texte{
+    position: absolute;
+    color: white;
+    visibility: hidden;
+    background-color: rgba(13,82,139,1);
+    left: {{ user.posteCoordX - 1 }}%;
+    top: {{ user.posteCordY - 5 }}%;
+}
+.terrain #cercle {
+    position: absolute;
+    max-width: 2%;
+    z-index: 2;
+    left: {{ user.posteCoordX - 1 }}%;
+    top: {{ user.posteCordY - 0.75 }}%;
+}
+
+</style>
+
+<center>
+    <div class="terrain">
+        <h1>Où souhaitez-vous jouer ?</h1>
+        <img src="/images/terrain.jpg" alt="terrain" id="terrain">
+        <img src="/images/cercle.png" alt="cercle" id="cercle" {% if user.posteCoordX != null %}style="visibility:visible;"{% else %}style="visibility:hidden;"{% endif %}>
+        <p class="texte">{{ user.getfirstname }} {{ user.getlastname }}</p>
+    </div>
+
+</center>
+
+<script src="/js/hiddenposte.js"></script>
+
+
+{% endblock %}
+

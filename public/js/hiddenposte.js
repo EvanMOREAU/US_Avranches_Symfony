@@ -43,7 +43,7 @@ function coordX(coord){
         body: new URLSearchParams(coord)
     };
 
-    var url = "/player/poste/set-poste-cache-x/"+id;
+    var url = "/user/poste/set-poste-cache-x/"+id;
 
     fetch(url, options)
         .then(response => response.json())
@@ -64,7 +64,7 @@ function coordY(coord){
         body: new URLSearchParams(coord)
     };
 
-    var url = "/player/poste/set-poste-cache-y/"+id;
+    var url = "/user/poste/set-poste-cache-y/"+id;
 
     fetch(url, options)
         .then(response => response.json())
