@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ChartsRepository::class)]
+#[ORM\Table(name:'tbl_charts')]
 class Charts
 {
     #[ORM\Id]

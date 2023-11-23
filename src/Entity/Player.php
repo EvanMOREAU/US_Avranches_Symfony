@@ -24,10 +24,6 @@ class Player
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $birthdate = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Players')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Team $team = null;
-
     #[ORM\Column]
     private ?int $matches_played = null;
 
@@ -80,18 +76,6 @@ class Player
     public function setBirthdate(\DateTimeInterface $birthdate): static
     {
         $this->birthdate = $birthdate;
-
-        return $this;
-    }
-
-    public function getTeam(): ?Team
-    {
-        return $this->team;
-    }
-
-    public function setTeam(?Team $team): static
-    {
-        $this->team = $team;
 
         return $this;
     }
