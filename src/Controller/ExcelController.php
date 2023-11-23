@@ -10,9 +10,6 @@ use App\Entity\User;
 
 class ExcelController extends AbstractController
 {
-    /**
-     * @Route("/excel", name="excel")
-     */
     public function excel(): Response
     {
         // Récupérez les données de la base de données
@@ -61,6 +58,9 @@ class ExcelController extends AbstractController
 
             // Ajoutez une feuille uniquement si l'utilisateur a des tests
             if ($user->getTests()->count() > 0) {
+
+                // Réinitialisez le numéro du test à l'intérieur de la boucle des utilisateurs
+                $numTest = 0;
 
                 // Créez une nouvelle feuille pour chaque test
                 $testSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Tests ' . $user->getLastName() . ' ' .$user->getFirstName());
