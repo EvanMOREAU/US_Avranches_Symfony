@@ -24,11 +24,10 @@ class TestsController extends AbstractController
 
     private $userVerificationService;
 
-    public function __construct(UserVerificationService $userVerificationService)
-    {
+    public function __construct(UserVerificationService $userVerificationService){
         $this->userVerificationService = $userVerificationService;
     }
-    
+
     #[Route('/', name: 'app_tests_index')]
     public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository): Response
     {
@@ -162,7 +161,7 @@ class TestsController extends AbstractController
             'form' => $form,
         ]);
     }
-    #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET'])]
+    #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_SUPER_ADMIN")]
     public function delete(Request $request, TestsRepository $testsRepository, $id): Response
     {

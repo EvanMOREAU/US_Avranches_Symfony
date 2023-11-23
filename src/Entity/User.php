@@ -52,19 +52,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'MadeBy', targetEntity: Gathering::class)]
     private Collection $gatherings;
 
-    public function __construct()
-    {
-        $this->attendances = new ArrayCollection();
-        $this->gatherings = new ArrayCollection();
-    }
-
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tests::class)]
     private Collection $tests;
 
     public function __construct()
     {
+        $this->attendances = new ArrayCollection();
+        $this->gatherings = new ArrayCollection();
         $this->tests = new ArrayCollection();
+
     }
 
     #[ORM\Column(nullable: true)]
