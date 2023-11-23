@@ -4,83 +4,29 @@
     Team Members
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="/css/team.css" rel="stylesheet"/>
+{% endblock %}
+
 {% block body %}
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-            color: #495057;
-        }
-
-        .container-team {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            padding: 20px;
-        }
-
-        .card {
-            width: 18rem;
-            margin: 10px;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.3s;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-body {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .card-title {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: #007bff;
-        }
-
-        .card-text {
-            margin-bottom: 10px;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-    </style>
 
     <div class="container-team">
-        <h2>Team Members</h2>
-        {% set sortedUsers = users|sort((a, b) => a.getFirstName() <=> b.getFirstName()) %}
+        <h2>Mon Équipe ({{ app.user.getCategory() }})</h2>
+        <div class="cards">
+            {% set sortedUsers = users|sort((a, b) => a.getFirstName() <=> b.getFirstName()) %}
 
-        {% for user in sortedUsers %}
-            {% if app.user is defined and user.getCategory() == app.user.category %}
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ user.getFirstName() }}</h5>
-                        <p class="card-text">Primary Position: </p>
-                        <p class="card-text">Secondary Position: </p>
-                        <a href="#" class="btn btn-primary">View Profile</a>
+            {% for user in sortedUsers %}
+                {% if app.user is defined and user.getCategory() == app.user.category %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><b>{{ user.getFirstName() }}</b></h5>
+                            <p class="card-text">Primary Position: </p>
+                            <p class="card-text">Secondary Position: </p>
+                        </div>
                     </div>
-                </div>
-            {% endif %}
-        {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
