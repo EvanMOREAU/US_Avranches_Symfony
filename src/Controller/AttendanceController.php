@@ -32,6 +32,15 @@ class AttendanceController extends AbstractController
     #[Route('/appel', name: 'app_attendance')]
     public function index(CategoryRepository $CategoryRepository): Response
     {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
         return $this->render('attendance/index.html.twig', [
             'controller_name' => 'AttendanceController',
             'categories' => $CategoryRepository->findAll(),
@@ -44,12 +53,12 @@ class AttendanceController extends AbstractController
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
             // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-             if (!$this->isGranted('ROLE_COACH')) {
-                 // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                 throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-             }
-         }
-         
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
         // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
         $allUsers = $UserRepository->findAll($category);
 
@@ -74,6 +83,15 @@ class AttendanceController extends AbstractController
     #[Route('/update-matches-played-{category}', name: 'update_matches_played', methods: ['POST'])]
     public function updateMatchesPlayed(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
         $requestData = json_decode($request->getContent(), true);
 
         $presentUserIds = $requestData['presentUserIds'];
