@@ -9,10 +9,10 @@
         {% block stylesheets %}
 
           {# <link href="/css/tests.css" rel="stylesheet" /> #}
-          <link href="/css/navbar.css" rel="stylesheet" />
           <link href="/css/pagebase.css" rel="stylesheet" />
           <link href="/css/param.css" rel="stylesheet" />
           <link href="/css/nav2.css" rel="stylesheet" />
+          <link href="/css/nav3.css" rel="stylesheet" />
 
           {{ encore_entry_link_tags('app') }}
           <!--Styles.css-->
@@ -26,172 +26,201 @@
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
         {% endblock %}
     </head>
-    {% block body %} 
+    
     <body>
-      <main class="site-wrapper">
-        <div class="pt-table desktop-768">
-          <div class="pt-tablecell page-home relative" style="background-image: path('images/joueur.jpg');
-          background-position: center;
-          background-size: cover;">
-                          <div class="overlay"></div>
-                          <div class="container">
-                              <div class="row">
-                                  <div class="col-xs-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8">
-                                      <div class="hexagon-menu clear">
-                                          <div class="hexagon-item">
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
+                        <div class="overlay"></div>
+                    <div class="menu">
+                        <div class="title" onclick="f()">{{ app.user.getFirstName() }} <span class="fa fa-bars"></span>
+                            <div class="arrow"></div>
+                        </div>
+                    <div class="dropdown">
+                        <p>Inbox <span class="fa fa-inbox"></span></p>
+                        <p>Settings <span class="fa fa-gear"></span></p>
+                        <p>Sign Out <span class="fa fa-sign-out"></span></p>
+                    </div>
+                </div>
+
+
+
+    {% block body %} 
+            <main class="site-wrapper">
+            <div class="pt-table desktop-768">
+                <div class="pt-tablecell page-home relative" style="background-image: path('images/joueur.jpg');
+                    background-position: center;
+                    background-size: cover;">
+                                  <div class="container">
+                                      <div class="row">
+                                          <div class="col-xs-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8">
+                                              <div class="hexagon-menu clear">
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content" href='/charts'>
+                                                          <span class="hex-content-inner">
+                                                              <span class="icon">
+                                                                  <i class="fa fa-universal-access"></i>
+                                                              </span>
+                                                              <span class="title">Graphiques</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>
+                                                  </div>
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content" href=''>
+                                                          <span class="hex-content-inner">
+                                                              <span class="icon">
+                                                                  <i class="fa fa-bullseye"></i>
+                                                              </span>
+                                                              <span class="title">Matchs /!\</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>
+                                                  </div>
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content" href='/tests'>
+                                                          <span class="hex-content-inner">
+                                                              <span class="icon">
+                                                                  <i class="fa fa-braille"></i>
+                                                              </span>
+                                                              <span class="title">Tests</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>    
+                                                  </div>
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content">
+                                                          <span class="hex-content-inner" href='/team'>
+                                                              <span class="icon">
+                                                                  <i class="fa fa-id-badge"></i>
+                                                              </span>
+                                                              <span class="title">Mon équipe</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>
+                                                  </div>
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content">
+                                                          <span class="hex-content-inner">
+                                                              <span class="icon">
+                                                                  <i class="fa fa-life-ring"></i>
+                                                              </span>
+                                                              <span class="title">Poste</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>
+                                                  </div>
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content" href='/pdf'>
+                                                          <span class="hex-content-inner">
+                                                              <span class="icon">
+                                                                  <i class="fa fa-clipboard"></i>
+                                                              </span>
+                                                              <span class="title">PDF</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>
+                                                  </div>
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content" href='/profile'>
+                                                          <span class="hex-content-inner">
+                                                              <span class="icon">
+                                                                  <i class="fa fa-map-signs"></i>
+                                                              </span>
+                                                              <span class="title">Paramètres</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>
+                                                  </div>
                                               </div>
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <a  class="hex-content" href='/charts'>
-                                                  <span class="hex-content-inner">
-                                                      <span class="icon">
-                                                          <i class="fa fa-universal-access"></i>
-                                                      </span>
-                                                      <span class="title">Graphiques</span>
-                                                  </span>
-                                                  <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                              </a>
-                                          </div>
-                                          <div class="hexagon-item">
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <a  class="hex-content" href=''>
-                                                  <span class="hex-content-inner">
-                                                      <span class="icon">
-                                                          <i class="fa fa-bullseye"></i>
-                                                      </span>
-                                                      <span class="title">Matchs /!\</span>
-                                                  </span>
-                                                  <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                              </a>
-                                          </div>
-                                          <div class="hexagon-item">
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <a  class="hex-content" href='/tests'>
-                                                  <span class="hex-content-inner">
-                                                      <span class="icon">
-                                                          <i class="fa fa-braille"></i>
-                                                      </span>
-                                                      <span class="title">Tests</span>
-                                                  </span>
-                                                  <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                              </a>    
-                                          </div>
-                                          <div class="hexagon-item">
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <a  class="hex-content">
-                                                  <span class="hex-content-inner" href='/team'>
-                                                      <span class="icon">
-                                                          <i class="fa fa-id-badge"></i>
-                                                      </span>
-                                                      <span class="title">Mon équipe</span>
-                                                  </span>
-                                                  <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                              </a>
-                                          </div>
-                                          <div class="hexagon-item">
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <a  class="hex-content">
-                                                  <span class="hex-content-inner">
-                                                      <span class="icon">
-                                                          <i class="fa fa-life-ring"></i>
-                                                      </span>
-                                                      <span class="title">Poste</span>
-                                                  </span>
-                                                  <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                              </a>
-                                          </div>
-                                          <div class="hexagon-item">
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <a  class="hex-content" href='/pdf'>
-                                                  <span class="hex-content-inner">
-                                                      <span class="icon">
-                                                          <i class="fa fa-clipboard"></i>
-                                                      </span>
-                                                      <span class="title">PDF</span>
-                                                  </span>
-                                                  <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                              </a>
-                                          </div>
-                                          <div class="hexagon-item">
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <div class="hex-item">
-                                                  <div></div>
-                                                  <div></div>
-                                                  <div></div>
-                                              </div>
-                                              <a  class="hex-content" href='/profile'>
-                                                  <span class="hex-content-inner">
-                                                      <span class="icon">
-                                                          <i class="fa fa-map-signs"></i>
-                                                      </span>
-                                                      <span class="title">Paramètres</span>
-                                                  </span>
-                                                  <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                              </a>
                                           </div>
                                       </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-      </main>
+                                  
       {% endblock %}
+
+            </div>
+          </div>
+        </div>
+      </main>
+      <script>
+        function f() {
+            document.getElementsByClassName('dropdown')[0].classList.toggle('down');
+            document.getElementsByClassName('arrow')[0].classList.toggle('gone');
+            if (document.getElementsByClassName('dropdown')[0].classList.contains('down')) {
+                setTimeout(function() {
+                document.getElementsByClassName('dropdown')[0].style.overflow = 'visible'
+                }, 500)
+            } else {
+                document.getElementsByClassName('dropdown')[0].style.overflow = 'hidden'
+            }
+        }
+      </script>
     </body>
 </html>
