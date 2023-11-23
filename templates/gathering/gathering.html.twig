@@ -15,12 +15,14 @@
 				<div class="col">
 					<div class="img card-attendance-u" data-user-id="1">
 						<div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="..."></div>
-						
-
-						<div
-							class="card-body"><h5 class="card-title text-center pt-1">{% if attendance.isPresent == 0  %}
-							raison : {{ attendance.reason }}
-						{% endif %}</h5>
+                        {{ attendance.id }}
+						<div class="card-body">
+							<h5 class="card-title text-center pt-1">
+								{% if attendance.isPresent == 0  %}
+									raison :
+									{{ attendance.reason }}
+								{% endif %}
+							</h5>
 						</div>
 					</div>
 				</div>
