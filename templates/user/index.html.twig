@@ -15,6 +15,9 @@
                 <th>Date_naissance</th>
                 <th>First_name</th>
                 <th>Last_name</th>
+                <th>Matches_played</th>
+                <th>Weight</th>
+                <th>Profile_image</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -28,6 +31,9 @@
                 <td>{{ user.dateNaissance ? user.dateNaissance|date('Y-m-d') : '' }}</td>
                 <td>{{ user.firstName }}</td>
                 <td>{{ user.lastName }}</td>
+                <td>{{ user.matchesPlayed }}</td>
+                <td>{{ user.weight }}</td>
+                <td>{{ user.profileImage }}</td>
                 <td>
                     <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
                     <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
@@ -35,7 +41,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="8">no records found</td>
+                <td colspan="11">no records found</td>
             </tr>
         {% endfor %}
         </tbody>

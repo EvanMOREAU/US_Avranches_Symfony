@@ -5,26 +5,24 @@
 {% endblock %}
 
 {% block body %}
+	<link href="/css/attendance.css" rel="stylesheet"/>
 
 	<div class="col-lg-8 mx-auto p-5 py-md-5">
 		<div class="mt-3 text-center">
-			<h1 class="h1 mb-2">Page d'appel</h1>
+			<h1 class="h1 mb-2 display-4">Page d'appel</h1>
 		</div>
 
-		{% set team = 10 %}
-
 		<div class="row row-cols-1 row-cols-md-2 g-4 pt-5">
-			{% for tbl_team in tbl_team %}
+			{% for categorie in categories %}
 				<div class="col">
-					<a href="/appel/U{{ team }}">
-						<div class="card">
-							<img src="/images/U{{ team }}.png" class="zoom" alt="1" >
+					<a href="/appel/{{ categorie.name }}">
+						<div class="card-attendance">
+							<img src="/uploads/images/{{ categorie.image }}" class="zoom" alt="{{ categorie.id }}">
 						</div>
 					</a>
 				</div>
-				{% set team = team + 1 %}
 			{% else %}
-				<td colspan="9">Il n'y a aucune équipe !</td>
+				<td colspan="9">Il n'y a aucune catégorie !</td>
 			{% endfor %}
 		</div>
 	</div>

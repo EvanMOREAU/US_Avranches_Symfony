@@ -1,0 +1,167 @@
+{% block title %}Hello VerifCodeController!{% endblock %}
+
+{% block body %}
+<style>
+.form {
+  --black: #000000;
+  --ch-black: #141414;
+  --eer-black: #1b1b1b;
+  --night-rider: #2e2e2e;
+  --white: #ffffff;
+  --af-white: #f3f3f3;
+  --ch-white: #e1e1e1;
+  --tomato: #fa5656;
+  font-family: Helvetica, sans-serif;
+  padding: 25px;
+  display: flex;
+  max-width: 420px;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  color: var(--af-white);
+  background-color: var(--black);
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, .1);
+}
+
+/*----heading and description-----*/
+
+.info {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.description {
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+/*----input-fields------*/
+
+.form .input-fields {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.form .input-fields input {
+  height: 2.5em;
+  width: 4.5em;
+  outline: none;
+  text-align: center;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 1.5rem;
+  color: var(--af-white);
+  border-radius: 5px;
+  border: 2.5px solid var(--eer-black);
+  background-color: var(--eer-black);
+}
+
+.form .input-fields input:focus {
+  border: 1px solid var(--af-white);
+  box-shadow: inset 10px 10px 10px rgba(0, 0, 0, .15);
+  transform: scale(1.05);
+  transition: 0.5s;
+}
+
+/*-----verify and clear buttons-----*/
+
+.action-btns {
+  display: flex;
+  margin-top: 20px;
+  gap: 0.5rem;
+}
+
+.verify {
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--night-rider);
+  text-shadow: none;
+  background: var(--af-white);
+  box-shadow: transparent;
+  border: 1px solid var(--af-white);
+  transition: 0.3s ease;
+  user-select: none;
+}
+
+.verify:hover,.verify:focus {
+  color: var(--night-rider);
+  background: var(--white);
+}
+
+.clear {
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ch-white);
+  text-shadow: none;
+  background: transparent;
+  border: 1px solid var(--ch-white);
+  transition: 0.3s ease;
+  user-select: none;
+}
+
+.clear:hover,.clear:focus {
+  color: var(--tomato);
+  background-color: transparent;
+  border: 1px solid var(--tomato);
+}
+
+/*-----close button------*/
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background-color: var(--night-rider);
+  color: var(--ch-white);
+  height: 30px;
+  width: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: .5s ease;
+}
+
+.close:hover {
+  background-color: var(--tomato);
+  color: var(--white);
+}
+
+</style>
+
+<form class="form" action='{{ path('app_verif_code') }}' method='POST'>
+
+  <div class="info">
+  <span class="title">Two-Factor Verification</span>
+<p class="description">CODE DE VERIFICATION</p>
+   </div>
+    <div class="input-fields">
+    {{ form_widget(form.code, { 'attr': {'class': 'input', 'type': 'tel', 'maxlength': '4'} }) }}
+    {{ form_row(form._token) }}
+  </div>
+
+      <div class="action-btns">
+        <button type='submit' class="verify"> Hey</button>
+        <a href="#" class="clear">Clear</a>
+      </div>
+
+</form>
+
+{% endblock %}

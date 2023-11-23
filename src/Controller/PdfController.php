@@ -6,6 +6,7 @@ use TCPDF;
 use App\Entity\Pdf;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\UserVerificationService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,9 +14,20 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PdfController extends AbstractController
 {
+    private $userVerificationService;
+
+    public function __construct(UserVerificationService $userVerificationService)
+    {
+        $this->userVerificationService = $userVerificationService;
+    }
+    
     #[Route('/pdf', name: 'app_pdf')]
     public function pdf(UserRepository $userRepository): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         // Récupérez le token d'authentification de l'utilisateur actuellement connecté.
         $token = $this->get('security.token_storage')->getToken();
 
@@ -34,7 +46,7 @@ class PdfController extends AbstractController
 
                 // Ajout d'une nouvelle page
                 $pdf->AddPage();
-                $pdf->setJPEGQuality(75);
+                $pdf->setJPEGQuality(75); 
 
                 // Calcul des dimensions de la page
                 $largeurPage = $pdf->getPageWidth() + 30;
@@ -64,16 +76,16 @@ class PdfController extends AbstractController
                 <br><hr><br><div></div>
                 <b>Catégorie : </b>' . $user->getCategory() . '
                 <br><hr><br><div></div>
-                <b>Nombre de matchs joués :</b>
+                <b>Nombre de matchs joués : 2</b>
                 <br><hr><br><div></div>
-                <b>Poids : </b>
+                <b>Poids : 61kg</b>
                 <br><hr><br><div></div>
-                <b>Taille : </b>
+                <b>Taille : 173cm</b>
                 <br><hr><br><div></div>
                 </p>
 
                 <p><b> Contact :</b>
-                <br> Christelle DELARUE<br>
+                <br> ChristelleGamer DELARUE<br>
                 <br>
                 Club House US Avranches MSM<br>
                 Allée Jacques Anquetil<br>
@@ -93,7 +105,7 @@ class PdfController extends AbstractController
                 $pdf->Image('img/graph_'. $user->getFirstName() .'.jpg', 95, 150, 100, 100, '', '', '', false, 300, '', false, false, 1, false, false, false);
 
                 // Ajout d'une image au PDF
-                $pdf->Image('img/anonyme.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                $pdf->Image('img/joueur.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
 
                 // Génération du PDF et envoi en réponse
                 return $pdf->Output('US-Avranches-' . '.pdf', 'I');
@@ -107,6 +119,10 @@ class PdfController extends AbstractController
     #[Route('/pdftest', name: 'app_pdftest')]
     public function pdfTest(): Response
     {
+        if(!$this->userVerificationService->verifyUser()){
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
         $user = $this->getUser(); // Récupérez l'utilisateur actuellement connecté
 
         return $this->render('/pdf/index.html.twig', [

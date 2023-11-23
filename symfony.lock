@@ -50,6 +50,15 @@
             "./migrations/.gitignore"
         ]
     },
+    "friendsofsymfony/ckeditor-bundle": {
+        "version": "2.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "2.0",
+            "ref": "f5ad42002183a6881962683e6d84bbb25cdfce5d"
+        }
+    },
     "sensio/framework-extra-bundle": {
         "version": "6.2",
         "recipe": {

@@ -3,96 +3,82 @@
 {% block title %}Charts index{% endblock %}
 
 {% block body %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <div class="row">
-        <div class="col-md-6">
-            {% set chartsLeft = charts[:5] %}
-            <div class="row">
-                {% for chart in chartsLeft %}
-                    <div class="col-md-12">
-                        <h2>Graph {{ chart.data }}</h2>
-                        <p>[{{ chart.source_data | raw }}]</p>
-                        <canvas id="{{ chart.id }}" width="400" height="200"></canvas>
-                        <hr/>
-                        <script>
-                            const ctx{{ chart.id }} = document.getElementById('{{ chart.id }}');
-                            new Chart(ctx{{ chart.id }}, {
-                                type: '{{ chart.type }}',
-                                data: {
-                                    labels: ['2024-01-11', '2024-09-11', '2025-10-11', ''],
-                                    datasets: [{
-                                        label: '{{ chart.id }}',
+<style>
+    body {
+        color: white;
+        margin: 10%;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% for chart in charts %}
+    <div class="accordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ chart.id }}" aria-expanded="false" aria-controls="collapse{{ chart.id }}">
+                    Graphique {{ chart.data }} :
+                </button>
+            </h2>
+            <div id="collapse{{ chart.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <canvas id="canvas{{ chart.id }}" width="400" height="200"></canvas>
+                    <br />
+                    <br />
+                    <script>
+                        const ctx{{ chart.id }} = document.getElementById('canvas{{ chart.id }}');
+                        new Chart(ctx{{ chart.id }}, {
+                            type: '{{ chart.type }}',
+                            data: {
+                                {% if chart.type == 'line' %}
+                                labels: ['2024-01-11', '2024-09-11', '2025-10-11', '2025-10-11'],
+                                datasets: [{
+                                    label: '{{ chart.id }}',
+                                    data: [{{ chart.source_data | raw }}],
+                                    backgroundColor: 'red',         
+                                    borderColor: 'red',
+                                    borderWidth: 2
+                                }]
+                                {% elseif chart.type == 'radar' %}
+                                labels: ['Technique', 'Morale', 'Physique', 'Tactique'],
+                                datasets: [
+                                    {
+                                        label: 'joueurs',
                                         data: [{{ chart.source_data | raw }}],
-                                        backgroundColor: '#F1C40F',
-                                        borderColor: '#F1C40F',
-                                        borderWidth: 1
-                                    }]
-                                },
-                                options: {
-                                    scales: {
-                                        {% if chart.type == 'line' %}
-                                        y: {
-                                            min: 0, 
-                                            max: 50
-                                        }
-                                        {% elseif chart.type == 'radar' %}
-                                        r: { 
-                                            min: 0, 
-                                            max: 50
-                                        }
-                                        {% endif %}   
+                                        borderColor: 'red',
+                                        backgroundColor: 'rgba(0,0,0,0)',
+                                        borderWidth: 2
+                                    },
+                                    {
+                                        label: 'COACH',
+                                        data: [2, 3, 1, 4],
+                                        borderColor: 'blue',
+                                        backgroundColor: 'rgba(0,0,0,0)',
+                                        borderWidth: 2
                                     }
-                                }
-                            });
-                        </script>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="col-md-6">
-            {% set chartsRight = charts[5:] %}
-            <div class="row">
-                {% for chart in chartsRight %}
-                    <div class="col-md-12">
-                        <h2>Graph {{ chart.data }}</h2>
-                        <p>[{{ chart.source_data | raw }}]</p>
-                        <canvas id="{{ chart.id }}" width="400" height="200"></canvas>
-                        <hr/>
-                        <script>
-                            const ctx{{ chart.id }} = document.getElementById('{{ chart.id }}');
-                            new Chart(ctx{{ chart.id }}, {
-                                type: '{{ chart.type }}',
-                                data: {
-                                    labels: ['2024-01-11', '2024-09-11', '2025-10-11', ''],
-                                    datasets: [{
-                                        label: '{{ chart.id }}',
-                                        data: [{{ chart.source_data | raw }}],
-                                        backgroundColor: '#F1C40F',
-                                        borderColor: '#F1C40F',
-                                        borderWidth: 1
-                                    }]
-                                },
-                                options: {
-                                    scales: {
-                                        {% if chart.type == 'line' %}
-                                        y: {
-                                            min: 0, 
-                                            max: 50
-                                        }
-                                        {% elseif chart.type == 'radar' %}
-                                        r: { 
-                                            min: 0, 
-                                            max: 50
-                                        }
-                                        {% endif %}   
+                                ]
+                                {% endif %}
+                            },
+                            options: {
+                                scales: {
+                                    {% if chart.type == 'line' %}
+                                    y: {
+                                        min: {{ chart.datascalemin }},
+                                        max: {{ chart.datascalemax }}
                                     }
+                                    {% elseif chart.type == 'radar' %}
+                                    r: {
+                                        min: {{ chart.datascalemin }},
+                                        max: {{ chart.datascalemax }}
+                                    }
+                                    {% endif %}
                                 }
-                            });
-                        </script>
-                    </div>
-                {% endfor %}
+                            }
+                        });
+                    </script>
+                </div>
             </div>
         </div>
     </div>
+{% endfor %}
 {% endblock %}
