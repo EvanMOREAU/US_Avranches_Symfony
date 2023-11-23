@@ -35,26 +35,26 @@
                                 datasets: [{
                                     label: '{{ chart.id }}',
                                     data: [{{ chart.source_data | raw }}],
-                                    backgroundColor: '#F1C40F',
-                                    borderColor: '#F1C40F',
-                                    borderWidth: 1
+                                    backgroundColor: 'red',         
+                                    borderColor: 'red',
+                                    borderWidth: 2
                                 }]
                                 {% elseif chart.type == 'radar' %}
                                 labels: ['Technique', 'Morale', 'Physique', 'Tactique'],
                                 datasets: [
                                     {
-                                        label: 'JOUEUR',
+                                        label: 'joueurs',
                                         data: [{{ chart.source_data | raw }}],
-                                        backgroundColor: 'rgba(241, 196, 15, 0.01)',
-                                        borderColor: 'yellow',
-                                        borderWidth: 1
+                                        borderColor: 'red',
+                                        backgroundColor: 'rgba(0,0,0,0)',
+                                        borderWidth: 2
                                     },
                                     {
                                         label: 'COACH',
                                         data: [2, 3, 1, 4],
-                                        backgroundColor: 'rgba(46, 204, 113, 0.01)',
-                                        borderColor: 'rgba(46, 204, 113, 1)',
-                                        borderWidth: 1
+                                        borderColor: 'blue',
+                                        backgroundColor: 'rgba(0,0,0,0)',
+                                        borderWidth: 2
                                     }
                                 ]
                                 {% endif %}

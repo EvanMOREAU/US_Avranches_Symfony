@@ -79,29 +79,29 @@ class ChartsFixtures extends Fixture
         $charts8->setDatascaleMax('10000');
         $manager->persist($charts8);
         
-        $charts8 = new Charts();
-        $charts8->setType('line');
-        $charts8->setData('VMACooper');
-        $charts8->setSourceData('28,26,40');
-        $charts8->setDatascaleMin('0');
-        $charts8->setDatascaleMax('10000');
-        $manager->persist($charts8);
-
         $charts9 = new Charts();
         $charts9->setType('line');
-        $charts9->setData('Sprint');
-        $charts9->setSourceData('9,6,15');
-        $charts9->setDatascaleMin('6');
-        $charts9->setDatascaleMax('15');
+        $charts9->setData('VMACooper');
+        $charts9->setSourceData('28,26,40');
+        $charts9->setDatascaleMin('0');
+        $charts9->setDatascaleMax('10000');
         $manager->persist($charts9);
 
         $charts10 = new Charts();
-        $charts10->setType('radar');
-        $charts10->setData('General');
-        $charts10->setSourceData('10,6,5,2');
-        $charts10->setDatascaleMin('0');
-        $charts10->setDatascaleMax('10');
+        $charts10->setType('line');
+        $charts10->setData('Sprint');
+        $charts10->setSourceData('9,6,15');
+        $charts10->setDatascaleMin('6');
+        $charts10->setDatascaleMax('15');
         $manager->persist($charts10);
+
+        $charts11 = new Charts();
+        $charts11->setType('radar');
+        $charts11->setData('General');
+        $charts11->setSourceData('10,6,5,2');
+        $charts11->setDatascaleMin('0');
+        $charts11->setDatascaleMax('10');
+        $manager->persist($charts11);
 
         $manager->flush();
     }
