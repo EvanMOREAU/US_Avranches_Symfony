@@ -68,13 +68,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tests::class)]
     private Collection $tests;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $weight = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $profile_image = null;
-
-    
     public function __construct()
     {
         $this->attendances = new ArrayCollection();
@@ -82,6 +75,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tests = new ArrayCollection();
 
     }
+
+
+    #[ORM\Column(nullable: true)]
+    private ?float $weight = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $profile_image = null;
+
+    
 
     /**
     * @Assert\NotBlank(groups={"registration", "resetPassword"})

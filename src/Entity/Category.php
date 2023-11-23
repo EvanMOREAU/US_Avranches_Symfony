@@ -6,7 +6,9 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TeamRepository;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[UniqueEntity(fields: ['name'], message: 'There is already a category with this name')]
@@ -30,6 +32,10 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $image = null;
 
+    #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'users')]
+    #[ORM\JoinColumn(name: 'team_id', referencedColumnName: 'id')]
+    private $team;
+    
     public function __construct()
     {
         $this->gatherings = new ArrayCollection();
@@ -82,10 +88,7 @@ class Category
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, User>
-     */
+    
     public function getUsers(): Collection
     {
         return $this->users;
@@ -121,6 +124,16 @@ class Category
     public function setImage(string $image): static
     {
         $this->image = $image;
+    }
+
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): self
+    {
+        $this->team = $team;
 
         return $this;
     }
