@@ -6,14 +6,14 @@
 
 {% block body %}
 <script>
-    var url2 = window.location.pathname; // Récupère le chemin de l'URL, c'est-à-dire "/player/3/poste"
+    var url2 = window.location.pathname; // Récupère le chemin de l'URL, c'est-à-dire "/user/3/poste"
     var parts = url2.split('/'); // Divise le chemin en segments en utilisant le caractère "/"
     var id = parts[2]; // L'ID se trouve à la position 2 dans cet exemple
-    var coordX = {{ player.posteCoordX }};
-    var coordY = {{ player.posteCordY }};
+    var coordX = {{ user.posteCoordX }};
+    var coordY = {{ user.posteCordY }};
 
     if (coordX !== null && coordY !== null) {
-        window.location.href = "/player/"+id+"/poste";
+        window.location.href = "/user/"+id+"/poste";
     }
 </script>
 
@@ -31,15 +31,15 @@ h1{
     color: white;
     visibility: hidden;
     background-color: rgba(13,82,139,1);
-    left: {{ player.posteCoordX - 1 }}%;
-    top: {{ player.posteCordY - 5 }}%;
+    left: {{ user.posteCoordX - 1 }}%;
+    top: {{ user.posteCordY - 5 }}%;
 }
 .terrain #cercle {
     position: absolute;
     max-width: 2%;
     z-index: 2;
-    left: {{ player.posteCoordX - 1 }}%;
-    top: {{ player.posteCordY - 0.75 }}%;
+    left: {{ user.posteCoordX - 1 }}%;
+    top: {{ user.posteCordY - 0.75 }}%;
 }
 
 </style>
@@ -47,9 +47,10 @@ h1{
 <center>
     <div class="terrain">
         <h1>Où souhaitez-vous jouer ?</h1>
+        <h4>🠕 On attaque dans ce sens 🠕</h4>
         <img src="/images/terrain.jpg" alt="terrain" id="terrain">
-        <img src="/images/cercle.png" alt="cercle" id="cercle" {% if player.posteCoordX != null %}style="visibility:visible;"{% else %}style="visibility:hidden;"{% endif %}>
-        <p class="texte">{{ player.getfirstname }} {{ player.getlastname }}</p>
+        <img src="/images/cercle.png" alt="cercle" id="cercle" {% if user.posteCoordX != null %}style="visibility:visible;"{% else %}style="visibility:hidden;"{% endif %}>
+        <p class="texte">{{ user.getfirstname }} {{ user.getlastname }}</p>
     </div>
 
 </center>

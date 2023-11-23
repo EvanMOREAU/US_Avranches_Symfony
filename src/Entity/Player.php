@@ -34,10 +34,10 @@ class Player
     private ?string $posteSecondaire = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $posteCoordX = null;
+    private ?float $posteCoordX = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $posteCordY = null;
+    private ?float $posteCordY = null;
 
     public function getId(): ?int
     {
@@ -116,24 +116,24 @@ class Player
         return $this;
     }
 
-    public function getPosteCoordX(): ?int
+    public function getPosteCoordX(): ?float
     {
         return $this->posteCoordX;
     }
 
-    public function setPosteCoordX(?int $posteCoordX): static
+    public function setPosteCoordX(?float $posteCoordX): static
     {
         $this->posteCoordX = $posteCoordX;
 
         return $this;
     }
 
-    public function getPosteCordY(): ?int
+    public function getPosteCordY(): ?float
     {
         return $this->posteCordY;
     }
 
-    public function setPosteCordY(?int $posteCordY): static
+    public function setPosteCordY(?float $posteCordY): static
     {
         $this->posteCordY = $posteCordY;
 
