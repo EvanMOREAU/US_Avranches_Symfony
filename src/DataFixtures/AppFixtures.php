@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Team;
 use App\Entity\Player;
 use App\Repository\TeamRepository;
 use DateTime;
