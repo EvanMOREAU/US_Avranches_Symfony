@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/testsnew.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Modifier un Test</h1>
+
+        {{ form_start(form) }}
+        
+        <div class="form-group {% if form.vma.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.vma, 'VMA (0 à 20 km/h)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.vma, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.vma, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+        <div class="form-group {% if form.demicooper.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.demicooper, 'Demi-Cooper (mètres)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.demicooper, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.demicooper, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+        <div class="form-group {% if form.cooper.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.cooper, 'Cooper (mètres)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.cooper, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.cooper, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+        <div class="form-group {% if form.jongle_gauche.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.jongle_gauche, 'Jongle Gauche (0 à 50)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.jongle_gauche, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.jongle_gauche, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+        <div class="form-group {% if form.jongle_droit.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.jongle_droit, 'Jongle Droit (0 à 50)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.jongle_droit, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.jongle_droit, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+        <div class="form-group {% if form.jongle_tete.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.jongle_tete, 'Jongle Tête (0 à 30)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.jongle_tete, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.jongle_tete, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+        <div class="form-group {% if form.conduiteballe.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.conduiteballe, 'Conduite de balle', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.conduiteballe, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !'}}) }}
+            {{ form_errors(form.conduiteballe, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+        <div class="form-group {% if form.vitesse.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.vitesse, 'Vitesse', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.vitesse, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !'}}) }}
+            {{ form_errors(form.vitesse, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+        {% if is_granted("ROLE_SUPER_ADMIN") %}
+            <div class="form-group {% if form.user.vars.errors|length > 0 %}has-error{% endif %}">
+                {{ form_label(form.user, 'Joueur', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.user, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !'}}) }}
+                {{ form_errors(form.user, {'attr': {'class': 'error-message'}}) }}
+            </div>
+        {% endif %}
+        <br>
+        <button onClick='redirectToPage("/tests")' class="form-button btn-gray"><i class="fas fa-arrow-left"></i> Retour</button>
+        <button type="submit" class="form-button"><i class="fas fa-save"></i> Enregistrer</button>
+        
+        
+        {{ form_end(form) }}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const conduiteBalleInput = document.querySelector('#{{ form.conduiteballe.vars.id }}');
+            const vitesseInput = document.querySelector('#{{ form.vitesse.vars.id }}');
+
+            const formatTimeInput = function (input) {
+                let value = input.value.trim();
+
+                // Supprimer les caractères non numériques
+                value = value.replace(/[^0-9]/g, '');
+
+                // Formater en secondes et millisecondes
+                if (value.length > 3) {
+                    const seconds = value.slice(0, -3);
+                    const milliseconds = value.slice(-3);
+
+                    // Formatage de la valeur en secondes et millisecondes
+                    value = `${seconds}.${milliseconds}`;
+                }
+
+                // Mettre à jour la valeur dans le champ
+                input.value = value;
+            };
+
+            conduiteBalleInput.addEventListener('input', function () {
+                formatTimeInput(this);
+            });
+
+            vitesseInput.addEventListener('input', function () {
+                formatTimeInput(this);
+            });
+        });
+    </script>
+{% endblock %}

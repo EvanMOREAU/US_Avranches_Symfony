@@ -1,13 +1,46 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit User{% endblock %}
-
 {% block body %}
-    <h1>Edit User</h1>
+<link rel="stylesheet" href="/css/template-form-admin.css">
+<link rel="stylesheet" href="/css/input_user.css">
 
-    {{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_user_index') }}">back to list</a>
 
-    {{ include('user/_delete_form.html.twig') }}
+{{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
+
+
+
+
+<script>
+  const dropContainer = document.getElementById('dropContainer');
+  const fileInput = document.getElementById('{{ form.profile_image.vars.id }}');
+
+  dropContainer.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropContainer.classList.add('drag-over');
+  });
+
+  dropContainer.addEventListener('dragleave', () => {
+    dropContainer.classList.remove('drag-over');
+  });
+
+  dropContainer.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropContainer.classList.remove('drag-over');
+    const files = e.dataTransfer.files;
+    fileInput.files = files;
+    handleFileSelect(e);
+  });
+
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    const fileNameElement = document.getElementById('file-name');
+    if (file) {
+      fileNameElement.textContent = file.name;
+    } else {
+      fileNameElement.textContent = '';
+    }
+  }
+</script>
+
 {% endblock %}

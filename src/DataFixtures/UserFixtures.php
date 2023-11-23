@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\DBAL\Driver\IBMDB2\Exception\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture
@@ -37,13 +38,14 @@ class UserFixtures extends Fixture
 
         $faker = \Faker\Factory::create();
 
-        for ($i = 0; $i < 150; $i++) {
-            $randomBirthdate = $faker->dateTimeBetween('-10 years', '-6 years');
+        for ($i = 0; $i < 50; $i++) {
+            $randomBirthdate = $faker->dateTimeBetween('-12 years', '-9 years');
             $player = new User();
             $player->setUsername($faker->userName);
             $player->setFirstName($faker->firstName);
             $player->setLastName($faker->lastName);
             $player->setDateNaissance($randomBirthdate);
+            $player->setWeight(826.21);
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $player,

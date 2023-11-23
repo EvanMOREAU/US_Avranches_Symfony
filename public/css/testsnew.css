@@ -1,0 +1,100 @@
+/* Styles de base */
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  max-width: 20%; /* Ajuste la largeur à 100% de l'espace disponible */
+  padding: 20px;
+  border: 2px solid #3b82f6;
+  border-radius: 10px;
+  background-color: #f0f5ff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  max-width: 100%; /* Ajuste la largeur à 100% de l'espace disponible */
+  padding: 20px;
+  border: 2px solid #3b82f6;
+  border-radius: 10px;
+  background-color: #f0f5ff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles communs */
+.form-label {
+  font-weight: bold;
+}
+
+.form-input {
+  padding: 10px;
+  border: 1px solid #3b82f6;
+  border-radius: 5px;
+  background-color: #fff;
+  width: 100%;
+  transition: border-color 0.3s;
+}
+
+.form-input:focus {
+  border-color: #216fd9;
+}
+
+.form-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+/* Ajoute cette règle pour la classe btn-gray */
+.form-button.btn-gray {
+  background-color: grey;
+}
+
+.form-button.btn-gray:hover {
+  background-color: rgb(112, 112, 112);
+}
+
+.form-button:hover {
+  background-color: #216fd9;
+}
+
+.error-message {
+  color: #f43f5e;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+.success-message {
+  color: #22c55e;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+/* Style pour les cellules de saisie en cas d'erreur */
+.form-group.has-error .form-input {
+  border: 2px solid #f43f5e;
+}
+
+/* Media Queries pour les écrans plus petits (par exemple, les téléphones) */
+@media (max-width: 768px) {
+  .container, .form-container {
+    max-width: 100%; /* Ajustez la largeur à 100% de l'écran pour les petits écrans */
+  }
+}
