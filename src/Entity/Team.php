@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\TeamRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TeamRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ORM\Table(name: 'tbl_team')]
@@ -28,6 +29,10 @@ class Team
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: User::class)]
     private Collection $users;
 
+    #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'users')]
+    #[ORM\JoinColumn(name: 'team_id', referencedColumnName: 'id')]
+    private $team;
+    
     public function __construct()
     {
         $this->Players = new ArrayCollection();
@@ -98,10 +103,7 @@ class Team
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, User>
-     */
+    
     public function getUsers(): Collection
     {
         return $this->users;
@@ -125,6 +127,17 @@ class Team
                 $user->setTeam(null);
             }
         }
+
+        return $this;
+    }
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): self
+    {
+        $this->team = $team;
 
         return $this;
     }

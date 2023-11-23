@@ -50,8 +50,15 @@
 
     <div class="container-fluid">
         {% if app.user %}
-            <div class="text-end">
-                <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">Déconnexion</a>
+            <div class="d-flex justify-content-between">
+                <div class="text-begin">
+                    <a href="{{ path('app_default') }}" class="btn btn-outline-primary ms-auto">
+                        <i class="fas fa-home"></i>
+                    </a>
+                </div>
+                <div class="text-end">
+                    <a href="{{ path('app_logout') }}" class="btn btn-outline-danger me-auto"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
             </div>
             <div class="text-center">
                 <h1 class="h1">Liste de vos tests {{ app.user.getFirstName() }}</h1>
@@ -155,7 +162,7 @@
                                                 Jongle Tête : {{ test.jongletete }}<br>
                                                 Conduite de balle : {{ test.conduiteballe|split('.')|first }}.{{ test.conduiteballe|split('.')|last|default('000') }}s<br>
                                                 Vitesse : {{ test.vitesse|split('.')|first }}.{{ test.vitesse|split('.')|last|default('000') }}s<br>
-                                                Date du test : {{ test.date|date('d-m-Y H:i:s') }}
+                                                Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}
                                             </p>
                                             {% if is_granted("ROLE_SUPER_ADMIN") %}
                                                 <div class="test-owner">Joueur : {{ test.user.getFirstName() }} ({{ test.user.getCategory() }})</div>
