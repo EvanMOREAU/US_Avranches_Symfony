@@ -2,15 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Tests;
+use App\Entity\Gathering;
+use App\Entity\Attendance;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
@@ -52,18 +55,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'MadeBy', targetEntity: Gathering::class)]
     private Collection $gatherings;
 
-    public function __construct()
-    {
-        $this->attendances = new ArrayCollection();
-        $this->gatherings = new ArrayCollection();
-    }
-
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tests::class)]
     private Collection $tests;
 
     public function __construct()
     {
+        $this->attendances = new ArrayCollection();
+        $this->gatherings = new ArrayCollection();
         $this->tests = new ArrayCollection();
     }
 
