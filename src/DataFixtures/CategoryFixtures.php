@@ -16,7 +16,7 @@ class CategoryFixtures extends Fixture
         for ($i = 10; $i <= 13; $i++) {
             $category = new Category();
             $category->setName("U" . $i);
-            $category->setImage("0");
+            $category->setImage('0');
             $manager->persist($category);
         }
 
