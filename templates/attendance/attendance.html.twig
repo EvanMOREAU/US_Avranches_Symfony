@@ -19,8 +19,8 @@
     <div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
         {% for user in users %}
             <div class="col">
-                <div class="img card-attendance-u zoom" data-user-id="{{ user.id }}">
-                    <div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top" alt="..."></div>
+                <div class="img card-attendance-u" data-user-id="{{ user.id }}">
+                    <div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="..."></div>
                     <div class="card-body">
                         <h5 class="card-title text-center pt-1">{{ user.firstName }} {{ user.lastName }}</h5>
                     </div>        
