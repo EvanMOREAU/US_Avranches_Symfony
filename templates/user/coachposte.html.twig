@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Selection du poste{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="/css/poste.css">
+
+    <style>
+        h1 {
+            color: white;
+        }
+
+        .cercle:hover + .texte {
+            visibility: visible;
+        }
+
+        .texte {
+            position: absolute;
+            color: white;
+            visibility: hidden;
+            background-color: rgba(13, 82, 139, 1);
+        }
+
+        .terrain .cercle {
+            position: absolute;
+            max-width: 2%;
+            z-index: 2;
+        }
+
+        {% for user in users %}
+            {% if user.posteCoordX is not null %}
+                .texte[data-coord-x="{{ user.posteCoordX }}"][data-coord-y="{{ user.posteCordY }}"] {
+                    left: {{ user.posteCoordX - 1 }}%;
+                    top: {{ user.posteCordY - 5 }}%;
+                }
+
+                .terrain .cercle[data-coord-x="{{ user.posteCoordX }}"][data-coord-y="{{ user.posteCordY }}"] {
+                    left: {{ user.posteCoordX - 1 }}%;
+                    top: {{ user.posteCordY - 0.75 }}%;
+                }
+            {% endif %}
+        {% endfor %}
+    </style>
+
+    <center>
+        <div class="terrain">
+            <h1>Position des joueurs</h1>
+            <img src="/images/terrain.jpg" alt="terrain" id="terrain">
+            {% for user in users %}
+                {% if user.posteCoordX is not null %}
+                    <img
+                        src="/images/cercle.png"
+                        alt="cercle"
+                        class="cercle"
+                        data-coord-x="{{ user.posteCoordX }}"
+                        data-coord-y="{{ user.posteCordY }}"
+                    >
+                    <p class="texte" data-coord-x="{{ user.posteCoordX }}" data-coord-y="{{ user.posteCordY }}">
+                        {{ user.getfirstname }} {{ user.getlastname }}
+                    </p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </center>
+
+{% endblock %}

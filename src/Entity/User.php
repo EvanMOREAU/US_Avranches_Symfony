@@ -43,7 +43,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $last_name = null;
 
-    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $postePrincipal = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $posteSecondaire = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $posteCoordX = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $posteCordY = null;
+
+  #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
     private Collection $attendances;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
@@ -52,22 +65,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'MadeBy', targetEntity: Gathering::class)]
     private Collection $gatherings;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tests::class)]
+    private Collection $tests;
+
     public function __construct()
     {
         $this->attendances = new ArrayCollection();
         $this->gatherings = new ArrayCollection();
         $this->tests = new ArrayCollection();
+
     }
 
-
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tests::class)]
-    private Collection $tests;
 
     #[ORM\Column(nullable: true)]
     private ?float $weight = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profile_image = null;
+
+    
 
     /**
     * @Assert\NotBlank(groups={"registration", "resetPassword"})
@@ -346,6 +362,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->isCodeValidated = $isCodeValidated;
 
+
+        return $this;
+    }
+
+    public function getPostePrincipal(): ?string
+    {
+        return $this->postePrincipal;
+    }
+
+    public function setPostePrincipal(?string $postePrincipal): static
+    {
+        $this->postePrincipal = $postePrincipal;
+
+        return $this;
+    }
+
+    public function getPosteSecondaire(): ?string
+    {
+        return $this->posteSecondaire;
+    }
+
+    public function setPosteSecondaire(?string $posteSecondaire): static
+    {
+        $this->posteSecondaire = $posteSecondaire;
+
+        return $this;
+    }
+
+    public function getPosteCoordX(): ?float
+    {
+        return $this->posteCoordX;
+    }
+
+    public function setPosteCoordX(?float $posteCoordX): static
+    {
+        $this->posteCoordX = $posteCoordX;
+
+        return $this;
+    }
+
+    public function getPosteCordY(): ?float
+    {
+        return $this->posteCordY;
+    }
+
+    public function setPosteCordY(?float $posteCordY): static
+    {
+        $this->posteCordY = $posteCordY;
 
         return $this;
     }

@@ -1,10 +1,12 @@
 /* Styles de base */
 body {
   display: flex;
+  font-family: Arial, sans-serif;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  margin: 0; /* Ajout pour supprimer la marge par défaut du corps */
 }
 
 .container {
@@ -14,7 +16,7 @@ body {
   align-items: center;
   gap: 10px;
   text-align: center;
-  max-width: 20%; /* Ajuste la largeur à 100% de l'espace disponible */
+  max-width: 400px; /* Ajuste la largeur à 400px pour une meilleure lisibilité */
   padding: 20px;
   border: 2px solid #3b82f6;
   border-radius: 10px;
@@ -91,6 +93,21 @@ body {
 .form-group.has-error .form-input {
   border: 2px solid #f43f5e;
 }
+
+/* Ajout de styles spécifiques pour le message de connexion */
+.login-message-container {
+  height: 95vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color:#fff;
+}
+
+.login-message {
+  text-align: center;
+}
+
 
 /* Media Queries pour les écrans plus petits (par exemple, les téléphones) */
 @media (max-width: 768px) {

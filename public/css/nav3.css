@@ -1,0 +1,81 @@
+@import "https://fonts.googleapis.com/css?family=Montserrat";
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0; /* Ajout de la marge à 0 pour éviter un espace en haut de la page */
+  }
+  
+  .site-wrapper {
+    position: relative;
+  }
+  
+  .menu {
+    width: 260px;
+    margin: 60px auto 0;
+    cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 1; /* Pour s'assurer que la barre est au-dessus du contenu */
+  }
+  
+  .menu .title {
+    width: 100%;
+    box-sizing: border-box;
+    background: #fff;
+    padding: 14px;
+    border-radius: 4px;
+    position: relative;
+    box-shadow: 0 0 40px -10px #000;
+    color: #505050;
+  }
+  
+  .menu span {
+    float: right;
+    font-size: 18px !important;
+  }
+  
+  .menu .dropdown {
+    width: 100%;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 40px -10px #000;
+    color: #505050;
+    margin-top: 24px;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.5s;
+    
+  }
+  
+  .menu.down .dropdown {
+    max-height: 150px;
+  }
+  
+  .menu .arrow {
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #fff;
+    position: absolute;
+    right: 20px;
+    bottom: -24px;
+    display: none;
+  }
+  
+  .menu.down .arrow {
+    display: block;
+  }
+  
+  .menu p {
+    padding: 15px 14px;
+    margin: 0;
+    transition: all 0.1s;
+    background-color: #fff;
+  }
+  
+  .menu p:hover {
+    background: coral;
+    -webkit-transform: scale(1.05);
+    color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 30px -10px #000;
+    
+  }
+  
