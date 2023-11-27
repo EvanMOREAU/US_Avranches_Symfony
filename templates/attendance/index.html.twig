@@ -1,12 +1,63 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Page d'appel
+{% endblock %}
 
+{% block stylesheets %}
+	{{ parent() }}
+	<link href="/css/attendance.css" rel="stylesheet"/>
+	<style>
+		.card-attendance {
+			position: relative;
+			overflow: hidden;
+		}
+
+		.card-overlay {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: white;
+			text-align: center;
+			z-index: 2;
+		}
+
+		.card-overlay h1 {
+			margin: 0;
+			display: inline-block;
+			padding: 10px;
+			border: 2px solid white;
+			width: 125%; /* Adjust the width as needed */
+			height: 100%;
+			box-sizing: border-box; /* Include padding and border in the element's total width and height */
+		}
+
+
+		.card-attendance::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.75);
+			z-index: 1;
+		}
+
+		.card-attendance img {
+			width: 100%;
+			height: auto;
+			z-index: 0;
+			transition: transform 0.4s;
+		}
+
+		.card-attendance:hover img {
+			transform: scale(1.03);
+		}
+	</style>
 {% endblock %}
 
 {% block body %}
-	<link href="/css/attendance.css" rel="stylesheet"/>
-
 	<div class="col-lg-8 mx-auto p-5 py-md-5">
 		<div class="mt-3 text-center">
 			<h1 class="h1 mb-2 display-4">Page d'appel</h1>
@@ -17,7 +68,10 @@
 				<div class="col">
 					<a href="/appel/{{ categorie.name }}">
 						<div class="card-attendance">
-							<img src="/uploads/images/{{ categorie.image }}" class="zoom" alt="{{ categorie.id }}">
+							<div class="card-overlay">
+								<h1 class="display-2">{{ categorie.name }}</h1>
+							</div>
+							<img src="/uploads/images/{{ categorie.image }}" alt="{{ categorie.id }}">
 						</div>
 					</a>
 				</div>
@@ -26,6 +80,5 @@
 			{% endfor %}
 		</div>
 	</div>
-
 {% endblock %}
 

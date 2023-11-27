@@ -11,8 +11,7 @@
           {# <link href="/css/tests.css" rel="stylesheet" /> #}
           <link href="/css/pagebase.css" rel="stylesheet" />
           <link href="/css/param.css" rel="stylesheet" />
-          <link href="/css/nav2.css" rel="stylesheet" />
-          <link href="/css/nav3.css" rel="stylesheet" />
+
 
           {{ encore_entry_link_tags('app') }}
           <!--Styles.css-->
@@ -28,7 +27,24 @@
     </head>
     
     <body>
-                        <div class="overlay"></div>
+                        {# <div class="overlay"></div>
+                    <div class="menu">
+                        <div class="title" onclick="f()">{{ app.user.getFirstName() }} <span class="fa fa-bars"></span>
+                            <div class="arrow"></div>
+                        </div>
+                    <div class="dropdown">
+                        <p>Inbox <span class="fa fa-inbox"></span></p>
+                        <p>Settings <span class="fa fa-gear"></span></p>
+                        <p>Sign Out <span class="fa fa-sign-out"></span></p>
+                    </div>
+                </div> #}
+
+
+
+    {% block body %} 
+              <link href="/css/nav2.css" rel="stylesheet" />
+          <link href="/css/nav3.css" rel="stylesheet" />
+                            <div class="overlay"></div>
                     <div class="menu">
                         <div class="title" onclick="f()">{{ app.user.getFirstName() }} <span class="fa fa-bars"></span>
                             <div class="arrow"></div>
@@ -39,10 +55,6 @@
                         <p>Sign Out <span class="fa fa-sign-out"></span></p>
                     </div>
                 </div>
-
-
-
-    {% block body %} 
             <main class="site-wrapper">
             <div class="pt-table desktop-768">
                 <div class="pt-tablecell page-home relative" style="background-image: path('images/joueur.jpg');
@@ -126,8 +138,8 @@
                                                           <div></div>
                                                           <div></div>
                                                       </div>
-                                                      <a  class="hex-content">
-                                                          <span class="hex-content-inner" href='/team'>
+                                                      <a  class="hex-content" href='/team'>
+                                                          <span class="hex-content-inner" >
                                                               <span class="icon">
                                                                   <i class="fa fa-id-badge"></i>
                                                               </span>
@@ -189,7 +201,7 @@
                                                           <div></div>
                                                           <div></div>
                                                       </div>
-                                                      <a  class="hex-content" href='/profile'>
+                                                      <a  class="hex-content" href='/user/{{ app.user.getId()}}/edit'>
                                                           <span class="hex-content-inner">
                                                               <span class="icon">
                                                                   <i class="fa fa-map-signs"></i>
@@ -198,6 +210,7 @@
                                                           </span>
                                                           <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
                                                       </a>
+                                                      
                                                   </div>
                                               </div>
                                           </div>
