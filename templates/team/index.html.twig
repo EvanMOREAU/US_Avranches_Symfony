@@ -1,20 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello TeamController!{% endblock %}
+{% block title %}
+    Team Members
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="/css/team.css" rel="stylesheet"/>
+{% endblock %}
 
 {% block body %}
-<div class='container-team'>
-    {% for user in users %}
-        <div class='container-team'>
-            <div class="card" style="width: 18rem;">
-                <img src="..." class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">{{ user.firstName }}</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
 
-    {% endfor %}
-</div>
+    <div class="container-team">
+        <h2>Mon Équipe ({{ app.user.getCategory() }})</h2>
+        <div class="cards">
+            {% set sortedUsers = users|sort((a, b) => a.getFirstName() <=> b.getFirstName()) %}
+
+            {% for user in sortedUsers %}
+                {% if app.user is defined and user.getCategory() == app.user.category %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><b>{{ user.getFirstName() }}</b></h5>
+                            <p class="card-text">Primary Position: </p>
+                            <p class="card-text">Secondary Position: </p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

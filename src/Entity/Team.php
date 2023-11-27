@@ -2,18 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\CategoryRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TeamRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
-#[ORM\Entity(repositoryClass: CategoryRepository::class)]
-#[UniqueEntity(fields: ['name'], message: 'There is already a category with this name')]
-#[ORM\Table(name: 'tbl_category')]
-class Category
+#[ORM\Entity(repositoryClass: TeamRepository::class)]
+#[ORM\Table(name: 'tbl_team')]
+class Team
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,14 +20,14 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'Category', targetEntity: Gathering::class)]
-    private Collection $gatherings;
+    #[ORM\Column]
+    private ?int $matches_played = null;
 
-    #[ORM\OneToMany(mappedBy: 'Category', targetEntity: User::class)]
+    #[ORM\OneToMany(mappedBy: 'team', targetEntity: Player::class)]
+    private Collection $Players;
+
+    #[ORM\OneToMany(mappedBy: 'team', targetEntity: User::class)]
     private Collection $users;
-
-    #[ORM\Column(length: 255)]
-    private ?string $image = null;
 
     #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'users')]
     #[ORM\JoinColumn(name: 'team_id', referencedColumnName: 'id')]
@@ -38,9 +35,15 @@ class Category
     
     public function __construct()
     {
-        $this->gatherings = new ArrayCollection();
+        $this->Players = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
+
+    public function __toString(): string
+    {
+        return $this->name;
+    }
+
 
     public function getId(): ?int
     {
@@ -59,30 +62,42 @@ class Category
         return $this;
     }
 
-    /**
-     * @return Collection<int, Gathering>
-     */
-    public function getGatherings(): Collection
+    public function getMatchesPlayed(): ?int
     {
-        return $this->gatherings;
+        return $this->matches_played;
     }
 
-    public function addGathering(Gathering $gathering): static
+    public function setMatchesPlayed(int $matches_played): static
     {
-        if (!$this->gatherings->contains($gathering)) {
-            $this->gatherings->add($gathering);
-            $gathering->setCategory($this);
+        $this->matches_played = $matches_played;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Player>
+     */
+    public function getPlayers(): Collection
+    {
+        return $this->Players;
+    }
+
+    public function addPlayer(Player $Player): static
+    {
+        if (!$this->Players->contains($Player)) {
+            $this->Players->add($Player);
+            $Player->setTeam($this);
         }
 
         return $this;
     }
 
-    public function removeGathering(Gathering $gathering): static
+    public function removePlayer(Player $Player): static
     {
-        if ($this->gatherings->removeElement($gathering)) {
+        if ($this->Players->removeElement($Player)) {
             // set the owning side to null (unless already changed)
-            if ($gathering->getCategory() === $this) {
-                $gathering->setCategory(null);
+            if ($Player->getTeam() === $this) {
+                $Player->setTeam(null);
             }
         }
 
@@ -98,7 +113,7 @@ class Category
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
-            $user->setCategory($this);
+            $user->setTeam($this);
         }
 
         return $this;
@@ -108,25 +123,13 @@ class Category
     {
         if ($this->users->removeElement($user)) {
             // set the owning side to null (unless already changed)
-            if ($user->getCategory() === $this) {
-                $user->setCategory(null);
+            if ($user->getTeam() === $this) {
+                $user->setTeam(null);
             }
         }
 
         return $this;
     }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(string $image): self
-    {
-        $this->image = $image;
-        return $this;
-    }
-
     public function getTeam(): ?Team
     {
         return $this->team;

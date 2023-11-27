@@ -6,6 +6,7 @@ use App\Repository\PlayerCodeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PlayerCodeRepository::class)]
+#[ORM\Table(name:'tbl_player_code')]
 class PlayerCode
 {
     #[ORM\Id]

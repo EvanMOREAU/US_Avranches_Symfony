@@ -85,7 +85,7 @@ class ChartsFixtures extends Fixture
         $charts9->setSourceData('28,26,40');
         $charts9->setDatascaleMin('0');
         $charts9->setDatascaleMax('10000');
-        $manager->persist($charts8);
+        $manager->persist($charts9);
 
         $charts10 = new Charts();
         $charts10->setType('line');
@@ -93,7 +93,7 @@ class ChartsFixtures extends Fixture
         $charts10->setSourceData('9,6,15');
         $charts10->setDatascaleMin('6');
         $charts10->setDatascaleMax('15');
-        $manager->persist($charts9);
+        $manager->persist($charts10);
 
         $charts11 = new Charts();
         $charts11->setType('radar');
@@ -101,7 +101,7 @@ class ChartsFixtures extends Fixture
         $charts11->setSourceData('10,6,5,2');
         $charts11->setDatascaleMin('0');
         $charts11->setDatascaleMax('10');
-        $manager->persist($charts10);
+        $manager->persist($charts11);
 
         $manager->flush();
     }

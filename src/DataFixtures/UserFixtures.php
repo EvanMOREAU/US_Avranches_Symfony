@@ -45,7 +45,7 @@ class UserFixtures extends Fixture
             $player->setFirstName($faker->firstName);
             $player->setLastName($faker->lastName);
             $player->setDateNaissance($randomBirthdate);
-            $player->setWeight(826.21);
+            $player->setWeight(0);
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $player,

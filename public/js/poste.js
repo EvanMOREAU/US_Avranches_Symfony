@@ -445,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function() {
             body: new URLSearchParams(postData)
         };
 
-        var url = "/player/poste/set-poste-principal/"+id;
+        var url = "/user/poste/set-poste-principal/"+id;
 
         fetch(url, options)
             .then(response => response.json())
@@ -466,7 +466,7 @@ document.addEventListener("DOMContentLoaded", function() {
             body: new URLSearchParams(postData)
         };
 
-        var url = "/player/poste/set-poste-secondaire/"+id;
+        var url = "/user/poste/set-poste-secondaire/"+id;
 
         fetch(url, options)
             .then(response => response.json())

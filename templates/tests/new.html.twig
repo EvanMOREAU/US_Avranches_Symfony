@@ -6,10 +6,45 @@
 {% endblock %}
 
 {% block body %}
+    {% if app.user %}
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const conduiteBalleInput = document.querySelector('#{{ form.conduiteballe.vars.id }}');
+            const vitesseInput = document.querySelector('#{{ form.vitesse.vars.id }}');
+
+            const formatTimeInput = function (input) {
+                let value = input.value.trim();
+
+                // Supprimer les caractères non numériques
+                value = value.replace(/[^0-9]/g, '');
+
+                // Formater en secondes et millisecondes
+                if (value.length > 3) {
+                    const seconds = value.slice(0, -3);
+                    const milliseconds = value.slice(-3);
+
+                    // Formatage de la valeur en secondes et millisecondes
+                    value = `${seconds}.${milliseconds}`;
+                }
+
+                // Mettre à jour la valeur dans le champ
+                input.value = value;
+            };
+
+            conduiteBalleInput.addEventListener('input', function () {
+                formatTimeInput(this);
+            });
+
+            vitesseInput.addEventListener('input', function () {
+                formatTimeInput(this);
+            });
+        });
+    </script>
+
     <div class="container">
         <h1>Nouveau Test</h1>
 
-        {{ form_start(form) }}
+       {{ form_start(form, {'method': 'POST'}) }}
         
         <div class="form-group {% if form.vma.vars.errors|length > 0 %}has-error{% endif %}">
             {{ form_label(form.vma, 'VMA (0 à 20 km/h)', {'label_attr': {'class': 'form-label'}}) }}
@@ -74,37 +109,16 @@
                 
         {{ form_end(form) }}
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const conduiteBalleInput = document.querySelector('#{{ form.conduiteballe.vars.id }}');
-            const vitesseInput = document.querySelector('#{{ form.vitesse.vars.id }}');
 
-            const formatTimeInput = function (input) {
-                let value = input.value.trim();
+    {% else %}   
 
-                // Supprimer les caractères non numériques
-                value = value.replace(/[^0-9]/g, '');
-
-                // Formater en secondes et millisecondes
-                if (value.length > 3) {
-                    const seconds = value.slice(0, -3);
-                    const milliseconds = value.slice(-3);
-
-                    // Formatage de la valeur en secondes et millisecondes
-                    value = `${seconds}.${milliseconds}`;
-                }
-
-                // Mettre à jour la valeur dans le champ
-                input.value = value;
-            };
-
-            conduiteBalleInput.addEventListener('input', function () {
-                formatTimeInput(this);
-            });
-
-            vitesseInput.addEventListener('input', function () {
-                formatTimeInput(this);
-            });
-        });
-    </script>   
+    <div class="container-fluid login-message-container">
+            <div class="login-message">
+                <div class="text-center">
+                    <p>Connectez-vous pour créer un nouveau test.</p>
+                    <p><a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter</a></p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
