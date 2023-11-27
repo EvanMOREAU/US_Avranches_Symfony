@@ -24,7 +24,7 @@ class DefaultController extends AbstractController
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('base.html.twig', [
+        return $this->render('login/index.html.twig', [
             'controller_name' => 'DefaultController',
         ]);
     }
