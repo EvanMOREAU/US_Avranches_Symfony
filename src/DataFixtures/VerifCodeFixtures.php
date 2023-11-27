@@ -8,7 +8,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\DBAL\Driver\IBMDB2\Exception\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class PlayerCodeFixtures extends Fixture
+class VerifCodeFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
