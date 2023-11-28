@@ -10,10 +10,12 @@ use App\Entity\User;
 
 class ExcelController extends AbstractController
 {
+
+    #[Route('/excel', name: 'app_excel')]
     public function excel(): Response
     {
         // Récupérez les données de la base de données
-        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
+        $users = $this->getDoctrine()->getRepository(User::class)->findByRole('ROLE_PLAYER');
 
         // Triez les utilisateurs par leur prénom (FirstName) en ordre alphabétique
         usort($users, function ($a, $b) {
@@ -24,7 +26,7 @@ class ExcelController extends AbstractController
         $spreadsheet = new Spreadsheet();
 
         // Définissez le nom de la feuille Excel
-        $spreadsheet->getActiveSheet()->setTitle('Informations du joueur');
+        $spreadsheet->getActiveSheet()->setTitle('Informations des joueurs');
 
         // Créez une feuille de calcul
         $sheet = $spreadsheet->getActiveSheet();
@@ -37,6 +39,11 @@ class ExcelController extends AbstractController
         $sheet->setCellValue('E1', 'Poids');
         $sheet->setCellValue('F1', 'Taille');
 
+        // Mettez en gras les en-têtes
+        $headerStyle = $sheet->getStyle('A1:F1');
+        $headerFont = $headerStyle->getFont();
+        $headerFont->setBold(true);
+
         // Ajoutez d'autres en-têtes et définissez la largeur des colonnes comme nécessaire
         $sheet->getColumnDimension('A')->setWidth(20); // Par exemple, largeur de la colonne A
         $sheet->getColumnDimension('B')->setWidth(20); // Par exemple, largeur de la colonne B
@@ -46,7 +53,7 @@ class ExcelController extends AbstractController
         $sheet->getColumnDimension('F')->setWidth(20);
 
         // Ajoutez les données à la feuille de calcul
-        $row = 3; // Commencez à partir de la ligne 2
+        $row = 2; // Commencez à partir de la ligne 2
         $numTest = 0; // Initialisez le numéro de test en dehors de la boucle des utilisateurs
         foreach ($users as $user) {
             $sheet->setCellValue('A' . $row, $user->getLastName());
@@ -63,7 +70,7 @@ class ExcelController extends AbstractController
                 $numTest = 0;
 
                 // Créez une nouvelle feuille pour chaque test
-                $testSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Tests ' . $user->getLastName() . ' ' .$user->getFirstName());
+                $testSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $user->getLastName() . ' ' . $user->getFirstName());
                 $spreadsheet->addSheet($testSheet);
                 $spreadsheet->setActiveSheetIndex(1);
 
@@ -79,6 +86,11 @@ class ExcelController extends AbstractController
                 $testSheet->setCellValue('I1', 'Conduite de balle (secondes)');
                 $testSheet->setCellValue('J1', 'Vitesse (secondes)');
 
+                // Mettez en gras les en-têtes
+                $headerStyle = $testSheet->getStyle('A1:J1');
+                $headerFont = $headerStyle->getFont();
+                $headerFont->setBold(true);
+
                 // Ajoutez d'autres en-têtes et définissez la largeur des colonnes comme nécessaire
                 $testSheet->getColumnDimension('A')->setWidth(30); // Par exemple, largeur de la colonne A
                 $testSheet->getColumnDimension('B')->setWidth(30); // Par exemple, largeur de la colonne B
@@ -92,7 +104,7 @@ class ExcelController extends AbstractController
                 $testSheet->getColumnDimension('J')->setWidth(30);
 
                 // Ajoutez les données à la feuille de calcul pour les tests
-                $testRow = 3; // Commencez à partir de la ligne 3.
+                $testRow = 2; // Commencez à partir de la ligne .
                 foreach ($user->getTests() as $test) {
                     $numTest++; // Incrémentez le numéro du test à chaque itération
                     $testSheet->setCellValue('A' . $testRow, 'n°' . $numTest);
