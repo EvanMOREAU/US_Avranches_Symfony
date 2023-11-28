@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Height{% endblock %}
+
+{% block body %}
+    <h1>Edit Height</h1>
+
+    {{ include('height/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_height_index') }}">back to list</a>
+
+    {{ include('height/_delete_form.html.twig') }}
+{% endblock %}

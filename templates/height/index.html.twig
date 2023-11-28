@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Height index{% endblock %}
+
+{% block body %}
+    <h1>Height index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Value</th>
+                <th>Date</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for height in heights %}
+            <tr>
+                <td>{{ height.id }}</td>
+                <td>{{ height.value }}</td>
+                <td>{{ height.date ? height.date|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_height_show', {'id': height.id}) }}">show</a>
+                    <a href="{{ path('app_height_edit', {'id': height.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_height_new') }}">Create new</a>
+{% endblock %}
