@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Charts;
 use App\Form\ChartsType;
+use App\Repository\TestsRepository;
 use App\Repository\ChartsRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,16 +23,25 @@ class ChartsController extends AbstractController {
     }
     
     #[Route('/', name: 'app_charts_index', methods: ['GET'])]
-    public function index(ChartsRepository $chartsRepository, Request $request): Response {
+    public function index(ChartsRepository $chartsRepository, TestsRepository $testsRepository, Request $request): Response {
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
 
-        // $chartGlobal = new Charts(); // Créez une nouvelle instance de Charts (ou adaptez ceci selon vos besoins)
+        $charts = $chartsRepository->findAll();
+
+        $chartTests = [];
+        foreach ($charts as $chart) {
+            $tests = $testsRepository->findBy(['chart' => $chart]);
+            $chartTests[$chart->getId()] = $tests;
+        }
+
         return $this->render('charts/index.html.twig', [
-            'charts' => $chartsRepository->findAll(),
+            'charts' => $charts,
+            'chartTests' => $chartTests,
         ]);
     }
+
 
     #[Route('/new', name: 'app_charts_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response {

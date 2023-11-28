@@ -45,6 +45,10 @@ class Tests
     #[ORM\ManyToOne(inversedBy: 'tests')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+    
+    #[ORM\ManyToOne(inversedBy: 'tests')]
+    #[ORM\JoinColumn(name: 'chart_id', referencedColumnName: 'id', nullable: false)]
+    private ?Charts $chart;
 
     public function getId(): ?int
     {
@@ -167,6 +171,18 @@ class Tests
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getChart(): ?Charts
+    {
+        return $this->chart;
+    }
+
+    public function setChart(?Charts $chart): self
+    {
+        $this->chart = $chart;
 
         return $this;
     }

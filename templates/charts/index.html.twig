@@ -30,48 +30,21 @@
                         new Chart(ctx{{ chart.id }}, {
                             type: '{{ chart.type }}',
                             data: {
-                                {% if chart.type == 'line' %}
-                                labels: ['2024-01-11', '2024-09-11', '2025-10-11', '2025-10-11'],
+                                labels: [ {% for test in chart.tests %} '{{ test.date | date("Y-m-d") }}', {% endfor %} ],
                                 datasets: [{
-                                    label: '{{ chart.id }}',
+                                    label: '{{ chart.data }}',
                                     data: [{{ chart.source_data | raw }}],
-                                    backgroundColor: 'red',         
+                                    backgroundColor: 'red',
                                     borderColor: 'red',
                                     borderWidth: 2
                                 }]
-                                {% elseif chart.type == 'radar' %}
-                                labels: ['Technique', 'Morale', 'Physique', 'Tactique'],
-                                datasets: [
-                                    {
-                                        label: 'joueurs',
-                                        data: [{{ chart.source_data | raw }}],
-                                        borderColor: 'red',
-                                        backgroundColor: 'rgba(0,0,0,0)',
-                                        borderWidth: 2
-                                    },
-                                    {
-                                        label: 'COACH',
-                                        data: [2, 3, 1, 4],
-                                        borderColor: 'blue',
-                                        backgroundColor: 'rgba(0,0,0,0)',
-                                        borderWidth: 2
-                                    }
-                                ]
-                                {% endif %}
                             },
                             options: {
                                 scales: {
-                                    {% if chart.type == 'line' %}
                                     y: {
                                         min: {{ chart.datascalemin }},
                                         max: {{ chart.datascalemax }}
                                     }
-                                    {% elseif chart.type == 'radar' %}
-                                    r: {
-                                        min: {{ chart.datascalemin }},
-                                        max: {{ chart.datascalemax }}
-                                    }
-                                    {% endif %}
                                 }
                             }
                         });

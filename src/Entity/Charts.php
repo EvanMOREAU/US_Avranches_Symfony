@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\ChartsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: ChartsRepository::class)]
 #[ORM\Table(name:'tbl_charts')]
@@ -29,6 +31,29 @@ class Charts
 
     #[ORM\Column(length: 255)]
     private ?string $datascale_max = null;
+
+    #[ORM\OneToMany(mappedBy: 'chart', targetEntity: Tests::class, cascade: ['persist'])]
+    private Collection $tests;
+
+    public function __construct()
+    {
+        $this->tests = new ArrayCollection();
+    }
+
+    public function getTests(): Collection
+    {
+        return $this->tests;
+    }
+
+    public function addTest(Tests $test): self
+    {
+        if (!$this->tests->contains($test)) {
+            $this->tests[] = $test;
+            $test->setChart($this);
+        }
+
+        return $this;
+    }
 
     public function getId(): ?int
     {
