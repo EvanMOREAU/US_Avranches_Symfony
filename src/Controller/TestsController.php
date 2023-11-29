@@ -4,18 +4,19 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Tests;
-use App\Repository\UserRepository;
 use App\Form\TestsFormType;
 use Doctrine\ORM\EntityManager;
+use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Annotation\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
 #[Route('/tests')]
@@ -245,5 +246,24 @@ class TestsController extends AbstractController
             // Par défaut, retournez une catégorie générique
             return 'Other';
         }
+    }
+    #[Route('/validate-test/{id}', name: 'app_validate_test', methods: ['GET', 'POST'])]
+    public function validateTestAction(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
+    {
+        // Récupérez le test à partir de l'ID
+        $test = $entityManager->getRepository(Tests::class)->find($id);
+    
+        if (!$test) {
+            throw $this->createNotFoundException('Test non trouvé');
+        }
+    
+        // Mettez à jour la propriété is_validated
+        $test->setIsValidated(true); // Assurez-vous que le nom du champ correspond à votre entité
+    
+        // Enregistrez les modifications dans la base de données
+        $entityManager->flush();
+    
+        // Répondez avec un JSON indiquant le succès de l'opération
+        return new JsonResponse(['success' => true]);
     }
 }

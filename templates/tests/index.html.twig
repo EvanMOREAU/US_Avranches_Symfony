@@ -13,6 +13,7 @@
 {% block body %}
     <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -46,6 +47,30 @@
                 }
             }
         });
+        function validateTest(validationUrl, testId) {
+            // Envoi de la requête AJAX pour mettre à jour les propriétés is_validated du test
+            fetch(validationUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ testId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Gestion de la réponse du serveur
+                if (data.success) {
+                    // Actualisez la page ou effectuez d'autres actions nécessaires
+                    window.location.reload();
+                } else {
+                    alert('Erreur lors de la validation du test : ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la validation du test:', error);
+            });
+        }
     </script>
 
     <div class="container-fluid">
@@ -163,9 +188,12 @@
                                                 Conduite de balle : {{ test.conduiteballe|split('.')|first }}.{{ test.conduiteballe|split('.')|last|default('000') }}s<br>
                                                 Vitesse : {{ test.vitesse|split('.')|first }}.{{ test.vitesse|split('.')|last|default('000') }}s<br>
                                                 Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}
-                                            </p>
+                                                {% if is_granted("ROLE_SUPER_ADMIN") and not test.isValidated %} {# Ajoutez cette condition #}
+                                                <button class="btn btn-primary" onclick="validateTest('{{ path('app_validate_test', {'id': test.id}) }}', {{ test.id }})" data-test-id="{{ test.id }}">Valider le test</button>
+                                                {% endif %}                                          </p>
                                             {% if is_granted("ROLE_SUPER_ADMIN") %}
                                                 <div class="test-owner">Joueur : {{ test.user.getFirstName() }} ({{ test.user.getCategory() }})</div>
+                                                
                                                 <div class="d-flex justify-content-between mt-3">
                                                     <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Supprimer</a>
                                                     <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i> Modifier</a>
