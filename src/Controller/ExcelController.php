@@ -82,7 +82,7 @@ class ExcelController extends AbstractController
                 $testSheet->setCellValue('E1', 'Jongles pied gauche');
                 $testSheet->setCellValue('F1', 'Jongles pied droit');
                 $testSheet->setCellValue('G1', 'Jongles tête');
-                $testSheet->setCellValue('H1', 'Date tests');
+                $testSheet->setCellValue('H1', 'Date test');
                 $testSheet->setCellValue('I1', 'Conduite de balle (secondes)');
                 $testSheet->setCellValue('J1', 'Vitesse (secondes)');
 
