@@ -84,21 +84,21 @@ class PdfController extends AbstractController
                     <br><hr><br><div></div>
                     <b>Catégorie : </b>' . $user->getCategory() . '
                     <br><hr><br><div></div>
-                    <b>Nombre de matchs joués </b>: 2
+                    <b>Nombre de matchs joués :</b> 2
                     <br><hr><br><div></div>
                     <b>Poids : </b>' . $user->getWeight() . ' kg
                     <br><hr><br><div></div>
-                    <b>Taille </b>: 173cm
+                    <b>Taille :</b> 173 cm
                     <br><hr><br><div></div>
                     </p>
                     <p><b> Contact :</b>
-                    <br> ChristelleGamer DELARUE<br>
+                    <br> Christelle DELARUE<br>
                     <br>
                     Club House US Avranches MSM<br>
                     Allée Jacques Anquetil<br>
                     50300 Avranches.<br><br>
-                    <b>Téléphone</b> : 02.33.48.30.78 <br><br>
-                    <b>Mails</b> :<br>
+                    <b>Téléphone :</b> 02.33.48.30.78 <br><br>
+                    <b>Mails :</b><br>
                     <span class="link"><u>communication@us-avranches.fr</u></span><br>
                     <span class="link"><u>partenaires@us-avranches.fr</u></span><br>
                     <span class="link"><u>us.avranches@orange.fr</u></span>
@@ -121,12 +121,13 @@ class PdfController extends AbstractController
                     $largeurPage = $pdf->getPageWidth() + 30;
                     $hauteurPage = $pdf->getPageHeight() - 25;
 
-                    $contentTests ='
-                    <br><br>
-                    <big><big><big><b>FICHE DU JOUEUR</b></big></big></big>
-                    <br><br>
-                    <b><i>Tests du joueur : </i></b>
-                    <br><br>
+
+                    $pdf->SetFontSize(16); // Définir la taille de police à 16 points (ajustez selon vos besoins)
+                    $pdf->MultiCell(70, 10, $user->getFirstName() . ' ' . $user->getLastName(), 0, 'C', 0, 1, '', '', true);
+                    $pdf->SetFontSize(10); // Rétablir la taille de police à la valeur par défaut (si nécessaire)
+
+                    $contentTests = '
+                    <br><br><br>
                     <p><b>VMA : </b>' . $test->getVma() . ' km/h 
                     <br><hr><br><div></div>
                     <b>Cooper : </b>' . $test->getCooper() . ' mètres
@@ -149,7 +150,17 @@ class PdfController extends AbstractController
                     $pdf->writeHTMLCell(65, 230, '', '', $contentTests, 0, 0, 0, true, '', true);
                     // Ajout d'une image au PDF
                     $pdf->Image('img/graph_' . $user->getFirstName() . '.jpg', 95, 150, 100, 100, '', '', '', false, 300, '', false, false, 1, false, false, false);
-                    $pdf->Image('img/joueur.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+
+                    // Insérer la date au dessus de l'image et faire en sorte qu'elle soit bien visible.
+                    $posX = 145;
+                    $posY = 33.3;
+                    $pdf->SetTextColor(255, 255, 255);
+                    $pdf->SetFontSize(20);
+                    $pdf->MultiCell($posX, $posY, $test->getDate()->format('d/m/Y, H:i:s'), 0, 'C', 0, 1, '', '', true);
+                    $pdf->SetFontSize(10);
+                    $pdf->SetTextColor(0, 0, 0);
+
+                    $pdf->Image('img/joueur.jpg', 130, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
 
                 }
 
@@ -160,20 +171,5 @@ class PdfController extends AbstractController
         // Gestion des cas d'erreur
         return new Response('Erreur');
 
-    }
-
-    #[Route('/pdftest', name: 'app_pdftest')]
-    public function pdfTest(): Response
-    {
-        if (!$this->userVerificationService->verifyUser()) {
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        $user = $this->getUser(); // Récupérez l'utilisateur actuellement connecté
-
-        return $this->render('/pdf/index.html.twig', [
-            'controller_name' => 'DefaultController',
-            'user' => $user,
-        ]);
     }
 }

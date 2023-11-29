@@ -1,60 +1,10 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="images\logo.svg" sizes="any" type="image/svg+xml">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        {% block stylesheets %}
+{% extends 'base.html.twig' %}
 
-          {# <link href="/css/tests.css" rel="stylesheet" /> #}
-          <link href="/css/pagebase.css" rel="stylesheet" />
-          <link href="/css/param.css" rel="stylesheet" />
+{% block title %}Hello AdminIndexController!{% endblock %}
 
-
-          {{ encore_entry_link_tags('app') }}
-          <!--Styles.css-->
-			    <link rel="stylesheet" href="/css/bootstrap.css">
-        {% endblock %}
-
-        {% block javascripts %}
-        <script type="text/javascript" src="/js/tests.js"></script>
-            {{ encore_entry_script_tags('app') }}
-            <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-        {% endblock %}
-    </head>
-    
-    <body>
-                        {# <div class="overlay"></div>
-                    <div class="menu">
-                        <div class="title" onclick="f()">{{ app.user.getFirstName() }} <span class="fa fa-bars"></span>
-                            <div class="arrow"></div>
-                        </div>
-                    <div class="dropdown">
-                        <p>Inbox <span class="fa fa-inbox"></span></p>
-                        <p>Settings <span class="fa fa-gear"></span></p>
-                        <p>Sign Out <span class="fa fa-sign-out"></span></p>
-                    </div>
-                </div> #}
-
-
-
-    {% block body %} 
+{% block body %}
               <link href="/css/nav2.css" rel="stylesheet" />
-                <link href="/css/nav3.css" rel="stylesheet" />
-                            <div class="overlay"></div>
-                    <div class="menu">
-                        <div class="title" onclick="f()">{{ app.user.getFirstName() }} <span class="fa fa-bars"></span>
-                            <div class="arrow"></div>
-                        </div>
-                    <div class="dropdown">
-                        <p>Inbox <span class="fa fa-inbox"></span></p>
-                        <p>Settings <span class="fa fa-gear"></span></p>
-                        <p>Sign Out <span class="fa fa-sign-out"></span></p>
-                    </div>
-                </div>
+          <link href="/css/nav3.css" rel="stylesheet" />
             <main class="site-wrapper">
             <div class="pt-table desktop-768">
                 <div class="pt-tablecell page-home relative" style="background-image: path('images/joueur.jpg');
@@ -75,12 +25,12 @@
                                                           <div></div>
                                                           <div></div>
                                                       </div>
-                                                      <a  class="hex-content" href='/charts'>
+                                                      <a  class="hex-content" href='/playercode/1/edit'>
                                                           <span class="hex-content-inner">
                                                               <span class="icon">
                                                                   <i class="fa fa-universal-access"></i>
                                                               </span>
-                                                              <span class="title">Graphiques</span>
+                                                              <span class="title">Code Vérification joueur</span>
                                                           </span>
                                                           <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
                                                       </a>
@@ -96,12 +46,12 @@
                                                           <div></div>
                                                           <div></div>
                                                       </div>
-                                                      <a  class="hex-content" href=''>
+                                                      <a  class="hex-content" href='/appel'>
                                                           <span class="hex-content-inner">
                                                               <span class="icon">
                                                                   <i class="fa fa-bullseye"></i>
                                                               </span>
-                                                              <span class="title">Matchs /!\</span>
+                                                              <span class="title">Appel</span>
                                                           </span>
                                                           <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
                                                       </a>
@@ -117,12 +67,12 @@
                                                           <div></div>
                                                           <div></div>
                                                       </div>
-                                                      <a  class="hex-content" href='/tests'>
+                                                      <a  class="hex-content" href='/categorie'>
                                                           <span class="hex-content-inner">
                                                               <span class="icon">
                                                                   <i class="fa fa-braille"></i>
                                                               </span>
-                                                              <span class="title">Tests</span>
+                                                              <span class="title">Catégorie</span>
                                                           </span>
                                                           <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
                                                       </a>    
@@ -138,12 +88,12 @@
                                                           <div></div>
                                                           <div></div>
                                                       </div>
-                                                        <a class="hex-content" href="{{ is_granted('ROLE_SUPER_ADMIN') ? path('app_admin_index') : path('app_team') }}">
+                                                      <a  class="hex-content" href='excel'>
                                                           <span class="hex-content-inner" >
                                                               <span class="icon">
                                                                   <i class="fa fa-id-badge"></i>
                                                               </span>
-                                                            <span class="title">{{ is_granted('ROLE_SUPER_ADMIN') ? 'Administration' : 'Mon équipe' }}</span>
+                                                              <span class="title">Excel</span>
                                                           </span>
                                                           <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
                                                       </a>
@@ -159,12 +109,12 @@
                                                           <div></div>
                                                           <div></div>
                                                       </div>
-                                                      <a  class="hex-content" href='/user/{{ app.user.id }}/poste-cache'>
+                                                      <a  class="hex-content" href='/rassemblement'>
                                                           <span class="hex-content-inner">
                                                               <span class="icon">
                                                                   <i class="fa fa-life-ring"></i>
                                                               </span>
-                                                              <span class="title">Poste</span>
+                                                              <span class="title">Rassemblement</span>
                                                           </span>
                                                           <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
                                                       </a>
@@ -180,12 +130,12 @@
                                                           <div></div>
                                                           <div></div>
                                                       </div>
-                                                      <a  class="hex-content" href='/pdf'>
+                                                      <a  class="hex-content" href='/player'>
                                                           <span class="hex-content-inner">
                                                               <span class="icon">
                                                                   <i class="fa fa-clipboard"></i>
                                                               </span>
-                                                              <span class="title">PDF</span>
+                                                              <span class="title">Joueurs</span>
                                                           </span>
                                                           <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
                                                       </a>
@@ -215,25 +165,4 @@
                                               </div>
                                           </div>
                                       </div>
-                                  
-      {% endblock %}
-
-            </div>
-          </div>
-        </div>
-      </main>
-      <script>
-        function f() {
-            document.getElementsByClassName('dropdown')[0].classList.toggle('down');
-            document.getElementsByClassName('arrow')[0].classList.toggle('gone');
-            if (document.getElementsByClassName('dropdown')[0].classList.contains('down')) {
-                setTimeout(function() {
-                document.getElementsByClassName('dropdown')[0].style.overflow = 'visible'
-                }, 500)
-            } else {
-                document.getElementsByClassName('dropdown')[0].style.overflow = 'hidden'
-            }
-        }
-      </script>
-    </body>
-</html>
+{% endblock %}

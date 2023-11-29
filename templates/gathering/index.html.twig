@@ -9,17 +9,23 @@
 			<h1 class="h1 mb-2 display-4 text-white">Page des rassemblements</h1>
 		</div>
 
-		<div class="row row-cols-1 row-cols-md-2 g-4 pt-5">
+		<div class="row row-cols-1 row-cols-md-4 g-4 pt-5">
 			{% for gathering in gatherings %}
-				<div class="col">
-					<a href="/rassemblement/{{ gathering.id }}" class="btn btn-primary">
-						<h3>Rassemblement n°{{ gathering.id }}</h3>
-						<h4>Du
-							{{ gathering.gatheringDate|date('Y-m-d H:i:s') }}</h4>
-					</a>
+			{# add div class row et gutter gx-4#}
+				<div class="card m-2">
+					<div class="card-header">
+						Rassemblement n°{{ gathering.id }}
+					</div>
+					<div class="card-body">
+						<h5 class="card-title">Le
+							{{ gathering.gatheringDate|date('d/m/Y') }}</h5>
+						<p class="card-text">à
+							{{ gathering.gatheringDate|date('H:i')|replace({':': 'h'}) }}</p>
+						<a href="/rassemblement/{{ gathering.id }}" class="btn btn-primary">Voir</a>
+					</div>
 				</div>
 			{% else %}
-				<td colspan="9">Il n'y a aucun rassemblement !</td>
+				<div class="text-white">Il n'y a aucun rassemblement !</div>
 			{% endfor %}
 		</div>
 	</div>

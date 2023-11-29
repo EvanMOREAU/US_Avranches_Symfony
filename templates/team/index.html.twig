@@ -21,8 +21,8 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title"><b>{{ user.getFirstName() }}</b></h5>
-                            <p class="card-text">Primary Position: </p>
-                            <p class="card-text">Secondary Position: </p>
+                            <p class="card-text">Primary Position : {{ user.getPostePrincipal() }}</p>
+                            <p class="card-text">Secondary Position : {{ user.getPosteSecondaire() }}</p>
                         </div>
                     </div>
                 {% endif %}

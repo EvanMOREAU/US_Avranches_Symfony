@@ -76,6 +76,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->attendances = new ArrayCollection();
         $this->gatherings = new ArrayCollection();
         $this->tests = new ArrayCollection();
+        $this->weights = new ArrayCollection();
+        $this->heights = new ArrayCollection();
 
     }
 
@@ -100,6 +102,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $isCodeValidated = false;
+
+    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Weight::class)]
+    private Collection $weights;
+
+    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Height::class)]
+    private Collection $heights;
 
     public function getId(): ?int
     {
@@ -413,6 +421,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPosteCordY(?float $posteCordY): static
     {
         $this->posteCordY = $posteCordY;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Weight>
+     */
+    public function getWeights(): Collection
+    {
+        return $this->weights;
+    }
+
+    public function addWeight(Weight $weight): static
+    {
+        if (!$this->weights->contains($weight)) {
+            $this->weights->add($weight);
+            $weight->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWeight(Weight $weight): static
+    {
+        if ($this->weights->removeElement($weight)) {
+            // set the owning side to null (unless already changed)
+            if ($weight->getUserId() === $this) {
+                $weight->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Height>
+     */
+    public function getHeights(): Collection
+    {
+        return $this->heights;
+    }
+
+    public function addHeight(Height $height): static
+    {
+        if (!$this->heights->contains($height)) {
+            $this->heights->add($height);
+            $height->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHeight(Height $height): static
+    {
+        if ($this->heights->removeElement($height)) {
+            // set the owning side to null (unless already changed)
+            if ($height->getUserId() === $this) {
+                $height->setUserId(null);
+            }
+        }
 
         return $this;
     }
