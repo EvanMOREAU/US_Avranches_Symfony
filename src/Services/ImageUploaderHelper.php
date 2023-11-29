@@ -54,8 +54,8 @@ class ImageUploaderHelper {
 
         if ($imageFile) {
             $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeFilename = $this->slugger->slug($originalFilename);
-            $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+            // $safeFilename = $this->slugger->slug($originalFilename);
+            $newFilename = $originalFilename.'.'.$imageFile->guessExtension();
 
             try {
                 $imageFile->move(
