@@ -18,14 +18,20 @@ class UserVerificationService
         $this->router = $router;
     }
 
-    public function verifyUser(): bool
+    public function verifyUser(): int
     {
-        $user = $this->tokenStorage->getToken()->getUser();
 
-        if ($user && !$user->isIsCodeValidated()) {
-           return false;
+        if ($this->tokenStorage->getToken()) {
+            $user = $this->tokenStorage->getToken()->getUser();
+
+            if ($user && !$user->isIsCodeValidated()) {
+               return 0; // Pas le droit (0)
+            }
+        } else {
+            return -1; // Pas connecté (-1)
         }
+        
 
-        return true;
+        return 1; // Bon code (1)
     }
 }
