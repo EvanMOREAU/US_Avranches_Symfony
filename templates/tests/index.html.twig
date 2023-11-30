@@ -71,6 +71,32 @@
                 console.error('Erreur lors de la validation du test:', error);
             });
         }
+        function cancelTest(cancelUrl, testId) {
+            // Envoi de la requête AJAX pour annuler le test
+            fetch(cancelUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ testId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Gestion de la réponse du serveur
+                console.log('Response from server:', data);
+
+                if (data.success) {
+                    // Actualisez la page ou effectuez d'autres actions nécessaires
+                    window.location.reload();
+                } else {
+                    alert('Erreur lors de l\'annulation du test : ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de l\'annulation du test:', error);
+            });
+        }
     </script>
 
     <div class="container-fluid">
@@ -177,7 +203,25 @@
                                 <div class="col">
                                     <div class="card green" style="position: relative;">
                                         <div class="card-body">
-                                            <h5 class="card-title">Test de {{ test.user.getFirstName() }} ({{ test.user.getCategory() }})</h5>
+                                        {# Validation indicators and title on the same line #}
+                                        <div class="validation-indicators">
+                                            {# Affiche l'icône de validation si le test est validé #}
+                                            {% if test.isValidated %}
+                                                <span class="validation-indicator validated">&#10004;</span>
+                                            {# Affiche l'icône d'annulation si le test n'est pas validé #}
+                                            {% elseif not test.isValidated %}
+                                                <span class="validation-indicator not-validated">&#10008;</span>
+                                            {% endif %}
+                                        </div>
+
+
+                                            {% if is_granted("ROLE_SUPER_ADMIN") %}
+                                                {# Display additional information for superadmin #}
+                                                <h5 class="card-title">Test de {{ test.user.getFirstName() }} {{ test.user.getLastName() }} ({{ test.user.getCategory() }})</h5><br>
+                                            {% else %}
+                                                {# Display simplified information for regular users #}
+                                                <h5 class="card-title">Test du - {{ test.date|date('d/m/Y à H:i:s') }} </h5><br>
+                                            {% endif %}
                                             <p class="card-text">
                                                 VMA : {{ test.vma }} km/h<br>
                                                 Cooper (12min) : {{ test.demicooper }} m<br>
@@ -187,18 +231,35 @@
                                                 Jongle Tête : {{ test.jongletete }}<br>
                                                 Conduite de balle : {{ test.conduiteballe|split('.')|first }}.{{ test.conduiteballe|split('.')|last|default('000') }}s<br>
                                                 Vitesse : {{ test.vitesse|split('.')|first }}.{{ test.vitesse|split('.')|last|default('000') }}s<br>
-                                                Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}
-                                                {% if is_granted("ROLE_SUPER_ADMIN") and not test.isValidated %} {# Ajoutez cette condition #}
-                                                <button class="btn btn-primary" onclick="validateTest('{{ path('app_validate_test', {'id': test.id}) }}', {{ test.id }})" data-test-id="{{ test.id }}">Valider le test</button>
-                                                {% endif %}                                          </p>
+                                                Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}</p>
                                             {% if is_granted("ROLE_SUPER_ADMIN") %}
                                                 <div class="test-owner">Joueur : {{ test.user.getFirstName() }} ({{ test.user.getCategory() }})</div>
                                                 
-                                                <div class="d-flex justify-content-between mt-3">
-                                                    <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Supprimer</a>
-                                                    <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i> Modifier</a>
-                                                </div>
+                                                
                                             {% endif %}
+                                            <div class="d-flex justify-content-between mt-3">
+                                                {% if is_granted("ROLE_SUPER_ADMIN") %}
+                                                <a href="{{ path('app_tests_delete', {'id': test.id}) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Supprimer</a>
+                                                {% if not test.isValidated %}
+                                                    <div class="btn-group" role="group" aria-label="Actions">
+                                                        <button class="btn btn-success custom-btn" onclick="validateTest('{{ path('app_validate_test', {'id': test.id}) }}', {{ test.id }})" data-test-id="{{ test.id }}">
+                                                            <i class="fas fa-check"></i> Valider
+                                                        </button>
+                                                    </div>
+                                                {% endif %}
+                                                {% if test.isValidated %}
+                                                    <div class="btn-group" role="group" aria-label="Actions">
+                                                        <button class="btn btn-danger custom-btn" onclick="cancelTest('{{ path('app_cancel_test', {'id': test.id}) }}', {{ test.id }})" data-test-id="{{ test.id }}">
+                                                            <i class="fas fa-times"></i> Rejeter
+                                                        </button>
+                                                    </div>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% if not test.isValidated or is_granted("ROLE_SUPER_ADMIN") %}
+                                                    {# Display the "Modifier" button for non-validated tests or for the superadmin #}
+                                                    <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i> Modifier</a>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

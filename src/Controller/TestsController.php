@@ -83,14 +83,32 @@ class TestsController extends AbstractController
     #[Route('/new', name: 'app_tests_new', methods: ['GET', 'POST'])]
     public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository): Response
     {
-        if(!$this->userVerificationService->verifyUser()){
+        if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
 
         $test = new Tests();
-        
-        // Assurez-vous que le champ user n'est pas requis
-        // $test->setUser($this->getUser()); // Ne pas définir l'utilisateur ici
+
+        // Vérifier si le formulaire est vide
+        $formIsEmpty = empty($request->request->all());
+
+        // Si le formulaire est vide, récupérez le dernier test de l'utilisateur
+        if ($formIsEmpty) {
+            $lastTest = $testsRepository->findLastTestByUser($this->getUser());
+
+            if ($lastTest) {
+                // Remplir les champs avec les valeurs du dernier test
+                $test->setVma($lastTest->getVma());
+                $test->setDemicooper($lastTest->getDemicooper());
+                $test->setCooper($lastTest->getCooper());
+                $test->setJongleGauche($lastTest->getJongleGauche());
+                $test->setJongleDroit($lastTest->getJongleDroit());
+                $test->setJongleTete($lastTest->getJongleTete());
+                $test->setConduiteBalle($lastTest->getConduiteBalle());
+                $test->setVitesse($lastTest->getVitesse());
+                // Répéter pour d'autres champs...
+            }
+        }
 
         $form = $this->createForm(TestsFormType::class, $test);
 
@@ -98,11 +116,11 @@ class TestsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            
+
             // Ajoutez ces lignes pour définir la date actuelle
             $currentDate = new \DateTime();
             $test->setDate($currentDate);
-            
+
             // Si l'utilisateur est superadmin, attribuez le test à l'utilisateur sélectionné depuis le formulaire
             if ($this->isGranted("ROLE_SUPER_ADMIN")) {
                 $selectedUser = $form->get('user')->getData();
@@ -266,4 +284,24 @@ class TestsController extends AbstractController
         // Répondez avec un JSON indiquant le succès de l'opération
         return new JsonResponse(['success' => true]);
     }
+    #[Route('/cancel-test/{id}', name: 'app_cancel_test', methods: ['GET', 'POST'])]
+    public function cancelTest(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
+{
+    // Récupérez le test à partir de l'ID
+    $test = $entityManager->getRepository(Tests::class)->find($id);
+    
+    if (!$test) {
+        throw $this->createNotFoundException('Test non trouvé');
+    }
+
+    // Mettez à jour la propriété is_validated
+    $test->setIsValidated(false); // Assurez-vous que le nom du champ correspond à votre entité
+
+    // Enregistrez les modifications dans la base de données
+    $entityManager->flush();
+
+    // Répondez avec un JSON indiquant le succès de l'opération
+    return new JsonResponse(['success' => true]);
+}
+    
 }

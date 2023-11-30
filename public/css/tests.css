@@ -1,3 +1,5 @@
+/* test.css */
+
 body {
   background-color: #f4f4f4;
   color: #FFFFFF;
@@ -79,6 +81,23 @@ h1 {
   color: #fff;
 }
 
+.card-title {
+  text-align: center;
+  margin: 0; /* Add this to remove default margin */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Add this to ensure full height */
+}
+
+.card-title-center h5 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0; /* Add this to remove any potential margin on the h5 element */
+}
+
 .button-left,
 .button-right {
   position: absolute;
@@ -134,7 +153,24 @@ h1 {
   text-align: center;
 }
 
+.validation-indicators {
+  position: absolute;
+  top: 10px; /* Adjust the top position as needed */
+  right: 10px; /* Adjust the right position as needed */
+}
 
+.validation-indicator {
+  font-size: 20px;
+  margin-left: 5px;
+}
+
+.validated {
+  color: green;
+}
+
+.not-validated {
+  color: red;
+}
 
 @media (max-width: 1200px) {
   .cards .card {
