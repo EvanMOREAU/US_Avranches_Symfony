@@ -17,6 +17,7 @@ class CategoryFixtures extends Fixture
             $category = new Category();
             $category->setName("U" . $i);
             $category->setImage("U" . $i . ".jpg");
+            $category->setColor("#FF5A5A");
             $manager->persist($category);
         }
 

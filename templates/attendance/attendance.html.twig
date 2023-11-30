@@ -1,43 +1,78 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Page d'appel - {{ category|upper }}
+{% block title %}Page d'appel -
+	{{ category|upper }}
 {% endblock %}
 
 {% block body %}
 <link href="/css/attendance.css" rel="stylesheet"/>
 <style>
-    img {
-        filter: grayscale(100%) brightness(50%); 
-    }
+	img {
+		filter: grayscale(100%) brightness(50%);
+	}
 </style>
 
 <div class="col-lg-8 mx-auto p-5 py-md-5">
-    <div class="mt-3 text-center">
-        <h1 class="h1 mb-2 display-4">Page d'appel - {{ category|upper }}</h1>
-    </div>
+	<div class="mt-3 text-center">
+		<h1 class="h1 mb-2 display-4">Page d'appel -
+			{{ category|upper }}</h1>
+	</div>
 
-    <div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
-        {% for user in users %}
-            <div class="col">
-                <div class="img card-attendance-u" data-user-id="{{ user.id }}">
-                    <div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="..."></div>
-                    <div class="card-body">
-                        <h5 class="card-title text-center pt-1">{{ user.firstName }} {{ user.lastName }}</h5>
-                    </div>        
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+	<div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
+    {% set usersSorted = users|sort((a, b) => a.lastName <=> b.lastName) %}
+		{% for user in usersSorted %}
+			<div class="col">
+				<div class="img card-attendance-u" data-user-id="{{ user.id }}">
+					<div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="..."></div>
+					<div
+						class="card-body">
+						<!-- Display lastName only on larger screens (md and above) -->
+						<h5 class="card-title text-center pt-1 d-none d-md-block">{{ user.firstName }}
+							{{ user.lastName }}</h5>
+						<!-- Display firstName on smaller screens (up to md) -->
+						<h5 class="card-title text-center pt-1 d-md-none">{{ user.firstName }}</h5>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
 
-    <div class="g-4 pt-5 row">
-        <div class="col text-end" style="text-align: start;">
-            <a class="btn btn-success" id="finaliserAppel">Finaliser l'appel</a>
-        </div>
-        <div class="col">
-            <a class="btn btn-danger" href="{{ path('app_attendance', {'category': category}) }}">Annuler l'appel</a>
-        </div>
-    </div>
+
+	<center>
+		<form>
+			<div class="text-center col-lg-2 pt-5">
+				<select class="form-select" id="attendanceType">
+					<option value="Entraînement">Entraînement</option>
+					<option value="Match">Match</option>
+				</select>
+			</div>
+		</form>
+	</center>
+
+
+	<div class="g-4 pt-5 row">
+		<div class="col text-end" style="text-align: start;">
+			<a class="btn btn-success" id="finaliserAppel">
+				<i class="fa-solid fa-check"></i>
+				Finaliser l'appel</a>
+		</div>
+		<div class="col">
+			<a class="btn btn-danger" href="{{ path('app_attendance', {'category': category}) }}">
+				<i class="fa-solid fa-xmark"></i>
+				Annuler l'appel</a>
+		</div>
+	</div>
+
+	<div class="g-4 pt-3 pb-3">
+		<div class="col text-center" style="text-align: start;">
+			<a href="/" class="btn btn-secondary">
+				<i class="fa-solid fa-house"></i>
+				Accueil</a>
+		</div>
+	</div>
 </div>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -94,6 +129,7 @@
                 // Continue with the attendance finalization process
                 const updateMatchesPlayedURL = '{{ path('update_matches_played', {'category': category}) }}';
                 const reasonSelectors = document.querySelectorAll('.reason-selector select');
+                const type = document.getElementById('attendanceType').value;
 
                 reasonSelectors.forEach((select) => {
                     const userId = select.closest('.img').getAttribute('data-user-id');
@@ -123,7 +159,8 @@
                     body: JSON.stringify({
                         presentUserIds: presentUserIds,
                         absentUserIds: absentUserIds,
-                        category: '{{ category }}'
+                        category: '{{ category }}',
+                        type: type
                     })
                 }).then(response => {
                     if (response.ok) {

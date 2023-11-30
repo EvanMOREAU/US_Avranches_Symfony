@@ -97,6 +97,7 @@ class AttendanceController extends AbstractController
         $presentUserIds = $requestData['presentUserIds'];
         $absentUserIds = $requestData['absentUserIds'];
         $categoryName = $requestData['category'];
+        $type = $requestData['type'];
 
         // Trouver l'entité Category par le nom
         $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $categoryName]);
@@ -108,9 +109,11 @@ class AttendanceController extends AbstractController
         // Créer un nouveau gathering
         $gathering = new Gathering();
         $gathering->setGatheringDate(new \DateTime());
-        $gathering->setCategory($category); // Utilise l'instance de l'entité Category
+        $gathering->setCategory($category);
+        $gathering->setType($type);
 
         // Trouver l'utilisateur (MadeBy) - Vous devrez peut-être ajuster cela en fonction de votre logique
+        // Récupérer l'utilisateur connecté pour savoir qui l'a fait
         $madeByUserId = 1; // En supposant que vous avez l'ID de l'utilisateur qui a créé la rencontre
         $madeByUser = $entityManager->getRepository(User::class)->find($madeByUserId);
 

@@ -44,16 +44,29 @@
 			z-index: 1;
 		}
 
+		@media (min-width: 1200px) {
+				.card-attendance img {
+					width: 100%;
+					height: 75vh;
+					z-index: 0;
+					transition: transform 0.4s;
+					object-fit: cover;
+				}
+		}
+
+		@media (max-width: 1200px) {
 		.card-attendance img {
-			width: 100%;
-			height: auto;
-			z-index: 0;
-			transition: transform 0.4s;
+					width: 100%;
+					height: 50vh;
+					z-index: 0;
+					transition: transform 0.4s;
+					object-fit: cover;
+				}
 		}
 
 		.card-attendance:hover img {
 			transform: scale(1.03);
-		}
+		} 
 	</style>
 {% endblock %}
 
@@ -69,15 +82,23 @@
 					<a href="/appel/{{ categorie.name }}">
 						<div class="card-attendance">
 							<div class="card-overlay">
-								<h1 class="display-2">{{ categorie.name }}</h1>
+								<h1 class="display-2" style="background-color: {{ categorie.color }}">{{ categorie.name }}</h1>
 							</div>
-							<img src="/uploads/images/{{ categorie.image }}" alt="{{ categorie.id }}">
+							<img class="img-fluid" src="/uploads/images/{{ categorie.image }}" alt="{{ categorie.id }}">
 						</div>
 					</a>
 				</div>
 			{% else %}
 				<div class="text-white">Il n'y a aucune catégorie !</div>
 			{% endfor %}
+		</div>
+
+		<div class="g-4 pt-5">
+			<div class="col text-center" style="text-align: start;">
+				<a href="/" class="btn btn-secondary">
+					<i class="fa-solid fa-house"></i>
+					Accueil</a>
+			</div>
 		</div>
 	</div>
 {% endblock %}
