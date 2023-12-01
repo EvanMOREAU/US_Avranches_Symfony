@@ -1,5 +1,4 @@
-{% block title %}Hello VerifCodeController!{% endblock %}
-
+{% extends 'base.html.twig' %}
 {% block body %}
 <style>
 .form {
@@ -21,9 +20,13 @@
   color: var(--af-white);
   background-color: var(--black);
   border-radius: 8px;
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   box-shadow: 10px 10px 10px rgba(0, 0, 0, .1);
 }
+
 
 /*----heading and description-----*/
 

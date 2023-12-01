@@ -1,12 +1,14 @@
 <?php
 namespace App\Controller; // Assurez-vous que le namespace correspond à l'emplacement de votre contrôleur
 
+use App\Entity\User;
+use App\Entity\Height;
+use App\Entity\Weight;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use App\Entity\User;
 
 class ExcelController extends AbstractController
 {
@@ -17,9 +19,9 @@ class ExcelController extends AbstractController
         // Récupérez les données de la base de données
         $users = $this->getDoctrine()->getRepository(User::class)->findByRole('ROLE_PLAYER');
 
-        // Triez les utilisateurs par leur prénom (FirstName) en ordre alphabétique
+        // Triez les utilisateurs par leur date de naissance
         usort($users, function ($a, $b) {
-            return $a->getLastName() <=> $b->getLastName();
+            return $a->getDateNaissance() <=> $b->getDateNaissance();
         });
 
         // Créez un objet Spreadsheet
@@ -36,8 +38,6 @@ class ExcelController extends AbstractController
         $sheet->setCellValue('B1', 'Prénom');
         $sheet->setCellValue('C1', 'Date de Naissance');
         $sheet->setCellValue('D1', 'Catégorie');
-        $sheet->setCellValue('E1', 'Poids');
-        $sheet->setCellValue('F1', 'Taille');
 
         // Mettez en gras les en-têtes
         $headerStyle = $sheet->getStyle('A1:F1');
@@ -49,9 +49,7 @@ class ExcelController extends AbstractController
         $sheet->getColumnDimension('B')->setWidth(20); // Par exemple, largeur de la colonne B
         $sheet->getColumnDimension('C')->setWidth(20);
         $sheet->getColumnDimension('D')->setWidth(20);
-        $sheet->getColumnDimension('E')->setWidth(20);
-        $sheet->getColumnDimension('F')->setWidth(20);
-
+        
         // Ajoutez les données à la feuille de calcul
         $row = 2; // Commencez à partir de la ligne 2
         $numTest = 0; // Initialisez le numéro de test en dehors de la boucle des utilisateurs
@@ -60,8 +58,6 @@ class ExcelController extends AbstractController
             $sheet->setCellValue('B' . $row, $user->getFirstName());
             $sheet->setCellValue('C' . $row, $user->getDateNaissance()->format('d/m/Y'));
             $sheet->setCellValue('D' . $row, $user->getCategory());
-            $sheet->setCellValue('E' . $row, $user->getWeight());
-            $sheet->setCellValue('F' . $row, $user->getWeight());
 
             // Ajoutez une feuille uniquement si l'utilisateur a des tests
             if ($user->getTests()->count() > 0) {
@@ -85,6 +81,8 @@ class ExcelController extends AbstractController
                 $testSheet->setCellValue('H1', 'Date test');
                 $testSheet->setCellValue('I1', 'Conduite de balle (secondes)');
                 $testSheet->setCellValue('J1', 'Vitesse (secondes)');
+                $testSheet->setCellValue('K1', 'Poids (kilogrammes)');
+                $testSheet->setCellValue('L1', 'Taille (centimètres)');
 
                 // Mettez en gras les en-têtes
                 $headerStyle = $testSheet->getStyle('A1:J1');
@@ -102,10 +100,19 @@ class ExcelController extends AbstractController
                 $testSheet->getColumnDimension('H')->setWidth(30);
                 $testSheet->getColumnDimension('I')->setWidth(30);
                 $testSheet->getColumnDimension('J')->setWidth(30);
+                $testSheet->getColumnDimension('K')->setWidth(30);
+                $testSheet->getColumnDimension('L')->setWidth(30);
 
                 // Ajoutez les données à la feuille de calcul pour les tests
                 $testRow = 2; // Commencez à partir de la ligne .
                 foreach ($user->getTests() as $test) {
+
+                    // Récupérez les informations de poids
+                    $weight = $this->getDoctrine()->getRepository(Weight::class)->findOneBy(['user' => $user]);
+
+                    // Récupérez les informations de taille
+                    $height = $this->getDoctrine()->getRepository(Height::class)->findOneBy(['user' => $user]);
+
                     $numTest++; // Incrémentez le numéro du test à chaque itération
                     $testSheet->setCellValue('A' . $testRow, 'n°' . $numTest);
                     $testSheet->setCellValue('B' . $testRow, $test->getVma() . ' km/h');
@@ -117,6 +124,8 @@ class ExcelController extends AbstractController
                     $testSheet->setCellValue('H' . $testRow, $test->getDate());
                     $testSheet->setCellValue('I' . $testRow, $test->getConduiteBalle() . ' secondes');
                     $testSheet->setCellValue('J' . $testRow, $test->getVitesse() . ' secondes');
+                    $testSheet->setCellValue('K' . $row, $weight ? $weight->getValue() : '' . ' kg'); // Si le poids existe, utilisez sa valeur, sinon laissez vide
+                    $testSheet->setCellValue('L' . $row, $height ? $height->getValue() : '' . ' cm'); // Si la taille existe, utilisez sa valeur, sinon laissez vide
 
                     // Continuez à ajouter les données nécessaires dans les colonnes suivantes
                     $testRow++;

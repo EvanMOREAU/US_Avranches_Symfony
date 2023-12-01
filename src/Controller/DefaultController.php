@@ -20,12 +20,23 @@ class DefaultController extends AbstractController
     #[Route('/', name: 'app_default')]
     public function index(): Response
     {
-        if(!$this->userVerificationService->verifyUser()){
+
+        // if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+        //     // Redirection vers la page de connexion (app_login)
+        //     return $this->redirectToRoute('app_login');
+        // }
+
+        if($this->userVerificationService->verifyUser() == 0 ){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
+        elseif($this->userVerificationService->verifyUser() == -1) {
+            return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);
+        } elseif($this->userVerificationService->verifyUser() == 1) {
+            return $this->render('base.html.twig', [
+                'controller_name' => 'DefaultController',
+            ]);
+        }
 
-        return $this->render('base.html.twig', [
-            'controller_name' => 'DefaultController',
-        ]);
+
     }
 }
