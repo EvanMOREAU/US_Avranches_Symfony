@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use DateTime;
+use DateTimeZone;
 use App\Entity\User;
 use App\Entity\Category;
 use App\Entity\Gathering;
@@ -97,6 +99,7 @@ class AttendanceController extends AbstractController
         $presentUserIds = $requestData['presentUserIds'];
         $absentUserIds = $requestData['absentUserIds'];
         $categoryName = $requestData['category'];
+        $happenedDate = new DateTime($requestData['datetime'], new DateTimeZone('Europe/Paris'));
         $type = $requestData['type'];
 
         // Trouver l'entité Category par le nom
@@ -108,13 +111,13 @@ class AttendanceController extends AbstractController
 
         // Créer un nouveau gathering
         $gathering = new Gathering();
-        $gathering->setGatheringDate(new \DateTime());
+        $parisTimezone = new DateTimeZone('Europe/Paris');
+        $gathering->setGatheringDate(new \DateTime('now', $parisTimezone));    
+        $gathering->setGatheringHappenedDate($happenedDate);    
         $gathering->setCategory($category);
         $gathering->setType($type);
 
-        // Trouver l'utilisateur (MadeBy) - Vous devrez peut-être ajuster cela en fonction de votre logique
-        // Récupérer l'utilisateur connecté pour savoir qui l'a fait
-        $madeByUserId = 1; // En supposant que vous avez l'ID de l'utilisateur qui a créé la rencontre
+        $madeByUserId = $this->getUser();
         $madeByUser = $entityManager->getRepository(User::class)->find($madeByUserId);
 
         if ($madeByUser) {

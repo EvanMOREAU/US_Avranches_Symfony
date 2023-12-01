@@ -19,7 +19,7 @@
 	</div>
 
 	<div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
-    {% set usersSorted = users|sort((a, b) => a.lastName <=> b.lastName) %}
+		{% set usersSorted = users|sort((a, b) => a.lastName <=> b.lastName) %}
 		{% for user in usersSorted %}
 			<div class="col">
 				<div class="img card-attendance-u" data-user-id="{{ user.id }}">
@@ -47,6 +47,11 @@
 				</select>
 			</div>
 		</form>
+
+		<div class="pt-2">
+			<label for="attendanceDate">Date et heure :</label>
+			<input id="attendanceDate" type="datetime-local">
+		</div>
 	</center>
 
 
@@ -71,7 +76,6 @@
 		</div>
 	</div>
 </div>
-
 
 
 <script>
@@ -130,6 +134,7 @@
                 const updateMatchesPlayedURL = '{{ path('update_matches_played', {'category': category}) }}';
                 const reasonSelectors = document.querySelectorAll('.reason-selector select');
                 const type = document.getElementById('attendanceType').value;
+                const datetime = document.getElementById('attendanceDate').value;
 
                 reasonSelectors.forEach((select) => {
                     const userId = select.closest('.img').getAttribute('data-user-id');
@@ -160,7 +165,8 @@
                         presentUserIds: presentUserIds,
                         absentUserIds: absentUserIds,
                         category: '{{ category }}',
-                        type: type
+                        type: type,
+                        datetime: datetime
                     })
                 }).then(response => {
                     if (response.ok) {
