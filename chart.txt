@@ -1,0 +1,168 @@
+   poid
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                    Graphique Poids :
+                </button>
+            </h2>
+            <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <canvas id="canvas1" width="400" height="200"></canvas>
+                    <br />
+                    <br />
+                    <script>
+                        const ctx1 = document.getElementById('canvas1');
+                        new Chart(ctx1, {
+                            type: 'line',
+                            data: {
+                                labels: [ {% for weight in weights %} '{{ weight.date | date("d-m-Y") }}', {% endfor %} ],
+                                datasets: [{
+                                    label: 'poids',
+                                    data: [{{ weight.value | raw }}],
+                                    backgroundColor: 'red',
+                                    borderColor: 'red',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        min: 0,
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+        {# taille #}
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                    Graphique Taille :
+                </button>
+            </h2>
+            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <canvas id="canvas2" width="400" height="200"></canvas>
+                    <br />
+                    <br />
+                    <script>
+                        const ctx2 = document.getElementById('canvas2');
+                        new Chart(ctx2, {
+                            type: 'line',
+                            data: {
+                                labels: [ {% for height in heights %} '{{ height.date | date("d-m-Y") }}', {% endfor %} ],
+                                datasets: [{
+                                    label: 'Taille',
+                                    data: [{{ height.value | raw }}],
+                                    backgroundColor: 'red',
+                                    borderColor: 'red',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        min: 0,
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <?php
+
+namespace App\DataFixtures;
+
+use App\Entity\Charts;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\DBAL\Driver\IBMDB2\Exception\Factory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+class ChartsFixtures extends Fixture
+{
+    public function load(ObjectManager $manager): void
+    {
+        $heightConfig = new ChartConfiguration();
+        $heightConfig->setChartType('line');
+        $heightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 100, 'max' => 200]);
+        $manager->persist($heightConfig);
+
+        $weightConfig = new ChartConfiguration();
+        $weightConfig->setChartType('line');
+        $weightConfig->setConfigData(['entity' => 'App\Entity\Weight', 'min' => 100, 'max' => 200]);
+        $manager->persist($weightConfig);
+
+        $leftConfig = new ChartConfiguration();
+        $leftConfig->setChartType('line');
+        $leftConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($leftConfig);
+
+        $rightConfig = new ChartConfiguration();
+        $rightConfig->setChartType('line');
+        $rightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 100, 'max' => 200]);
+        $manager->persist($rightConfig);
+
+        $rightConfig = new ChartConfiguration();
+        $rightConfig->setChartType('line');
+        $rightConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($rightConfig);
+
+        $headConfig = new ChartConfiguration();
+        $headConfig->setChartType('line');
+        $headConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($headConfig);
+
+        $controlConfig = new ChartConfiguration();
+        $controlConfig->setChartType('line');
+        $controlConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($controlConfig);
+
+        $vmaConfig = new ChartConfiguration();
+        $vmaConfig->setChartType('line');
+        $vmaConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($vmaConfig);
+
+        $cooperConfig = new ChartConfiguration();
+        $cooperConfig->setChartType('line');
+        $cooperConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($cooperConfig);;
+
+        $demicooperConfig = new ChartConfiguration();
+        $demicooperConfig->setChartType('line');
+        $demicooperConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($demicooperConfig);
+
+        $vitesseConfig = new ChartConfiguration();
+        $vitesseConfig->setChartType('line');
+        $vitesseConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($vitesseConfig);
+
+        // $generalConfig = new ChartConfiguration();
+        // $generalConfig->setChartType('radar');
+        // $generalConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        // $manager->persist($generalConfig);
+
+        
+
+        $manager->flush();
+    }
+}

@@ -1,75 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}graphique{% endblock %}
+{% block title %}ChartConfiguration{% endblock %}
 
 {% block body %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <h1>ChartConfiguration</h1>
 
-    <h1>Charts</h1>
-    <br />
-    {# {% for chart in charts %} #}
-    
-        <canvas id='{{ chart.data }}' role:"img"></canvas>
-        <script>
-        const ctx = document.getElementById('{{ chart.data }}');
-
-        new Chart(ctx, {
-            type: '{{ chart.type }}',
-            data: {
-            labels: ['Red', 'Blue', 'Yellow'],
-            datasets: [{
-                data: [{{ chart.source_data }}],
-                borderWidth: 1
-            }]
-            },
-            options: {
-            scales: {
-                y: {
-                beginAtZero: true
-                }
-            }
-            }
-        });
-        </script>
-    {# {% endfor %} #}
-
-    <br />
-
-
-    <hr/>
-
-<div>
-  <canvas id="myChart"></canvas>
-</div>
-
-    <script>
-    const ctx2 = document.getElementById('myChart');
-
-    new Chart(ctx2, {
-        type: 'bar',
-        data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            borderWidth: 1
-        }]
-        },
-        options: {
-        scales: {
-            y: {
-            beginAtZero: true
-            }
-        }
-        }
-    });
-    </script>
-
-
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ chart_configuration.id }}</td>
+            </tr>
+            <tr>
+                <th>ChartType</th>
+                <td>{{ chart_configuration.chartType }}</td>
+            </tr>
+            <tr>
+                <th>ConfigData</th>
+                <td>{{ chart_configuration.configData ? chart_configuration.configData|json_encode : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
 
     <a href="{{ path('app_charts_index') }}">back to list</a>
-<br>
-    <a href="{{ path('app_charts_edit', {'id': chart.id}) }}">edit</a>
-<br />
+
+    <a href="{{ path('app_charts_edit', {'id': chart_configuration.id}) }}">edit</a>
+
     {{ include('charts/_delete_form.html.twig') }}
 {% endblock %}

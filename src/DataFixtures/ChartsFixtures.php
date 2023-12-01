@@ -2,95 +2,77 @@
 
 namespace App\DataFixtures;
 
-use DateTime;
-use App\Entity\Charts;
-use App\Repository\TeamRepository;
+use App\Entity\ChartConfiguration;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\DBAL\Driver\IBMDB2\Exception\Factory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ChartsFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        // $product = new Product();
-        // $manager->persist($product);
+        $heightConfig = new ChartConfiguration();
+        $heightConfig->setChartType('line');
+        $heightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 100, 'max' => 200]);
+        $manager->persist($heightConfig);
 
-        $charts1 = new Charts();
-        $charts1->setType('line');
-        $charts1->setData('Height');
-        $charts1->setDatascaleMin('100');
-        $charts1->setDatascaleMax('180');
-        $manager->persist($charts1);
+        $weightConfig = new ChartConfiguration();
+        $weightConfig->setChartType('line');
+        $weightConfig->setConfigData(['entity' => 'App\Entity\Weight', 'min' => 100, 'max' => 200]);
+        $manager->persist($weightConfig);
 
-        $charts2 = new Charts();
-        $charts2->setType('line');
-        $charts2->setData('Weight');
-        $charts2->setDatascaleMin('40');
-        $charts2->setDatascaleMax('80');
-        $manager->persist($charts2);
+        $leftConfig = new ChartConfiguration();
+        $leftConfig->setChartType('line');
+        $leftConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($leftConfig);
 
-        $charts3 = new Charts();
-        $charts3->setType('line');
-        $charts3->setData('LeftFoot');
-        $charts3->setDatascaleMin('0');
-        $charts3->setDatascaleMax('50');
-        $manager->persist($charts3);
+        $rightConfig = new ChartConfiguration();
+        $rightConfig->setChartType('line');
+        $rightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 100, 'max' => 200]);
+        $manager->persist($rightConfig);
 
-        $charts4 = new Charts();
-        $charts4->setType('line');
-        $charts4->setData('RightFoot');
-        $charts4->setDatascaleMin('0');
-        $charts4->setDatascaleMax('50');
-        $manager->persist($charts4);
+        $rightConfig = new ChartConfiguration();
+        $rightConfig->setChartType('line');
+        $rightConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($rightConfig);
 
-        $charts5 = new Charts();
-        $charts5->setType('line');
-        $charts5->setData('Head');
-        $charts5->setDatascaleMin('0');
-        $charts5->setDatascaleMax('50');
-        $manager->persist($charts5);
+        $headConfig = new ChartConfiguration();
+        $headConfig->setChartType('line');
+        $headConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($headConfig);
 
-        $charts6 = new Charts();
-        $charts6->setType('line');
-        $charts6->setData('Control');
-        $charts6->setDatascaleMin('6');
-        $charts6->setDatascaleMax('15');
-        $manager->persist($charts6);
+        $controlConfig = new ChartConfiguration();
+        $controlConfig->setChartType('line');
+        $controlConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($controlConfig);
 
-        $charts7 = new Charts();
-        $charts7->setType('line');
-        $charts7->setData('VMAClassic');
-        $charts7->setDatascaleMin('0');
-        $charts7->setDatascaleMax('20');
-        $manager->persist($charts7);
+        $vmaConfig = new ChartConfiguration();
+        $vmaConfig->setChartType('line');
+        $vmaConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($vmaConfig);
 
-        $charts8 = new Charts();
-        $charts8->setType('line');
-        $charts8->setData('VMADemiCooper');
-        $charts8->setDatascaleMin('0');
-        $charts8->setDatascaleMax('10000');
-        $manager->persist($charts8);
+        $cooperConfig = new ChartConfiguration();
+        $cooperConfig->setChartType('line');
+        $cooperConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($cooperConfig);;
+
+        $demicooperConfig = new ChartConfiguration();
+        $demicooperConfig->setChartType('line');
+        $demicooperConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($demicooperConfig);
+
+        $vitesseConfig = new ChartConfiguration();
+        $vitesseConfig->setChartType('line');
+        $vitesseConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $manager->persist($vitesseConfig);
+
+        // $generalConfig = new ChartConfiguration();
+        // $generalConfig->setChartType('radar');
+        // $generalConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        // $manager->persist($generalConfig);
+
         
-        $charts9 = new Charts();
-        $charts9->setType('line');
-        $charts9->setData('VMACooper');
-        $charts9->setDatascaleMin('0');
-        $charts9->setDatascaleMax('10000');
-        $manager->persist($charts9);
-
-        $charts10 = new Charts();
-        $charts10->setType('line');
-        $charts10->setData('Sprint');
-        $charts10->setDatascaleMin('6');
-        $charts10->setDatascaleMax('15');
-        $manager->persist($charts10);
-
-        $charts11 = new Charts();
-        $charts11->setType('radar');
-        $charts11->setData('General');
-        $charts11->setDatascaleMin('0');
-        $charts11->setDatascaleMax('10');
-        $manager->persist($charts11);
 
         $manager->flush();
     }

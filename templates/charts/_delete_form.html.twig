@@ -1,4 +1,4 @@
-<form method="post" action="{{ path('app_charts_delete', {'id': chart.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ chart.id) }}">
+<form method="post" action="{{ path('app_charts_delete', {'id': chart_configuration.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ chart_configuration.id) }}">
     <button class="btn">Delete</button>
 </form>
