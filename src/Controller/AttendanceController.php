@@ -31,6 +31,7 @@ class AttendanceController extends AbstractController
         $this->logger = $logger;
     }
 
+    // Page principale d'appel
     #[Route('/appel', name: 'app_attendance')]
     public function index(CategoryRepository $CategoryRepository): Response
     {
@@ -43,12 +44,14 @@ class AttendanceController extends AbstractController
             }
         }
 
+        // Rendre la vue avec les catégories pour l'appel
         return $this->render('attendance/index.html.twig', [
             'controller_name' => 'AttendanceController',
             'categories' => $CategoryRepository->findAll(),
         ]);
     }
 
+    // Page d'appel pour une catégorie spécifique
     #[Route('/appel/{category}', name: 'app_attendance_u')]
     public function attendance(string $category, UserRepository $UserRepository): Response
     {
@@ -77,11 +80,7 @@ class AttendanceController extends AbstractController
         ]);
     }
 
-    // À FAIRE : changer le code pour que les "selectedUserIds" aient "is_present=true" dans la base de données
-    // et "reason=null" dans la base de données puis "unselectedUserIds" aient "is_present=false" dans la base de données
-    // et "reason=La Raison à récupérer depuis la page" dans la base de données, puis que ça crée un nouveau gathering
-    // dans la table tbl_gathering avec la date et la catégorie qui a joué.
-
+    // Met à jour le nombre de matches joués pour une catégorie spécifique
     #[Route('/update-matches-played-{category}', name: 'update_matches_played', methods: ['POST'])]
     public function updateMatchesPlayed(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -94,6 +93,7 @@ class AttendanceController extends AbstractController
             }
         }
 
+        // Analyse les données JSON de la requête
         $requestData = json_decode($request->getContent(), true);
 
         $presentUserIds = $requestData['presentUserIds'];
@@ -109,7 +109,7 @@ class AttendanceController extends AbstractController
             return new JsonResponse(['error' => 'Catégorie invalide'], Response::HTTP_BAD_REQUEST);
         }
 
-        // Créer un nouveau gathering
+        // Créer un nouveau gathering pour enregistrer les présences
         $gathering = new Gathering();
         $parisTimezone = new DateTimeZone('Europe/Paris');
         $gathering->setGatheringDate(new \DateTime('now', $parisTimezone));    
@@ -117,6 +117,7 @@ class AttendanceController extends AbstractController
         $gathering->setCategory($category);
         $gathering->setType($type);
 
+        // Enregistre l'utilisateur qui a fait l'appel
         $madeByUserId = $this->getUser();
         $madeByUser = $entityManager->getRepository(User::class)->find($madeByUserId);
 

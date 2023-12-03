@@ -1,52 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Rassemblement n°{{ gathering }}
+{% block title %}
+    Rassemblement n°{{ gathering }}
 {% endblock %}
 
 {% block body %}
-	<link href="/css/attendance.css" rel="stylesheet"/>
+    <link href="/css/attendance.css" rel="stylesheet"/>
 
-	<div class="col-lg-8 mx-auto p-5 py-md-5">
-		<div class="mt-3 text-center">
-			<h1 class="h1 mb-2 display-4 text-white">Rassemblement n°{{ gathering }}</h1>
-		</div>
+    <div class="col-lg-8 mx-auto p-5 py-md-5">
+        <div class="mt-3 text-center">
+            <h1 class="h1 mb-2 display-4 text-white">Rassemblement n°{{ gathering }}</h1>
+        </div>
 
-		<div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
-			{% set attendancesSorted = attendances|sort((a, b) => a.getUser().lastname <=> b.getUser().lastname) %}
-			{% for attendance in attendancesSorted %}
-				<div class="col">
-					<div class="img card-attendance-u" data-user-id="1">
-						<div class="abs present"><img src="/images/arthur-delacour.png" {% if attendance.isPresent == 0 %} style="filter: grayscale(100%) brightness(50%);" {% endif %} class="card-img-top zoom" alt="..."></div>
+        <div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
+            {% set attendancesSorted = attendances|sort((a, b) => a.getUser().lastname <=> b.getUser().lastname) %}
+            {% for attendance in attendancesSorted %}
+                <div class="col">
+                    <div class="img card-attendance-u" data-user-id="1">
+                        <div class="abs present">
+                            <img src="/images/arthur-delacour.png" {% if attendance.isPresent == 0 %} style="filter: grayscale(100%) brightness(50%);" {% endif %} class="card-img-top zoom" alt="...">
+                        </div>
 
-						<div class="card-body">
-							<h5
-								class="card-title text-center">
-								<!-- Display lastName only on larger screens (md and above) -->
-								<h5 class="card-title text-center pt-1 d-none d-md-block">{{ attendance.getUser().firstname }}
-									{{ attendance.getUser().lastname }}</h5>
-								<!-- Display firstName on smaller screens (up to md) -->
-								<h5 class="card-title text-center pt-1 d-md-none">{{ attendance.getUser().firstname }}</h5>
-								{% if attendance.isPresent == 0  %}
-									<div class="text-center">
-										<h6>Motif :
-											{{ attendance.reason }}</h6>
-									</div>
-								{% endif %}
-							</h5>
-						</div>
-					</div>
-				</div>
-			{% endfor %}
-		</div>
+                        <div class="card-body">
+                            <h5 class="card-title text-center">
+                                <!-- Affiche le nom de famille uniquement sur les écrans plus grands (md et plus) -->
+                                <h5 class="card-title text-center pt-1 d-none d-md-block">{{ attendance.getUser().firstname }}
+                                    {{ attendance.getUser().lastname }}</h5>
+                                <!-- Affiche le prénom sur les écrans plus petits (jusqu'à md) -->
+                                <h5 class="card-title text-center pt-1 d-md-none">{{ attendance.getUser().firstname }}</h5>
+                                {% if attendance.isPresent == 0  %}
+                                    <div class="text-center">
+                                        <h6>Motif :
+                                            {{ attendance.reason }}</h6>
+                                    </div>
+                                {% endif %}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
 
-		<div class="g-4 pt-5">
-			<div class="col text-center" style="text-align: start;">
-				<a href="/" class="btn btn-secondary">
-					<i class="fa-solid fa-house"></i>
-					Accueil</a>
-			</div>
-		</div>
-	</div>
+        <div class="g-4 pt-5">
+            <div class="col text-center" style="text-align: start;">
+                <a href="/" class="btn btn-secondary">
+                    <i class="fa-solid fa-house"></i>
+                    Accueil</a>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
-
