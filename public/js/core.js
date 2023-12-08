@@ -4502,7 +4502,7 @@ Docs & License: https://fullcalendar.io/
         // allDayDefault: undefined,
         // locale
         locales: [],
-        locale: '',
+        locale: 'fr',
         // dir: will get this from the default locale
         // buttonIcons: null,
         // allows setting a min-height to the event segment to prevent short events overlapping each other
@@ -4592,15 +4592,15 @@ Docs & License: https://fullcalendar.io/
             prevYear: 'prev year',
             nextYear: 'next year',
             year: 'year',
-            today: 'today',
-            month: 'month',
-            week: 'week',
-            day: 'day',
+            today: 'Ce mois-ci',
+            month: 'Mois',
+            week: 'Semaines',
+            day: 'Jours',
             list: 'list'
         },
         weekLabel: 'W',
         allDayText: 'all-day',
-        eventLimitText: 'more',
+        eventLimitText: 'appels',
         noEventsMessage: 'No events to display'
     };
     function parseRawLocales(explicitRawLocales) {

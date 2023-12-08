@@ -44,6 +44,10 @@ h2 {
   right: 20px;
   bottom: 20px; }
 
+.fc-left {
+    color: #ffffff;
+  }
+
 .fc-header-toolbar {
   /*
     the calendar will be butting up against the edges,
