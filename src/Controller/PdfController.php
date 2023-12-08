@@ -2,15 +2,14 @@
 
 namespace App\Controller;
 
-use TCPDF;
 use App\Entity\Pdf;
 use App\Entity\User;
-use App\Entity\Tests;
 use App\Entity\Weight;
 use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,7 +26,7 @@ class PdfController extends AbstractController
 
     #[Route('/pdf', name: 'app_pdf')]
 
-    public function pdf(UserRepository $userRepository, TestsRepository $testsRepository, EntityManagerInterface $entityManager): Response
+    public function pdf(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, EntityManagerInterface $entityManager): Response
     {
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -35,6 +34,25 @@ class PdfController extends AbstractController
 
         // Récupérez le token d'authentification de l'utilisateur actuellement connecté.
         $token = $this->get('security.token_storage')->getToken();
+
+        // Vérifiez le rôle de l'utilisateur
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+            // L'utilisateur est super admin, vérifiez s'il a sélectionné un autre utilisateur
+            $selectedUserId = $request->query->get('userId'); // Use 'userId' as the parameter name
+    
+            if ($selectedUserId) {
+                $selectedUser = $userRepository->find($selectedUserId);
+    
+                if (!$selectedUser) {
+                    throw $this->createNotFoundException('Utilisateur non trouvé');
+                }
+    
+                $user = $selectedUser;
+            }
+        } elseif ($token instanceof TokenInterface) {
+            // Si ce n'est pas un super admin, utilisez l'utilisateur du token
+            $user = $token->getUser();
+        }
 
         // Créez une nouvelle instance de la classe PDF.
         $pdf = new Pdf();
@@ -125,11 +143,27 @@ class PdfController extends AbstractController
                     $pdf->MultiCell(70, 10, $user->getFirstName() . ' ' . $user->getLastName(), 0, 'C', 0, 1, '', '', true);
                     $pdf->SetFontSize(10); // Rétablir la taille de police à la valeur par défaut (si nécessaire)
 
-                    // A MODIFIER LE POIDS ET LA TAILLE CAR NE FONCTIONNE PAS COMME CA DEVRAIT
-                    $contentTests = '
-                    <br><br><br>
-                    <b>Poids : </b>' . $this->getWeightForDate($user, $test->getDate(), $entityManager) . ' kg
-                    <br><hr><br><div></div>
+                    // --- Contenu du pdf ---
+                    $contentTests = '<br><br><br>';
+                    // Afficher les poids
+                    $weights = $this->getWeightsForUser($user, $entityManager);
+                    foreach ($weights as $weight) {
+                        // Utilisez la fonction pour récupérer la date du poids la plus proche
+                        $nearestWeightDate = $this->getNearestWeightDate($user, $test->getDate(), $entityManager);
+
+                        $contentTests .= '<br><hr><br><div></div>';
+                        $contentTests .= '<b>Poids le </b>';
+
+                        // Affichez la date du poids sur le PDF si elle est disponible
+                        if ($nearestWeightDate) {
+                            $contentTests .= '<b>' . $nearestWeightDate->format('d/m/Y') . ' :</b> ' . $weight->getValue() . ' kg';
+                        } else {
+                            $contentTests .= $weight->getValue() . ' kg';
+                        }
+                        // N'affichez qu'une seule fois, car vous avez déjà récupéré tous les poids en dehors de cette boucle
+                        break;
+                    }
+                    $contentTests .= '<br><hr><br><div></div>
                     <b>Taille :</b> 173 cm
                     <br><hr><br><div></div>
                     <p><b>VMA : </b>' . $test->getVma() . ' km/h 
@@ -169,6 +203,7 @@ class PdfController extends AbstractController
                 }
 
                 // Génération du PDF et envoi en réponse
+                ob_clean(); // Efface la sortie tampon
                 return $pdf->Output('US-Avranches-' . '.pdf', 'I');
             }
         }
@@ -176,12 +211,43 @@ class PdfController extends AbstractController
         return new Response('Erreur');
     }
 
-    // A MODIFIER LE POIDS ET LA TAILLE CAR NE FONCTIONNE PAS COMME CA DEVRAIT
-    private function getWeightForDate(User $user, \DateTimeInterface $testDate, EntityManagerInterface $entityManager): ?float
+    private function getWeightsForUser(User $user, EntityManagerInterface $entityManager): array
+    {
+        // Utilisez le repository de l'entité Weight pour récupérer tous les poids triés par date
+        $weights = $entityManager->getRepository(Weight::class)->findBy(['user' => $user], ['date' => 'ASC']);
+
+        return $weights;
+    }
+
+    private function getNearestWeightDate(User $user, \DateTimeInterface $testDate, EntityManagerInterface $entityManager): ?\DateTimeInterface
     {
         // Utilisez le repository de l'entité Weight
-        $weightEntry = $entityManager->getRepository(Weight::class)->findOneBy(['user' => $user, 'date' => $testDate]);
-    
-        return $weightEntry ? $weightEntry->getValue() : $user->getWeight();
+        $queryBuilder = $entityManager->createQueryBuilder();
+
+        $nearestWeightDate = $queryBuilder
+            ->select('w.date')
+            ->from(Weight::class, 'w')
+            ->where('w.user = :user')
+            ->andWhere('w.date <= :testDate')
+            ->setParameter('user', $user)
+            ->setParameter('testDate', $testDate)
+            ->orderBy('w.date', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult(\Doctrine\ORM\Query::HYDRATE_SINGLE_SCALAR);
+
+        return $nearestWeightDate ? new \DateTimeImmutable($nearestWeightDate) : null;
+    }
+
+    #[Route('/choose-user-pdf', name: 'app_choose_user_pdf')]
+    public function chooseUserPdf(UserRepository $userRepository): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        $users = $userRepository->findBy([], ['last_name' => 'ASC']);
+
+        return $this->render('pdf/choose_user_pdf.html.twig', [
+            'users' => $users,
+        ]);
     }
 }

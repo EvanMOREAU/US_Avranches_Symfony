@@ -12,8 +12,8 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.16",
         "fakerphp/faker": "*",
-        "phpoffice/phpspreadsheet": "^1.29",
         "friendsofsymfony/ckeditor-bundle": "*",
+        "phpoffice/phpspreadsheet": "^1.29",
         "sensio/framework-extra-bundle": "^6.2",
         "symfony/asset": "5.4.*",
         "symfony/console": "5.4.*",
@@ -26,6 +26,7 @@
         "symfony/security-bundle": "5.4.*",
         "symfony/twig-bundle": "5.4.*",
         "symfony/validator": "5.4.*",
+        "symfony/var-dumper": "5.4.*",
         "symfony/yaml": "5.4.*",
         "tecnickcom/tcpdf": "^6.6"
     },
