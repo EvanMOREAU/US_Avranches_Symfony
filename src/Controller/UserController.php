@@ -116,7 +116,12 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
 
-        $form = $this->createForm(UserType::class, $user);
+        if ($this->isGranted('ROLE_PLAYER')) {
+            $form = $this->createForm(UserType::class, $user, ['exclude_date_naissance' => true]);
+        } else {
+            $form = $this->createForm(UserType::class, $user);
+        }
+        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

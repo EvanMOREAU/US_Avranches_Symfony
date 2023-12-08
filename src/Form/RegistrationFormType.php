@@ -48,7 +48,7 @@ class RegistrationFormType extends AbstractType
             ->add('date_naissance', BirthdayType::class, [
                 'widget' => 'choice', // Utilisez 'single_text' pour un champ de texte unique au lieu de menus déroulants.
                 'format' => 'dd MM yyyy', // Format de la date
-                'years' => range(date('Y') - 100, date('Y')), // La plage d'années que vous voulez afficher (ici, les 100 dernières années)
+                'years' => range(date('Y') - 20, date('Y')), // La plage d'années que vous voulez afficher (ici, les 100 dernières années)
                 'label' => false, // Étiquette du champ
 
             ])
