@@ -8,12 +8,14 @@ use App\Form\Type\MinutesSecondesType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Time;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -137,7 +139,12 @@ class TestsFormType extends AbstractType
         ->add('vitesse', TextType::class, [
             'label' => 'Vitesse (en millisecondes)',
             'required' => false,
-        ]);
+        ])
+        ->add('video', FileType::class, [
+            'label' => 'Video',
+            'required' => false,
+        ])
+        ;
         if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
             $builder->add('user', ChoiceType::class, [
                 'choices' => $this->getUserChoices(),

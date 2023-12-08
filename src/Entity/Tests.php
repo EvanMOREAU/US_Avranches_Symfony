@@ -49,6 +49,9 @@ class Tests
     #[ORM\Column(name: "is_validated", type: "boolean", nullable: false, options: ["default" => false])]
     private bool $is_validated = false;
 
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private $video;
+
 
     public function getId(): ?int
     {
@@ -183,6 +186,17 @@ class Tests
     public function setIsValidated(bool $is_validated): static
     {
         $this->is_validated = $is_validated;
+        return $this;
+    }
+    public function getVideo()
+    {
+        return $this->video;
+    }
+
+    public function setVideo(string $video)
+    {
+        $this->video = $video;
+    
         return $this;
     }
 }
