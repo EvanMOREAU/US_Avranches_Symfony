@@ -4,10 +4,12 @@ namespace App\Form;
 
 use App\Entity\Category;
 use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class CategoryType extends AbstractType
@@ -46,6 +48,9 @@ class CategoryType extends AbstractType
                     'mimeTypesMessage' => 'Image non valide, veuillez choisir une image valide',
                 ])
             ],
+        ]);
+        $builder->add('color', ColorType::class, [
+            'required' => true,
         ]);
     }
 
