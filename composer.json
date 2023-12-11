@@ -12,7 +12,6 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.16",
         "fakerphp/faker": "*",
-        "friendsofsymfony/ckeditor-bundle": "*",
         "phpoffice/phpspreadsheet": "^1.29",
         "sensio/framework-extra-bundle": "^6.2",
         "symfony/asset": "5.4.*",

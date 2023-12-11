@@ -5,20 +5,23 @@ namespace App\Form;
 use App\Entity\Tests;
 use App\Repository\UserRepository;
 use App\Form\Type\MinutesSecondesType;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Time;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class TestsFormType extends AbstractType
@@ -35,14 +38,12 @@ class TestsFormType extends AbstractType
         $builder
         ->add('vma', NumberType::class, [
             'label' => 'VMA',
+            'required' => false,
             'attr' => [
                 'min' => 0,   // Valeur minimale
                 'max' => 20,  // Valeur maximale
             ],
             'constraints' => [
-                new NotBlank([
-                    'message' => 'Please enter a VMA value',
-                ]),
                 new Range([
                     'min' => 0,
                     'max' => 20,
@@ -53,6 +54,7 @@ class TestsFormType extends AbstractType
         ])  
         ->add('demicooper', NumberType::class, [
             'label' => 'Demi-Cooper',
+            'required' => false,
             'attr' => [
                 'min' => 0,   // Valeur minimale
                 'max' => 10000,  // Valeur maximale
@@ -68,6 +70,7 @@ class TestsFormType extends AbstractType
         ])       
         ->add('cooper', NumberType::class, [
             'label' => 'Cooper',
+            'required' => false,
             'attr' => [
                 'min' => 0,   // Valeur minimale
                 'max' => 10000,  // Valeur maximale
@@ -83,6 +86,7 @@ class TestsFormType extends AbstractType
         ])          
         ->add('jongle_gauche', NumberType::class, [
             'label' => 'Jongle Gauche',
+            'required' => false,
             'attr' => [
                 'min' => 0,   // Valeur minimale
                 'max' => 50,  // Valeur maximale
@@ -98,6 +102,7 @@ class TestsFormType extends AbstractType
         ])
         ->add('jongle_droit', NumberType::class, [
             'label' => 'Jongle Droit',
+            'required' => false,
             'attr' => [
                 'min' => 0,   // Valeur minimale
                 'max' => 50,  // Valeur maximale
@@ -113,6 +118,7 @@ class TestsFormType extends AbstractType
         ])
         ->add('jongle_tete', NumberType::class, [
             'label' => 'Jongle Tête',
+            'required' => false,
             'attr' => [
                 'min' => 0,   // Valeur minimale
                 'max' => 30,  // Valeur maximale
@@ -128,10 +134,17 @@ class TestsFormType extends AbstractType
         ])
         ->add('conduiteballe', TextType::class, [
             'label' => 'Conduite de balle (en millisecondes)',
+            'required' => false,
         ])
         ->add('vitesse', TextType::class, [
             'label' => 'Vitesse (en millisecondes)',
-        ]);
+            'required' => false,
+        ])
+        ->add('video', FileType::class, [
+            'label' => 'Video',
+            'required' => false,
+        ])
+        ;
         if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
             $builder->add('user', ChoiceType::class, [
                 'choices' => $this->getUserChoices(),
