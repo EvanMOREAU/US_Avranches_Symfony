@@ -17,6 +17,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[UniqueEntity(fields: ['email'], message: 'Un compte possède déjà cette adresse mail.')]
 #[ORM\Table(name:'tbl_user')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -108,6 +109,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Height::class)]
     private Collection $heights;
+
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
 
     public function getId(): ?int
     {
@@ -481,6 +485,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $height->setUserId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
 
         return $this;
     }
