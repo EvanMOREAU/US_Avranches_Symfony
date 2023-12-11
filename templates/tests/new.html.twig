@@ -16,16 +16,27 @@
             const formatTimeInput = function (input) {
                 let value = input.value.trim();
 
-                // Supprimer les caractères non numériques
-                value = value.replace(/[^0-9]/g, '');
+                // Supprimer les caractères non numériques et le point en excès
+                value = value.replace(/[^0-9,.]/g, '');
 
-                // Formater en secondes et millisecondes
-                if (value.length > 3) {
-                    const seconds = value.slice(0, -3);
-                    const milliseconds = value.slice(-3);
+                // Remplacer la virgule par un point si nécessaire
+                if (value.includes(',')) {
+                    value = value.replace(',', '.');
+                }
 
-                    // Formatage de la valeur en secondes et millisecondes
-                    value = `${seconds}.${milliseconds}`;
+                // Limiter à un seul point et trois chiffres après la virgule
+                const parts = value.split('.');
+                if (parts.length > 1) {
+                    const integerPart = parts[0];
+                    const decimalPart = parts[1].slice(0, 3);
+
+                    // Mettre à jour la valeur avec le format x.xxx ou xx.xxx
+                    if (integerPart.length <= 2 && decimalPart.length === 3) {
+                        value = `${integerPart}.${decimalPart}`;
+                    }
+                } else if (value.length <= 3) {
+                    // Mettre à jour la valeur en ajoutant un point pour le format 1234 -> 1.234
+                    value = `${value.slice(0, 1)}.${value.slice(1)}`;
                 }
 
                 // Mettre à jour la valeur dans le champ
@@ -85,20 +96,29 @@
 
         <div class="form-group {% if form.conduiteballe.vars.errors|length > 0 %}has-error{% endif %}">
             {{ form_label(form.conduiteballe, 'Conduite de balle', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.conduiteballe, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !'}}) }}
+            {{ form_widget(form.conduiteballe, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !', 'type': 'text'}}) }}
             {{ form_errors(form.conduiteballe, {'attr': {'class': 'error-message'}}) }}
         </div>
 
         <div class="form-group {% if form.vitesse.vars.errors|length > 0 %}has-error{% endif %}">
             {{ form_label(form.vitesse, 'Vitesse', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.vitesse, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !'}}) }}
+            {{ form_widget(form.vitesse, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !', 'type': 'text'}}) }}
             {{ form_errors(form.vitesse, {'attr': {'class': 'error-message'}}) }}
         </div>
+
+        <div class="form-group {% if form.video.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.video, 'video', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.video, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.video, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+ 
+
 
         {% if is_granted("ROLE_SUPER_ADMIN") %}
             <div class="form-group {% if form.user.vars.errors|length > 0 %}has-error{% endif %}">
                 {{ form_label(form.user, 'Joueur', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.user, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !'}}) }}
+                {{ form_widget(form.user, {'attr': {'class': 'form-input', 'placeholder': 'Sélectionner un utilisateur'}}) }}
                 {{ form_errors(form.user, {'attr': {'class': 'error-message'}}) }}
             </div>
         {% endif %}

@@ -107,7 +107,16 @@ body {
 .login-message {
   text-align: center;
 }
+.file-drop-zone {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
 
+.file-drop-zone:hover {
+  border-color: #aaa;
+}
 
 /* Media Queries pour les écrans plus petits (par exemple, les téléphones) */
 @media (max-width: 768px) {
