@@ -125,7 +125,7 @@
 
                 if (isConfirmed) {
                     // Continuer le processus de finalisation de l'appel
-                    const updateMatchesPlayedURL = '{{ path('update_matches_played', {'category': category}) }}';
+                    const createAttendance = '{{ path('create_attendance', {'category': category}) }}';
                     const reasonSelectors = document.querySelectorAll('.reason-selector select');
                     const type = document.getElementById('attendanceType').value;
                     const datetime = document.getElementById('attendanceDate').value;
@@ -150,7 +150,7 @@
                         }
                     });
 
-                    fetch(updateMatchesPlayedURL, {
+                    fetch(createAttendance, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

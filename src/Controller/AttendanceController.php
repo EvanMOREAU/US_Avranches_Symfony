@@ -11,6 +11,7 @@ use App\Entity\Attendance;
 use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
 use App\Repository\CategoryRepository;
+use App\Repository\AttendanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,8 +82,8 @@ class AttendanceController extends AbstractController
     }
 
     // Met à jour le nombre de matches joués pour une catégorie spécifique
-    #[Route('/update-matches-played-{category}', name: 'update_matches_played', methods: ['POST'])]
-    public function updateMatchesPlayed(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/create-attendance-{category}', name: 'create_attendance', methods: ['POST'])]
+    public function createAttendance(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -166,8 +167,43 @@ class AttendanceController extends AbstractController
         return new JsonResponse(['message' => 'Matches played updated successfully']);
     }
 
-    #[Route('/update-gathering-attendance/{gathering}', name: 'update_gathering_attendance', methods: ['POST'])]
-    public function updateGatheringAttendance(Request $request, Gathering $gathering): JsonResponse
+    #[Route('/modify-attendance/{gathering}', name: 'modify_attendance', methods: ['GET'])]
+    public function modifyAttendance(string $gathering, UserRepository $UserRepository, AttendanceRepository $attendanceRepository): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // Récupère les présences pour le rassemblement donné
+        $attendances = $attendanceRepository->findBy(['Gathering' => $gathering]);     
+        $category = $attendances[0]->getUser()->getCategory();
+
+        // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
+        $allUsers = $UserRepository->findAll($category);
+
+        // Filtrer les utilisateurs qui appartiennent à la catégorie spécifiée
+        $usersInCategory = array_filter($allUsers, function ($user) use ($category) {
+            return $user->getCategory() === $category;
+        });
+
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/modify_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'category' => $category,
+            'users' => $usersInCategory,
+            'gathering' => $gathering,
+            'attendances' => $attendances,            
+        ]);
+    }
+
+
+    #[Route('/update-attendance/{gathering}', name: 'update_attendance', methods: ['POST'])]
+    public function updateAttendance(Request $request, Gathering $gathering): JsonResponse
     {
         // Get data from the request
         $requestData = json_decode($request->getContent(), true);
