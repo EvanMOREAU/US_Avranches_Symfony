@@ -292,7 +292,6 @@ class TestsController extends AbstractController
     #[Route('/validate-test/{id}', name: 'app_validate_test', methods: ['GET', 'POST'])]
     public function validateTestAction(EntityManagerInterface $entityManager, $id, Request $request): JsonResponse
     {
-        
         // Récupérez le test à partir de l'ID
         $test = $entityManager->getRepository(Tests::class)->find($id);
 
@@ -302,20 +301,22 @@ class TestsController extends AbstractController
 
         // Mettez à jour la propriété is_validated
         $test->setIsValidated(true); // Assurez-vous que le nom du champ correspond à votre entité
-        
-        
-        try {
-            // Enregistrez les modifications dans la base de données
-            $entityManager->flush();
 
+        try {
             // Supprimez la vidéo du dossier uploads/videos
             $videoFileName = $test->getVideo();
-            $videoPath = $this->getParameter('upload_dir') . '/videos/' . $videoFileName;
-            
+            $videoPath = realpath($this->getParameter('upload_dir') . '/videos/' . $videoFileName);
+
             // Vérifiez si le fichier existe avant de tenter de le supprimer
             if ($videoFileName && file_exists($videoPath)) {
                 unlink($videoPath);
             }
+
+            // Définissez la propriété video sur null
+            $test->setVideo(null);
+
+            // Enregistrez les modifications dans la base de données
+            $entityManager->flush();
 
             // Vérifiez si la requête est une requête Ajax
             if ($request->isXmlHttpRequest()) {
@@ -341,6 +342,8 @@ class TestsController extends AbstractController
             }
         }
     }
+
+
     #[Route('/cancel-test/{id}', name: 'app_cancel_test', methods: ['GET', 'POST'])]
     public function cancelTest(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
     {

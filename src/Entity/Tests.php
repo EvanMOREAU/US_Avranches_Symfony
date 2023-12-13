@@ -193,10 +193,11 @@ class Tests
         return $this->video;
     }
 
-    public function setVideo(string $video)
+    public function setVideo(?string $video): self
     {
         $this->video = $video;
-    
+
         return $this;
     }
+
 }
