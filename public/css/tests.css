@@ -14,10 +14,6 @@ body {
   margin: 20px; /* Ajout de marges autour du conteneur */
 }
 
-h1 {
-  margin-bottom: 20px;
-}
-
 .user-dropdown-container {
   margin-top: 20px;
   width: 12.5%;
@@ -172,6 +168,7 @@ h1 {
 .not-validated {
   color: red;
 }
+
 
 @media (max-width: 1200px) {
   .cards .card {
