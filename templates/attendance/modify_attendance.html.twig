@@ -6,6 +6,11 @@
 
 {% block body %}
 <link href="/css/attendance.css" rel="stylesheet"/>
+    <style>
+        img {
+            filter: grayscale(100%) brightness(50%);
+        }
+    </style>
 
 <div class="col-lg-8 mx-auto p-5 py-md-5">
 	<div class="mt-3 text-center">
@@ -18,7 +23,7 @@
 		{% for attendance in attendancesSorted %}
 			<div class="col">
 				<div class="img card-attendance-u" data-user-id="{{ attendance.getUser().id }}">
-					<div class="abs {% if attendance.isPresent == 1 %}present{% else %}absent{% endif %}">
+					<div class="abs present">
 						<img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="...">
 					</div>
 					<div class="card-body">
@@ -29,12 +34,6 @@
 						<h5 class="card-title text-center pt-1 d-md-none">
 							{{ attendance.getUser().firstname }}
 						</h5>
-						{% if attendance.isPresent == 0 %}
-							<div class="text-center">
-								<h6>Motif :
-									{{ attendance.getReason }}</h6>
-							</div>
-						{% endif %}
 					</div>
 				</div>
 			</div>
@@ -59,66 +58,64 @@
 
 		<!-- Add a button to trigger the attendance modification -->
 		<div class="text-center pt-3">
-			<button id="modifyAttendanceButton" class="btn btn-primary">
+			<button id="modifyAttendance" class="btn btn-primary">
 				Enregistrer la modificiation
 			</button>
 		</div>
 	</div>
-
-        <!-- Add a script to handle the modification button click -->
+</div>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                var button = document.getElementById('modifyAttendanceButton');
-                button.addEventListener('click', function() {
-                    const absElements = document.querySelectorAll('.abs');
-                    const presentUserIds = [];
-                    const absentUserIds = [];
+            const abss = document.querySelectorAll('.abs');
+            const presentUserIds = [];
+            const absentUserIds = [];
 
-                    absElements.forEach(abs => {
-                        const userId = abs.closest('.img').getAttribute('data-user-id');
-                        abs.addEventListener('click', function() {
-                            abs.classList.toggle('present');
-                            abs.classList.toggle('absent');
+            abss.forEach(abs => {
+                presentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
+                abs.addEventListener('click', function() {
+                    abs.classList.toggle('present');
+                    abs.classList.toggle('absent');
 
-                            if (abs.classList.contains('present')) {
-                                presentUserIds.push(userId);
-                            } else {
-                                const index = presentUserIds.indexOf(userId);
-                                if (index !== -1) {
-                                    presentUserIds.splice(index, 1);
-                                }
-                            }
+                    // Obtenir l'ID de l'utilisateur
+                    const userId = abs.closest('.img').getAttribute('data-user-id');
 
-                            if (abs.classList.contains('absent')) {
-                                const reasonSelectorDiv = document.createElement('div');
-                                reasonSelectorDiv.classList.add('reason-selector');
-                                reasonSelectorDiv.id = 'reasonSelector' + userId;
-                                reasonSelectorDiv.innerHTML = `
-                                    <select class="form-select">
-                                        <option value="Malade">Malade</option>
-                                        <option value="Blessé">Blessé</option>
-                                        <option value="Sport">Sport</option>
-                                    </select>
-                                `;
-                                abs.closest('.img').appendChild(reasonSelectorDiv);
-                            } else {
-                                const index = absentUserIds.findIndex(item => item.userId === userId);
-                                if (index !== -1) {
-                                    absentUserIds.splice(index, 1);
-                                }
-                                const reasonSelectorDiv = document.getElementById('reasonSelector' + userId);
-                                if (reasonSelectorDiv) {
-                                    reasonSelectorDiv.remove();
-                                }
-                            }
-                        });
-                    });
+                    if (abs.classList.contains('present')) {
+                        presentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
+
+                        const reasonSelector = document.getElementById('reasonSelector' + userId);
+                        reasonSelector.remove();
+                    } else {
+                        const index = presentUserIds.indexOf(abs.closest('.img').getAttribute('data-user-id'));
+                        if (index !== -1) {
+                            presentUserIds.splice(index, 1);
+                        }
+                    }
+                    if (abs.classList.contains('absent')) {
+                        const reasonSelectorDiv = document.createElement('div');
+                        reasonSelectorDiv.classList.add('reason-selector');
+                        reasonSelectorDiv.id = 'reasonSelector' + userId;
+                        reasonSelectorDiv.innerHTML = `
+                            <select class="form-select">
+                                <option value="Malade">Malade</option>
+                                <option value="Blessé">Blessé</option>
+                                <option value="Sport">Sport</option>
+                            </select>
+                        `;
+                        abs.closest('.img').appendChild(reasonSelectorDiv);
+                    } else {
+                        const index = absentUserIds.indexOf(abs.closest('.img').getAttribute('data-user-id'));
+                        if (index !== -1) {
+                            absentUserIds.splice(index, 1);
+                        }
+                    }
+                });
+            });
 
                     function finalizeAttendanceAndRedirect() {
-                        const isConfirmed = confirm("Êtes-vous sûr de vouloir finaliser la modification de l'assistance ?");
+                        const isConfirmed = confirm("Êtes-vous sûr de vouloir finaliser la modification de l'appel ?");
 
                         if (isConfirmed) {
-                            const updateAttendance = '{{ path('update_attendance', {'gathering': "7"}) }}';
+                            const updateAttendance = '{{ path('update_attendance', {'gathering':  gathering}) }}';
                             const reasonSelectors = document.querySelectorAll('.reason-selector select');
                             const type = document.getElementById('attendanceType').value;
                             const datetime = document.getElementById('attendanceDate').value;
@@ -127,16 +124,17 @@
                                 const userId = select.closest('.img').getAttribute('data-user-id');
                                 const reason = select.value;
 
-                                if (select.closest('.img').classList.contains('present')) {
+                                if (select.closest('.img').querySelector('.abs').classList.contains('present')) {
                                     presentUserIds.push(userId);
                                 }
 
-                                if (select.closest('.img').classList.contains('absent')) {
+                                if (select.closest('.img').querySelector('.abs').classList.contains('absent')) {
                                     absentUserIds.push({
                                         userId: userId,
                                         reason: reason
                                     });
                                 }
+
                             });
 
                             fetch(updateAttendance, {
@@ -147,7 +145,7 @@
                                 body: JSON.stringify({
                                     presentUserIds: presentUserIds,
                                     absentUserIds: absentUserIds,
-                                    category: 'U10',
+                                    category: '{{ category }}',
                                     type: type,
                                     datetime: datetime
                                 })
@@ -163,10 +161,8 @@
                         }
                     }
 
-                    finalizeAttendanceAndRedirect();
+                    document.getElementById('modifyAttendance').addEventListener('click', finalizeAttendanceAndRedirect);
                 });
-            });
         </script>
 
-    </div>
 {% endblock %}
