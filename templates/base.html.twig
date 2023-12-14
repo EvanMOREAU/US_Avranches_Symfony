@@ -121,7 +121,7 @@
     </button>
     <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
       <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Dark offcanvas</h5>
+        <h5 class="offcanvas-title text-light" id="offcanvasDarkNavbarLabel">Navigation personnalisée</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body h-100">
@@ -156,19 +156,6 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/pdf">PDF</a>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Dropdown
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </li>
         </ul>
         <div class='col'></div>
         <div class='col'></div>
@@ -177,16 +164,15 @@
             <div class="row align-bottom row-cols-1">
                 <div class='col'>
                     <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-                            <strong>mdo</strong>
+                        <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle text-light" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{% if app.user.getProfileImage() != "" %}/uploads/images/{{ app.user.getProfileImage() }}{% else %} /uploads/images/Anonyme.jpg{% endif %}" alt="" width="32" height="32" class="rounded-circle me-2">
+                            <strong class='text-light'>mdo</strong>
                         </a>
                         <ul class="dropdown-menu text-small shadow">
                             <li><a class="dropdown-item" href=""></a></li>
-                            <li><a class="dropdown-item" href="/parameter/modify">Settings</a></li>
-                            <li><a class="dropdown-item" href="">Profile</a></li>
+                            <li><a class="dropdown-item" href="/parameter/modify">Paramètres</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+                            <li><a class="dropdown-item" href="/logout">Déconnexion</a></li>
                         </ul>
                     </div>
                 <!-- Déplacez le bloc du menu utilisateur ici -->
