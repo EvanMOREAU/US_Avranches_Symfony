@@ -103,72 +103,93 @@ class TestsController extends AbstractController
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
-
-        $test = new Tests();
-
-        // Vérifier si le formulaire est vide
-        $formIsEmpty = empty($request->request->all());
-
-        // Si le formulaire est vide, récupérez le dernier test de l'utilisateur
-        if ($formIsEmpty) {
-            $lastTest = $testsRepository->findLastTestByUser($this->getUser());
-
-            if ($lastTest) {
-                // Remplir les champs avec les valeurs du dernier test
-                $test->setVma($lastTest->getVma());
-                $test->setDemicooper($lastTest->getDemicooper());
-                $test->setCooper($lastTest->getCooper());
-                $test->setJongleGauche($lastTest->getJongleGauche());
-                $test->setJongleDroit($lastTest->getJongleDroit());
-                $test->setJongleTete($lastTest->getJongleTete());
-                $test->setConduiteBalle($lastTest->getConduiteBalle());
-                $test->setVitesse($lastTest->getVitesse());
-            }
-        }
-
-        $form = $this->createForm(TestsFormType::class, $test);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Ajoutez ces lignes pour définir la date actuelle
-            $currentDate = new \DateTime();
-            $test->setDate($currentDate);
-
-            // Si l'utilisateur est superadmin, attribuez le test à l'utilisateur sélectionné depuis le formulaire
-            if ($this->isGranted("ROLE_SUPER_ADMIN")) {
-                $selectedUser = $form->get('user')->getData();
-
-                if ($selectedUser) {
-                    $test->setUser($selectedUser);
+        
+            $test = new Tests();
+        
+            // Vérifier si le formulaire est vide
+            $formIsEmpty = empty($request->request->all());
+        
+            // Si le formulaire est vide, récupérez le dernier test de l'utilisateur
+            if ($formIsEmpty) {
+                $lastTest = $testsRepository->findLastTestByUser($this->getUser());
+        
+                if ($lastTest) {
+                    // Remplir les champs avec les valeurs du dernier test
+                    $test->setVma($lastTest->getVma());
+                    $test->setDemicooper($lastTest->getDemicooper());
+                    $test->setCooper($lastTest->getCooper());
+                    $test->setJongleGauche($lastTest->getJongleGauche());
+                    $test->setJongleDroit($lastTest->getJongleDroit());
+                    $test->setJongleTete($lastTest->getJongleTete());
+                    $test->setConduiteBalle($lastTest->getConduiteBalle());
+                    $test->setVitesse($lastTest->getVitesse());
                 }
-            } else {
-                // Si l'utilisateur n'est pas superadmin, attribuez le test à l'utilisateur connecté
-                $test->setUser($this->getUser());
             }
+        
+            $form = $this->createForm(TestsFormType::class, $test);
+        
+            $form->handleRequest($request);
+        
+            if ($form->isSubmitted() && $form->isValid()) {
+                // Ajoutez ces lignes pour définir la date actuelle
+                $currentDate = new \DateTime();
+                $test->setDate($currentDate);
+        
+                // Si l'utilisateur est superadmin, attribuez le test à l'utilisateur sélectionné depuis le formulaire
+                if ($this->isGranted("ROLE_SUPER_ADMIN")) {
+                    $selectedUser = $form->get('user')->getData();
+        
+                    if ($selectedUser) {
+                        $test->setUser($selectedUser);
+                    }
+                } else {
+                    // Si l'utilisateur n'est pas superadmin, attribuez le test à l'utilisateur connecté
+                    $test->setUser($this->getUser());
+                }
+        
+                // Traitement du champ vidéo
+                $videoFile = $form->get('video')->getData();
+                if ($videoFile instanceof UploadedFile) {
+                    // Générez le nom du fichier vidéo en utilisant l'id du joueur
+                    if ($this->isGranted("ROLE_SUPER_ADMIN")) {
+                        // Si c'est un superadmin, utilisez l'id du joueur sélectionné depuis le formulaire
+                        $selectedUser = $form->get('user')->getData();
+                        $playerId = $selectedUser->getId();
+                    } else {
+                        // Sinon, utilisez l'id du joueur connecté
+                        $playerId = $this->getUser()->getId();
+                    }
+                    $videoFileName = $playerId .'.mp4'; // Utilisez uniqid() ou une autre méthode pour garantir l'unicité du nom du fichier
 
-            // Traitement du champ vidéo
-            $videoFile = $form->get('video')->getData();
-            if ($videoFile instanceof UploadedFile) {
-                // Utilisez le nom fourni dans le formulaire pour enregistrer la vidéo
-                $videoName = pathinfo($videoFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $videoFileName = $this->uploadVideo($videoFile, $videoName);
-                $test->setVideo($videoFileName);
+                    // Définissez le nouveau nom du fichier dans l'entité
+                    $test->setVideo($videoFileName);
+
+                    // Obtenez le chemin complet du dossier uploads/videos
+                    $uploadDir = $this->getParameter('upload_dir');
+
+                    // Assurez-vous que le dossier existe, sinon, créez-le
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+
+                    // Définissez le chemin complet du nouveau fichier en utilisant le nouveau nom
+                    $newFilePath = $uploadDir . $videoFileName;
+
+                    // Déplacez et renommez le fichier en utilisant la méthode move()
+                    $videoFile->move($uploadDir, $videoFileName);
+                }
+        
+                $entityManager->persist($test);
+                $entityManager->flush();
+        
+                return $this->redirectToRoute('app_tests_index');
             }
-
-
-            $entityManager->persist($test);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_tests_index');
+        
+            return $this->renderForm('tests/new.html.twig', [
+                'test' => $test,
+                'form' => $form,
+            ]);
         }
-
-        return $this->renderForm('tests/new.html.twig', [
-            'test' => $test,
-            'form' => $form,
-        ]);
-    }
-
 
     #[Route('/tests/{id}/edit', name: 'app_tests_edit', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_SUPER_ADMIN")]
@@ -305,18 +326,21 @@ class TestsController extends AbstractController
         try {
             // Supprimez la vidéo du dossier uploads/videos
             $videoFileName = $test->getVideo();
-            $videoPath = realpath($this->getParameter('upload_dir') . '/videos/' . $videoFileName);
 
-            // Vérifiez si le fichier existe avant de tenter de le supprimer
-            if ($videoFileName && file_exists($videoPath)) {
-                unlink($videoPath);
+            if ($videoFileName) {
+                $videoPath = $this->getParameter('upload_dir') . $videoFileName;
+
+                // Vérifiez si le fichier existe avant de tenter de le supprimer
+                if (file_exists($videoPath)) {
+                    unlink($videoPath);
+                }
+
+                // Définissez la propriété video sur null
+                $test->setVideo(null);
+
+                // Enregistrez les modifications dans la base de données
+                $entityManager->flush();
             }
-
-            // Définissez la propriété video sur null
-            $test->setVideo(null);
-
-            // Enregistrez les modifications dans la base de données
-            $entityManager->flush();
 
             // Vérifiez si la requête est une requête Ajax
             if ($request->isXmlHttpRequest()) {

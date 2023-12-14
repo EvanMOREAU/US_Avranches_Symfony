@@ -141,10 +141,18 @@ class TestsFormType extends AbstractType
             'required' => false,
         ])
         ->add('video', FileType::class, [
-            'label' => 'Video',
-            'required' => false,
-        ])
-        ;
+            'label' => 'Vidéo',
+            'required' => false, // Le champ n'est pas obligatoire lors de la modification
+            'constraints' => [
+                new File([
+                    'maxSize' => '1024M',
+                    'mimeTypes' => [
+                        'video/*',
+                    ],
+                    'mimeTypesMessage' => 'Please upload a valid video file',
+                ]),
+            ],
+        ]);
         if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
             $builder->add('user', ChoiceType::class, [
                 'choices' => $this->getUserChoices(),

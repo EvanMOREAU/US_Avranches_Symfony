@@ -176,8 +176,8 @@
                                                 Jongle Gauche : {{ test.jonglegauche }}<br>
                                                 Jongle Droit : {{ test.jongledroit }}<br>
                                                 Jongle Tête : {{ test.jongletete }}<br>
-                                                Conduite de balle : {{ test.conduiteballe|split('.')|first }}.{{ test.conduiteballe|split('.')|last|default('000') }}s<br>
-                                                Vitesse : {{ test.vitesse|split('.')|first }}.{{ test.vitesse|split('.')|last|default('000') }}s<br>
+                                                Conduite de balle : {{ test.conduiteballe|number_format(3, '.', '') }}s<br>
+                                                Vitesse : {{ test.vitesse|number_format(3, '.', '') }}s<br>
                                                 Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}
                                                {% if test.video %}
                                                     {% if test.isValidated %}
