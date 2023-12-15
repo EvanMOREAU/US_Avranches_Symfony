@@ -3,35 +3,38 @@
 {% block title %}ChartConfiguration index{% endblock %}
 
 {% block body %}
-    {% for chart in charts %}
-    {# ... Autres codes ... #}
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% for chart in charts %}
+    <h1 style="color:white;">{{ chart.name }}</h1>
     <canvas id="canvas{{ chart.id }}" width="400" height="200"></canvas>
     <script>
         const ctx{{ chart.id }} = document.getElementById('canvas{{ chart.id }}');
-        const config{{ chart.id }} = {{ chartData[chart.id] | json_encode | raw }};
+        const config{{ chart.id }} = [{{ chartData[chart.id] | json_encode | raw }}];
+        const configData{{ chart.id }} = config{{ chart.id }}[0];
         new Chart(ctx{{ chart.id }}, {
-            type: '{{ chart.type }}',
+            type: '{{ chart.chartType }}',
             data: {
-                {% if chart.type == 'line' %}
+                {% if chart.chartType == 'line' %}
                 labels: ['2024-01-11', '2024-09-11', '2025-10-11', '2025-10-11'],
                 datasets: [{
                     label: '{{ chart.id }}',
-                    data: config{{ chart.id }},
+                    data: configData{{ chart.id }},
                     backgroundColor: 'red',
                     borderColor: 'red',
                     borderWidth: 2
                 }]
-                {% elseif chart.type == 'radar' %}
+                {% elseif chart.chartType == 'radar' %}
                 // Logique pour le type 'radar'
                 {% endif %}
             },
             options: {
                 scales: {
-                    {% if chart.type == 'line' %}
+                    {% if chart.chartType == 'line' %}
                     y: {
-                        min: {{ config[chart.id].min }},
-                        max: {{ config[chart.id].max }}
+                        min: configData{{ chart.id }}.min ,
+                        max: configData{{ chart.id }}.max 
                     }
                     {% endif %}
                 }

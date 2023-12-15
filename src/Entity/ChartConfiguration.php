@@ -19,6 +19,9 @@ class ChartConfiguration
     #[ORM\Column]
     private array $configData = [];
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,18 @@ class ChartConfiguration
     public function setConfigData(array $configData): static
     {
         $this->configData = $configData;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }

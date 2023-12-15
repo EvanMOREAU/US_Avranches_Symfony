@@ -166,3 +166,76 @@ class ChartsFixtures extends Fixture
         $manager->flush();
     }
 }
+
+==================================================================================================================
+
+<?php
+
+namespace App\Controller;
+
+use App\Entity\ChartConfiguration;
+use App\Form\ChartConfigurationType;
+use App\Repository\ChartConfigurationRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+#[Route('/charts')]
+class ChartsController extends AbstractController
+{
+    #[Route('/', name: 'app_charts_index', methods: ['GET'])]
+    public function index(ChartConfigurationRepository $configRepository, Request $request): Response {
+        if (!$this->userVerificationService->verifyUser()) {
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $user = $this->getUser();
+        $chartData = [];
+
+        $charts = $configRepository->findAll();  // Utilisez le bon repository
+        $configurations = $configRepository->findAll();
+
+        foreach ($charts as $chart) {
+            $config = $this->findConfigByType($configurations, $chart->getType());
+
+            if ($config) {
+                $chartData[$chart->getId()] = $this->getChartData($user->getId(), $config);
+            }
+        }
+
+        return $this->render('charts/index.html.twig', [
+            'charts' => $charts,
+            'chartData' => $chartData,
+        ]);
+    }
+
+    private function findConfigByType($configurations, $chartType) {
+        foreach ($configurations as $config) {
+            if ($config->getChartType() === $chartType) {
+                return $config;
+            }
+        }
+
+        return null;
+    }
+
+    private function getChartData($userId, $config) {
+        // Utilisez les données de configuration pour construire dynamiquement la requête
+        $entityClass = $config->getConfigData()['entity'];
+        $minValue = $config->getConfigData()['min'];
+        $maxValue = $config->getConfigData()['max'];
+
+        return $this->getDoctrine()
+            ->getRepository($entityClass)  // Utilisez getDoctrine()->getRepository
+            ->createQueryBuilder('e')
+            ->select('e.value, e.date')
+            ->where('e.user = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    // Reste du contrôleur...
+}

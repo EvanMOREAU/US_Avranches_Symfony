@@ -14,23 +14,24 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/charts')]
 class ChartsController extends AbstractController
 {
+
     #[Route('/', name: 'app_charts_index', methods: ['GET'])]
-    public function index(ChartsRepository $chartsRepository, ChartConfigurationRepository $configRepository, Request $request): Response {
-        if(!$this->userVerificationService->verifyUser()){
+    public function index(ChartConfigurationRepository $configRepository, Request $request, EntityManagerInterface $entityManager): Response {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
 
         $user = $this->getUser();
         $chartData = [];
 
-        $charts = $chartsRepository->findAll();
+        $charts = $configRepository->findAll();
         $configurations = $configRepository->findAll();
 
         foreach ($charts as $chart) {
-            $config = $this->findConfigByType($configurations, $chart->getType());
+            $config = $this->findConfigByType($configurations, $chart->getChartType());
 
             if ($config) {
-                $chartData[$chart->getId()] = $this->getChartData($user->getId(), $config);
+                $chartData[$chart->getId()] = $this->getChartData($user->getId(), $config, $entityManager);
             }
         }
 
@@ -50,30 +51,53 @@ class ChartsController extends AbstractController
         return null;
     }
 
-    private function getChartData($userId, $config) {
-        // Utilisez les données de configuration pour construire dynamiquement la requête
+    private function getChartData($userId, $config, EntityManagerInterface $entityManager) {
         $entityClass = $config->getConfigData()['entity'];
-        $minValue = $config->getConfigData()['min'];
-        $maxValue = $config->getConfigData()['max'];
-
-        return $this->getEntityManager()
-            ->createQuery("
-                SELECT e.value, e.date
-                FROM $entityClass e
-                WHERE e.user = :userId
-            ")
+        $specificField = $this->getSpecificField($entityClass);
+    
+        $scale = $config->getConfigData()['scale'] ?? ['min' => 0, 'max' => 100];
+    
+        return $entityManager
+            ->getRepository($entityClass)
+            ->createQueryBuilder('e')
+            ->select("e.$specificField as value", 'e.date')
+            ->where('e.user = :userId')
             ->setParameter('userId', $userId)
+            ->getQuery()
             ->getResult();
+    }
+    
+    private function getSpecificField($entityClass, $chartType) {
+        $fieldMapping = [
+            'App\Entity\Weight' => 'weightValue',
+            'App\Entity\Height' => 'heightValue',
+            'App\Entity\Tests' => [
+                'line' => [
+                    'jongle_droit',
+                    'jongle_gauche',
+                    'jongle_tete',
+                    'conduiteballe',
+                    'vma',
+                    'cooper',
+                    'demicooper',
+                    'vitesse',
+                ],
+                // Ajoutez d'autres types de graphiques si nécessaire
+            ],
+        ];
+    
+        return $this->resolveSpecificField($entityClass, $chartType, $fieldMapping);
     }
 
     #[Route('/new', name: 'app_charts_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
         $chartConfiguration = new ChartConfiguration();
         $form = $this->createForm(ChartConfigurationType::class, $chartConfiguration);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($chartConfiguration);
             $entityManager->flush();
 
@@ -113,9 +137,10 @@ class ChartsController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_charts_delete', methods: ['POST'])]
-    public function delete(Request $request, ChartConfiguration $chartConfiguration, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, ChartConfiguration $chartConfiguration): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$chartConfiguration->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $chartConfiguration->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($chartConfiguration);
             $entityManager->flush();
         }

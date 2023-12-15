@@ -12,67 +12,73 @@ class ChartsFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $heightConfig = new ChartConfiguration();
-        $heightConfig->setChartType('line');
-        $heightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 100, 'max' => 200]);
-        $manager->persist($heightConfig);
+        // $heightConfig = new ChartConfiguration();
+        // $heightConfig->setChartType('line');
+        // $heightConfig->setName('Taille');
+        // $heightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 100, 'max' => 200, 'field' => 'heightValue']);
+        // $manager->persist($heightConfig);
 
-        $weightConfig = new ChartConfiguration();
-        $weightConfig->setChartType('line');
-        $weightConfig->setConfigData(['entity' => 'App\Entity\Weight', 'min' => 100, 'max' => 200]);
-        $manager->persist($weightConfig);
+        // $weightConfig = new ChartConfiguration();
+        // $weightConfig->setChartType('line');
+        // $weightConfig->setName('Poids');
+        // $weightConfig->setConfigData(['entity' => 'App\Entity\Weight', 'min' => 100, 'max' => 200, 'field' => 'weightValue']);
+        // $manager->persist($weightConfig);
 
+        // Exemple pour Jongle Gauche
         $leftConfig = new ChartConfiguration();
         $leftConfig->setChartType('line');
-        $leftConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $leftConfig->setName('Jongle Gauche');
+        $leftConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 50, 'field' => 'jongle_gauche']);
         $manager->persist($leftConfig);
 
+        // Exemple pour Jongle Droit
         $rightConfig = new ChartConfiguration();
         $rightConfig->setChartType('line');
-        $rightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 100, 'max' => 200]);
-        $manager->persist($rightConfig);
-
-        $rightConfig = new ChartConfiguration();
-        $rightConfig->setChartType('line');
-        $rightConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $rightConfig->setName('Jongle Droit');
+        $rightConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 50, 'field' => 'jongle_droit']);
         $manager->persist($rightConfig);
 
         $headConfig = new ChartConfiguration();
         $headConfig->setChartType('line');
-        $headConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $headConfig->setName('Jongle tete');
+        $headConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'jongle_tete']);
         $manager->persist($headConfig);
 
         $controlConfig = new ChartConfiguration();
         $controlConfig->setChartType('line');
-        $controlConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $controlConfig->setName('Controle de balle');
+        $controlConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'conduiteballe']);
         $manager->persist($controlConfig);
 
         $vmaConfig = new ChartConfiguration();
         $vmaConfig->setChartType('line');
-        $vmaConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $vmaConfig->setName('VMA Classique');
+        $vmaConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'vma']);
         $manager->persist($vmaConfig);
 
         $cooperConfig = new ChartConfiguration();
         $cooperConfig->setChartType('line');
-        $cooperConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $cooperConfig->setName('VMA Cooper');
+        $cooperConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'cooper']);
         $manager->persist($cooperConfig);;
 
         $demicooperConfig = new ChartConfiguration();
         $demicooperConfig->setChartType('line');
-        $demicooperConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $demicooperConfig->setName('VMA Demi Cooper');
+        $demicooperConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'demicooper']);
         $manager->persist($demicooperConfig);
 
         $vitesseConfig = new ChartConfiguration();
         $vitesseConfig->setChartType('line');
-        $vitesseConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        $vitesseConfig->setName('Test Vitesse');
+        $vitesseConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'vitesse']);
         $manager->persist($vitesseConfig);
 
         // $generalConfig = new ChartConfiguration();
         // $generalConfig->setChartType('radar');
-        // $generalConfig->setConfigData(['entity' => 'App\Entity\Test', 'min' => 100, 'max' => 200]);
+        // $generalConfig->setName('Test General');
+        // $generalConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'general']);
         // $manager->persist($generalConfig);
-
-        
 
         $manager->flush();
     }
