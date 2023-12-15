@@ -57,7 +57,7 @@
                     Finaliser l'appel</a>
             </div>
             <div class="col">
-                <a class="btn btn-danger" href="{{ path('app_attendance', {'category': category}) }}">
+                <a class="btn btn-danger" href="{{ path('app_attendance') }}">
                     <i class="fa-solid fa-xmark"></i>
                     Annuler l'appel</a>
             </div>
@@ -164,7 +164,7 @@
                         })
                     }).then(response => {
                         if (response.ok) {
-                            alert('Appel effectué avec succès!');
+                            alert('Appel effectué avec succès !');
                             // window.location.href = '{{ path('app_attendance') }}';
                         } else {
                             alert('Erreur, l\'appel n\'a pas pu être effectué !');

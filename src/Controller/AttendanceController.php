@@ -199,9 +199,9 @@ class AttendanceController extends AbstractController
             'attendances' => $attendances,            
         ]);
     }
-
+    
     #[Route('/update-attendance/{gathering}', name: 'update_attendance', methods: ['POST'])]
-    public function updateAttendance(Request $request, Gathering $gathering): JsonResponse
+    public function updateAttendance(Request $request, Gathering $gathering, AttendanceRepository $attendanceRepository): JsonResponse
     {
         // Get data from the request
         $requestData = json_decode($request->getContent(), true);
@@ -218,42 +218,48 @@ class AttendanceController extends AbstractController
             $gathering->setType($type);
             $gathering->setGatheringHappenedDate($datetime);
     
-            // Update existing attendance records for users present
-            foreach ($presentUserIds as $userId) {
-                $user = $entityManager->getRepository(User::class)->find($userId);
-    
-                if ($user) {
-                    $attendance = $entityManager->getRepository(Attendance::class)->findOneBy([
-                        'user' => $user,
-                        'gathering' => $gathering,
-                    ]);
-    
-                    if ($attendance) {
-                        $attendance->setIsPresent(true);
-                        $attendance->setReason(null);
-                    }
-                }
+            // Delete existing attendance records for the gathering
+            // $existingAttendances = $entityManager->getRepository(Attendance::class)->findBy(['gathering' => $gathering]);
+            // $existingAttendances = $entityManager->getRepository(Attendance::class);
+            $existingAttendances = $attendanceRepository;
+
+            foreach ($existingAttendances as $attendance) {
+                $entityManager->remove($attendance);
             }
     
-            // Update existing attendance records for users absent
-            foreach ($absentUserIds as $userData) {
-                $userId = $userData['userId'];
-                $reason = $userData['reason'];
+            // Commit changes to the database
+            $entityManager->flush();
+
+            // // Create new attendance records for present users
+            // foreach ($presentUserIds as $userId) {
+            //     $user = $entityManager->getRepository(User::class)->find($userId);
     
-                $user = $entityManager->getRepository(User::class)->find($userId);
+            //     if ($user) {
+            //         $attendance = new Attendance();
+            //         $attendance->setUser($user);
+            //         $attendance->setGathering($gathering);
+            //         $attendance->setIsPresent(true);
+            //         $attendance->setReason(null);
+            //         $entityManager->persist($attendance);
+            //     }
+            // }
     
-                if ($user) {
-                    $attendance = $entityManager->getRepository(Attendance::class)->findOneBy([
-                        'user' => $user,
-                        'gathering' => $gathering,
-                    ]);
+            // // Create new attendance records for absent users
+            // foreach ($absentUserIds as $userData) {
+            //     $userId = $userData['userId'];
+            //     $reason = $userData['reason'];
     
-                    if ($attendance) {
-                        $attendance->setIsPresent(false);
-                        $attendance->setReason($reason);
-                    }
-                }
-            }
+            //     $user = $entityManager->getRepository(User::class)->find($userId);
+    
+            //     if ($user) {
+            //         $attendance = new Attendance();
+            //         $attendance->setUser($user);
+            //         $attendance->setGathering($gathering);
+            //         $attendance->setIsPresent(false);
+            //         $attendance->setReason($reason);
+            //         $entityManager->persist($attendance);
+            //     }
+            // }
     
             // Commit changes to the database
             $entityManager->flush();
@@ -263,7 +269,6 @@ class AttendanceController extends AbstractController
             return new JsonResponse(['error' => 'An error occurred during attendance update'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
 
     // #[Route('/update-attendance/{gathering}2', name: 'update_attendance2', methods: ['POST'])]
     // public function updateAttendance2(Request $request, Gathering $gathering): JsonResponse
