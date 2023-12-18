@@ -32,6 +32,12 @@ class Gathering
     #[ORM\JoinColumn(nullable: false)]
     private ?User $MadeBy = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $type = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $GatheringHappenedDate = null;
+
     public function __construct()
     {
         $this->attendances = new ArrayCollection();
@@ -104,6 +110,30 @@ class Gathering
     public function setMadeBy(?User $MadeBy): static
     {
         $this->MadeBy = $MadeBy;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getGatheringHappenedDate(): ?\DateTimeInterface
+    {
+        return $this->GatheringHappenedDate;
+    }
+
+    public function setGatheringHappenedDate(\DateTimeInterface $GatheringHappenedDate): static
+    {
+        $this->GatheringHappenedDate = $GatheringHappenedDate;
 
         return $this;
     }
