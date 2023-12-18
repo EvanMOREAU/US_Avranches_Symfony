@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Time;
+use App\Form\DataTransformer\VideoDataTransformer;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\DateTime;
@@ -23,14 +24,17 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+
 
 class TestsFormType extends AbstractType
 {
 
-    public function __construct(UserRepository $userRepository, Security $security)
+    public function __construct(UserRepository $userRepository, Security $security, ParameterBagInterface $parameterBag)
     {
         $this->userRepository = $userRepository;
         $this->security = $security;
+        $this->videoDirectory = $parameterBag->get('upload_dir');;
     }
     
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -152,7 +156,8 @@ class TestsFormType extends AbstractType
                     'mimeTypesMessage' => 'Please upload a valid video file',
                 ]),
             ],
-        ]);
+        ])
+        ;
         if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
             $builder->add('user', ChoiceType::class, [
                 'choices' => $this->getUserChoices(),
@@ -160,6 +165,9 @@ class TestsFormType extends AbstractType
                 'required' => true,
             ]);
         }
+        // Ajoutez le transformateur de données au champ 'video'
+        $builder->get('video')
+            ->addModelTransformer(new VideoDataTransformer($this->videoDirectory));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

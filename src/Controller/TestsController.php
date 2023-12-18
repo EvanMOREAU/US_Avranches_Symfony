@@ -205,21 +205,57 @@ class TestsController extends AbstractController
             throw $this->createNotFoundException('Test non trouvé');
         }
 
+        // Sauvegardez le nom du fichier vidéo actuel avant de créer le formulaire
+        $currentVideo = $test->getVideo();
+
         $form = $this->createForm(TestsFormType::class, $test);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->flush(); // Enregistrez les modifications
-
-            // Ajoutez un message flash pour indiquer que la modification a réussi
-            $this->addFlash('success', 'La modification a été réalisée avec succès.');
-
-            // Redirigez l'utilisateur vers une autre page, par exemple la liste des tests
-            return $this->redirectToRoute('app_tests_index');
+        if ($this->isGranted("ROLE_SUPER_ADMIN")) {
+            // Si c'est un superadmin, utilisez l'id du joueur sélectionné depuis le formulaire
+            $selectedUser = $form->get('user')->getData();
+            $playerId = $selectedUser->getId();
+        } else {
+            // Sinon, utilisez l'id du joueur connecté
+            $playerId = $this->getUser()->getId();
         }
 
+        if ($form->isSubmitted() && $form->isValid()) {
+        
+            // Vérifiez si un nouveau fichier vidéo a été téléchargé
+            $videoFile = $form->get('video')->getData();
+            if ($videoFile instanceof UploadedFile) {
+                // Supprimez l'ancien fichier vidéo s'il existe
+                $oldVideoPath = $this->getParameter('upload_dir') . DIRECTORY_SEPARATOR . $currentVideo;
+                if (file_exists($oldVideoPath)) {
+                    unlink($oldVideoPath);
+                }
+        
+                // Générez un nom de fichier unique (vous pouvez utiliser une logique différente ici)
+                $newVideoName = $playerId . '.mp4';
+        
+                // Déplacez le fichier vidéo vers le répertoire d'uploads avec le nouveau nom
+                $videoFile->move(
+                    $this->getParameter('upload_dir'), // Assurez-vous que 'upload_dir' est défini dans votre fichier services.yaml
+                    $newVideoName
+                );
+        
+                // Mettez à jour le champ video avec le nouveau nom de fichier
+                $test->setVideo($newVideoName);
+            } else {
+                // Si aucun nouveau fichier n'est téléchargé, rétablissez le nom du fichier vidéo actuel
+                $test->setVideo($currentVideo);
+            }
+        
+            // Enregistrez l'entité modifiée
+            $this->getDoctrine()->getManager()->flush();
+
+            // Redirection vers la page index après l'enregistrement
+            return $this->redirectToRoute('app_tests_index');
+
+        }
+        
         return $this->renderForm('tests/edit.html.twig', [
             'test' => $test,
             'form' => $form,
