@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use App\Repository\WeightRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -56,12 +57,12 @@ class Weight
 
     public function getUserId(): ?User
     {
-        return $this->user;
+        return $this->userId;
     }
 
     public function setUserId(?User $user): static
     {
-        $this->user = $user;
+        $this->userId = $user;
 
         return $this;
     }
