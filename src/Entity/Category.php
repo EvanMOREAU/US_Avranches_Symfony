@@ -35,6 +35,9 @@ class Category
     #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'users')]
     #[ORM\JoinColumn(name: 'team_id', referencedColumnName: 'id')]
     private $team;
+
+    #[ORM\Column(length: 255)]
+    private ?string $color = null;
     
     public function __construct()
     {
@@ -135,6 +138,18 @@ class Category
     public function setTeam(?Team $team): self
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(string $color): static
+    {
+        $this->color = $color;
 
         return $this;
     }

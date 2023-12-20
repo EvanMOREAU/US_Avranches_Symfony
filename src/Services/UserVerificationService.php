@@ -27,7 +27,7 @@ class UserVerificationService
             if ($user && !$user->isIsCodeValidated()) {
                return 0; // Pas le droit (0)
             }
-        } else {
+        } elseif(!$this->tokenStorage->getToken()){
             return -1; // Pas connecté (-1)
         }
         
