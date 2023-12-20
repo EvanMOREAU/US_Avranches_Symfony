@@ -60,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?float $posteCordY = null;
 
-  #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
     private Collection $attendances;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
@@ -89,29 +89,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profile_image = null;
 
-    
+
 
     /**
-    * @Assert\NotBlank(groups={"registration", "resetPassword"})
-    * @Assert\Length(
-    *     min=6,
-    *     minMessage="Votre mot de passe doit comporter au moins {{ limit }} caractères",
-    *     groups={"registration", "resetPassword"}
-    * )
-    */
+     * @Assert\NotBlank(groups={"registration", "resetPassword"})
+     * @Assert\Length(
+     *     min=6,
+     *     minMessage="Votre mot de passe doit comporter au moins {{ limit }} caractères",
+     *     groups={"registration", "resetPassword"}
+     * )
+     */
     private $plainPassword;
 
     #[ORM\Column]
     private ?bool $isCodeValidated = false;
 
-    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Weight::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Weight::class)]
     private Collection $weights;
 
-    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Height::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Height::class)]
     private Collection $heights;
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
+
 
     public function getId(): ?int
     {
@@ -208,7 +209,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    
+
     public function getFirstName(): ?string
     {
         return $this->first_name;
@@ -233,10 +234,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCategory(){
+    public function getCategory()
+    {
         $this_year = new \DateTime('first day of January next year');
         $diff = $this_year->diff($this->date_naissance);
-        return 'U'.$diff->y + 1;
+        return 'U' . $diff->y + 1;
     }
 
     /**
@@ -500,4 +502,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 }

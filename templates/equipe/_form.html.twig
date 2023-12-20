@@ -1,0 +1,19 @@
+{{ form_start(form) }}
+    {{ form_widget(form._token) }}
+    <div class="row">
+        <div class="col-md-10 col-lg-5 mx-auto d-flex flex-column justify-content-center vh-100">
+            <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary" action="{{ path('app_login') }}" method="post">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Nom de l'équipe</label>
+                    {{ form_widget(form.name, { 'id': form.name.vars.id, 'attr': {'class': 'form-control', 'onchange': 'handleFileSelect(event)'} }) }}
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Categorie à laquelle elle appartient</label>
+                    {{ form_widget(form.category, { 'id': form.category.vars.id, 'attr': {'class': 'form-select', 'onchange': 'handleFileSelect(event)'} }) }}
+                </div>
+                <button class="w-100 btn btn-lg btn-success" type="submit">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
