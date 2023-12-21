@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Palier index{% endblock %}
+
+{% block body %}
+    <h1>Palier index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Objectif</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for palier in paliers %}
+            <tr>
+                <td>{{ palier.id }}</td>
+                <td>{{ palier.name }}</td>
+                <td>{{ palier.objectif }}</td>
+                <td>
+                    <a href="{{ path('app_palier_show', {'id': palier.id}) }}">show</a>
+                    <a href="{{ path('app_palier_edit', {'id': palier.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_palier_new') }}">Create new</a>
+{% endblock %}
