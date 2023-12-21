@@ -81,7 +81,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tests = new ArrayCollection();
         $this->weights = new ArrayCollection();
         $this->heights = new ArrayCollection();
-
     }
 
 
@@ -114,6 +113,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Palier $palier = null;
+
+
 
     public function getId(): ?int
     {
@@ -502,4 +506,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getPalier(): ?Palier
+    {
+        return $this->palier;
+    }
+
+    public function setPalier(?Palier $palier): static
+    {
+        $this->palier = $palier;
+
+        return $this;
+    }
+
+
 }

@@ -1,4 +1,18 @@
+{# palier/_form.html.twig #}
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <div class="mb-3">
+        {{ form_label(form.name) }}
+        {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.objectif) }}
+        {{ form_widget(form.objectif, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+
+    {# Vous n'avez pas besoin d'inclure le champ 'numero' ici #}
+
+    {{ form_row(form._token) }} {# N'oubliez pas d'inclure le champ CSRF token #}
+
+    <button type="submit" class="btn btn-lg btn-success">Enregistrer</button>
 {{ form_end(form) }}

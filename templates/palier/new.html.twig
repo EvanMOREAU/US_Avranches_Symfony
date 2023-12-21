@@ -3,9 +3,11 @@
 {% block title %}New Palier{% endblock %}
 
 {% block body %}
-    <h1>Create new Palier</h1>
+    <div class="container mt-4">
+        <h1>Create new Palier</h1>
 
-    {{ include('palier/_form.html.twig') }}
+        {{ include('palier/_form.html.twig') }}
 
-    <a href="{{ path('app_palier_index') }}">back to list</a>
+        <a href="{{ path('app_palier_index') }}" class="btn btn-secondary mt-3">Back to list</a>
+    </div>
 {% endblock %}
