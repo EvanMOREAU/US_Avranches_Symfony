@@ -201,7 +201,68 @@ class AttendanceController extends AbstractController
     }
     
     #[Route('/update-attendance/{gathering}', name: 'update_attendance', methods: ['POST'])]
-    public function updateAttendance(Request $request, Gathering $gathering, AttendanceRepository $attendanceRepository): JsonResponse
+    public function updateAttendance(Request $request, Gathering $gathering): JsonResponse
+    {
+        // Get data from the request
+        $requestData = json_decode($request->getContent(), true);
+        $presentUserIds = $requestData['presentUserIds'];
+        $absentUserIds = $requestData['absentUserIds'];
+        $type = $requestData['type'];
+        $datetime = new \DateTime($requestData['datetime']);
+    
+        // Get the EntityManager
+        $entityManager = $this->getDoctrine()->getManager();
+    
+        try {
+            // Update the gathering details
+            $gathering->setType($type);
+            $gathering->setGatheringHappenedDate($datetime);
+
+            // Update every attendance details one by one
+            foreach ($gathering->getAttendances() as $attendance) {
+                // Update attendance details
+                // $attendance->setIsPresent(False);
+                // $attendance->setReason("test");
+
+                // $entityManager->persist($attendance);
+
+                // Update attendance records for present users
+                foreach ($presentUserIds as $userId) {
+                    $user = $entityManager->getRepository(User::class)->find($userId);
+        
+                    if ($user == $userId) {
+                        $attendance->setIsPresent(true);
+                        $attendance->setReason(null);
+                        $entityManager->persist($attendance);
+                    }
+                }
+
+                // Update attendance records for absent users
+                foreach ($absentUserIds as $userData) {
+                    $userId = $userData['userId'];
+                    $reason = $userData['reason'];
+        
+                    $user = $entityManager->getRepository(User::class)->find($userId);
+        
+                    if ($user == $userId) {
+                        $attendance->setIsPresent(false);
+                        $attendance->setReason($reason);
+                        $entityManager->persist($attendance);
+                    }
+                }
+            }
+
+            // Commit changes to the database
+            $entityManager->flush();
+    
+            return new JsonResponse(['message' => 'Gathering attendance updated successfully']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'An error occurred during attendance update'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/update-attendance2/{gathering}', name: 'update_attendance2', methods: ['POST'])]
+    public function updateAttendance2(Request $request, Gathering $gathering, AttendanceRepository $attendanceRepository): JsonResponse
     {
         // Get data from the request
         $requestData = json_decode($request->getContent(), true);
@@ -221,12 +282,13 @@ class AttendanceController extends AbstractController
             // Delete existing attendance records for the gathering
             // $existingAttendances = $entityManager->getRepository(Attendance::class)->findBy(['gathering' => $gathering]);
             // $existingAttendances = $entityManager->getRepository(Attendance::class);
-            $existingAttendances = $attendanceRepository;
+ 
+            // $existingAttendances = $attendanceRepository;
 
-            foreach ($existingAttendances as $attendance) {
-                $entityManager->remove($attendance);
-            }
-    
+            // foreach ($existingAttendances as $attendance) {
+            //     $entityManager->remove($attendance);
+            // }
+
             // Commit changes to the database
             $entityManager->flush();
 
@@ -246,8 +308,8 @@ class AttendanceController extends AbstractController
     
             // // Create new attendance records for absent users
             // foreach ($absentUserIds as $userData) {
-            //     $userId = $userData['userId'];
-            //     $reason = $userData['reason'];
+                // $userId = $userData['userId'];
+                // $reason = $userData['reason'];
     
             //     $user = $entityManager->getRepository(User::class)->find($userId);
     
@@ -262,7 +324,7 @@ class AttendanceController extends AbstractController
             // }
     
             // Commit changes to the database
-            $entityManager->flush();
+            // $entityManager->flush();
     
             return new JsonResponse(['message' => 'Gathering attendance updated successfully']);
         } catch (\Exception $e) {

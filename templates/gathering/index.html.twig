@@ -39,16 +39,23 @@
         },
         defaultView: 'dayGridMonth',
         defaultDate: new Date(),
-        // navLinks: true,
-        editable: true,
+        navLinks: false,
+        editable: false,
         eventLimit: true,
+        firstDay: 1,
         events: [
           {% for gathering in gatherings %}
             {
-              	title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
-              	start: '{{ gathering.gatheringHappenedDate|date("Y-m-d") }}',
-				        color: '{{ gathering.category.color }}',
-              	url: '/rassemblement/{{ gathering.id }}',
+              title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
+              start: '{{ gathering.gatheringHappenedDate|date("Y-m-d") }}',
+              {% if gathering.type == 'Entraînement' %}
+                color: '{{ gathering.category.color }}',
+              {% else %}
+                backgroundColor: '#ffffff',
+                borderColor: '{{ gathering.category.color }}',
+                textColor: '{{ gathering.category.color }}',
+              {% endif %}
+              url: '/rassemblement/{{ gathering.id }}',
             },
           {% endfor %}
         ]
@@ -59,5 +66,5 @@
   </script>
 
   <script src="js/main.js"></script>
-	
+  
 {% endblock %}
