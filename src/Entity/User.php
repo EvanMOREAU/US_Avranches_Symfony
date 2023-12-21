@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Tests;
+use App\Entity\Height;
+use App\Entity\Weight;
 use App\Entity\Gathering;
 use App\Entity\Attendance;
 use Doctrine\DBAL\Types\Types;
@@ -104,10 +106,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $isCodeValidated = false;
 
-    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Weight::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Weight::class)]
     private Collection $weights;
 
-    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Height::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Height::class)]
     private Collection $heights;
 
     #[ORM\Column(length: 255)]
