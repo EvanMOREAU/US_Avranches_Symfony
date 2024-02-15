@@ -28,6 +28,11 @@ class Attendance
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $reason = null;
 
+    public function __toString(): string
+    {
+        return "attendance.id = '" . $this->getId()."' user.name = '" . $this->getUser()->getUsername()."'";
+    }
+
     public function getId(): ?int
     {
         return $this->id;
