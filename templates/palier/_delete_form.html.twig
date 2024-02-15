@@ -1,7 +1,8 @@
-<form method="post" action="{{ path('app_palier_delete', {'id': palier.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer le palier {{ palier.name }} ?');">
+{# palier/_delete_form.html.twig #}
+<form class="delete-form" action="{{ path('app_palier_delete', {'id': palier.id}) }}" method="post">
+    <input type="hidden" name="_method" value="DELETE">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ palier.id) }}">
-    <button type="submit" class="btn btn-danger mt-2">
-        <i class="fa-solid fa-trash-can"></i>
-        Supprimer
+    <button type="submit" class="btn btn-danger deletePalier">
+        <i class="fas fa-trash"></i> Supprimer
     </button>
 </form>

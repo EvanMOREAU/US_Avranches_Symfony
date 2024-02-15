@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/palier')]
 class PalierController extends AbstractController
 {
+    #[IsGranted("ROLE_SUPER_ADMIN")]
     #[Route('/', name: 'app_palier_index', methods: ['GET', 'POST'])]
     public function index(PalierRepository $palierRepository): Response
     {
@@ -23,6 +24,7 @@ class PalierController extends AbstractController
         ]);
     }
 
+    #[IsGranted("ROLE_SUPER_ADMIN")]
     #[Route('/new', name: 'app_palier_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -57,7 +59,7 @@ class PalierController extends AbstractController
         ]);
     }
 
-
+    #[IsGranted("ROLE_SUPER_ADMIN")]
     #[Route('/{id}', name: 'app_palier_show', methods: ['GET', 'POST'])]
     public function show(Palier $palier): Response
     {
@@ -66,6 +68,7 @@ class PalierController extends AbstractController
         ]);
     }
 
+    #[IsGranted("ROLE_SUPER_ADMIN")]
     #[Route('/{id}/edit', name: 'app_palier_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Palier $palier, EntityManagerInterface $entityManager): Response
     {
@@ -84,15 +87,21 @@ class PalierController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_palier_delete', methods: ['POST'])]
+    #[IsGranted("ROLE_SUPER_ADMIN")]
+    #[Route('/palier/{id}', name: 'app_palier_delete', methods: ['DELETE'])]
     public function delete(Request $request, Palier $palier, EntityManagerInterface $entityManager): JsonResponse
     {
-        // Supprimer le palier de la base de données
-        $entityManager->remove($palier);
-        $entityManager->flush();
+        $response = ['success' => false];
 
-        // Vous pouvez renvoyer une réponse JSON avec succès
-        return new JsonResponse(['success' => true]);
+        if ($this->isCsrfTokenValid('delete' . $palier->getId(), $request->headers->get('X-CSRF-Token'))) {
+            $entityManager->remove($palier);
+            $entityManager->flush();
+
+            $response['success'] = true;
+        }
+
+        return new JsonResponse($response);
     }
+
 
 }
