@@ -45,4 +45,13 @@ class HeightRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function removeByUser($user){
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'DELETE FROM tbl_height WHERE user_id = :userId';
+
+        $result = $conn->executeQuery($sql, ['userId' => $user->getId()]);
+        return $result;
+    }
 }

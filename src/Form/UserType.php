@@ -1,8 +1,11 @@
 <?php
-
 namespace App\Form;
 
 use App\Entity\User;
+use App\Entity\Equipe;
+
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
@@ -29,6 +32,10 @@ class UserType extends AbstractType
                 'first_options'  => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Répétez le mot de passe'],
             ])
+            ->add('equipe', EntityType::class, [
+                'class' => Equipe::class,
+                'choice_label' => 'name',
+            ])
             ->add('first_name')
             ->add('last_name')
             ->add('date_naissance')
@@ -50,7 +57,7 @@ class UserType extends AbstractType
             ])
         ;
     }
-
+    
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
