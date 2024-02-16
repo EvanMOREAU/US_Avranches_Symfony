@@ -28,20 +28,20 @@ class ChartsFixtures extends Fixture
         $leftConfig = new ChartConfiguration();
         $leftConfig->setChartType('line');
         $leftConfig->setName('Jongle Gauche');
-        $leftConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 50, 'field' => 'jongle_gauche']);
+        $leftConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 50, 'field' => 'jonglegauche']);
         $manager->persist($leftConfig);
 
         // Exemple pour Jongle Droit
         $rightConfig = new ChartConfiguration();
         $rightConfig->setChartType('line');
         $rightConfig->setName('Jongle Droit');
-        $rightConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 50, 'field' => 'jongle_droit']);
+        $rightConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 50, 'field' => 'jongledroit']);
         $manager->persist($rightConfig);
 
         $headConfig = new ChartConfiguration();
         $headConfig->setChartType('line');
         $headConfig->setName('Jongle tete');
-        $headConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'jongle_tete']);
+        $headConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'jongletete']);
         $manager->persist($headConfig);
 
         $controlConfig = new ChartConfiguration();

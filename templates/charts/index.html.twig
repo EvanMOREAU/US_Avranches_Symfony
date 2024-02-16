@@ -4,42 +4,36 @@
 
 {% block body %}
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    {% for chart in charts %}
-    <h1 style="color:white;">{{ chart.name }}</h1>
-    <canvas id="canvas{{ chart.id }}" width="400" height="200"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% for chartId, chartData in chartData %}
+    <h1 style="color:white;">{{ chartData.name }}</h1>
+    <canvas id="canvas{{ chartId }}" width="400" height="200"></canvas>
     <script>
-        const ctx{{ chart.id }} = document.getElementById('canvas{{ chart.id }}');
-        const config{{ chart.id }} = [{{ chartData[chart.id] | json_encode | raw }}];
-        const configData{{ chart.id }} = config{{ chart.id }}[0];
-        new Chart(ctx{{ chart.id }}, {
-            type: '{{ chart.chartType }}',
+        const ctx{{ chartId }} = document.getElementById('canvas{{ chartId }}');
+        const configData{{ chartId }} = {{ chartData.data | json_encode | raw }};
+        new Chart(ctx{{ chartId }}, {
+            type: '{{ chartData.chartType }}',
             data: {
-                {% if chart.chartType == 'line' %}
-                labels: ['2024-01-11', '2024-09-11', '2025-10-11', '2025-10-11'],
+                labels: configData{{ chartId }}.dates, // Utiliser les dates pour l'axe x
                 datasets: [{
-                    label: '{{ chart.id }}',
-                    data: configData{{ chart.id }},
+                    label: '{{ chartData.name }}',
+                    data: configData{{ chartId }}.values, // Utiliser les valeurs pour les données
                     backgroundColor: 'red',
                     borderColor: 'red',
                     borderWidth: 2
                 }]
-                {% elseif chart.chartType == 'radar' %}
-                // Logique pour le type 'radar'
-                {% endif %}
             },
             options: {
                 scales: {
-                    {% if chart.chartType == 'line' %}
                     y: {
-                        min: configData{{ chart.id }}.min ,
-                        max: configData{{ chart.id }}.max 
+                         min: {{ chartData.min }},
+                         max: {{ chartData.max }}
                     }
-                    {% endif %}
                 }
             }
         });
     </script>
 {% endfor %}
+
 {% endblock %}
