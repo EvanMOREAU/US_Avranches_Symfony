@@ -33,11 +33,11 @@ class ChartsController extends AbstractController
         // Parcourir les configurations de graphique
         foreach ($configurations as $config) {
             $chartData[$config->getId()] = [
-                'name' => $config->getName(), // Ajouter le nom du graphique
-                'chartType' => $config->getChartType(), // Ajouter le type du graphique
-                'data' => $this->generateLineChartData($testsData, $config->getConfigData()), // Générer les données du graphique
-                'min' => $config->getConfigData()['min'], // Ajouter la valeur min
-                'max' => $config->getConfigData()['max'], // Ajouter la valeur max
+                'name' => $config->getName(),
+                'chartType' => $config->getChartType(),
+                'data' => $this->generateLineChartData($testsData, $config->getConfigData()),
+                'min' => $config->getConfigData()['min'],
+                'max' => $config->getConfigData()['max'],
             ];
         }
 
@@ -58,16 +58,15 @@ class ChartsController extends AbstractController
                 // Utiliser le nom de la colonne spécifiée dans la configuration pour les étiquettes
                 $labels[] = $test->getDate()->format('d-m-Y');
             } else {
-                // Utiliser le nom de la colonne spécifiée dans la configuration pour les étiquettes
-                $labels[] = $test->{'get' . ucfirst($configData['date_field'])}();
                 // Utiliser les valeurs correspondantes pour les données du graphique
+                $labels[] = $test->{'get' . ucfirst($configData['date_field'])}();
                 $values[] = $test->{'get' . ucfirst($configData['field'])}();
             }
         }
 
         return [
             'labels' => $labels,
-            'values' => $values, // Ajouter les valeurs générées pour les données du graphique
+            'values' => $values,
         ];
     }
 }

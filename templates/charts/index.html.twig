@@ -13,14 +13,14 @@
         const ctx{{ chartId }} = document.getElementById('canvas{{ chartId }}');
         const configData{{ chartId }} = {{ chartData.data | json_encode | raw }};
         console.log("les données : " + configData{{ chartId }}.values);
-        console.log("les dates : " + configData{{ chartId }}.labels); 
+        console.log("les dates : " + configData{{ chartId }}.labels);
         new Chart(ctx{{ chartId }}, {
             type: '{{ chartData.chartType }}',
             data: {
-                labels: configData{{ chartId }}.dates, // Utiliser les dates pour l'axe x
+                labels: configData{{ chartId }}.labels,
                 datasets: [{
                     label: '{{ chartData.name }}',
-                    data: configData{{ chartId }}.values, // Utiliser les valeurs pour les données
+                    data: configData{{ chartId }}.values,
                     backgroundColor: 'red',
                     borderColor: 'red',
                     borderWidth: 2
