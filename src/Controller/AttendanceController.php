@@ -32,7 +32,7 @@ class AttendanceController extends AbstractController
         $this->logger = $logger;
     }
 
-    // Page principale d'appel
+    // Page principale d'appel qui affiche les catégories
     #[Route('/appel', name: 'app_attendance')]
     public function index(CategoryRepository $CategoryRepository): Response
     {
@@ -52,7 +52,7 @@ class AttendanceController extends AbstractController
         ]);
     }
 
-    // Page d'appel pour une catégorie spécifique
+    // Page d'appel pour une catégorie spécifique, choisie précédemment par le coach
     #[Route('/appel/{category}', name: 'app_attendance_u')]
     public function attendance(string $category, UserRepository $UserRepository): Response
     {
@@ -81,6 +81,7 @@ class AttendanceController extends AbstractController
         ]);
     }
 
+    // Crée un nouveau rassemblement avec la catégorie et les joueurs
     #[Route('/create-attendance-{category}', name: 'create_attendance', methods: ['POST'])]
     public function createAttendance(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -166,6 +167,7 @@ class AttendanceController extends AbstractController
         return new JsonResponse(['message' => 'Matches played updated successfully']);
     }
 
+    // Affichage la page permettant la modification d'appel
     #[Route('/modify-attendance/{gathering}', name: 'modify_attendance', methods: ['GET'])]
     public function modifyAttendance(string $gathering, UserRepository $UserRepository, AttendanceRepository $attendanceRepository, ): Response
     {
@@ -200,6 +202,7 @@ class AttendanceController extends AbstractController
         ]);
     }
 
+    // Modifie l'appel pour le rassemblement de l'équipe choisie par le coach
     #[Route('/update-attendance/{gathering}', name: 'update_attendance', methods: ['POST'])]
     public function updateAttendance(string $gathering, UserRepository $userRepository, AttendanceRepository $attendanceRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
