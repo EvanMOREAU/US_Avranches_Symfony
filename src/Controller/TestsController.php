@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Tests;
+use App\Entity\Palier;
 use App\Form\TestsFormType;
 use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
+use App\Repository\PalierRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +42,7 @@ class TestsController extends AbstractController
         $tests = $testsRepository->findAll();
         
         $user = $this->getUser();
+        
         $selectedUserId = $request->query->get('userId');
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
@@ -86,6 +89,18 @@ class TestsController extends AbstractController
                 : array_filter($testsArray, fn ($test) => !$test->isIsValidated());
         }
         
+        
+        $user = $this->getUser();
+        $palierNumber = 0; // Valeur par défaut
+        $palierName = 'Aucun palier'; // Valeur par défaut
+
+        if ($user) {
+            $palier = $user->getPalier(); // Assurez-vous que la relation entre User et Palier est correctement définie
+            if ($palier) {
+                $palierNumber = $palier->getNumero();
+                $palierName = $palier->getName();
+            }
+        }
 
         return $this->render('tests/index.html.twig', [
             'controller_name' => 'TestsController',
@@ -94,11 +109,13 @@ class TestsController extends AbstractController
             'user' => $user,
             'selectedUserId' => $selectedUserId,
             'usersByCategory' => $usersByCategory,
+            'palierNumber' => $palierNumber,
+            'palierName' => $palierName,
         ]);
     }
     
     #[Route('/new', name: 'app_tests_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository, PalierRepository $palierRepository, EntityManagerInterface $entityManager): Response
     {
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -108,11 +125,18 @@ class TestsController extends AbstractController
         
             // Vérifier si le formulaire est vide
             $formIsEmpty = empty($request->request->all());
+            $paliers = $palierRepository->findAll(); // Assurez-vous que votre repository Palier est correctement autowired
+
+            $form = $this->createForm(TestsFormType::class, $test, [
+                'paliers' => $paliers, // $paliers est la liste des paliers que vous devez fournir ici
+            ]);
+            
+
         
             // Si le formulaire est vide, récupérez le dernier test de l'utilisateur
             if ($formIsEmpty) {
                 $lastTest = $testsRepository->findLastTestByUser($this->getUser());
-        
+                
                 if ($lastTest) {
                     // Remplir les champs avec les valeurs du dernier test
                     $test->setVma($lastTest->getVma());
@@ -134,7 +158,8 @@ class TestsController extends AbstractController
                 // Ajoutez ces lignes pour définir la date actuelle
                 $currentDate = new \DateTime();
                 $test->setDate($currentDate);
-        
+                $palier = $form->get('palier')->getData();
+                $test->setPalier($palier);
                 // Si l'utilisateur est superadmin, attribuez le test à l'utilisateur sélectionné depuis le formulaire
                 if ($this->isGranted("ROLE_SUPER_ADMIN")) {
                     $selectedUser = $form->get('user')->getData();
@@ -182,7 +207,7 @@ class TestsController extends AbstractController
                 $entityManager->persist($test);
                 $entityManager->flush();
         
-                return $this->redirectToRoute('app_tests_index');
+                return $this->redirectToRoute('app_tests_index', ['id' => $test->getId()]);
             }
         
             return $this->renderForm('tests/new.html.twig', [
@@ -205,6 +230,7 @@ class TestsController extends AbstractController
             throw $this->createNotFoundException('Test non trouvé');
         }
 
+        
         // Sauvegardez le nom du fichier vidéo actuel avant de créer le formulaire
         $currentVideo = $test->getVideo();
 

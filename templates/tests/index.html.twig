@@ -178,7 +178,14 @@
                                                 Jongle Tête : {{ test.jongletete }}<br>
                                                 Conduite de balle : {{ test.conduiteballe|number_format(3, '.', '') }}s<br>
                                                 Vitesse : {{ test.vitesse|number_format(3, '.', '') }}s<br>
-                                                Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}
+                                                Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}<br>
+                                                {% if palierNumber is not null %}
+                                                    <p>Palier : {{ palierNumber }} - {{ palierName }}</p>
+                                                {% else %}
+                                                    <p>Aucun palier associé à ce test.</p>
+                                                {% endif %}
+
+
                                                {% if test.video %}
                                                     {% if test.isValidated %}
                                                         {# Display a message indicating that the video is not available #}

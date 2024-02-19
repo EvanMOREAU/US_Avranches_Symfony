@@ -104,5 +104,9 @@ class Palier
 
         return $this;
     }
+    public function __toString(): string
+    {
+        return $this->numero !== null ? (string)$this->numero : '';
+    }
 
 }

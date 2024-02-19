@@ -15,7 +15,8 @@ class PalierType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('objectif');
+            ->add('objectif')
+            ->add('numero');
 
         // Ajouter le champ de suppression (visible uniquement lors de la modification)
         if ($options['is_edit']) {

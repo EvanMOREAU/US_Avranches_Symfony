@@ -99,6 +99,11 @@
             {{ form_errors(form.video, {'attr': {'class': 'error-message'}}) }}
         </div>
 
+        <div class="form-group {% if form.palier.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.palier, 'Palier', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.palier, {'attr': {'class': 'form-input', 'placeholder': 'Sélectionner un palier'}}) }}
+            {{ form_errors(form.palier, {'attr': {'class': 'error-message'}}) }}
+        </div>
 
 
         {% if is_granted("ROLE_SUPER_ADMIN") %}

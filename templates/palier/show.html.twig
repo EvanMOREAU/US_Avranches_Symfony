@@ -5,12 +5,27 @@
 {% block body %}
     <style>
         .table td {
-            max-width: 300px; /* Ajustez la largeur maximale selon vos besoins */
+            max-width: 300px;
             word-wrap: break-word;
         }
 
         .table td.actions-column {
-            max-width: 120px; /* Ajustez la largeur maximale selon vos besoins */
+            max-width: 120px;
+        }
+
+        @media (max-width: 576px) {
+            .table td {
+                max-width: none;
+            }
+
+            .table td:not(.actions-column) {
+                display: none;
+            }
+
+            .table td.actions-column {
+                max-width: none;
+                display: table-cell;
+            }
         }
     </style>
 
@@ -37,11 +52,11 @@
                             <td class="align-middle">{{ palier.numero }}</td>
                             <td class="align-middle">{{ palier.name }}</td>
                             <td class="align-middle">{{ palier.objectif }}</td>
-                            
+
                             <td class="align-middle actions-column">
                                 <div class="d-flex justify-content-center align-items-center">
                                     <a href="{{ path('app_palier_edit', {'id': palier.id}) }}" class="btn btn-warning me-2">
-                                        <i class="fas fa-pen"></i> Modifier
+                                        <i class="fas fa-pen"></i>
                                     </a>
 
                                     {% include 'palier/_delete_form.html.twig' with {'palier': palier} %}
@@ -65,7 +80,7 @@
         document.getElementById('ajouterPalier').addEventListener('click', function() {
             // Récupérer le numéro du dernier palier
             var dernierNumero = {{ palier.numero ?? 0 }};
-            
+
             // Incrémenter le numéro
             var nouveauNumero = dernierNumero + 1;
 

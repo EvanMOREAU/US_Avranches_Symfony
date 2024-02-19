@@ -2,12 +2,14 @@
 
 namespace App\Form;
 
+use App\Entity\Palier;
 use App\Entity\Tests;
 use App\Repository\UserRepository;
 use App\Form\Type\MinutesSecondesType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Time;
 use App\Form\DataTransformer\VideoDataTransformer;
@@ -144,6 +146,16 @@ class TestsFormType extends AbstractType
             'label' => 'Vitesse (en millisecondes)',
             'required' => false,
         ])
+        ->add('palier', EntityType::class, [
+            'class' => Palier::class,
+            'choices' => $options['paliers'],
+            'choice_label' => 'name',
+            'placeholder' => 'Sélectionner un palier',
+            'required' => false,
+        ])
+
+
+
         ->add('video', FileType::class, [
             'label' => 'Vidéo',
             'required' => false, // Le champ n'est pas obligatoire lors de la modification
@@ -174,6 +186,7 @@ class TestsFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Tests::class,
+            'paliers' => null, // Add this line to define the 'paliers' option
         ]);
     }
     

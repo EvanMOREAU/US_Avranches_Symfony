@@ -52,7 +52,11 @@ class Tests
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $video;
 
+    #[ORM\ManyToOne(targetEntity: Palier::class)]
+    #[ORM\JoinColumn(name: "palier_id", referencedColumnName: "id")]
+    private ?Palier $palier = null;
 
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -199,5 +203,15 @@ class Tests
 
         return $this;
     }
+    public function getPalier(): ?Palier
+    {
+        return $this->palier;
+    }
 
+    public function setPalier(?Palier $palier): self
+    {
+        $this->palier = $palier;
+
+        return $this;
+    }
 }
