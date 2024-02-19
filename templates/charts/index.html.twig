@@ -7,13 +7,28 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 {% for chartId, chartData in chartData %}
-    <h1 style="color:white;">{{ chartData.name }}</h1>
+    <h5 style="color:white;">{{ chartData.name }}</h5>
     <canvas id="canvas{{ chartId }}" width="400" height="200"></canvas>
     <script>
         const ctx{{ chartId }} = document.getElementById('canvas{{ chartId }}');
         const configData{{ chartId }} = {{ chartData.data | json_encode | raw }};
         console.log("les données : " + configData{{ chartId }}.values);
         console.log("les dates : " + configData{{ chartId }}.labels);
+
+        // Création de la liste des couleurs en fonction des valeurs
+        const colors{{ chartId }} = configData{{ chartId }}.values.map((value, index) => {
+                         
+                const previousValue = configData{{ chartId }}.values[index - 1];
+                if (value > previousValue) {
+                    return 'green'; // Si la valeur actuelle est supérieure à la précédente, couleur verte
+                } else if (value < previousValue) {
+                    return 'red'; // Si la valeur actuelle est inférieure à la précédente, couleur rouge
+                } else if (value = previousValue) {
+                    return 'orange'; // Si la valeur actuelle est égale à la précédente, couleur orange
+                }
+
+        });
+
         new Chart(ctx{{ chartId }}, {
             type: '{{ chartData.chartType }}',
             data: {
@@ -21,16 +36,18 @@
                 datasets: [{
                     label: '{{ chartData.name }}',
                     data: configData{{ chartId }}.values,
-                    backgroundColor: 'red',
-                    borderColor: 'red',
-                    borderWidth: 2
+                    borderColor: colors{{ chartId }}, // Utilisez la liste de couleurs déterminée précédemment
+                    backgroundColor : colors{{ chartId }},
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0 // Pour éviter l'interpolation des valeurs
                 }]
             },
             options: {
                 scales: {
                     y: {
-                         min: {{ chartData.min }},
-                         max: {{ chartData.max }}
+                        min: {{ chartData.min }},
+                        max: {{ chartData.max }}
                     }
                 }
             }
