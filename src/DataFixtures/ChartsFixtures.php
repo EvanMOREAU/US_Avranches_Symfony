@@ -24,14 +24,14 @@ class ChartsFixtures extends Fixture
         // $weightConfig->setConfigData(['entity' => 'App\Entity\Weight', 'min' => 100, 'max' => 200, 'field' => 'weightValue', 'date_field' => 'date']);
         // $manager->persist($weightConfig);
 
-        // Exemple pour Jongle Gauche
+        
         $leftConfig = new ChartConfiguration();
         $leftConfig->setChartType('line');
         $leftConfig->setName('Jongle Gauche');
         $leftConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 50, 'field' => 'jonglegauche', 'date_field' => 'date']);
         $manager->persist($leftConfig);
 
-        // Exemple pour Jongle Droit
+    
         $rightConfig = new ChartConfiguration();
         $rightConfig->setChartType('line');
         $rightConfig->setName('Jongle Droit');
