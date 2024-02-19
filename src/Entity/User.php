@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Tests;
+use App\Entity\Height;
+use App\Entity\Weight;
 use App\Entity\Gathering;
 use App\Entity\Attendance;
 use Doctrine\DBAL\Types\Types;
@@ -79,7 +81,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tests = new ArrayCollection();
         $this->weights = new ArrayCollection();
         $this->heights = new ArrayCollection();
-
     }
 
 
@@ -113,6 +114,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
+<<<<<<< HEAD
+=======
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Palier $palier = null;
+
+
+>>>>>>> 4ad568ddf890958d39775a15bf60004b622719f6
 
     public function getId(): ?int
     {
@@ -503,4 +511,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+<<<<<<< HEAD
+=======
+    public function getPalier(): ?Palier
+    {
+        return $this->palier;
+    }
+
+    public function setPalier(?Palier $palier): static
+    {
+        $this->palier = $palier;
+
+        return $this;
+    }
+
+
+>>>>>>> 4ad568ddf890958d39775a15bf60004b622719f6
 }

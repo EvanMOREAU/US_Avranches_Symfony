@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Nouveau Test{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/testsnew.css') }}">
@@ -10,47 +10,39 @@
     <script src="/js/redirect.js"></script>
         <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const conduiteBalleInput = document.querySelector('#{{ form.conduiteballe.vars.id }}');
-            const vitesseInput = document.querySelector('#{{ form.vitesse.vars.id }}');
+                const conduiteBalleInput = document.querySelector('#{{ form.conduiteballe.vars.id }}');
+                const vitesseInput = document.querySelector('#{{ form.vitesse.vars.id }}');
+                const videoInput = document.querySelector('#{{ form.video.vars.id }}');
 
-            const formatTimeInput = function (input) {
-                let value = input.value.trim();
+                conduiteBalleInput.addEventListener('input', function () {
+                    formatTimeInput(this);
+                });
 
-                // Supprimer les caractères non numériques et le point en excès
-                value = value.replace(/[^0-9,.]/g, '');
+                vitesseInput.addEventListener('input', function () {
+                    formatTimeInput(this);
+                });
 
-                // Remplacer la virgule par un point si nécessaire
-                if (value.includes(',')) {
-                    value = value.replace(',', '.');
-                }
+                // Ajout de la gestion du glisser-déposer pour la vidéo
+                const fileDropZone = document.querySelector('.file-drop-zone');
 
-                // Limiter à un seul point et trois chiffres après la virgule
-                const parts = value.split('.');
-                if (parts.length > 1) {
-                    const integerPart = parts[0];
-                    const decimalPart = parts[1].slice(0, 3);
+                fileDropZone.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    this.classList.add('active');
+                });
 
-                    // Mettre à jour la valeur avec le format x.xxx ou xx.xxx
-                    if (integerPart.length <= 2 && decimalPart.length === 3) {
-                        value = `${integerPart}.${decimalPart}`;
-                    }
-                } else if (value.length <= 3) {
-                    // Mettre à jour la valeur en ajoutant un point pour le format 1234 -> 1.234
-                    value = `${value.slice(0, 1)}.${value.slice(1)}`;
-                }
+                fileDropZone.addEventListener('dragleave', function () {
+                    this.classList.remove('active');
+                });
 
-                // Mettre à jour la valeur dans le champ
-                input.value = value;
-            };
+                fileDropZone.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    this.classList.remove('active');
 
-            conduiteBalleInput.addEventListener('input', function () {
-                formatTimeInput(this);
+                    const file = e.dataTransfer.files[0];
+                    videoInput.files = new DataTransfer().files;
+                    videoInput.files.add(file);
+                });
             });
-
-            vitesseInput.addEventListener('input', function () {
-                formatTimeInput(this);
-            });
-        });
     </script>
 
     <div class="container">
@@ -107,12 +99,22 @@
         </div>
 
         <div class="form-group {% if form.video.vars.errors|length > 0 %}has-error{% endif %}">
-            {{ form_label(form.video, 'video', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.video, {'attr': {'class': 'form-input'}}) }}
+            {{ form_label(form.video, 'Video', {'label_attr': {'class': 'form-label'}}) }}
+            
+            <div class="file-drop-zone">
+                <div class="file-drop-icon vertical-center">&#8595;</div>
+                {{ form_widget(form.video, {'attr': {'class': 'form-input file-drop-input'}}) }}
+                <p>Glissez et déposez vos fichiers ici</p>
+            </div>
+            
             {{ form_errors(form.video, {'attr': {'class': 'error-message'}}) }}
         </div>
 
- 
+        <div class="form-group {% if form.palier.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.palier, 'Palier', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.palier, {'attr': {'class': 'form-input', 'placeholder': 'Sélectionner un palier'}}) }}
+            {{ form_errors(form.palier, {'attr': {'class': 'error-message'}}) }}
+        </div>
 
 
         {% if is_granted("ROLE_SUPER_ADMIN") %}

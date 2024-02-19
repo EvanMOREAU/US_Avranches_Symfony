@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Tests;
+use App\Entity\Palier;
 use App\Form\TestsFormType;
 use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
+use App\Repository\PalierRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +33,7 @@ class TestsController extends AbstractController
     }
 
     #[Route('/', name: 'app_tests_index')]
-    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository): Response
+    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, PalierRepository $palierRepository): Response
     {
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -40,6 +42,7 @@ class TestsController extends AbstractController
         $tests = $testsRepository->findAll();
         
         $user = $this->getUser();
+        
         $selectedUserId = $request->query->get('userId');
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
@@ -86,6 +89,21 @@ class TestsController extends AbstractController
                 : array_filter($testsArray, fn ($test) => !$test->isIsValidated());
         }
         
+        
+        $user = $this->getUser();
+        $palierNumber = 0; // Valeur par défaut
+        $palierName = 'Aucun palier'; // Valeur par défaut
+
+        if ($user) {
+            // Récupérez l'entité Palier associée à l'utilisateur
+            $palier = $palierRepository->findOneBy(['id' => $user->getId()]);
+
+            // Assurez-vous que la relation entre User et Palier est correctement définie
+            if ($palier instanceof Palier) {
+                $palierNumber = $palier->getNumero();
+                $palierName = $palier->getName();
+            }
+        }
 
         return $this->render('tests/index.html.twig', [
             'controller_name' => 'TestsController',
@@ -94,81 +112,112 @@ class TestsController extends AbstractController
             'user' => $user,
             'selectedUserId' => $selectedUserId,
             'usersByCategory' => $usersByCategory,
+            'palierNumber' => $palierNumber,
+            'palierName' => $palierName,
         ]);
     }
     
     #[Route('/new', name: 'app_tests_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository, PalierRepository $palierRepository, EntityManagerInterface $entityManager): Response
     {
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
+        
+            $test = new Tests();
+        
+            // Vérifier si le formulaire est vide
+            $formIsEmpty = empty($request->request->all());
+            $paliers = $palierRepository->findAll(); // Assurez-vous que votre repository Palier est correctement autowired
 
-        $test = new Tests();
+            $form = $this->createForm(TestsFormType::class, $test, [
+                'paliers' => $paliers, // $paliers est la liste des paliers que vous devez fournir ici
+            ]);
+            
 
-        // Vérifier si le formulaire est vide
-        $formIsEmpty = empty($request->request->all());
-
-        // Si le formulaire est vide, récupérez le dernier test de l'utilisateur
-        if ($formIsEmpty) {
-            $lastTest = $testsRepository->findLastTestByUser($this->getUser());
-
-            if ($lastTest) {
-                // Remplir les champs avec les valeurs du dernier test
-                $test->setVma($lastTest->getVma());
-                $test->setDemicooper($lastTest->getDemicooper());
-                $test->setCooper($lastTest->getCooper());
-                $test->setJongleGauche($lastTest->getJongleGauche());
-                $test->setJongleDroit($lastTest->getJongleDroit());
-                $test->setJongleTete($lastTest->getJongleTete());
-                $test->setConduiteBalle($lastTest->getConduiteBalle());
-                $test->setVitesse($lastTest->getVitesse());
-            }
-        }
-
-        $form = $this->createForm(TestsFormType::class, $test);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Ajoutez ces lignes pour définir la date actuelle
-            $currentDate = new \DateTime();
-            $test->setDate($currentDate);
-
-            // Si l'utilisateur est superadmin, attribuez le test à l'utilisateur sélectionné depuis le formulaire
-            if ($this->isGranted("ROLE_SUPER_ADMIN")) {
-                $selectedUser = $form->get('user')->getData();
-
-                if ($selectedUser) {
-                    $test->setUser($selectedUser);
+        
+            // Si le formulaire est vide, récupérez le dernier test de l'utilisateur
+            if ($formIsEmpty) {
+                $lastTest = $testsRepository->findLastTestByUser($this->getUser());
+                
+                if ($lastTest) {
+                    // Remplir les champs avec les valeurs du dernier test
+                    $test->setVma($lastTest->getVma());
+                    $test->setDemicooper($lastTest->getDemicooper());
+                    $test->setCooper($lastTest->getCooper());
+                    $test->setJongleGauche($lastTest->getJongleGauche());
+                    $test->setJongleDroit($lastTest->getJongleDroit());
+                    $test->setJongleTete($lastTest->getJongleTete());
+                    $test->setConduiteBalle($lastTest->getConduiteBalle());
+                    $test->setVitesse($lastTest->getVitesse());
                 }
-            } else {
-                // Si l'utilisateur n'est pas superadmin, attribuez le test à l'utilisateur connecté
-                $test->setUser($this->getUser());
             }
+        
+            $form = $this->createForm(TestsFormType::class, $test);
+        
+            $form->handleRequest($request);
+        
+            if ($form->isSubmitted() && $form->isValid()) {
+                // Ajoutez ces lignes pour définir la date actuelle
+                $currentDate = new \DateTime();
+                $test->setDate($currentDate);
+                $palier = $form->get('palier')->getData();
+                $test->setPalier($palier);
+                // Si l'utilisateur est superadmin, attribuez le test à l'utilisateur sélectionné depuis le formulaire
+                if ($this->isGranted("ROLE_SUPER_ADMIN")) {
+                    $selectedUser = $form->get('user')->getData();
+        
+                    if ($selectedUser) {
+                        $test->setUser($selectedUser);
+                    }
+                } else {
+                    // Si l'utilisateur n'est pas superadmin, attribuez le test à l'utilisateur connecté
+                    $test->setUser($this->getUser());
+                }
+        
+                // Traitement du champ vidéo
+                $videoFile = $form->get('video')->getData();
+                if ($videoFile instanceof UploadedFile) {
+                    // Générez le nom du fichier vidéo en utilisant l'id du joueur
+                    if ($this->isGranted("ROLE_SUPER_ADMIN")) {
+                        // Si c'est un superadmin, utilisez l'id du joueur sélectionné depuis le formulaire
+                        $selectedUser = $form->get('user')->getData();
+                        $playerId = $selectedUser->getId();
+                    } else {
+                        // Sinon, utilisez l'id du joueur connecté
+                        $playerId = $this->getUser()->getId();
+                    }
+                    $videoFileName = $playerId .'.mp4'; // Utilisez uniqid() ou une autre méthode pour garantir l'unicité du nom du fichier
 
-            // Traitement du champ vidéo
-            $videoFile = $form->get('video')->getData();
-            if ($videoFile instanceof UploadedFile) {
-                // Utilisez le nom fourni dans le formulaire pour enregistrer la vidéo
-                $videoName = pathinfo($videoFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $videoFileName = $this->uploadVideo($videoFile, $videoName);
-                $test->setVideo($videoFileName);
+                    // Définissez le nouveau nom du fichier dans l'entité
+                    $test->setVideo($videoFileName);
+
+                    // Obtenez le chemin complet du dossier uploads/videos
+                    $uploadDir = $this->getParameter('upload_dir');
+
+                    // Assurez-vous que le dossier existe, sinon, créez-le
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+
+                    // Définissez le chemin complet du nouveau fichier en utilisant le nouveau nom
+                    $newFilePath = $uploadDir . $videoFileName;
+
+                    // Déplacez et renommez le fichier en utilisant la méthode move()
+                    $videoFile->move($uploadDir, $videoFileName);
+                }
+        
+                $entityManager->persist($test);
+                $entityManager->flush();
+        
+                return $this->redirectToRoute('app_tests_index', ['id' => $test->getId()]);
             }
-
-
-            $entityManager->persist($test);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_tests_index');
+        
+            return $this->renderForm('tests/new.html.twig', [
+                'test' => $test,
+                'form' => $form,
+            ]);
         }
-
-        return $this->renderForm('tests/new.html.twig', [
-            'test' => $test,
-            'form' => $form,
-        ]);
-    }
-
 
     #[Route('/tests/{id}/edit', name: 'app_tests_edit', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_SUPER_ADMIN")]
@@ -184,21 +233,58 @@ class TestsController extends AbstractController
             throw $this->createNotFoundException('Test non trouvé');
         }
 
+        
+        // Sauvegardez le nom du fichier vidéo actuel avant de créer le formulaire
+        $currentVideo = $test->getVideo();
+
         $form = $this->createForm(TestsFormType::class, $test);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->flush(); // Enregistrez les modifications
-
-            // Ajoutez un message flash pour indiquer que la modification a réussi
-            $this->addFlash('success', 'La modification a été réalisée avec succès.');
-
-            // Redirigez l'utilisateur vers une autre page, par exemple la liste des tests
-            return $this->redirectToRoute('app_tests_index');
+        if ($this->isGranted("ROLE_SUPER_ADMIN")) {
+            // Si c'est un superadmin, utilisez l'id du joueur sélectionné depuis le formulaire
+            $selectedUser = $form->get('user')->getData();
+            $playerId = $selectedUser->getId();
+        } else {
+            // Sinon, utilisez l'id du joueur connecté
+            $playerId = $this->getUser()->getId();
         }
 
+        if ($form->isSubmitted() && $form->isValid()) {
+        
+            // Vérifiez si un nouveau fichier vidéo a été téléchargé
+            $videoFile = $form->get('video')->getData();
+            if ($videoFile instanceof UploadedFile) {
+                // Supprimez l'ancien fichier vidéo s'il existe
+                $oldVideoPath = $this->getParameter('upload_dir') . DIRECTORY_SEPARATOR . $currentVideo;
+                if (file_exists($oldVideoPath)) {
+                    unlink($oldVideoPath);
+                }
+        
+                // Générez un nom de fichier unique (vous pouvez utiliser une logique différente ici)
+                $newVideoName = $playerId . '.mp4';
+        
+                // Déplacez le fichier vidéo vers le répertoire d'uploads avec le nouveau nom
+                $videoFile->move(
+                    $this->getParameter('upload_dir'), // Assurez-vous que 'upload_dir' est défini dans votre fichier services.yaml
+                    $newVideoName
+                );
+        
+                // Mettez à jour le champ video avec le nouveau nom de fichier
+                $test->setVideo($newVideoName);
+            } else {
+                // Si aucun nouveau fichier n'est téléchargé, rétablissez le nom du fichier vidéo actuel
+                $test->setVideo($currentVideo);
+            }
+        
+            // Enregistrez l'entité modifiée
+            $this->getDoctrine()->getManager()->flush();
+
+            // Redirection vers la page index après l'enregistrement
+            return $this->redirectToRoute('app_tests_index');
+
+        }
+        
         return $this->renderForm('tests/edit.html.twig', [
             'test' => $test,
             'form' => $form,
@@ -292,7 +378,6 @@ class TestsController extends AbstractController
     #[Route('/validate-test/{id}', name: 'app_validate_test', methods: ['GET', 'POST'])]
     public function validateTestAction(EntityManagerInterface $entityManager, $id, Request $request): JsonResponse
     {
-        
         // Récupérez le test à partir de l'ID
         $test = $entityManager->getRepository(Tests::class)->find($id);
 
@@ -302,19 +387,24 @@ class TestsController extends AbstractController
 
         // Mettez à jour la propriété is_validated
         $test->setIsValidated(true); // Assurez-vous que le nom du champ correspond à votre entité
-        
-        
-        try {
-            // Enregistrez les modifications dans la base de données
-            $entityManager->flush();
 
+        try {
             // Supprimez la vidéo du dossier uploads/videos
             $videoFileName = $test->getVideo();
-            $videoPath = $this->getParameter('upload_dir') . '/videos/' . $videoFileName;
-            
-            // Vérifiez si le fichier existe avant de tenter de le supprimer
-            if ($videoFileName && file_exists($videoPath)) {
-                unlink($videoPath);
+
+            if ($videoFileName) {
+                $videoPath = $this->getParameter('upload_dir') . $videoFileName;
+
+                // Vérifiez si le fichier existe avant de tenter de le supprimer
+                if (file_exists($videoPath)) {
+                    unlink($videoPath);
+                }
+
+                // Définissez la propriété video sur null
+                $test->setVideo(null);
+
+                // Enregistrez les modifications dans la base de données
+                $entityManager->flush();
             }
 
             // Vérifiez si la requête est une requête Ajax
@@ -341,6 +431,8 @@ class TestsController extends AbstractController
             }
         }
     }
+
+
     #[Route('/cancel-test/{id}', name: 'app_cancel_test', methods: ['GET', 'POST'])]
     public function cancelTest(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
     {

@@ -1,0 +1,27 @@
+{# palier/_form.html.twig #}
+{{ form_start(form) }}
+
+    <div class="mb-3">
+        {{ form_label(form.numero, formLabels.numero|default('Numéro')) }}
+        {{ form_widget(form.numero, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.name, formLabels.name|default('Nom')) }}
+        {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.objectif, formLabels.objectif|default('Objectif')) }}
+        {{ form_widget(form.objectif, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+
+    
+
+    {# Ajout de l'icône FontAwesome au bouton Enregistrer #}
+    <button type="submit" class="btn btn-success">
+        <i class="fas fa-save"></i> Enregistrer
+    </button>
+
+    {{ form_row(form._token) }} {# N'oubliez pas d'inclure le champ CSRF token #}
+
+{{ form_end(form) }}
