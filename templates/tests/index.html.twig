@@ -179,12 +179,9 @@
                                                 Conduite de balle : {{ test.conduiteballe|number_format(3, '.', '') }}s<br>
                                                 Vitesse : {{ test.vitesse|number_format(3, '.', '') }}s<br>
                                                 Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}<br>
-                                                {% if palierNumber is not null %}
-                                                    <p>Palier : {{ palierNumber }} - {{ palierName }}</p>
-                                                {% else %}
-                                                    <p>Aucun palier associé à ce test.</p>
-                                                {% endif %}
-
+                                                Palier : {{ test.palier.numero }}<br>
+                                                Titre : {{ test.palier.name }}<br>
+                                                Objectif : {{ test.palier.objectif }}
 
                                                {% if test.video %}
                                                     {% if test.isValidated %}

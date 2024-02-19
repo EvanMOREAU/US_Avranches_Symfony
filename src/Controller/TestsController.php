@@ -33,7 +33,7 @@ class TestsController extends AbstractController
     }
 
     #[Route('/', name: 'app_tests_index')]
-    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository): Response
+    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, PalierRepository $palierRepository): Response
     {
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -95,8 +95,11 @@ class TestsController extends AbstractController
         $palierName = 'Aucun palier'; // Valeur par défaut
 
         if ($user) {
-            $palier = $user->getPalier(); // Assurez-vous que la relation entre User et Palier est correctement définie
-            if ($palier) {
+            // Récupérez l'entité Palier associée à l'utilisateur
+            $palier = $palierRepository->findOneBy(['id' => $user->getId()]);
+
+            // Assurez-vous que la relation entre User et Palier est correctement définie
+            if ($palier instanceof Palier) {
                 $palierNumber = $palier->getNumero();
                 $palierName = $palier->getName();
             }
