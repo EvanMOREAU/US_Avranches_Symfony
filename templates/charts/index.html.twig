@@ -12,6 +12,8 @@
     <script>
         const ctx{{ chartId }} = document.getElementById('canvas{{ chartId }}');
         const configData{{ chartId }} = {{ chartData.data | json_encode | raw }};
+        console.log("les données : " + configData{{ chartId }}.values);
+        console.log("les dates : " + configData{{ chartId }}.labels); 
         new Chart(ctx{{ chartId }}, {
             type: '{{ chartData.chartType }}',
             data: {
