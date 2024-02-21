@@ -45,4 +45,13 @@ class WeightRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function removeByUser($user){
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'DELETE FROM tbl_weight WHERE user_id = :userId';
+
+        $result = $conn->executeQuery($sql, ['userId' => $user->getId()]);
+        return $result;
+    }
 }

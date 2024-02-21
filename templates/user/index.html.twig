@@ -18,6 +18,7 @@
                         <th>Nom</th>
                         <th>Date de naissance</th>
                         <th>Image de profile</th>
+						<th>Dernière connexion</th>
                         <th>actions</th>
 					</tr>
 				</thead>
@@ -30,6 +31,7 @@
                             <td>{{ user.lastName }}</td>
                             <td>{{ user.dateNaissance ? user.dateNaissance|date('Y-m-d') : '' }}</td>
                             <td>{% if user.profileImage != '' %}Oui{% else %}Non{% endif %}</td>
+							<td>{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:m:s') : '' }}</td>
                             <td>
 								<a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-warning">
 									<i class="fa-solid fa-pen"></i> Modifier
@@ -45,8 +47,6 @@
 				</tbody>
 			</table>
 
-			<a href="{{ path('app_user_new') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Ajouter une catégorie</a>
 		</div>
 	</div>
-    <a href="{{ path('app_user_new') }}">Create new</a>
 {% endblock %}
