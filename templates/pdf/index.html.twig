@@ -1,20 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ExcelController!{% endblock %}
+{% block title %}Génération de PDF{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="example-wrapper">
+        <h1>Génération de PDF ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/lefatri/Documents/test/US_Avranches_Symfony3/src/Controller/ExcelController.php'|file_link(0) }}">src/Controller/ExcelController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/lefatri/Documents/test/US_Avranches_Symfony3/templates/excel/index.html.twig'|file_link(0) }}">templates/excel/index.html.twig</a></code></li>
-    </ul>
-</div>
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+            {# Afficher le formulaire de sélection d'utilisateur pour les super admins #}
+            <form method="post" action="{{ path('app_pdf') }}">
+                {{ form_start(pdfForm) }}
+
+                {{ form_row(pdfForm.user) }}
+
+                <button type="submit">Générer PDF</button>
+
+                {{ form_end(pdfForm) }}
+            </form>
+        {% else %}
+            {# Afficher le message pour les utilisateurs non super admins #}
+            <p>Ce service est disponible uniquement pour les administrateurs.</p>
+        {% endif %}
+
+        {# Le reste de votre contenu ici, ou ajoutez d'autres blocs Twig si nécessaire #}
+        <p>This friendly message is coming from your controller at <code><a href="{{ 'C:/Users/lefatri/Documents/test/US_Avranches_Symfony3/src/Controller/ExcelController.php'|file_link(0) }}">src/Controller/ExcelController.php</a></code>.</p>
+    </div>
 {% endblock %}
