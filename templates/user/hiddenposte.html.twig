@@ -41,6 +41,10 @@ h1{
     left: {{ user.posteCoordX - 1 }}%;
     top: {{ user.posteCordY - 0.75 }}%;
 }
+h4{
+    color: white;
+    font-style: oblique;
+}
 
 </style>
 
@@ -52,6 +56,8 @@ h1{
         <img src="/images/cercle.png" alt="cercle" id="cercle" {% if user.posteCoordX != null %}style="visibility:visible;"{% else %}style="visibility:hidden;"{% endif %}>
         <p class="texte">{{ user.getfirstname }} {{ user.getlastname }}</p>
     </div>
+    <button id="confirmerButton">Confirmer</button>
+
 
 </center>
 
