@@ -45,6 +45,7 @@ class DefaultController extends AbstractController
                 if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
                 else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
                 else if($weightVerif == 1){return $this->render('base.html.twig', ['controller_name' => 'DefaultController',]);}
+                // return $this->render('base.html.twig', ['controller_name' => 'DefaultController',]);
             }
         }
 
