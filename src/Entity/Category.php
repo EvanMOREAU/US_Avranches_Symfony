@@ -35,11 +35,18 @@ class Category
     #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'users')]
     #[ORM\JoinColumn(name: 'team_id', referencedColumnName: 'id')]
     private $team;
+
+    #[ORM\Column(length: 255)]
+    private ?string $color = null;
+
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Equipe::class)]
+    private Collection $equipes;
     
     public function __construct()
     {
         $this->gatherings = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->equipes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,6 +142,48 @@ class Category
     public function setTeam(?Team $team): self
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(string $color): static
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipe>
+     */
+    public function getEquipes(): Collection
+    {
+        return $this->equipes;
+    }
+
+    public function addEquipe(Equipe $equipe): static
+    {
+        if (!$this->equipes->contains($equipe)) {
+            $this->equipes->add($equipe);
+            $equipe->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipe(Equipe $equipe): static
+    {
+        if ($this->equipes->removeElement($equipe)) {
+            // set the owning side to null (unless already changed)
+            if ($equipe->getCategory() === $this) {
+                $equipe->setCategory(null);
+            }
+        }
 
         return $this;
     }

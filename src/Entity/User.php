@@ -2,18 +2,24 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Tests;
+use App\Entity\Height;
+use App\Entity\Weight;
+use App\Entity\Gathering;
+use App\Entity\Attendance;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[UniqueEntity(fields: ['email'], message: 'Un compte possède déjà cette adresse mail.')]
 #[ORM\Table(name:'tbl_user')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -56,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?float $posteCordY = null;
 
-  #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
     private Collection $attendances;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
@@ -73,7 +79,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->attendances = new ArrayCollection();
         $this->gatherings = new ArrayCollection();
         $this->tests = new ArrayCollection();
-
+        $this->weights = new ArrayCollection();
+        $this->heights = new ArrayCollection();
     }
 
 
@@ -83,20 +90,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profile_image = null;
 
-    
+
 
     /**
-    * @Assert\NotBlank(groups={"registration", "resetPassword"})
-    * @Assert\Length(
-    *     min=6,
-    *     minMessage="Votre mot de passe doit comporter au moins {{ limit }} caractères",
-    *     groups={"registration", "resetPassword"}
-    * )
-    */
+     * @Assert\NotBlank(groups={"registration", "resetPassword"})
+     * @Assert\Length(
+     *     min=6,
+     *     minMessage="Votre mot de passe doit comporter au moins {{ limit }} caractères",
+     *     groups={"registration", "resetPassword"}
+     * )
+     */
     private $plainPassword;
 
     #[ORM\Column]
     private ?bool $isCodeValidated = false;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Weight::class)]
+    private Collection $weights;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Height::class)]
+    private Collection $heights;
+
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Equipe $equipe = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $lastConnection = null;
+
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Palier $palier = null;
 
     public function getId(): ?int
     {
@@ -193,7 +219,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    
+
     public function getFirstName(): ?string
     {
         return $this->first_name;
@@ -218,10 +244,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCategory(){
+    public function getCategory()
+    {
         $this_year = new \DateTime('first day of January next year');
         $diff = $this_year->diff($this->date_naissance);
-        return 'U'.$diff->y + 1;
+        return 'U' . $diff->y + 1;
     }
 
     /**
@@ -413,4 +440,113 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Weight>
+     */
+    public function getWeights(): Collection
+    {
+        return $this->weights;
+    }
+
+    public function addWeight(Weight $weight): static
+    {
+        if (!$this->weights->contains($weight)) {
+            $this->weights->add($weight);
+            $weight->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWeight(Weight $weight): static
+    {
+        if ($this->weights->removeElement($weight)) {
+            // set the owning side to null (unless already changed)
+            if ($weight->getUserId() === $this) {
+                $weight->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Height>
+     */
+    public function getHeights(): Collection
+    {
+        return $this->heights;
+    }
+
+    public function addHeight(Height $height): static
+    {
+        if (!$this->heights->contains($height)) {
+            $this->heights->add($height);
+            $height->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHeight(Height $height): static
+    {
+        if ($this->heights->removeElement($height)) {
+            // set the owning side to null (unless already changed)
+            if ($height->getUserId() === $this) {
+                $height->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+
+    public function getEquipe(): ?Equipe
+    {
+        return $this->equipe;
+    }
+
+    public function setEquipe(?Equipe $equipe): static
+    {
+        $this->equipe = $equipe;
+
+    public function getPalier(): ?Palier
+    {
+        return $this->palier;
+    }
+
+    public function setPalier(?Palier $palier): static
+    {
+        $this->palier = $palier;
+
+
+        return $this;
+    }
+
+    public function getLastConnection(): ?\DateTimeInterface
+    {
+        return $this->lastConnection;
+    }
+
+    public function setLastConnection(?\DateTimeInterface $lastConnection): static
+    {
+        $this->lastConnection = $lastConnection;
+
+        return $this;
+    }
+
+
 }

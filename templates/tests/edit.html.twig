@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Modification du Test{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/testsnew.css') }}">
@@ -92,6 +92,19 @@
             {{ form_widget(form.vitesse, {'attr': {'class': 'form-input', 'placeholder': 'Entrez le temps en secondes et millisecondes (s.mmm) !'}}) }}
             {{ form_errors(form.vitesse, {'attr': {'class': 'error-message'}}) }}
         </div>
+
+        <div class="form-group {% if form.video.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.video, 'Video', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.video, {'attr': {'class': 'form-input', 'accept': 'video/*'}}) }}
+            {{ form_errors(form.video, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
+        <div class="form-group {% if form.palier.vars.errors|length > 0 %}has-error{% endif %}">
+            {{ form_label(form.palier, 'Palier', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.palier, {'attr': {'class': 'form-input', 'placeholder': 'Sélectionner un palier'}}) }}
+            {{ form_errors(form.palier, {'attr': {'class': 'error-message'}}) }}
+        </div>
+
 
         {% if is_granted("ROLE_SUPER_ADMIN") %}
             <div class="form-group {% if form.user.vars.errors|length > 0 %}has-error{% endif %}">

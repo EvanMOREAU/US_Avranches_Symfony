@@ -17,7 +17,14 @@
 		</div>
 	</div>
 
-	<div class="mb-4"></div>
+	<div class="mb-4 col-lg-1">
+		{{ form_row(form.color, { 
+    'label': 'Couleur', 
+    'attr': { 'class': 'form-control mb-4', 'id': 'image', 'name': '_image', 'aria-label': 'image' }, 
+    'label_attr': {'class': 'form-label text-white'},
+    'separator': '<br><br>' 
+}) }}
+	</div>
 
 	<div class="row row-cols-1 row-cols-md-2">
 		<div class="col">
@@ -36,7 +43,7 @@
 	</div>
 
 	<button class="btn btn-primary btn-sm mt-2">{{ button_label|default('Créer') }}</button>
-	<a class="btn btn-secondary btn-sm mt-2" href="{{ path('app_category_index') }}">Revenir à la liste</a>
 	{{ form_end(form) }}
 
 </div>
+

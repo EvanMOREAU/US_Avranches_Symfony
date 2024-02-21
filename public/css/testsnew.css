@@ -108,6 +108,34 @@ body {
   text-align: center;
 }
 
+.file-drop-zone {
+  border: 2px dashed #1c6ea4; /* Couleur principale du club de football */
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #f9f9f9; /* Couleur de fond légère */
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.file-drop-zone:hover {
+  border-color: #005daa; /* Couleur de survol plus intense */
+  background-color: #f4f4f4; /* Couleur de fond légère au survol */
+}
+
+/* Ajout d'une icône pour le drag and drop (par exemple, une flèche vers le bas) */
+.file-drop-icon {
+  font-size: 24px;
+  color: #1c6ea4; /* Couleur principale du club de football */
+}
+
+/* Centrer l'icône verticalement */
+.file-drop-icon.vertical-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
 
 /* Media Queries pour les écrans plus petits (par exemple, les téléphones) */
 @media (max-width: 768px) {

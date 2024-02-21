@@ -1,0 +1,14 @@
+Calendrier :
+- Si match -> encadré en forme de but de la couleur de l'équipe sur fond blanc avec le nom de l'équipe avec sa couleur.
+- Si entraînement -> gardé l'encadré avec fond de la couleur de l'équipe et nom de l'équipe en blanc.
+
+- Sinon mettre un icône (2 joueurs) pour un entraînement et un icône (1 joueur avec un ballon) pour un match.
+
+Appel :
+- Toast (pop-up en dessous qui disparait automatique) à la place de la confirmation d'appel car trop de clics à faire.
+- Date d'appel du jour et heure si rien de choisi par le coach.
+- Si possible, rajouter l'appel par équipe dans une catégorie pour les matchs, garder par catégorie pour les entraînements.
+
+Postes :
+- Possibilité d'afficher les points pour une équipe ou une catégorie.
+- 

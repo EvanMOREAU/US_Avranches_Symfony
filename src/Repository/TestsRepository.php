@@ -21,7 +21,13 @@ class TestsRepository extends ServiceEntityRepository
         parent::__construct($registry, Tests::class);
     }
 
-    public function save(Tests $entity, bool $flush = false): void
+    /**
+     * Enregistre une entité Tests dans la base de données.
+     *
+     * @param Tests $entity L'entité à enregistrer
+     * @param bool  $flush  Détermine s'il faut effectuer un flush immédiatement
+     */
+    public function saveEntity(Tests $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -29,28 +35,31 @@ class TestsRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-//    /**
-//     * @return Tests[] Returns an array of Tests objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
-//    public function findOneBySomeField($value): ?Tests
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * Récupère le dernier test créé par un utilisateur.
+     *
+     * @param int $userId L'ID de l'utilisateur
+     *
+     * @return Tests|null Le dernier test ou null s'il n'y en a pas
+     */
+    public function findLastTestByUser($userId)
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.user = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('t.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    public function findTestsByValidation($isValidated)
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.is_validated = :is_validated')
+            ->setParameter('is_validated', $isValidated)
+            ->orderBy('t.date', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

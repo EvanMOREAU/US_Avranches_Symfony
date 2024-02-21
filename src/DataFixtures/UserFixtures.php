@@ -25,6 +25,7 @@ class UserFixtures extends Fixture
         $superAdmin->setFirstName('SIO');
         $superAdmin->setLastName('2');
         $superAdmin->setDateNaissance($dateNaissance);
+        $superAdmin->setEmail('evan.moreau@etik.com');
         $plaintextPassword = "admin";
         $hashedPassword = $this->passwordHasher->hashPassword(
             $superAdmin,
@@ -45,7 +46,9 @@ class UserFixtures extends Fixture
             $player->setFirstName($faker->firstName);
             $player->setLastName($faker->lastName);
             $player->setDateNaissance($randomBirthdate);
-            $player->setWeight('892.63');
+            $randomEmail = $faker->safeEmail;
+            $player->setEmail($randomEmail);
+            $player->setWeight(0);
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $player,
@@ -56,6 +59,29 @@ class UserFixtures extends Fixture
             ]);
             $player->setPassword($hashedPassword);
             $manager->persist($player);
+
+        }
+
+        for ($i = 0; $i < 5; $i++) {
+            $randomBirthdate = $faker->dateTimeBetween('-12 years', '-9 years');
+            $coach = new User();
+            $coach->setUsername($faker->userName);
+            $coach->setFirstName($faker->firstName);
+            $coach->setLastName($faker->lastName);
+            $coach->setDateNaissance($randomBirthdate);
+            $coach->setWeight(0);
+            $randomEmail = $faker->safeEmail;
+            $coach->setEmail($randomEmail);
+            $plaintextPassword = "admin";
+            $hashedPassword = $this->passwordHasher->hashPassword(
+                $coach,
+                $plaintextPassword
+            );
+            $coach->setRoles([
+                "ROLE_COACH",
+            ]);
+            $coach->setPassword($hashedPassword);
+            $manager->persist($coach);
 
         }
         
