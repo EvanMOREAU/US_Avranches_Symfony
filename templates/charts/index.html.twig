@@ -5,8 +5,9 @@
 {% block body %}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<div class="accordion">
 {% for chartId, chartData in chartData %}
+
     <h5 style="color:white;">{{ chartData.name }}</h5>
     <canvas id="canvas{{ chartId }}" width="400" height="200"></canvas>
     <script>
@@ -54,5 +55,5 @@
         });
     </script>
 {% endfor %}
-
+</div>
 {% endblock %}

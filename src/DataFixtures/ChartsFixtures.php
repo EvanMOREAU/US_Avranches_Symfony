@@ -41,37 +41,37 @@ class ChartsFixtures extends Fixture
         $headConfig = new ChartConfiguration();
         $headConfig->setChartType('line');
         $headConfig->setName('Jongle tete');
-        $headConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'jongletete', 'date_field' => 'date']);
+        $headConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 30, 'field' => 'jongletete', 'date_field' => 'date']);
         $manager->persist($headConfig);
 
         $controlConfig = new ChartConfiguration();
         $controlConfig->setChartType('line');
         $controlConfig->setName('Controle de balle');
-        $controlConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'conduiteballe', 'date_field' => 'date']);
+        $controlConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 200000, 'field' => 'conduiteballe', 'date_field' => 'date']);
         $manager->persist($controlConfig);
 
         $vmaConfig = new ChartConfiguration();
         $vmaConfig->setChartType('line');
         $vmaConfig->setName('VMA Classique');
-        $vmaConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'vma', 'date_field' => 'date']);
+        $vmaConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 20, 'field' => 'vma', 'date_field' => 'date']);
         $manager->persist($vmaConfig);
 
         $cooperConfig = new ChartConfiguration();
         $cooperConfig->setChartType('line');
         $cooperConfig->setName('VMA Cooper');
-        $cooperConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'cooper', 'date_field' => 'date']);
+        $cooperConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 20, 'field' => 'cooper', 'date_field' => 'date']);
         $manager->persist($cooperConfig);;
 
         $demicooperConfig = new ChartConfiguration();
         $demicooperConfig->setChartType('line');
         $demicooperConfig->setName('VMA Demi Cooper');
-        $demicooperConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'demicooper', 'date_field' => 'date']);
+        $demicooperConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 20, 'field' => 'demicooper', 'date_field' => 'date']);
         $manager->persist($demicooperConfig);
 
         $vitesseConfig = new ChartConfiguration();
         $vitesseConfig->setChartType('line');
         $vitesseConfig->setName('Test Vitesse');
-        $vitesseConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'vitesse', 'date_field' => 'date']);
+        $vitesseConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 200000, 'field' => 'vitesse', 'date_field' => 'date']);
         $manager->persist($vitesseConfig);
 
         // $generalConfig = new ChartConfiguration();
