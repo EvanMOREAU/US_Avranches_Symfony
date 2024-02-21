@@ -156,22 +156,39 @@ class UserController extends AbstractController
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 
+    #[Route('/{id}/poste-cache', name: 'app_user_cacheposte', methods: ['GET'])]
+    public function poste_cache(user $user, LoggerInterface $logger): Response
+    {
+        if (!$this->isAccessGranted($user)) {
+            throw $this->createAccessDeniedException('Access denied.');
+        }
+
+        return $this->render('user/hiddenposte.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
     #[Route('/{id}/poste', name: 'app_user_poste', methods: ['GET'])]
     public function poste(user $user, LoggerInterface $logger): Response
     {
-        // $logger->debug('poste() user->getFirstname() = ' . $user->getFirstname());
+        if (!$this->isAccessGranted($user)) {
+            throw $this->createAccessDeniedException('Access denied.');
+        }
+
         return $this->render('user/poste.html.twig', [
             'user' => $user,
         ]);
     }
 
-    #[Route('/{id}/poste-cache', name: 'app_user_cacheposte', methods: ['GET'])]
-    public function poste_cache(user $user, LoggerInterface $logger): Response
+    private function isAccessGranted(User $user): bool
     {
-        // $logger->debug('poste() user->getFirstname() = ' . $user->getFirstname());
-        return $this->render('user/hiddenposte.html.twig', [
-            'user' => $user,
-        ]);
+        $currentUser = $this->getUser();
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+        
+        return $currentUser && $currentUser->getId() === $user->getId();
     }
 
     #[Route('/poste/poste-coach', name: 'app_user_coach', methods: ['GET'])]
