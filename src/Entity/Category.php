@@ -56,12 +56,20 @@ class Category
 
     public function getName(): ?string
     {
-        return $this->name;
+        $this_year = new \DateTime('first day of January next year');
+        $result = $this_year->format('Y');
+
+        $diff = $result - $this->name;
+        return 'U' . $diff;
     }
 
     public function setName(string $name): static
     {
-        $this->name = $name;
+        $this_year = new \DateTime('now');
+        $result = $this_year->format('Y');
+        $year = $result - $name + 1;
+        
+        $this->name = $year;
 
         return $this;
     }

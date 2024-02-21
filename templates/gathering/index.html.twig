@@ -51,9 +51,11 @@
               {% if gathering.type == 'Entraînement' %}
                 color: '{{ gathering.category.color }}',
               {% else %}
-                backgroundColor: '#ffffff',
-                borderColor: '{{ gathering.category.color }}',
-                textColor: '{{ gathering.category.color }}',
+                color: '{{ gathering.category.color }}',
+                borderColor: '#000000',
+                // backgroundColor: '#000000',
+                // borderColor: '{{ gathering.category.color }}',
+                // textColor: '{{ gathering.category.color }}',
               {% endif %}
               url: '/rassemblement/{{ gathering.id }}',
             },
