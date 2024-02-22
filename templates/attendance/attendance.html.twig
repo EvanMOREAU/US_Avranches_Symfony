@@ -83,7 +83,7 @@
         <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
             <div class="d-flex">
                 <div class="toast-body">
-                    Appel effectué avec succès !
+                    Appel modifié avec succès !
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -92,7 +92,7 @@
         <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
             <div class="d-flex">
                 <div class="toast-body">
-                    L'appel n'a pas pu être effectué !
+                    L'appel n'a pas pu être modifié !
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -188,7 +188,7 @@
 
                 if (isConfirmed) {
                     // Continuer le processus de finalisation de l'appel
-                    const createAttendance = '{{ path('create_attendance', {'category': category}) }}';
+                    const createAttendance = '{{ path('create_attendance', {'category': category|replace({'U': ''}) }) }}';
                     const reasonSelectors = document.querySelectorAll('.reason-selector select');
                     const type = document.getElementById('attendanceType').value;
                     const datetime = document.getElementById('attendanceDate').value;
@@ -221,7 +221,7 @@
                         body: JSON.stringify({
                             presentUserIds: presentUserIds,
                             absentUserIds: absentUserIds,
-                            category: '{{ category }}',
+                            category: '{{ category|replace({'U': ''}) }}',
                             type: type,
                             datetime: datetime
                         })

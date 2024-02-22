@@ -19,12 +19,12 @@ class CategoryType extends AbstractType
         $builder
             ->add('name', ChoiceType::class, [
                 'choices' => array_map(function ($value) {
-                    // return $value;
-                    return 'U' . $value;
+                    return $value;
+                    // return 'U' . $value;
                 }, range(0, 99)),
                 'choice_label' => function ($value) {
-                    // return 'U' . $value;
-                    return $value;
+                    return 'U' . $value;
+                    // return $value;
                 },
                 // Permet de choisir la valeur par défaut dans le dropdown, à changer pour mettre celui de la catégorie
                 // 'data' => 'U0',

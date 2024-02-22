@@ -104,7 +104,10 @@ class AttendanceController extends AbstractController
         $type = $requestData['type'];
 
         // Trouver l'entité Category par le nom
-        $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $categoryName]);
+        $this_year = new \DateTime('now');
+        $result = $this_year->format('Y');
+        $name = $result - $categoryName + 1;
+        $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
 
         if (!$category) {
             return new JsonResponse(['error' => 'Catégorie invalide'], Response::HTTP_BAD_REQUEST);
@@ -226,7 +229,9 @@ class AttendanceController extends AbstractController
         $requestData = json_decode($request->getContent(), true);
 
         $type = $requestData['type'];
-        $datetime = new \DateTime($requestData['datetime']);
+        $parisTimezone = new DateTimeZone('Europe/Paris');
+        $datetime = new \DateTime($requestData['datetime'], $parisTimezone);
+
         $presentUserIds = $requestData['presentUserIds'];
         $absentUserIds = $requestData['absentUserIds'];
 
