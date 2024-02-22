@@ -1,108 +1,76 @@
 <?php
-
 namespace App\Controller;
 
-use App\Entity\Charts;
-use App\Form\ChartsType;
-use App\Repository\ChartsRepository;
-use App\Service\UserVerificationService;
+use App\Entity\ChartConfiguration;
+use App\Entity\Tests;
+use App\Repository\ChartConfigurationRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/charts')]
-class ChartsController extends AbstractController {
-    private $userVerificationService;
-
-    public function __construct(UserVerificationService $userVerificationService)
+class ChartsController extends AbstractController
+{
+    #[Route('/charts', name: 'app_charts_index', methods: ['GET'])]
+    public function index(ChartConfigurationRepository $configRepository, EntityManagerInterface $entityManager): Response
     {
-        $this->userVerificationService = $userVerificationService;
+        // Récupérer l'utilisateur connecté
+        $user = $this->getUser();
+
+        // Rediriger si l'utilisateur n'est pas authentifié
+        if (!$user) {
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $chartData = [];
+
+        // Récupérer toutes les configurations de graphique
+        $configurations = $configRepository->findAll();
+
+        // Récupérer les données spécifiques de chaque joueur à partir de la table tbl_tests
+        $testsData = $entityManager->getRepository(Tests::class)->findBy(['user' => $user]);
+
+        // Parcourir les configurations de graphique
+        foreach ($configurations as $config) {
+            $chartData[$config->getId()] = [
+                'name' => $config->getName(),
+                'chartType' => $config->getChartType(),
+                'data' => $this->generateLineChartData($testsData, $config->getConfigData()),
+                'min' => $config->getConfigData()['min'],
+                'max' => $config->getConfigData()['max'],
+            ];
+        }
+
+        return $this->render('charts/index.html.twig', [
+            'chartData' => $chartData,
+        ]);
+    }
+
+    private function generateLineChartData($testsData, $configData)
+    {
+        $labels = [];
+        $values = [];
+    
+        // Parcourir les données des tests pour générer les données du graphique en ligne
+        foreach ($testsData as $test) {
+            // Vérifier si le champ de la configuration est 'date'
+            if ($configData['field'] === 'date') {
+                // Utiliser la date de chaque test comme étiquette
+                $labels[] = $test->getDate()->format('d-m-Y');
+                // Utiliser les valeurs correspondantes pour les données du graphique
+                $values[] = $test->{'get' . ucfirst($configData['field'])}();
+            } else {
+                // Utiliser le nom de la colonne spécifiée dans la configuration pour les étiquettes
+                $labels[] = $test->{'get' . ucfirst($configData['date_field'])}()->format('d-m-Y');
+                // Utiliser les valeurs correspondantes pour les données du graphique
+                $values[] = $test->{'get' . ucfirst($configData['field'])}();
+            }
+        }
+    
+        return [
+            'labels' => $labels,
+            'values' => $values, // Ajouter les valeurs générées pour les données du graphique
+        ];
     }
     
-    #[Route('/', name: 'app_charts_index', methods: ['GET'])]
-    public function index(ChartsRepository $chartsRepository, Request $request): Response {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        // $chartGlobal = new Charts(); // Créez une nouvelle instance de Charts (ou adaptez ceci selon vos besoins)
-        return $this->render('charts/index.html.twig', [
-            'charts' => $chartsRepository->findAll(),
-        ]);
-    }
-
-    #[Route('/new', name: 'app_charts_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response {
-
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-        
-        $chart = new Charts();
-        $form = $this->createForm(ChartsType::class, $chart);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($chart);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_charts_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('charts/new.html.twig', [
-            'chart' => $chart,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_charts_show', methods: ['GET'])]
-    public function show(Charts $chart): Response {
-
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('charts/show.html.twig', [
-            'chart' => $chart,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_charts_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Charts $chart, EntityManagerInterface $entityManager): Response {
-
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        $form = $this->createForm(ChartsType::class, $chart);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_charts_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('charts/edit.html.twig', [
-            'chart' => $chart,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_charts_delete', methods: ['POST'])]
-    public function delete(Request $request, Charts $chart, EntityManagerInterface $entityManager): Response {
-
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        if ($this->isCsrfTokenValid('delete'.$chart->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($chart);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_charts_index', [], Response::HTTP_SEE_OTHER);
-    }
 }
