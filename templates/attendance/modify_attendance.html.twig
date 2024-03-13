@@ -30,7 +30,7 @@
             {% set attendancesSorted = attendances|sort((a, b) => a.getUser().lastname <=> b.getUser().lastname) %}
             {% for attendance in attendancesSorted %}
                 <div class="col">
-                    <div class="img card-attendance-u" data-user-id="{{ attendance.getUser().id }}">
+                    <div class="img card-attendance-u" data-user-id="{{ attendance.getUser().id }}" data-user-reason="{{ attendance.getReason }}">
                         <div class="abs {% if attendance.isPresent == 0 %}absent{% else %}present{% endif %}"><img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="..."></div>
                         <div class="card-body">
                             <!-- Affiche le nom de famille uniquement sur les écrans plus grands (md et plus) -->
@@ -112,16 +112,36 @@
 
                 if (abs.classList.contains('absent')) {
                     const reasonSelectorDiv = document.createElement('div');
+                    const userReason = abs.closest('.img').getAttribute('data-user-reason');
                     
                     reasonSelectorDiv.classList.add('reason-selector');
                     reasonSelectorDiv.id = 'reasonSelector' + userId;
-                    reasonSelectorDiv.innerHTML = `
-                        <select class="form-select">
-                            <option value="Malade">Malade</option>
-                            <option value="Blessé">Blessé</option>
-                            <option value="Sport">Sport</option>
-                        </select>
-                    `;
+                    
+                    if (userReason == "Malade") {
+                        reasonSelectorDiv.innerHTML = `
+                            <select class="form-select">
+                                <option value="Malade" selected>Malade</option>
+                                <option value="Blessé">Blessé</option>
+                                <option value="Sport">Sport</option>
+                            </select>
+                        `;
+                    } else if (userReason == "Blessé") {
+                        reasonSelectorDiv.innerHTML = `
+                            <select class="form-select">
+                                <option value="Malade">Malade</option>
+                                <option value="Blessé" selected>Blessé</option>
+                                <option value="Sport">Sport</option>
+                            </select>
+                        `;
+                    }  else if (userReason == "Sport") {
+                        reasonSelectorDiv.innerHTML = `
+                            <select class="form-select">
+                                <option value="Malade">Malade</option>
+                                <option value="Blessé">Blessé</option>
+                                <option value="Sport" selected>Sport</option>
+                            </select>
+                        `;
+                    }
                     
                     abs.closest('.img').appendChild(reasonSelectorDiv);
                 }

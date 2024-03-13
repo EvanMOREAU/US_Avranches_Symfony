@@ -4,7 +4,30 @@
 
 {% block body %}
 
-  <div id='calendar-container' class="mt-5">
+  {# <div class="mt-5">
+    <div id="category-buttons">
+      <button class="category-button" data-category="all">Tous</button>
+      {% for category in categories %}
+        <button class="category-button" data-category="{{ category.id }}">{{ category.name }}</button>
+      {% endfor %}
+    </div>
+  </div> #}
+
+    <div class="mt-5">
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Tous
+      </button>
+      <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+        <a class="dropdown-item category-dropdown-item" data-category="all" href="#">Tous</a>
+        {% for category in categories %}
+          <a class="dropdown-item category-dropdown-item" data-category="{{ category.id }}" href="#">{{ category.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div id='calendar-container' class="mt-3">
     <div id='calendar'></div>
   </div>
 
@@ -23,12 +46,27 @@
   <script src='/js/interaction.js'></script>
   <script src='/js/daygrid.js'></script>
   <script src='/js/timegrid.js'></script>
-  <script src='/js/list.js'></script>   
+  <script src='/js/list.js'></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var calendarEl = document.getElementById('calendar');
       var isMobile = window.innerWidth < 1920;
+      var allEvents = [
+        {% for gathering in gatherings %}
+          {
+            title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
+            start: '{{ gathering.gatheringHappenedDate|date("Y-m-d") }}',
+            {% if gathering.type == 'Entraînement' %}
+              color: '{{ gathering.category.color }}',
+            {% else %}
+              color: '{{ gathering.category.color }}',
+              borderColor: '#000000',
+            {% endif %}
+            url: '/rassemblement/{{ gathering.id }}',
+          },
+        {% endfor %}
+      ];
 
       var calendar = new FullCalendar.Calendar(calendarEl, {
         plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
@@ -43,30 +81,31 @@
         editable: false,
         eventLimit: true,
         firstDay: 1,
-        events: [
-          {% for gathering in gatherings %}
-            {
-              title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
-              start: '{{ gathering.gatheringHappenedDate|date("Y-m-d") }}',
-              {% if gathering.type == 'Entraînement' %}
-                color: '{{ gathering.category.color }}',
-              {% else %}
-                color: '{{ gathering.category.color }}',
-                borderColor: '#000000',
-                // backgroundColor: '#000000',
-                // borderColor: '{{ gathering.category.color }}',
-                // textColor: '{{ gathering.category.color }}',
-              {% endif %}
-              url: '/rassemblement/{{ gathering.id }}',
-            },
-          {% endfor %}
-        ]
+        events: allEvents
       });
 
       calendar.render();
+
+      // Filter events by category
+      var categoryButtons = document.querySelectorAll('.category-button');
+      categoryButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          var category = button.getAttribute('data-category');
+          var filteredEvents = [];
+          if (category === 'all') {
+            filteredEvents = allEvents;
+          } else {
+            filteredEvents = allEvents.filter(function(event) {
+              return event.categoryId == category;
+            });
+          }
+          calendar.removeAllEvents();
+          calendar.addEventSource(filteredEvents);
+        });
+      });
     });
   </script>
 
   <script src="js/main.js"></script>
-  
+
 {% endblock %}
