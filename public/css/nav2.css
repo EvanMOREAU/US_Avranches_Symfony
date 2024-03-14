@@ -138,7 +138,8 @@ textarea, label {
   height: calc(100vh - 4px); }
 
 .pt-tablecell {
-  display: table-cell;
+  display: flex;
+  left: 2%;
   vertical-align: middle; }
 
 .overlay {
@@ -543,8 +544,6 @@ textarea, label {
     padding-top: 60px;
 }
 
-
-
 .hexagon-item:hover .icon i
 {
   color:#ff0037;
@@ -610,5 +609,3 @@ textarea, label {
 }
   
 }
-
-

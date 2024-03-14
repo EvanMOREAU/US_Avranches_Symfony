@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page des rassemblements{% endblock %}
+
+{% block body %}
+
+  <div id='calendar-container' class="mt-5">
+    <div id='calendar'></div>
+  </div>
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/icomoon.css" />
+  <link rel='stylesheet' href='/css/core.css' />
+  <link rel='stylesheet' href='/css/daygrid.css' />
+  <link rel="stylesheet" href="/css/calendar.css">
+
+  <script src="/js/jquery-3.3.1.min.js"></script>
+  <script src="/js/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src='/js/core.js'></script>
+  <script src='/js/interaction.js'></script>
+  <script src='/js/daygrid.js'></script>
+  <script src='/js/timegrid.js'></script>
+  <script src='/js/list.js'></script>   
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+      var isMobile = window.innerWidth < 1920;
+
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
+        height: 'parent',
+        header: {
+          left: 'title',
+          right: 'prev,next today'
+        },
+        defaultView: 'dayGridMonth',
+        defaultDate: new Date(),
+        navLinks: false,
+        editable: false,
+        eventLimit: true,
+        firstDay: 1,
+        events: [
+          {% for gathering in gatherings %}
+            {
+              title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
+              start: '{{ gathering.gatheringHappenedDate|date("Y-m-d") }}',
+              {% if gathering.type == 'Entraînement' %}
+                color: '{{ gathering.category.color }}',
+              {% else %}
+                backgroundColor: '#ffffff',
+                borderColor: '{{ gathering.category.color }}',
+                textColor: '{{ gathering.category.color }}',
+              {% endif %}
+              url: '/rassemblement/{{ gathering.id }}',
+            },
+          {% endfor %}
+        ]
+      });
+
+      calendar.render();
+    });
+  </script>
+
+  <script src="js/main.js"></script>
+  
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Éditer un Palier{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 text-white">
+        <h1 class="mb-4">Éditer un Palier</h1>
+        
+        {{ include('palier/_form.html.twig', {'button_label': 'Mettre à jour', 'form_title': 'Modifier le Palier'}) }}
+
+        {# Bouton Supprimer à droite avec une classe pour le style #}
+        <div class="float-end">
+            {% include 'palier/_delete_form.html.twig' with {'palier': palier} %}
+        </div>
+
+        <a href="{{ path('app_palier_index') }}" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteForm = document.querySelector('.delete-form');
+
+            if (deleteForm) {
+                deleteForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const confirmDelete = confirm('Êtes-vous sûr de vouloir supprimer ce palier?');
+
+                    if (confirmDelete) {
+                        const formData = new FormData(deleteForm);
+
+                        fetch(deleteForm.action, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-Token': formData.get('_token'),
+                            },
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.href = '{{ path('app_palier_index') }}'; // Redirect to the index page
+                            } else {
+                                alert('Erreur lors de la suppression du palier.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur AJAX:', error);
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

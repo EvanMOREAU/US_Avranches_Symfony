@@ -1,19 +1,24 @@
 <?php
-
 namespace App\Form;
 
 use App\Entity\User;
+use App\Entity\Equipe;
+
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
-
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\EqualTo;
+
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class UserType extends AbstractType
 {
@@ -27,10 +32,13 @@ class UserType extends AbstractType
                 'first_options'  => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Répétez le mot de passe'],
             ])
-            ->add('date_naissance')
+            ->add('equipe', EntityType::class, [
+                'class' => Equipe::class,
+                'choice_label' => 'name',
+            ])
             ->add('first_name')
             ->add('last_name')
-            ->add('weight')
+            ->add('date_naissance')
             ->add('profile_image', FileType::class, [
                 'label' => 'Image de profil',
                 'mapped' => false,
@@ -49,11 +57,12 @@ class UserType extends AbstractType
             ])
         ;
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
+    
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'exclude_date_naissance' => false,
         ]);
     }
 }

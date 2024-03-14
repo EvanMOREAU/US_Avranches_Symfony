@@ -4,10 +4,12 @@ namespace App\Form;
 
 use App\Entity\Category;
 use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class CategoryType extends AbstractType
@@ -16,9 +18,13 @@ class CategoryType extends AbstractType
     {
         $builder
             ->add('name', ChoiceType::class, [
-                'choices' => range(1, 99)
-            ])
-        ;
+                'choices' => array_map(function ($value) {
+                    return 'U' . $value;
+                }, range(0, 99)),
+                'choice_label' => function ($value) {
+                    return $value;
+                },
+            ]);
         $builder->add('image', FileType::class, [
             'label' => 'Image',
 
@@ -27,7 +33,7 @@ class CategoryType extends AbstractType
 
             // make it optional so you don't have to re-upload the image file
             // every time you edit the item
-            'required' => true,
+            'required' => false,
 
             // unmapped fields can't define their validation using annotations
             // in the associated entity, so you can use the PHP constraint classes
@@ -42,6 +48,9 @@ class CategoryType extends AbstractType
                     'mimeTypesMessage' => 'Image non valide, veuillez choisir une image valide',
                 ])
             ],
+        ]);
+        $builder->add('color', ColorType::class, [
+            'required' => true,
         ]);
     }
 

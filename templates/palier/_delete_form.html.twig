@@ -1,0 +1,8 @@
+{# palier/_delete_form.html.twig #}
+<form class="delete-form" action="{{ path('app_palier_delete', {'id': palier.id}) }}" method="post">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ palier.id) }}">
+    <button type="submit" class="btn btn-danger deletePalier">
+        <i class="fas fa-trash"></i> 
+    </button>
+</form>

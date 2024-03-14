@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ParameterController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+              <link href="/css/nav2.css" rel="stylesheet" />
+          <link href="/css/nav3.css" rel="stylesheet" />
+            <main class="site-wrapper">
+            <div class="pt-table desktop-768">
+                <div class="pt-tablecell page-home relative" style="background-image: path('images/joueur.jpg');
+                    background-position: center;
+                    background-size: cover;">
+                                  <div class="container">
+                                      <div class="row">
+                                          <div class="col-xs-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8">
+                                              <div class="hexagon-menu clear">
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content" href="/parameter/modify">
+                                                          <span class="hex-content-inner">
+                                                              <span class="icon">
+                                                                  <i class="fa fa-life-ring"></i>
+                                                              </span>
+                                                              <span class="title">Paramètres compte</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>
+                                                  </div>
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content" href='/pdf'>
+                                                          <span class="hex-content-inner">
+                                                              <span class="icon">
+                                                                  <i class="fa fa-clipboard"></i>
+                                                              </span>
+                                                              <span class="title">PDF</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>
+                                                  </div>
+                                                  <div class="hexagon-item">
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <div class="hex-item">
+                                                          <div></div>
+                                                          <div></div>
+                                                          <div></div>
+                                                      </div>
+                                                      <a  class="hex-content" href='/user/{{ app.user.getId()}}/edit'>
+                                                          <span class="hex-content-inner">
+                                                              <span class="icon">
+                                                                  <i class="fa fa-map-signs"></i>
+                                                              </span>
+                                                              <span class="title">Paramètres</span>
+                                                          </span>
+                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+                                                      </a>
+                                                      
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+{% endblock %}

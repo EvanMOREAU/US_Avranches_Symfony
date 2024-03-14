@@ -1,11 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Category{% endblock %}
+{% block title %}New Category
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Category</h1>
+    <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
 
-    {{ include('category/_form.html.twig') }}
+	<h1>Create new Category</h1>
 
-    <a href="{{ path('app_category_index') }}">back to list</a>
+	{{ include('category/_form.html.twig') }}
+
+
+	<a class="btn btn-secondary btn-sm mt-2" href="{{ path('app_category_index') }}">
+		<i class="fa-solid fa-arrow-left"></i>
+		Revenir à la liste</a>
 {% endblock %}
+

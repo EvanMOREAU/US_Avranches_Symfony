@@ -22,7 +22,7 @@ security:
                 # "app_login" is the name of the route created previously
                 login_path: app_login
                 check_path: app_login
-                default_target_path: app_verif_code
+                # default_target_path: app_default
 
             logout:
                 path:   app_logout

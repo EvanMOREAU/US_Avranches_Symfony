@@ -46,6 +46,17 @@ class Tests
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\Column(name: "is_validated", type: "boolean", nullable: false, options: ["default" => false])]
+    private bool $is_validated = false;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private $video;
+
+    #[ORM\ManyToOne(targetEntity: Palier::class)]
+    #[ORM\JoinColumn(name: "palier_id", referencedColumnName: "id")]
+    private ?Palier $palier = null;
+
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -167,6 +178,39 @@ class Tests
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function isIsValidated(): ?bool
+    {
+        return $this->is_validated;
+    }
+    
+    public function setIsValidated(bool $is_validated): static
+    {
+        $this->is_validated = $is_validated;
+        return $this;
+    }
+    public function getVideo()
+    {
+        return $this->video;
+    }
+
+    public function setVideo(?string $video): self
+    {
+        $this->video = $video;
+
+        return $this;
+    }
+    public function getPalier(): ?Palier
+    {
+        return $this->palier;
+    }
+
+    public function setPalier(?Palier $palier): self
+    {
+        $this->palier = $palier;
 
         return $this;
     }
