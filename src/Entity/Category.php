@@ -65,6 +65,11 @@ class Category
     //     return $this;
     // }
 
+    public function getRealName(): ?string
+    {
+        return $this->name;
+    }
+
     public function getName(): ?string
     {
         $this_year = new \DateTime('first day of January next year');

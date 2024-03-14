@@ -4,33 +4,6 @@
 
 {% block body %}
 
-  {# <div class="mt-5">
-    <div id="category-buttons">
-      <button class="category-button" data-category="all">Tous</button>
-      {% for category in categories %}
-        <button class="category-button" data-category="{{ category.id }}">{{ category.name }}</button>
-      {% endfor %}
-    </div>
-  </div> #}
-
-    <div class="mt-5">
-    <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Tous
-      </button>
-      <div class="dropdown-menu" aria-labelledby="categoryDropdown">
-        <a class="dropdown-item category-dropdown-item" data-category="all" href="#">Tous</a>
-        {% for category in categories %}
-          <a class="dropdown-item category-dropdown-item" data-category="{{ category.id }}" href="#">{{ category.name }}</a>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-
-  <div id='calendar-container' class="mt-3">
-    <div id='calendar'></div>
-  </div>
-
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap" rel="stylesheet">
 
@@ -48,6 +21,28 @@
   <script src='/js/timegrid.js'></script>
   <script src='/js/list.js'></script>
 
+  <div class="container">
+    <div id='calendar-container' class="mt-5 pt-5">
+      <div id='calendar'></div>
+    </div>
+
+    <div class="container mt-5 pt-5">
+      <div class="row">
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6 mx-auto">
+          <div class="form-floating">
+            <select id="filter-select" class="form-select" aria-label="Catégorie(s)">
+              <option value="all" selected>Toutes</option>
+              {% for category in categories %}
+                <option value='{{ category.name }}'>{{ category.name }}</option>
+              {% endfor %}
+            </select>
+            <label for="filter-select">Catégorie(s)</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var calendarEl = document.getElementById('calendar');
@@ -58,10 +53,12 @@
             title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
             start: '{{ gathering.gatheringHappenedDate|date("Y-m-d") }}',
             {% if gathering.type == 'Entraînement' %}
-              color: '{{ gathering.category.color }}',
+              // color: '{{ gathering.category.color }}',
+              color: '#5b9ad4',
             {% else %}
-              color: '{{ gathering.category.color }}',
-              borderColor: '#000000',
+              // color: '{{ gathering.category.color }}',
+              // borderColor: '#000000',
+              color: '#92d050',
             {% endif %}
             url: '/rassemblement/{{ gathering.id }}',
           },
@@ -86,22 +83,19 @@
 
       calendar.render();
 
-      // Filter events by category
-      var categoryButtons = document.querySelectorAll('.category-button');
-      categoryButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-          var category = button.getAttribute('data-category');
-          var filteredEvents = [];
-          if (category === 'all') {
-            filteredEvents = allEvents;
+      // Add event listener to the filter select
+      var filterSelect = document.getElementById('filter-select');
+      filterSelect.addEventListener('change', function() {
+        var selectedCategory = this.value;
+        var filteredEvents = allEvents.filter(function(event) {
+          if (selectedCategory === 'all') {
+            return true; // Show all events
           } else {
-            filteredEvents = allEvents.filter(function(event) {
-              return event.categoryId == category;
-            });
+            return event.title.includes(selectedCategory); // Filter by selected category
           }
-          calendar.removeAllEvents();
-          calendar.addEventSource(filteredEvents);
         });
+        calendar.removeAllEvents();
+        calendar.addEventSource(filteredEvents);
       });
     });
   </script>
