@@ -22,7 +22,7 @@
             {% for attendance in attendancesSorted %}
                 <div class="col">
                     <div class="img card-attendance-u" data-user-id="{{ attendance.getUser().id }}">
-                        <div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="..."></div>
+                        <div class="abs {% if attendance.isPresent == 0 %}absent{% else %}present{% endif %}"><img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="..."></div>
                         <div class="card-body">
                             <!-- Affiche le nom de famille uniquement sur les écrans plus grands (md et plus) -->
                             <h5 class="card-title text-center pt-1 d-none d-md-block">{{ attendance.getUser().firstName }} {{ attendance.getUser().lastName }}</h5>
@@ -80,6 +80,25 @@
 
             abss.forEach(abs => {
                 presentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
+
+                const userId = abs.closest('.img').getAttribute('data-user-id');
+
+                if (abs.classList.contains('absent')) {
+                    const reasonSelectorDiv = document.createElement('div');
+                    
+                    reasonSelectorDiv.classList.add('reason-selector');
+                    reasonSelectorDiv.id = 'reasonSelector' + userId;
+                    reasonSelectorDiv.innerHTML = `
+                        <select class="form-select">
+                            <option value="Malade">Malade</option>
+                            <option value="Blessé">Blessé</option>
+                            <option value="Sport">Sport</option>
+                        </select>
+                    `;
+                    
+                    abs.closest('.img').appendChild(reasonSelectorDiv);
+                }
+
                 abs.addEventListener('click', function() {
                     abs.classList.toggle('present');
                     abs.classList.toggle('absent');
@@ -100,6 +119,7 @@
                     }
                     if (abs.classList.contains('absent')) {
                         const reasonSelectorDiv = document.createElement('div');
+                        
                         reasonSelectorDiv.classList.add('reason-selector');
                         reasonSelectorDiv.id = 'reasonSelector' + userId;
                         reasonSelectorDiv.innerHTML = `
@@ -109,6 +129,7 @@
                                 <option value="Sport">Sport</option>
                             </select>
                         `;
+                        
                         abs.closest('.img').appendChild(reasonSelectorDiv);
                     } else {
                         const index = absentUserIds.indexOf(abs.closest('.img').getAttribute('data-user-id'));
