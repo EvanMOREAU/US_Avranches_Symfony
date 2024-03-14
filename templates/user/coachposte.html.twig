@@ -5,6 +5,20 @@
 {% block body %}
     <link rel="stylesheet" href="/css/poste.css">
 
+    {# <script>
+    // Sélectionnez les éléments nécessaires
+    const menuPrincipal = document.querySelector('#menu-principal');
+    const boutonMenu = document.querySelector('.bouton-menu');
+
+    // Fonction pour ouvrir et fermer le menu
+    function toggleMenu() {
+        menuPrincipal.classList.toggle('menu-ouvert');
+    }
+
+    // Ajoutez un écouteur d'événement sur le bouton pour ouvrir et fermer le menu
+    boutonMenu.addEventListener('click', toggleMenu);
+    </script> #}
+
     <style>
         h1 {
             color: white;
@@ -26,6 +40,19 @@
             max-width: 2%;
             z-index: 2;
         }
+        {# /* Styles généraux pour le menu */
+        nav {
+            position: relative;
+        }
+
+        #menu-principal {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: none;
+            width: 100%;
+            background-color: #333333;
+        } #}
 
         {% for user in users %}
             {% if user.posteCoordX is not null %}
@@ -41,6 +68,22 @@
             {% endif %}
         {% endfor %}
     </style>
+
+    {# <nav>
+        <ul id="menu-principal">
+            <li data-sous-menu="sous-menu-1"><a href="#">Equipe 1</a></li>
+            <li data-sous-menu="sous-menu-2"><a href="#">Equipe 2</a></li>
+            <li data-sous-menu="sous-menu-3"><a href="#">Equipe 3</a></li>
+        </ul>
+    </nav> #}
+
+    <label for="menuDeroulant">Choisir une option :</label>
+    <select id="menuDeroulant">
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+        <option value="option4">Option 4</option>
+    </select>
 
     <center>
         <div class="terrain">
@@ -62,5 +105,16 @@
             {% endfor %}
         </div>
     </center>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    var menuDeroulant = document.getElementById("menuDeroulant");
+
+    menuDeroulant.addEventListener("change", function() {
+        var selectedOption = menuDeroulant.options[menuDeroulant.selectedIndex].value;
+        console.log("Option sélectionnée :", selectedOption);
+    });
+    });
+    </script>
 
 {% endblock %}
