@@ -52,9 +52,9 @@ class AttendanceController extends AbstractController
         ]);
     }
 
-    // Page d'appel pour une catégorie spécifique, choisie précédemment par le coach
-    #[Route('/appel/{category}', name: 'app_attendance_u')]
-    public function attendance(string $category, UserRepository $UserRepository): Response
+    // Page du choix d'appel (entraînement ou match)
+    #[Route('/appel/choix/{category}', name: 'app_attendance_choice')]
+    public function choice(string $category): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -65,7 +65,27 @@ class AttendanceController extends AbstractController
             }
         }
 
-        // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/choice_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'category' => $category,
+        ]);
+    }
+
+    // Page d'appel pour un entraînement
+    #[Route('/appel/entraînement/{category}', name: 'app_attendance_training')]
+    public function training(string $category, UserRepository $UserRepository): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+    // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
         $allUsers = $UserRepository->findAll($category);
 
         // Filtrer les utilisateurs qui appartiennent à la catégorie spécifiée
@@ -74,16 +94,36 @@ class AttendanceController extends AbstractController
         });
 
         // Rendre le modèle en fonction de la catégorie
-        return $this->render('attendance/attendance.html.twig', [
+        return $this->render('attendance/training_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
             'category' => $category,
             'users' => $usersInCategory,
         ]);
     }
 
-    // Crée un nouveau rassemblement avec la catégorie et les joueurs
-    #[Route('/create-attendance-{category}', name: 'create_attendance', methods: ['POST'])]
-    public function createAttendance(Request $request, EntityManagerInterface $entityManager): Response
+    // Page d'appel pour un match
+    #[Route('/appel/match/{category}', name: 'app_attendance_match')]
+    public function match(string $category): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/match_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'category' => $category,
+        ]);
+    }
+
+    // Crée un nouvel entraînement avec la catégorie et les joueurs
+    #[Route('/create-training-attendance-{category}', name: 'create_training_attendance', methods: ['POST'])]
+    public function createTrainingAttendance(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -167,7 +207,7 @@ class AttendanceController extends AbstractController
         // Envoyer les modifications à la base de données
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Matches played updated successfully']);
+        return new JsonResponse(['message' => 'Entraînement créée avec succès']);
     }
 
     // Affichage la page permettant la modification d'appel
