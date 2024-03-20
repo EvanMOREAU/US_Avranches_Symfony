@@ -1,5 +1,8 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Modification de l'équipe "{{ equipe.name }}"
+{% endblock %}
+
 {% block body %}
     {{ include('equipe/_form.html.twig', {'button_label': 'Update'}) }}
 

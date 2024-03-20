@@ -70,6 +70,15 @@ class Category
         return $this->name;
     }
 
+    public function getNumber(): ?string
+    {
+        $this_year = new \DateTime('first day of January next year');
+        $result = $this_year->format('Y');
+
+        $diff = $result - $this->name;
+        return $diff;
+    }
+
     public function getName(): ?string
     {
         $this_year = new \DateTime('first day of January next year');
