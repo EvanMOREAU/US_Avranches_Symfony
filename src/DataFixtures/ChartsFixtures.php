@@ -2,106 +2,83 @@
 
 namespace App\DataFixtures;
 
-use DateTime;
-use App\Entity\Charts;
-use App\Repository\TeamRepository;
+use App\Entity\ChartConfiguration;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\DBAL\Driver\IBMDB2\Exception\Factory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ChartsFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        // $product = new Product();
-        // $manager->persist($product);
+        $heightConfig = new ChartConfiguration();
+        $heightConfig->setChartType('line');
+        $heightConfig->setName('Taille');
+        $heightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 1, 'max' => 2, 'field' => 'value', 'date_field' => 'date']);
+        $manager->persist($heightConfig);
 
-        $charts1 = new Charts();
-        $charts1->setType('line');
-        $charts1->setData('Height');
-        $charts1->setSourceData('110,175,145');
-        $charts1->setDatascaleMin('100');
-        $charts1->setDatascaleMax('180');
-        $manager->persist($charts1);
+        $weightConfig = new ChartConfiguration();
+        $weightConfig->setChartType('line');
+        $weightConfig->setName('Poids');
+        $weightConfig->setConfigData(['entity' => 'App\Entity\Weight', 'min' => 10, 'max' => 120, 'field' => 'value', 'date_field' => 'date']);
+        $manager->persist($weightConfig);
 
-        $charts2 = new Charts();
-        $charts2->setType('line');
-        $charts2->setData('Weight');
-        $charts2->setSourceData('62,70,41');
-        $charts2->setDatascaleMin('40');
-        $charts2->setDatascaleMax('80');
-        $manager->persist($charts2);
-
-        $charts3 = new Charts();
-        $charts3->setType('line');
-        $charts3->setData('LeftFoot');
-        $charts3->setSourceData('30,26,29');
-        $charts3->setDatascaleMin('0');
-        $charts3->setDatascaleMax('50');
-        $manager->persist($charts3);
-
-        $charts4 = new Charts();
-        $charts4->setType('line');
-        $charts4->setData('RightFoot');
-        $charts4->setSourceData('34,24,5');
-        $charts4->setDatascaleMin('0');
-        $charts4->setDatascaleMax('50');
-        $manager->persist($charts4);
-
-        $charts5 = new Charts();
-        $charts5->setType('line');
-        $charts5->setData('Head');
-        $charts5->setSourceData('5,26,45');
-        $charts5->setDatascaleMin('0');
-        $charts5->setDatascaleMax('50');
-        $manager->persist($charts5);
-
-        $charts6 = new Charts();
-        $charts6->setType('line');
-        $charts6->setData('Control');
-        $charts6->setSourceData('6,6,12');
-        $charts6->setDatascaleMin('6');
-        $charts6->setDatascaleMax('15');
-        $manager->persist($charts6);
-
-        $charts7 = new Charts();
-        $charts7->setType('line');
-        $charts7->setData('VMAClassic');
-        $charts7->setSourceData('17,16,6');
-        $charts7->setDatascaleMin('0');
-        $charts7->setDatascaleMax('20');
-        $manager->persist($charts7);
-
-        $charts8 = new Charts();
-        $charts8->setType('line');
-        $charts8->setData('VMADemiCooper');
-        $charts8->setSourceData('28,26,40');
-        $charts8->setDatascaleMin('0');
-        $charts8->setDatascaleMax('10000');
-        $manager->persist($charts8);
         
-        $charts9 = new Charts();
-        $charts9->setType('line');
-        $charts9->setData('VMACooper');
-        $charts9->setSourceData('28,26,40');
-        $charts9->setDatascaleMin('0');
-        $charts9->setDatascaleMax('10000');
-        $manager->persist($charts9);
+        $leftConfig = new ChartConfiguration();
+        $leftConfig->setChartType('line');
+        $leftConfig->setName('Jongle Gauche');
+        $leftConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 50, 'field' => 'jonglegauche', 'date_field' => 'date']);
+        $manager->persist($leftConfig);
 
-        $charts10 = new Charts();
-        $charts10->setType('line');
-        $charts10->setData('Sprint');
-        $charts10->setSourceData('9,6,15');
-        $charts10->setDatascaleMin('6');
-        $charts10->setDatascaleMax('15');
-        $manager->persist($charts10);
+    
+        $rightConfig = new ChartConfiguration();
+        $rightConfig->setChartType('line');
+        $rightConfig->setName('Jongle Droit');
+        $rightConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 50, 'field' => 'jongledroit', 'date_field' => 'date']);
+        $manager->persist($rightConfig);
 
-        $charts11 = new Charts();
-        $charts11->setType('radar');
-        $charts11->setData('General');
-        $charts11->setSourceData('10,6,5,2');
-        $charts11->setDatascaleMin('0');
-        $charts11->setDatascaleMax('10');
-        $manager->persist($charts11);
+        $headConfig = new ChartConfiguration();
+        $headConfig->setChartType('line');
+        $headConfig->setName('Jongle tete');
+        $headConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 30, 'field' => 'jongletete', 'date_field' => 'date']);
+        $manager->persist($headConfig);
+
+        $controlConfig = new ChartConfiguration();
+        $controlConfig->setChartType('line');
+        $controlConfig->setName('Controle de balle');
+        $controlConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 20, 'max' => 5, 'field' => 'conduiteballe', 'date_field' => 'date']);
+        $manager->persist($controlConfig);
+
+        $vmaConfig = new ChartConfiguration();
+        $vmaConfig->setChartType('line');
+        $vmaConfig->setName('VMA Classique');
+        $vmaConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 20, 'field' => 'vma', 'date_field' => 'date']);
+        $manager->persist($vmaConfig);
+
+        $cooperConfig = new ChartConfiguration();
+        $cooperConfig->setChartType('line');
+        $cooperConfig->setName('VMA Cooper');
+        $cooperConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 20, 'field' => 'cooper', 'date_field' => 'date']);
+        $manager->persist($cooperConfig);;
+
+        $demicooperConfig = new ChartConfiguration();
+        $demicooperConfig->setChartType('line');
+        $demicooperConfig->setName('VMA Demi Cooper');
+        $demicooperConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 0, 'max' => 20, 'field' => 'demicooper', 'date_field' => 'date']);
+        $manager->persist($demicooperConfig);
+
+        $vitesseConfig = new ChartConfiguration();
+        $vitesseConfig->setChartType('line');
+        $vitesseConfig->setName('Test Vitesse');
+        $vitesseConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 20, 'max' => 5, 'field' => 'vitesse', 'date_field' => 'date']);
+        $manager->persist($vitesseConfig);
+
+        // $generalConfig = new ChartConfiguration();
+        // $generalConfig->setChartType('radar');
+        // $generalConfig->setName('Test General');
+        // $generalConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 100, 'max' => 200, 'field' => 'general', 'date_field' => 'date']);
+        // $manager->persist($generalConfig);
 
         $manager->flush();
     }

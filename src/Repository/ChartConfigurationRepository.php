@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Charts;
+use App\Entity\ChartConfiguration;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Charts>
+ * @extends ServiceEntityRepository<ChartConfiguration>
  *
- * @method Charts|null find($id, $lockMode = null, $lockVersion = null)
- * @method Charts|null findOneBy(array $criteria, array $orderBy = null)
- * @method Charts[]    findAll()
- * @method Charts[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ChartConfiguration|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ChartConfiguration|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ChartConfiguration[]    findAll()
+ * @method ChartConfiguration[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ChartsRepository extends ServiceEntityRepository
+class ChartConfigurationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Charts::class);
+        parent::__construct($registry, ChartConfiguration::class);
     }
 
 //    /**
-//     * @return Charts[] Returns an array of Charts objects
+//     * @return ChartConfiguration[] Returns an array of ChartConfiguration objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -36,7 +36,7 @@ class ChartsRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Charts
+//    public function findOneBySomeField($value): ?ChartConfiguration
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')
