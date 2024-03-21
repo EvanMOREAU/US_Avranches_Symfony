@@ -6,9 +6,15 @@
 <style>
     canvas{
         margin-left : 10%;
-        margin-right : 10%
+        margin-right : 10%;
+        margin-bottom : 10%;
     }
 </style>
+<script>
+    const up = (ctx, value) => ctx.p0.parsed.y < ctx.p1.parsed.y ? value : undefined;
+    const down = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y ? value : undefined;
+    const equal = (ctx, value) => ctx.p0.parsed.y = ctx.p1.parsed.y ? value : undefined;
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="accordion">
 {% for chartId, chartData in chartData %}
@@ -18,22 +24,28 @@
     <script>
         const ctx{{ chartId }} = document.getElementById('canvas{{ chartId }}');
         const configData{{ chartId }} = {{ chartData.data | json_encode | raw }};
-        console.log("les données : " + configData{{ chartId }}.values);
-        console.log("les dates : " + configData{{ chartId }}.labels);
-
-        // Création de la liste des couleurs en fonction des valeurs
         const colors{{ chartId }} = configData{{ chartId }}.values.map((value, index) => {
-                         
-                const previousValue = configData{{ chartId }}.values[index - 1];
-                if (value > previousValue) {
-                    return 'green'; // Si la valeur actuelle est supérieure à la précédente, couleur verte
-                } else if (value < previousValue) {
-                    return 'red'; // Si la valeur actuelle est inférieure à la précédente, couleur rouge
-                } else if (value = previousValue) {
-                    return 'orange'; // Si la valeur actuelle est égale à la précédente, couleur orange
-                }
+            const previousValue = configData{{ chartId }}.values[index - 1];
+                if ({{ chartId }} === 6 || {{ chartId }} === 10){
+                    if (value >= (({{ chartData.max }} - {{ chartData.min }}) / 3) * 2) {   return 'red';   }
+                    else if (value >= ({{ chartData.max }} - {{ chartData.min }}) / 3 ) {   return 'green'; }
+                    else                                                                {   return 'orange';}
+                }else{
+                    if (value >= (({{ chartData.max }} - {{ chartData.min }}) / 3) * 2) {   return 'green'; } 
+                    else if (value <= ({{ chartData.max }} - {{ chartData.min }}) / 3 ) {   return 'red';   }
+                    else                                                                {   return 'orange';}
+                }         
 
         });
+        
+        let borderColor{{ chartId }} = "";
+        if ({{ chartId }} === 6 ||{{ chartId }} === 10) {
+            borderColor{{ chartId }} = ctx{{ chartId }} => up(ctx{{ chartId }}, 'red') || down(ctx{{ chartId }}, 'green') || equal(ctx{{ chartId }}, 'orange');
+        }else{
+            borderColor{{ chartId }} =  ctx{{ chartId }} => up(ctx{{ chartId }}, 'green') || down(ctx{{ chartId }}, 'red') || equal(ctx{{ chartId }}, 'orange');
+        }
+
+
 
         new Chart(ctx{{ chartId }}, {
             type: '{{ chartData.chartType }}',
@@ -44,15 +56,37 @@
                     data: configData{{ chartId }}.values,
                     borderColor: colors{{ chartId }}, // Utilisez la liste de couleurs déterminée précédemment
                     backgroundColor : colors{{ chartId }},
-                    borderWidth: 2,
-                    {# fontColor: white, #}
+                    borderWidth: 3,
+                    segment: {
+                        borderColor: borderColor{{ chartId }}, 
+                    },
+                    spanGaps: true,
+                    tension: 0.1
                 }]
             },
             options: {
                 scales: {
                     y: {
                         min: {{ chartData.min }},
-                        max: {{ chartData.max }}
+                        max: {{ chartData.max }},
+                        grid:{
+                            color :'rgba(0,0,0,0.5)'
+                        },
+                        title: {
+                        color: 'black',
+                        display: true,
+                        text: 'Resultats des tests'
+                        }
+                    },
+                    x: {
+                        grid:{
+                            color :'rgba(0,0,0,0.5)',
+                        },
+                        title: {
+                        color: 'black',
+                        display: true,
+                        text: 'Date de passage des tests'
+                        }
                     }
                 },
             }

@@ -1,7 +1,10 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\ChartConfiguration;
+use App\Entity\Height;
+use App\Entity\Weight;
 use App\Entity\Tests;
 use App\Repository\ChartConfigurationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,15 +30,24 @@ class ChartsController extends AbstractController
         // Récupérer toutes les configurations de graphique
         $configurations = $configRepository->findAll();
 
-        // Récupérer les données spécifiques de chaque joueur à partir de la table tbl_tests
-        $testsData = $entityManager->getRepository(Tests::class)->findBy(['user' => $user]);
-
         // Parcourir les configurations de graphique
         foreach ($configurations as $config) {
+            // Récupérer les données spécifiques en fonction de l'entité configurée
+            $entity = $config->getConfigData()['entity'];
+            $data = [];
+            if ($entity === 'App\Entity\Height') {
+                $data = $entityManager->getRepository(Height::class)->findBy(['user' => $user]);
+            } elseif ($entity === 'App\Entity\Weight') {
+                $data = $entityManager->getRepository(Weight::class)->findBy(['user' => $user]);
+            } elseif ($entity === 'App\Entity\Tests') {
+                $data = $entityManager->getRepository(Tests::class)->findBy(['user' => $user]);
+            }
+
+            // Générer les données du graphique
             $chartData[$config->getId()] = [
                 'name' => $config->getName(),
                 'chartType' => $config->getChartType(),
-                'data' => $this->generateLineChartData($testsData, $config->getConfigData()),
+                'data' => $this->generateLineChartData($data, $config->getConfigData()['field']),
                 'min' => $config->getConfigData()['min'],
                 'max' => $config->getConfigData()['max'],
             ];
@@ -46,31 +58,21 @@ class ChartsController extends AbstractController
         ]);
     }
 
-    private function generateLineChartData($testsData, $configData)
+    private function generateLineChartData($data, $field)
     {
         $labels = [];
         $values = [];
     
-        // Parcourir les données des tests pour générer les données du graphique en ligne
-        foreach ($testsData as $test) {
-            // Vérifier si le champ de la configuration est 'date'
-            if ($configData['field'] === 'date') {
-                // Utiliser la date de chaque test comme étiquette
-                $labels[] = $test->getDate()->format('d-m-Y');
-                // Utiliser les valeurs correspondantes pour les données du graphique
-                $values[] = $test->{'get' . ucfirst($configData['field'])}();
-            } else {
-                // Utiliser le nom de la colonne spécifiée dans la configuration pour les étiquettes
-                $labels[] = $test->{'get' . ucfirst($configData['date_field'])}()->format('d-m-Y');
-                // Utiliser les valeurs correspondantes pour les données du graphique
-                $values[] = $test->{'get' . ucfirst($configData['field'])}();
-            }
+        // Parcourir les données pour générer les données du graphique en ligne
+        foreach ($data as $item) {
+            $labels[] = $item->getDate()->format('d-m-Y');
+            // Utiliser la méthode get avec le nom du champ spécifié dans la configuration
+            $values[] = $item->{'get' . ucfirst($field)}();
         }
-    
+
         return [
             'labels' => $labels,
-            'values' => $values, // Ajouter les valeurs générées pour les données du graphique
+            'values' => $values,
         ];
     }
-    
 }
