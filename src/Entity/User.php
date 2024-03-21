@@ -522,6 +522,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEquipe(?Equipe $equipe): static
     {
         $this->equipe = $equipe;
+
+        return $this;
     }
     
     public function getPalier(): ?Palier
