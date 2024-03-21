@@ -21,6 +21,24 @@ class WeightRepository extends ServiceEntityRepository
         parent::__construct($registry, Weight::class);
     }
 
+    public function getLatestWeightDate(int $userId): ?\DateTimeInterface
+    {
+        $result = $this->createQueryBuilder('w')
+            ->select('MAX(w.date) as latest_date')
+            ->andWhere('w.user = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        // Si aucun poids n'est trouvé, retourner null
+        if ($result === null) {
+            return null;
+        }
+
+        // Convertir la chaîne de date en objet DateTimeInterface
+        return new \DateTimeImmutable($result);
+    }
+
 //    /**
 //     * @return Weight[] Returns an array of Weight objects
 //     */

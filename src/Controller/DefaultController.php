@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\PalierRepository;
 use App\Repository\TestsRepository;
 use App\Repository\UserRepository;
+use App\Repository\WeightRepository;
 use App\Service\UserVerificationService;
 use App\Service\HeightVerificationService;
 use App\Service\WeightVerificationService;
@@ -29,7 +30,7 @@ class DefaultController extends AbstractController
 
 
     #[Route('/', name: 'app_default')]
-    public function index(TestsRepository $testsRepository, UserRepository $userRepository, PalierRepository $palierRepository): Response
+    public function index(TestsRepository $testsRepository, UserRepository $userRepository, PalierRepository $palierRepository, WeightRepository $weightRepository): Response
     {
         $userVerif = $this->userVerificationService->verifyUser();
         $heightVerif = $this->heightVerificationService->verifyHeight();
@@ -47,6 +48,7 @@ class DefaultController extends AbstractController
                 $usersInSameTeam = $userRepository->findBy(['equipe' => $equipe]);
                 $countUsersInSameTeam = $userRepository->count(['equipe' => $equipe]);
             }
+            $latestWeightDate = $weightRepository->getLatestWeightDate($playerId);
         }else{
             return $this->render('/login/index.html.twig', ['controller_name' => 'SecurityController',]);
         }
@@ -68,7 +70,8 @@ class DefaultController extends AbstractController
                         'usercount' => $userRepository->count([]),
                         'equipeuser' => $usersInSameTeam,
                         'equipeusercount' => $countUsersInSameTeam,
-                        'paliers' => $palierRepository->findByNumeroLessThan($currentPalierNumber),
+                        'paliers' => $palierRepository->findAll(),
+                        'weightIn' => $latestWeightDate,
  
                     ]);}
                 return $this->render('base.html.twig', [

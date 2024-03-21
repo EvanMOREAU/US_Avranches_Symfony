@@ -24,7 +24,7 @@ class PalierRepository extends ServiceEntityRepository
     public function findByNumeroLessThan($currentPalierNumber): array
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.numero < :currentPalierNumber')
+            ->andWhere('p.numero <= :currentPalierNumber')
             ->setParameter('currentPalierNumber', $currentPalierNumber)
             ->getQuery()
             ->getResult();
