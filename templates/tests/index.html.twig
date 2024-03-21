@@ -14,26 +14,15 @@
     <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-
-
-    <script src="/js/tests.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 
     <div class="container-fluid">
         {% if app.user %}
-            <div class="d-flex justify-content-between">
-                <div class="text-begin">
-                    <a href="{{ path('app_default') }}" class="btn btn-outline-primary ms-auto">
-                        <i class="fas fa-home"></i>
-                    </a>
-                </div>
-                <div class="text-end">
-                    <a href="{{ path('app_logout') }}" class="btn btn-outline-danger me-auto"><i class="fas fa-sign-out-alt"></i></a>
-                </div>
-            </div>
             <div class="text-center">
                 <h1 class="h1">Liste de vos tests {{ app.user.getFirstName() }}</h1>
-                <a href="{{ path('app_tests_new', {'userId': app.user.getId()}) }}" class="btn btn-primary mt-3">Créer un nouveau test</a>
+                {% if is_granted("ROLE_SUPER_ADMIN") %}
+                    <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
+                {% endif %}
             </div>
 
             <div class="user-dropdown-container mt-3">
@@ -75,45 +64,18 @@
             <div class="mt-4">
         {# Boutons de tri #}
         <div class="btn-group" role="group" aria-label="Trie">
-            <div class="btn-group" role="group">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Trié par
-                </button>
-                <div class="dropdown-menu">
-                    <a href="{{ path('app_tests_index', {'order': 'asc', 'is_validated': app.request.query.get('is_validated')}) }}" class="dropdown-item {% if app.request.query.get('order') == 'asc' %}active{% endif %}">
-                        <i class="fas fa-arrow-up"></i> Plus ancien d'abord
-                    </a>
-                    <a href="{{ path('app_tests_index', {'order': 'desc', 'is_validated': app.request.query.get('is_validated')}) }}" class="dropdown-item {% if app.request.query.get('order') == 'desc' %}active{% endif %}">
-                        <i class="fas fa-arrow-down"></i> Plus récent d'abord
-                    </a>
-                    <a href="{{ path('app_tests_index', {'order': 'alphabetical', 'is_validated': app.request.query.get('is_validated')}) }}" class="dropdown-item {% if app.request.query.get('order') == 'alphabetical' %}active{% endif %}">
-                        <i class="fas fa-sort-alpha-down"></i> Par ordre alphabétique
-                    </a>
-                </div>
-            </div>
+            <a href="{{ path('app_tests_index', {'order': 'asc'}) }}" class="btn btn-secondary {% if app.request.query.get('order') == 'asc' %}active{% endif %}">
+                <i class="fas fa-arrow-up"></i> Plus ancien d'abord
+            </a>
+            <a href="{{ path('app_tests_index', {'order': 'desc'}) }}" class="btn btn-secondary {% if app.request.query.get('order') == 'desc' %}active{% endif %}">
+                <i class="fas fa-arrow-down"></i> Plus récent d'abord
+            </a>
+            <a href="{{ path('app_tests_index', {'order': 'alphabetical'}) }}" class="btn btn-secondary {% if app.request.query.get('order') == 'alphabetical' %}active{% endif %}">
+                <i class="fas fa-sort-alpha-down"></i> Par ordre alphabétique
+            </a>
 
-            <div class="btn-group" role="group">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Affichés par
-                </button>
-                <div class="dropdown-menu">
-                    <a href="{{ path('app_tests_index') }}" id="tousTestsButton" class="dropdown-item {% if app.request.query.get('is_validated') is null %}active{% endif %}">
-                        <i class="fas fa-list"></i> Tous les tests
-                    </a>
-                    <a href="{{ path('app_tests_index', {'is_validated': 'false'}) }}" class="dropdown-item {% if app.request.query.get('is_validated') == 'false' %}active{% endif %}">
-                        <i class="fas fa-times"></i> Non validés seulement
-                    </a>
-                    <a href="{{ path('app_tests_index', {'is_validated': 'true'}) }}" class="dropdown-item {% if app.request.query.get('is_validated') == 'true' %}active{% endif %}">
-                        <i class="fas fa-check"></i> Validés seulement
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
-
-
-
-
             <div class="mt-4">
                 {% for message in app.flashes('success') %}
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -150,18 +112,6 @@
                                 <div class="col">
                                     <div class="card green" style="position: relative;">
                                         <div class="card-body">
-                                        {# Validation indicators and title on the same line #}
-                                        <div class="validation-indicators">
-                                            {# Affiche l'icône de validation si le test est validé #}
-                                            {% if test.isValidated %}
-                                                <span class="validation-indicator validated">&#10004;</span>
-                                            {# Affiche l'icône d'annulation si le test n'est pas validé #}
-                                            {% elseif not test.isValidated %}
-                                                <span class="validation-indicator not-validated">&#10008;</span>
-                                            {% endif %}
-                                        </div>
-
-
                                             {% if is_granted("ROLE_SUPER_ADMIN") %}
                                                 {# Display additional information for superadmin #}
                                                 <h5 class="card-title">Test de {{ test.user.getFirstName() }} {{ test.user.getLastName() }} ({{ test.user.getCategory() }})</h5><br>
@@ -179,15 +129,8 @@
                                                 Conduite de balle : {{ test.conduiteballe|number_format(3, '.', '') }}s<br>
                                                 Vitesse : {{ test.vitesse|number_format(3, '.', '') }}s<br>
                                                 Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}<br>
-                                                Palier : {{ test.palier.numero }}<br>
-                                                Titre : {{ test.palier.name }}<br>
-                                                Objectif : {{ test.palier.objectif }}
 
                                                {% if test.video %}
-                                                    {% if test.isValidated %}
-                                                        {# Display a message indicating that the video is not available #}
-                                                        <p class="text-muted">La vidéo n'est pas disponible.</p>
-                                                    {% else %}
                                                         <div class="d-flex justify-content-center">
                                                             <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#videoModal{{ test.id }}">
                                                                 Afficher la vidéo
@@ -204,7 +147,6 @@
                                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        {% if not test.isValidated %}
                                                                             {% if not test.video %}
                                                                                 {# Display a message indicating that the video is not available #}
                                                                                 <p class="text-muted">La vidéo n'est pas disponible.</p>
@@ -214,13 +156,6 @@
                                                                                     Your browser does not support the video tag.
                                                                                 </video>
                                                                             {% endif %}
-                                                                        {% else %}
-                                                                            {# Display the video for validated tests #}
-                                                                            <video width="100%" height="100%" controls>
-                                                                                <source src="{{ asset('/uploads/videos/' ~ test.video) }}" type="video/mp4">
-                                                                                Your browser does not support the video tag.
-                                                                            </video>
-                                                                        {% endif %}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -232,13 +167,14 @@
                                                 {% endif %}</p>
                                             {% if is_granted("ROLE_SUPER_ADMIN") %}
                                                 <div class="test-owner">Joueur : {{ test.user.getFirstName() }} ({{ test.user.getCategory() }})</div>
-                                                
-                                                
                                             {% endif %}
                                             <div class="d-flex justify-content-between mt-3">
                                                 {% if is_granted("ROLE_SUPER_ADMIN") %}
                                                 <a href="#" class="btn btn-danger" onclick="displayDeletionConfirmationModal('{{ path('app_tests_delete', {'id': test.id}) }}', {{ test.id }})">
                                                     <i class="fa fa-trash"></i> Supprimer
+                                                </a>
+                                                <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-primary">
+                                                    <i class="fa fa-edit"></i> Modifier
                                                 </a>
                                                 <div class="modal fade" id="deletionConfirmationModal" tabindex="-1" aria-labelledby="deletionConfirmationModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-dialog-centered">
@@ -255,13 +191,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                {% if not test.isValidated %}
-                                                    <div class="btn-group" role="group" aria-label="Actions">
-                                                        <button class="btn btn-success custom-btn" onclick="displayValidationConfirmationModal('{{ path('app_validate_test', {'id': test.id}) }}', {{ test.id }})">
-                                                            <i class="fas fa-check"></i> Valider
-                                                        </button>
-                                                    </div>
 
                                                     <div class="modal fade" id="displayValidationConfirmationModal{{ test.id }}" tabindex="-1" aria-labelledby="displayValidationConfirmationModalLabel{{ test.id }}" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered">
@@ -280,38 +209,12 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <script>
-                                                        // Script to handle modal button click after modal is loaded
-                                                        $('#validationConfirmationModal{{ test.id }}').on('shown.bs.modal', function () {
-                                                            // Set the confirmation message
-                                                            $('#validationConfirmationModalBody').text("Voulez-vous vraiment valider ce test ?");
-
-                                                            // Attach click event handler for the confirm button
-                                                            $('#confirmValidationButton').on('click', function () {
-                                                                validateTest('{{ path('app_validate_test', {'id': test.id}) }}', {{ test.id }});
-                                                                $('#validationConfirmationModal{{ test.id }}').modal('hide');
-                                                            });
-                                                        });
-                                                    </script>
-                                                {% endif %}
-                                                {% if test.isValidated %}
-                                                    <div class="btn-group" role="group" aria-label="Actions">
-                                                        <button class="btn btn-danger custom-btn" onclick="cancelTest('{{ path('app_cancel_test', {'id': test.id}) }}', {{ test.id }})" data-test-id="{{ test.id }}">
-                                                            <i class="fas fa-times"></i> Rejeter
-                                                        </button>
-                                                    </div>
-                                                {% endif %}
-                                                {% endif %}
-                                                {% if not test.isValidated or is_granted("ROLE_SUPER_ADMIN") %}
-                                                    {# Display the "Modifier" button for non-validated tests or for the superadmin #}
-                                                    <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i> Modifier</a>
                                                 {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 {% set hasTests = true %}
-                            {% endif %}
                         {% endfor %}
                     </div>
 
@@ -345,6 +248,6 @@
             </div>
         {% endif %}
     </div>
-
-    <!-- Script Bootstrap -->
+        <script src="/js/tests.js"></script>
 {% endblock %}
+

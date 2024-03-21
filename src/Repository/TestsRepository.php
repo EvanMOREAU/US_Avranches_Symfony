@@ -53,13 +53,4 @@ class TestsRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-    public function findTestsByValidation($isValidated)
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.is_validated = :is_validated')
-            ->setParameter('is_validated', $isValidated)
-            ->orderBy('t.date', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
 }

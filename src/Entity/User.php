@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Tests;
 use App\Entity\Height;
 use App\Entity\Weight;
+use App\Entity\Palier;
 use App\Entity\Gathering;
 use App\Entity\Attendance;
 use Doctrine\DBAL\Types\Types;
@@ -453,7 +454,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->weights->contains($weight)) {
             $this->weights->add($weight);
-            $weight->setUserId($this);
+            $weight->setUser($this);
         }
 
         return $this;
@@ -463,8 +464,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->weights->removeElement($weight)) {
             // set the owning side to null (unless already changed)
-            if ($weight->getUserId() === $this) {
-                $weight->setUserId(null);
+            if ($weight->getUser() === $this) {
+                $weight->setUser(null);
             }
         }
 
@@ -513,7 +514,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
     public function getEquipe(): ?Equipe
     {
         return $this->equipe;
@@ -526,10 +526,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
     
-    public function getPalier(): ?Palier
+    public function getPalier(): ?Palier_
     {
         return $this->palier;
     }
+
 
     public function setPalier(?Palier $palier): static
     {

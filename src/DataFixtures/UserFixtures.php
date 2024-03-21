@@ -18,6 +18,7 @@ class UserFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        
         /* Utilisateur Dev */
         $dateNaissance = new \DateTime('2004-12-27');
         $superAdmin = new User();
@@ -26,6 +27,7 @@ class UserFixtures extends Fixture
         $superAdmin->setLastName('2');
         $superAdmin->setDateNaissance($dateNaissance);
         $superAdmin->setEmail('evan.moreau@etik.com');
+        $superAdmin->setPalier(0);
         $plaintextPassword = "admin";
         $hashedPassword = $this->passwordHasher->hashPassword(
             $superAdmin,
@@ -49,6 +51,7 @@ class UserFixtures extends Fixture
             $randomEmail = $faker->safeEmail;
             $player->setEmail($randomEmail);
             $player->setWeight(0);
+            $player->setPalier(0);
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $player,
@@ -70,6 +73,7 @@ class UserFixtures extends Fixture
             $coach->setLastName($faker->lastName);
             $coach->setDateNaissance($randomBirthdate);
             $coach->setWeight(0);
+            $coach->setPalier(0);
             $randomEmail = $faker->safeEmail;
             $coach->setEmail($randomEmail);
             $plaintextPassword = "admin";
