@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des équipes
-{% endblock %}
+{% block title %}Liste des équipes{% endblock %}
 
 {% block body %}
     <div class="col-lg-8 mx-auto p-5 py-md-5">
@@ -19,7 +18,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for equipe in equipes %}
+                    {% set sortedEquipes = equipes|sort((a, b) => 
+                        (a.getCategory().name <=> b.getCategory().name) ?: 
+                        (a.name <=> b.name)
+                    ) %}
+					{% for equipe in sortedEquipes %}
 						<tr>
 							<td>{{ equipe.name }}</td>
                             <td>{{ equipe.getCategory().name }}</td>

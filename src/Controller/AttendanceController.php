@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\AttendanceRepository;
+use App\Repository\EquipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -85,7 +86,7 @@ class AttendanceController extends AbstractController
             }
         }
 
-    // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
+        // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
         $allUsers = $UserRepository->findAll($category);
 
         // Filtrer les utilisateurs qui appartiennent à la catégorie spécifiée
@@ -102,8 +103,8 @@ class AttendanceController extends AbstractController
     }
 
     // Page d'appel pour un match
-    #[Route('/appel/match/{category}', name: 'app_attendance_match')]
-    public function match(string $category): Response
+    #[Route('/appel/match/{category}', name: 'app_attendance_match_choice')]
+    public function choiceMatch(string $category, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -114,10 +115,74 @@ class AttendanceController extends AbstractController
             }
         }
 
+        // $category = "U10" / "U11" / ...
+
+        // Extract the numerical part of the category (removing the 'U')
+        $categoryNumber = intval(substr($category, 1));
+
+        // Trouver l'entité Category par le nom
+        $this_year = new \DateTime('now');
+        $result = $this_year->format('Y');
+        $name = $result - $categoryNumber + 1;
+        $findCategory = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
+
+        // Check if category exists
+        if (!$findCategory) {
+            throw $this->createNotFoundException('Category non trouvée');
+        }
+        
+        // Now you have the $category entity, you can access its ID
+        $categoryId = $findCategory->getId();
+
+        // Query EquipeRepository to find all Equipe entities with this category ID
+        $allTeams = $equipeRepository->findBy(['category' => $categoryId]);
+
         // Rendre le modèle en fonction de la catégorie
-        return $this->render('attendance/match_attendance.html.twig', [
+        return $this->render('attendance/match_choice_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
             'category' => $category,
+            'teams' => $allTeams,
+        ]);
+    }
+
+    // Page d'appel pour un match
+    #[Route('/appel/match/{category}/{team}', name: 'app_attendance_match')]
+    public function match(string $category, string $team, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // Extract the numerical part of the category (removing the 'U')
+        $categoryNumber = intval(substr($category, 1));
+
+        // Trouver l'entité Category par le nom
+        $this_year = new \DateTime('now');
+        $result = $this_year->format('Y');
+        $name = $result - $categoryNumber + 1;
+        $findCategory = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
+
+        // Check if category exists
+        if (!$findCategory) {
+            throw $this->createNotFoundException('Category non trouvée');
+        }
+        
+        // Now you have the $category entity, you can access its ID
+        $categoryId = $findCategory->getId();
+
+        // Query EquipeRepository to find all Equipe entities with this category ID
+        $allTeams = $equipeRepository->findBy(['category' => $categoryId]);
+
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/match_choice_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'category' => $category,
+            'teams' => $allTeams,
         ]);
     }
 

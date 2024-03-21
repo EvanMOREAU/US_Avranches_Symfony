@@ -23,7 +23,7 @@
 
     <div class="col-lg-8 mx-auto p-5 py-md-5">
         <div class="mt-3 text-center">
-            <h1 class="h1 mb-2 display-4">Page d'appel - {{ category|upper }}</h1>
+            <h1 class="h1 mb-2 display-4">Match - {{ category|upper }}</h1>
         </div>
 
         <div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
@@ -44,15 +44,6 @@
         </div>
 
         <center>
-            <form>
-                <div class="text-center col-lg-2 pt-5">
-                    <select class="form-select" id="attendanceType">
-                        <option value="Entraînement">Entraînement</option>
-                        <option value="Match">Match</option>
-                    </select>
-                </div>
-            </form>
-
             <div class="pt-2">
                 <label for="attendanceDate">Date et heure :</label>
                 <input id="attendanceDate" type="datetime-local">
@@ -188,9 +179,9 @@
 
                 if (isConfirmed) {
                     // Continuer le processus de finalisation de l'appel
-                    const createAttendance = '{{ path('create_attendance', {'category': category|replace({'U': ''}) }) }}';
+                    const createAttendance = '{{ path('create_training_attendance', {'category': category|replace({'U': ''}) }) }}';
                     const reasonSelectors = document.querySelectorAll('.reason-selector select');
-                    const type = document.getElementById('attendanceType').value;
+                    const type = "Entraînement";
                     const datetime = document.getElementById('attendanceDate').value;
 
                     reasonSelectors.forEach((select) => {
