@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use DateTime;
+use DateTimeZone;
 use App\Entity\User;
 use App\Entity\Category;
 use App\Entity\Gathering;
@@ -25,7 +27,7 @@ class GatheringController extends AbstractController
 {
     // Affiche la liste des rassemblements
     #[Route('/', name: 'app_gathering')]
-    public function index(GatheringRepository $GatheringRepository): Response
+    public function index(GatheringRepository $GatheringRepository, CategoryRepository $CategoryRepository): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -40,6 +42,7 @@ class GatheringController extends AbstractController
         return $this->render('gathering/index.html.twig', [
             'controller_name' => 'GatheringController',
             'gatherings' => $GatheringRepository->findAll(),
+            'categories' => $CategoryRepository->findAll(),
         ]);
     }
 

@@ -5,17 +5,3 @@ index:
 verif_code_page:
     path: /verif-code
     controller: App\Controller\CodeController::enterCode
-
-choose_user_pdf:
-    path: /choose-user-pdf
-    controller: App\Controller\PdfController::chooseUserPdf
-    methods: ['GET']
-    requirements:
-        _role: 'ROLE_SUPER_ADMIN'
-
-pdf:
-    path: /pdf
-    controller: App\Controller\PdfController::pdf
-    methods: ['GET']
-    requirements:
-        _role: 'ROLE_SUPER_ADMIN'

@@ -8,7 +8,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\DBAL\Driver\IBMDB2\Exception\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserFixtures extends Fixture
+class AUserFixtures extends Fixture
 {
     private $passwordHasher;
 
@@ -25,7 +25,6 @@ class UserFixtures extends Fixture
         $superAdmin->setFirstName('SIO');
         $superAdmin->setLastName('2');
         $superAdmin->setDateNaissance($dateNaissance);
-        $superAdmin->setEmail('evan.moreau@etik.com');
         $plaintextPassword = "admin";
         $hashedPassword = $this->passwordHasher->hashPassword(
             $superAdmin,
@@ -46,8 +45,6 @@ class UserFixtures extends Fixture
             $player->setFirstName($faker->firstName);
             $player->setLastName($faker->lastName);
             $player->setDateNaissance($randomBirthdate);
-            $randomEmail = $faker->safeEmail;
-            $player->setEmail($randomEmail);
             $player->setWeight(0);
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
@@ -70,8 +67,6 @@ class UserFixtures extends Fixture
             $coach->setLastName($faker->lastName);
             $coach->setDateNaissance($randomBirthdate);
             $coach->setWeight(0);
-            $randomEmail = $faker->safeEmail;
-            $coach->setEmail($randomEmail);
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $coach,

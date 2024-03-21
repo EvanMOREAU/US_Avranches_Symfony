@@ -11,9 +11,11 @@
         "doctrine/doctrine-bundle": "^2.10",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.16",
+        "dompdf/dompdf": "^2.0",
         "fakerphp/faker": "*",
         "friendsofsymfony/ckeditor-bundle": "*",
-        "phpoffice/phpspreadsheet": "^1.29",
+        "knplabs/knp-snappy": "^1.5",
+        "phpoffice/phpspreadsheet": "^2.0",
         "sensio/framework-extra-bundle": "^6.2",
         "symfony/asset": "5.4.*",
         "symfony/console": "5.4.*",
@@ -30,7 +32,7 @@
         "symfony/var-dumper": "5.4.*",
         "symfony/yaml": "5.4.*",
         "symfonycasts/reset-password-bundle": "^1.19",
-        "tecnickcom/tcpdf": "^6.6"
+        "tecnickcom/tcpdf": "^6.7"
     },
     "config": {
         "allow-plugins": {

@@ -75,6 +75,14 @@
                                 }
                             }
                         });
+                        <script>
+                        // Script pour capturer l'image à partir du canvas
+                        html2canvas(document.getElementById("canvasElement")).then(function(canvas) {
+                            var imgData = canvas.toDataURL("image/png");
+                            var img = document.createElement("img");
+                            img.src = imgData;
+                            document.getElementById("hiddenImage").src = imgData; // Cachez cette image si vous ne voulez pas l'afficher
+                        });
                     </script>
                 </div>
             </div>
