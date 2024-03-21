@@ -38,7 +38,7 @@ class WeightController extends AbstractController
             $entityManager->persist($weight);
             $entityManager->flush();
             
-            return $this->redirectToRoute('app_weight_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_default', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('weight/new.html.twig', [

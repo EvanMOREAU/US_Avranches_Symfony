@@ -1,7 +1,7 @@
     <link rel="stylesheet" href="{{ asset('css/testsnew.css') }}">
 
     <div class="container">
-        <h1>Nouveau Poids</h1>
+        <h1>Enregistrement de poids</h1>
 
        {{ form_start(form, {'method': 'POST'}) }}
         
@@ -11,8 +11,8 @@
             {{ form_errors(form.value, {'attr': {'class': 'error-message'}}) }}
         </div>
         <br>
-        <button onClick='redirectToPage("/weight")' class="form-button btn-gray"><i class="fas fa-arrow-left"></i> Retour</button>
-        <button type="submit" class="form-button"><i class="fas fa-plus"></i> Créer</button>
+        {# <button onClick='redirectToPage("/weight")' class="form-button btn-gray"><i class="fas fa-arrow-left"></i> Retour</button> #}
+        <button type="submit" class="form-button"><i class="fas fa-plus"></i> Enregistrer</button>
                 
         {{ form_end(form) }}
     </div>

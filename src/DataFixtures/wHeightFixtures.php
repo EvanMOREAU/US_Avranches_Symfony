@@ -10,7 +10,7 @@ use App\Entity\Height;
 use App\Entity\User;
 use Faker\Factory;
 
-class HeightFixtures extends Fixture
+class wHeightFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {

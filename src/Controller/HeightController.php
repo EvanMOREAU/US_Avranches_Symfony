@@ -38,7 +38,7 @@ class HeightController extends AbstractController
             $entityManager->persist($height);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_height_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_default', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('height/new.html.twig', [

@@ -16,15 +16,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[Route('/parameter')]
 class ParameterController extends AbstractController
 {
-    #[Route('/', name: 'app_parameter')]
-    public function index(): Response
-    {
-        return $this->render('parameter/index.html.twig', [
-            'controller_name' => 'ParameterController',
-        ]);
-    }
 
-    #[Route('/modify', name: 'app_parameter_modify')]
+    #[Route('/', name: 'app_parameter')]
     public function modify(Request $request, EntityManagerInterface $entityManager, ImageUploaderHelper $imageUploaderHelper, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository): Response // Injection de la classe Request
     {
         $user = $this->getUser();

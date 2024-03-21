@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use DateTime;
 use App\Entity\Tests;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Tests>
@@ -61,5 +62,32 @@ class TestsRepository extends ServiceEntityRepository
             ->orderBy('t.date', 'DESC')
             ->getQuery()
             ->getResult();
+    }
+    public function countPlayerElements($playerId)
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.user', 'j') // Remplacez 'joueurs' par le nom de la relation entre test et joueur
+            ->andWhere('j.id = :playerId')
+            ->setParameter('playerId', $playerId)
+            ->select('COUNT(j) as playerElementsCount')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countTestsAddedThisMonth($userId)
+    {
+        $startDate = new DateTime('first day of this month');
+        $endDate = new DateTime('last day of this month');
+    
+        return $this->createQueryBuilder('t')
+            ->select('COUNT(t.id)')
+            ->andWhere('t.user = :userId')
+            ->andWhere('t.date >= :startDate')
+            ->andWhere('t.date <= :endDate')
+            ->setParameter('userId', $userId)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }
