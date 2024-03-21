@@ -147,7 +147,7 @@ class AttendanceController extends AbstractController
 
     // Page d'appel pour un match
     #[Route('/appel/match/{category}/{team}', name: 'app_attendance_match')]
-    public function match(string $category, string $team, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
+    public function match(string $category, string $team, string $teamId, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -158,31 +158,14 @@ class AttendanceController extends AbstractController
             }
         }
 
-        // Extract the numerical part of the category (removing the 'U')
-        $categoryNumber = intval(substr($category, 1));
-
-        // Trouver l'entité Category par le nom
-        $this_year = new \DateTime('now');
-        $result = $this_year->format('Y');
-        $name = $result - $categoryNumber + 1;
-        $findCategory = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
-
-        // Check if category exists
-        if (!$findCategory) {
-            throw $this->createNotFoundException('Category non trouvée');
-        }
-        
-        // Now you have the $category entity, you can access its ID
-        $categoryId = $findCategory->getId();
-
-        // Query EquipeRepository to find all Equipe entities with this category ID
-        $allTeams = $equipeRepository->findBy(['category' => $categoryId]);
+        // trouver tous les utilisateurs dans l'équipe $team
 
         // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/match_choice_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
             'category' => $category,
-            'teams' => $allTeams,
+            'team' => $team,
+            'teamId' => $teamId,
         ]);
     }
 
