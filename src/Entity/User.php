@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Tests;
 use App\Entity\Height;
 use App\Entity\Weight;
+use App\Entity\Palier;
 use App\Entity\Gathering;
 use App\Entity\Attendance;
 use Doctrine\DBAL\Types\Types;
@@ -62,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?float $posteCordY = null;
 
-  #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
     private Collection $attendances;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
@@ -90,16 +91,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profile_image = null;
 
-    
+
 
     /**
-    * @Assert\NotBlank(groups={"registration", "resetPassword"})
-    * @Assert\Length(
-    *     min=6,
-    *     minMessage="Votre mot de passe doit comporter au moins {{ limit }} caractères",
-    *     groups={"registration", "resetPassword"}
-    * )
-    */
+     * @Assert\NotBlank(groups={"registration", "resetPassword"})
+     * @Assert\Length(
+     *     min=6,
+     *     minMessage="Votre mot de passe doit comporter au moins {{ limit }} caractères",
+     *     groups={"registration", "resetPassword"}
+     * )
+     */
     private $plainPassword;
 
     #[ORM\Column]
@@ -114,10 +115,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Palier $palier = null;
-
-
+    #[ORM\Column(nullable: true)]
+    private ?int $palier = 0;
 
     public function getId(): ?int
     {
@@ -214,7 +213,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    
+
     public function getFirstName(): ?string
     {
         return $this->first_name;
@@ -239,10 +238,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCategory(){
+    public function getCategory()
+    {
         $this_year = new \DateTime('first day of January next year');
         $diff = $this_year->diff($this->date_naissance);
-        return 'U'.$diff->y + 1;
+        return 'U' . $diff->y + 1;
     }
 
     /**
@@ -447,7 +447,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->weights->contains($weight)) {
             $this->weights->add($weight);
-            $weight->setUserId($this);
+            $weight->setUser($this);
         }
 
         return $this;
@@ -457,8 +457,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->weights->removeElement($weight)) {
             // set the owning side to null (unless already changed)
-            if ($weight->getUserId() === $this) {
-                $weight->setUserId(null);
+            if ($weight->getUser() === $this) {
+                $weight->setUser(null);
             }
         }
 
@@ -507,17 +507,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPalier(): ?Palier
+    public function getPalier(): ?int
     {
         return $this->palier;
     }
 
-    public function setPalier(?Palier $palier): static
+    public function setPalier(int $palier): static
     {
         $this->palier = $palier;
 
         return $this;
     }
-
-
 }

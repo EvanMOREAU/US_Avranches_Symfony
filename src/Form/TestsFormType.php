@@ -146,13 +146,6 @@ class TestsFormType extends AbstractType
             'label' => 'Vitesse (en millisecondes)',
             'required' => false,
         ])
-        ->add('palier', EntityType::class, [
-            'class' => Palier::class,
-            'choices' => $options['paliers'],
-            'choice_label' => 'name',
-            'placeholder' => 'Sélectionner un palier',
-            'required' => false,
-        ])
 
 
 

@@ -1,6 +1,7 @@
 index:
     path: /
     controller: App\Controller\DefaultController::index
+
 verif_code_page:
     path: /verif-code
     controller: App\Controller\CodeController::enterCode

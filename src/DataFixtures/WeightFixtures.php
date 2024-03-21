@@ -26,7 +26,7 @@ class WeightFixtures extends Fixture
                 $weight = new Weight();
                 $weight->setValue($faker->randomFloat(2, 50, 100)); // Exemple de valeur aléatoire entre 50 et 100
                 $weight->setDate($faker->dateTimeBetween('-1 year', 'now'));
-                $weight->setUserId($user);
+                $weight->setUser($user);
 
                 $manager->persist($weight);
             }

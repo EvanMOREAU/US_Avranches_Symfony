@@ -24,7 +24,15 @@ services:
 
     # Ajoutez l'alias ici
     'App\Service\UserVerificationService': '@app.service.user_verification'
-        
+    
+    App\Service\HeightVerificationService:
+        arguments:
+            $tokenStorage: '@security.token_storage'
+            $entityManager: '@doctrine.orm.entity_manager' 
+    App\Service\WeightVerificationService:
+        arguments:
+            $tokenStorage: '@security.token_storage'
+            $entityManager: '@doctrine.orm.entity_manager'
     
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

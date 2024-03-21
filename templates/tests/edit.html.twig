@@ -99,12 +99,6 @@
             {{ form_errors(form.video, {'attr': {'class': 'error-message'}}) }}
         </div>
 
-        <div class="form-group {% if form.palier.vars.errors|length > 0 %}has-error{% endif %}">
-            {{ form_label(form.palier, 'Palier', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.palier, {'attr': {'class': 'form-input', 'placeholder': 'Sélectionner un palier'}}) }}
-            {{ form_errors(form.palier, {'attr': {'class': 'error-message'}}) }}
-        </div>
-
 
         {% if is_granted("ROLE_SUPER_ADMIN") %}
             <div class="form-group {% if form.user.vars.errors|length > 0 %}has-error{% endif %}">
@@ -113,6 +107,7 @@
                 {{ form_errors(form.user, {'attr': {'class': 'error-message'}}) }}
             </div>
         {% endif %}
+        
         <br>
         <button onClick='redirectToPage("/tests")' class="form-button btn-gray"><i class="fas fa-arrow-left"></i> Retour</button>
         <button type="submit" class="form-button"><i class="fas fa-save"></i> Enregistrer</button>

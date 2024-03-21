@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Form\HeightType;
+use App\Form\WeightType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Email;
@@ -75,6 +77,12 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
+            
+            // // Ajoutez le formulaire Weight
+            // ->add('weight', WeightType::class)
+            
+            // // Ajoutez le formulaire Height
+            // ->add('height', HeightType::class)
             
         ;
     }

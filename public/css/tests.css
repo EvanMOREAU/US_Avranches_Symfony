@@ -161,14 +161,6 @@ body {
   margin-left: 5px;
 }
 
-.validated {
-  color: green;
-}
-
-.not-validated {
-  color: red;
-}
-
 
 @media (max-width: 1200px) {
   .cards .card {

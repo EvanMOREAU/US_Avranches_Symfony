@@ -32,7 +32,6 @@ class UserType extends AbstractType
             ->add('first_name')
             ->add('last_name')
             ->add('date_naissance')
-            ->add('weight')
             ->add('profile_image', FileType::class, [
                 'label' => 'Image de profil',
                 'mapped' => false,

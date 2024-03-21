@@ -36,7 +36,7 @@ class PdfController extends AbstractController
         $token = $this->get('security.token_storage')->getToken();
 
         // Vérifiez le rôle de l'utilisateur
-        if ($this->isGranted('ROLE_COACH')) {
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
             // L'utilisateur est super admin, vérifiez s'il a sélectionné un autre utilisateur
             $selectedUserId = $request->query->get('userId'); // Use 'userId' as the parameter name
     
@@ -149,17 +149,28 @@ class PdfController extends AbstractController
                     $weights = $this->getWeightsForUser($user, $entityManager);
                     foreach ($weights as $weight) {
                         // Utilisez la fonction pour récupérer la date du poids la plus proche
-                        $nearestWeightDate = $this->getNearestWeightDate($user, $test->getDate(), $entityManager);
-
+                        // $nearestWeightDate = $this->getNearestWeightDate($user, $test->getDate(), $entityManager);
+                        $date = $weight->getDate();
                         $contentTests .= '<br><hr><br><div></div>';
                         $contentTests .= '<b>Poids le </b>';
 
-                        // Affichez la date du poids sur le PDF si elle est disponible
-                        if ($nearestWeightDate) {
-                            $contentTests .= '<b>' . $nearestWeightDate->format('d/m/Y') . ' :</b> ' . $weight->getValue() . ' kg';
-                        } else {
-                            $contentTests .= $weight->getValue() . ' kg';
+                        //Affichez la date du poids sur le PDF si elle est disponible
+                        if ($date) {
+                            $formatted_date = $date->format("d-m-Y");
+
+                            $contentTests .= '<b>' . $formatted_date . ' :</b> ' . $weight->getValue() . ' kg';
+                        }else {
+                            $contentTests .= "fail";
                         }
+                            // } else {
+                        //     $contentTests .= $weight->getValue() . ' kg';
+                        // }
+                        // Affichez la date du poids sur le PDF si elle est disponible
+                        // if ($nearestWeightDate) {
+                        //     $contentTests .= '<b>' . $nearestWeightDate->format('d/m/Y') . ' :</b> ' . $weight->getValue() . ' kg';
+                        // } else {
+                        //     $contentTests .= $weight->getValue() . ' kg';
+                        // }
                         // N'affichez qu'une seule fois, car vous avez déjà récupéré tous les poids en dehors de cette boucle
                         break;
                     }
@@ -242,7 +253,7 @@ class PdfController extends AbstractController
     #[Route('/choose-user-pdf', name: 'app_choose_user_pdf')]
     public function chooseUserPdf(UserRepository $userRepository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_COACH');
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         $users = $userRepository->findBy([], ['last_name' => 'ASC']);
 

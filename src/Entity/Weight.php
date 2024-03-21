@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use App\Repository\WeightRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: WeightRepository::class)]
-#[ORM\Table(name:'tbl_weight')]
+#[ORM\Table(name: 'tbl_weight')]
 class Weight
 {
     #[ORM\Id]
@@ -22,7 +23,7 @@ class Weight
     private ?\DateTimeInterface $date = null;
 
     #[ORM\ManyToOne(inversedBy: 'weights')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
     private ?User $user = null;
 
     public function getId(): ?int
@@ -54,16 +55,15 @@ class Weight
         return $this;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUserId(?User $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
         return $this;
     }
-
 }

@@ -202,6 +202,7 @@ class ExcelController extends AbstractController
                 $heightRow = 2; // Commencez à partir de la ligne .
 
                 // Déclarez la variable $height avant la boucle
+                $height = null;
 
                 foreach ($user->getHeights() as $height) {
                     // Récupérez les informations de poids

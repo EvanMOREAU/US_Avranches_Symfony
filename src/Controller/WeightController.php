@@ -32,7 +32,7 @@ class WeightController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $token = $this->get('security.token_storage')->getToken();
             $user = $token->getUser();
-            $weight->setUserId($user);
+            $weight->setUser($user);
             $currentDate = new \DateTime();
             $weight->setDate($currentDate);
             $entityManager->persist($weight);

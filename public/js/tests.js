@@ -29,49 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
-function validateTest(validationUrl, testId) {
-    fetch(validationUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: JSON.stringify({ testId }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Response data:', data);
-        if (data.success) {
-            console.log('Test validé avec succès!');
-            window.location.reload();
-        } else {
-            console.log('Erreur lors de la validation du test : ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Erreur lors de la validation du test:', error);
-    });
-}
-
-function displayValidationConfirmationModal(validationUrl, testId) {
-        const validationConfirmationMessage = "Voulez-vous vraiment valider ce test ?";
-
-        // Set the confirmation message
-        $('#displayValidationConfirmationModalBody' + testId).text(validationConfirmationMessage);
-
-        // Show the modal
-        $('#displayValidationConfirmationModal' + testId).modal('show');
-
-        // Clear previous click event handlers to avoid multiple calls
-        $('#confirmValidationButton' + testId).off('click');
-
-        // Attach click event handler for the confirm button
-        $('#confirmValidationButton' + testId).on('click', function () {
-            validateTest(validationUrl, testId);
-            // Hide the modal after confirmation
-            $('#displayValidationConfirmationModal' + testId).modal('hide');
-        });
-    }
 
 function cancelTest(cancelUrl, testId) {
     // Envoi de la requête AJAX pour annuler le test
