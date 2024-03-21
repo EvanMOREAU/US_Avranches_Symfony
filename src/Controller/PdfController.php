@@ -36,7 +36,7 @@ class PdfController extends AbstractController
         $token = $this->get('security.token_storage')->getToken();
 
         // Vérifiez le rôle de l'utilisateur
-        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($this->isGranted('ROLE_COACH')) {
             // L'utilisateur est super admin, vérifiez s'il a sélectionné un autre utilisateur
             $selectedUserId = $request->query->get('userId'); // Use 'userId' as the parameter name
     
@@ -253,7 +253,7 @@ class PdfController extends AbstractController
     #[Route('/choose-user-pdf', name: 'app_choose_user_pdf')]
     public function chooseUserPdf(UserRepository $userRepository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_COACH');
 
         $users = $userRepository->findBy([], ['last_name' => 'ASC']);
 

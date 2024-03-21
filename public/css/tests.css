@@ -162,6 +162,7 @@ body {
 }
 
 
+
 @media (max-width: 1200px) {
   .cards .card {
     flex-basis: calc(33.33% - 30px); /* 3 cartes par ligne sur des écrans plus petits */

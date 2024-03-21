@@ -54,14 +54,47 @@ class Category
         return $this->id;
     }
 
-    public function getName(): ?string
+    // public function getName(): ?string
+    // {
+    //     return $this->name;
+    // }
+
+    // public function setName(string $name): static
+    // {
+    //     $this->name = $name;
+    //     return $this;
+    // }
+
+    public function getRealName(): ?string
     {
         return $this->name;
     }
 
+    public function getNumber(): ?string
+    {
+        $this_year = new \DateTime('first day of January next year');
+        $result = $this_year->format('Y');
+
+        $diff = $result - $this->name;
+        return $diff;
+    }
+
+    public function getName(): ?string
+    {
+        $this_year = new \DateTime('first day of January next year');
+        $result = $this_year->format('Y');
+
+        $diff = $result - $this->name;
+        return 'U' . $diff;
+    }
+
     public function setName(string $name): static
     {
-        $this->name = $name;
+        $this_year = new \DateTime('now');
+        $result = $this_year->format('Y');
+        $year = $result - $name + 1;
+        
+        $this->name = $year;
 
         return $this;
     }

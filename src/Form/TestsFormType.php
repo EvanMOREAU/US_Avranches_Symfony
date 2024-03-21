@@ -147,6 +147,21 @@ class TestsFormType extends AbstractType
             'required' => false,
         ])
 
+        ->add('video', FileType::class, [
+            'label' => 'Vidéo',
+            'required' => false, // Le champ n'est pas obligatoire lors de la modification
+            'constraints' => [
+                new File([
+                    'maxSize' => '1024M',
+                    'mimeTypes' => [
+                        'video/*',
+                    ],
+                    'mimeTypesMessage' => 'Please upload a valid video file',
+                ]),
+            ],
+
+        ])
+
 
 
         ->add('video', FileType::class, [

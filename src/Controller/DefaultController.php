@@ -29,6 +29,13 @@ class DefaultController extends AbstractController
         $userVerif = $this->userVerificationService->verifyUser();
         $heightVerif = $this->heightVerificationService->verifyHeight();
         $weightVerif = $this->weightVerificationService->verifyWeight();
+
+        $user = $this->getUser();
+        if ($user) {
+            $user->setLastConnection(new \DateTime());
+            $this->getDoctrine()->getManager()->flush();
+        }
+
         if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
         else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
         else if($userVerif == 1) {
@@ -38,6 +45,7 @@ class DefaultController extends AbstractController
                 if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
                 else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
                 else if($weightVerif == 1){return $this->render('base.html.twig', ['controller_name' => 'DefaultController',]);}
+                // return $this->render('base.html.twig', ['controller_name' => 'DefaultController',]);
             }
         }
 

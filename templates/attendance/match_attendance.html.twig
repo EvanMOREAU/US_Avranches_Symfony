@@ -1,0 +1,234 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Page d'appel - {{ category|upper }}
+{% endblock %}
+
+{% block body %}
+    <link href="/css/attendance.css" rel="stylesheet"/>
+    <style>
+        img {
+            filter: grayscale(100%) brightness(50%);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2%;
+            right: 2%;
+            z-index: 1000;
+        }
+    </style>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+
+    <div class="col-lg-8 mx-auto p-5 py-md-5">
+        <div class="mt-3 text-center">
+            <h1 class="h1 mb-2 display-4">Match - {{ category|upper }}</h1>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
+            {% set usersSorted = users|sort((a, b) => a.lastName <=> b.lastName) %}
+            {% for user in usersSorted %}
+                <div class="col">
+                    <div class="img card-attendance-u" data-user-id="{{ user.id }}">
+                        <div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="..."></div>
+                        <div class="card-body">
+                            <!-- Affiche le nom de famille uniquement sur les écrans plus grands (md et plus) -->
+                            <h5 class="card-title text-center pt-1 d-none d-md-block">{{ user.firstName }} {{ user.lastName }}</h5>
+                            <!-- Affiche le prénom sur les écrans plus petits (jusqu'à md) -->
+                            <h5 class="card-title text-center pt-1 d-md-none">{{ user.firstName }}</h5>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <center>
+            <div class="pt-2">
+                <label for="attendanceDate">Date et heure :</label>
+                <input id="attendanceDate" type="datetime-local">
+            </div>
+        </center>
+
+        <div class="g-4 pt-5 row">
+            <div class="col text-end" style="text-align: start;">
+                <a class="btn btn-success" id="finaliserAppel">
+                    <i class="fa-solid fa-check"></i>
+                    Finaliser l'appel</a>
+            </div>
+            <div class="col">
+                <a class="btn btn-danger" href="{{ path('app_attendance') }}">
+                    <i class="fa-solid fa-xmark"></i>
+                    Annuler l'appel</a>
+            </div>
+        </div>
+
+        <div class="g-4 pt-3 pb-3">
+            <div class="col text-center" style="text-align: start;">
+                <a href="/" class="btn btn-secondary">
+                    <i class="fa-solid fa-house"></i>
+                    Accueil</a>
+            </div>
+        </div>
+        
+        <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Appel modifié avec succès !
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    L'appel n'a pas pu être modifié !
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const abss = document.querySelectorAll('.abs');
+            const presentUserIds = [];
+            const absentUserIds = [];
+
+            abss.forEach(abs => {
+                presentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
+                abs.addEventListener('click', function() {
+                    abs.classList.toggle('present');
+                    abs.classList.toggle('absent');
+
+                    // Obtenir l'ID de l'utilisateur
+                    const userId = abs.closest('.img').getAttribute('data-user-id');
+
+                    if (abs.classList.contains('present')) {
+                        presentUserIds.push(abs.closest('.img').getAttribute('data-user-id'));
+
+                        const reasonSelector = document.getElementById('reasonSelector' + userId);
+                        reasonSelector.remove();
+                    } else {
+                        const index = presentUserIds.indexOf(abs.closest('.img').getAttribute('data-user-id'));
+                        if (index !== -1) {
+                            presentUserIds.splice(index, 1);
+                        }
+                    }
+                    if (abs.classList.contains('absent')) {
+                        const reasonSelectorDiv = document.createElement('div');
+                        reasonSelectorDiv.classList.add('reason-selector');
+                        reasonSelectorDiv.id = 'reasonSelector' + userId;
+                        reasonSelectorDiv.innerHTML = `
+                            <select class="form-select">
+                                <option value="Malade">Malade</option>
+                                <option value="Blessé">Blessé</option>
+                                <option value="Sport">Sport</option>
+                            </select>
+                        `;
+                        abs.closest('.img').appendChild(reasonSelectorDiv);
+                    } else {
+                        const index = absentUserIds.indexOf(abs.closest('.img').getAttribute('data-user-id'));
+                        if (index !== -1) {
+                            absentUserIds.splice(index, 1);
+                        }
+                    }
+                });
+            });
+
+            function showToast(message, type) {
+                // Create a toast element
+                const toast = document.createElement('div');
+                toast.classList.add('toast');
+                toast.classList.add(`bg-${type}`);
+                toast.setAttribute('role', 'alert');
+                toast.setAttribute('aria-live', 'assertive');
+                toast.setAttribute('aria-atomic', 'true');
+                toast.style.position = 'absolute';
+                toast.style.top = '0';
+                toast.style.right = '0';
+
+                // Create the toast body
+                const toastBody = document.createElement('div');
+                toastBody.classList.add('toast-body');
+                toastBody.textContent = message;
+
+                // Append the body to the toast
+                toast.appendChild(toastBody);
+
+                // Append the toast to the document
+                document.body.appendChild(toast);
+
+                // Initialize the Bootstrap Toast
+                const bootstrapToast = new bootstrap.Toast(toast);
+
+                // Show the toast
+                bootstrapToast.show();
+
+                // Automatically remove the toast after a delay (adjust as needed)
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 5000); // 5000 milliseconds (5 seconds)
+            }
+
+            function finalizeAttendanceAndRedirect() {
+                // Afficher une boîte de dialogue de confirmation
+                const isConfirmed = confirm("Êtes-vous sûr de vouloir finaliser l'appel ?");
+
+                if (isConfirmed) {
+                    // Continuer le processus de finalisation de l'appel
+                    const createAttendance = '{{ path('create_training_attendance', {'category': category|replace({'U': ''}) }) }}';
+                    const reasonSelectors = document.querySelectorAll('.reason-selector select');
+                    const type = "Entraînement";
+                    const datetime = document.getElementById('attendanceDate').value;
+
+                    reasonSelectors.forEach((select) => {
+                        const userId = select.closest('.img').getAttribute('data-user-id');
+                        const reason = select.value;
+
+                        const absElement = select.closest('.img').querySelector('.abs');
+
+                        if (absElement.classList.contains('present')) {
+                            presentUserIds.push({
+                                userId: userId
+                            });
+                        }
+
+                        if (absElement.classList.contains('absent')) {
+                            absentUserIds.push({
+                                userId: userId,
+                                reason: reason
+                            });
+                        }
+                    });
+
+                    fetch(createAttendance, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            presentUserIds: presentUserIds,
+                            absentUserIds: absentUserIds,
+                            category: '{{ category|replace({'U': ''}) }}',
+                            type: type,
+                            datetime: datetime
+                        })
+                    }).then(response => {
+                        if (response.ok) {
+                            $("#successToast").toast("show");
+                            window.location.href = '{{ path('app_attendance') }}';
+                        } else {
+                            $("#errorToast").toast("show");
+                        }
+                    });
+                }
+            }
+
+            document.getElementById('finaliserAppel').addEventListener('click', finalizeAttendanceAndRedirect);
+        });
+    </script>
+
+{% endblock %}

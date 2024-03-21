@@ -39,77 +39,95 @@ td {
 
 /* Bouton de selection (base de la page) */
 .poste-selec-button {
-    background-color: #6382fc;
-    color: #fff;
-    width: 8.5em;
-    height: 2.9em;
-    border: #3654ff 0.2em solid;
-    border-radius: 11px;
-    text-align: center;
-    transition: all 0.6s ease;
-    font-size: 0.8vw;
-    font-size: min(2px);
-    font-size: max(12px);
+    text-decoration: none;
+    padding: 10px;
+    font-family: arial;
+    font-size: 1em;
+    color: #FFFFFF;
+    background-color: #4f81bd;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border: 1px solid #FFFFFF;
 }
 
 .poste-selec-button:hover {
-    background-color: #3654ff;
-    cursor: pointer;
+    padding: 10px;
+    font-size: 1.1em;
 }
 
 /* Bouton du terrain */
 .poste-button {
     position: absolute;
-    background-color: #6382fc;
-    border: #3654ff 0.2em solid;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    padding: 4px 7px;
-    transition: all 0.6s ease;
-    font-size: 1.5vw;
-    font-size: min(2px);
-    font-size: max(12px);
+    text-decoration: none;
+    padding: 3px;
+    font-family: arial;
+    font-size: 0.8em;
+    color: #FFFFFF;
+    background-color: #4f81bd;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border: 2px outset #FFFFFF;
+    box-shadow: 1px 1px 7px #444444;
+    -webkit-box-shadow: 1px 1px 7px #444444;
+    -moz-box-shadow: 1px 1px 7px #444444;
 }
 
 .poste-button:hover{
-    background-color: #3654ff;
+    padding: 3px;
+    border: 2px inset #FFFFFF;
+    box-shadow: 1px 1px 7px #3f3f3f;
+    -webkit-box-shadow: 1px 1px 7px #3f3f3f;
+    -moz-box-shadow: 1px 1px 7px #3f3f3f;
 }
 
 /* Position de chaque bouton du terrain */
-#gardien { /* Gardien */
-    top: 78%;
-    left: 45%;
+#gardien {
+    transform: translate(-50%, -50%);
+    top: 80%;
+    left: 50%;
 }
 
-#defenseurg { /* Defenseur gauche */
+#defenseurg {
+    transform: translate(-50%, -50%);
     top: 70%;
-    left: 21%;
-}
-#defenseurd { /* Defenseur droit */
-    top: 70%;
-    left: 62%;
+    left: 30%;
 }
 
-#milieug { /* Milieu guache */
+#defenseurd {
+    transform: translate(-50%, -50%);
+    top: 70%;
+    left: 69%;
+}
+
+#milieug {
+    transform: translate(-50%, -50%);
     top: 48.3%;
-    left: 15%;
+    left: 20%;
 }
-#milieuoff { /* Milieu offensif */
+
+#milieuoff {
+    transform: translate(-50%, -50%);
     top: 41%;
-    left: 52%;
-}
-#milieudef { /* Milieu defensif */
-    top: 55%;
-    left: 35%;
-}
-#milieud { /* Milieu droit */
-    top: 48.3%;
-    left: 72%;
+    left: 57%;
 }
 
-#attaquant { /* Attaquant */
+#milieudef {
+    transform: translate(-50%, -50%);
+    top: 58%;
+    left: 40%;
+}
+
+#milieud {
+    transform: translate(-50%, -50%);
+    top: 48.3%;
+    left: 80%;
+}
+
+#attaquant {
+    transform: translate(-50%, -50%);
     top: 29%;
-    left: 42%;
+    left: 45%;
 }
 

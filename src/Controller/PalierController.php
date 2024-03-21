@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\User;
 use App\Entity\Palier;
 use App\Form\PalierType;
@@ -36,7 +37,6 @@ class PalierController extends AbstractController
                 'paliers' => $paliers,
             ]);
         }
-    }
 
 
     #[Route('/new', name: 'app_palier_new', methods: ['GET', 'POST'])]
@@ -109,15 +109,18 @@ class PalierController extends AbstractController
     }
 
 
+
     #[Route('/palier/{id}', name: 'app_palier_delete', methods: ['POST'])]
     #[IsGranted("ROLE_SUPER_ADMIN")]
     public function delete(Request $request, Palier $palier, EntityManagerInterface $entityManager): Response
+
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         $response = ['success' => false];
 
         if ($this->isCsrfTokenValid('delete' . $palier->getId(), $request->request->get('_token'))) {
+
             $entityManager->remove($palier);
             $entityManager->flush();
 
@@ -170,5 +173,6 @@ class PalierController extends AbstractController
         return $this->render('validation.html.twig', [
             'users' => $users,
         ]);
+
     }
 }

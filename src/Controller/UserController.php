@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
+use App\Repository\UserRepository;
+use App\Repository\HeightRepository;
+use App\Repository\WeightRepository;
 use App\Services\ImageUploaderHelper;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -72,31 +74,7 @@ class UserController extends AbstractController
             'users' => $userRepository->findAll(),
         ]);
     }
-
-    #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('user/new.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
-
+    
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): Response
     {
@@ -157,13 +135,20 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager, WeightRepository $weightRepository, HeightRepository $heightRepository): Response
     {
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
 
+        
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+
+            // foreach($user->getWeights() as $Weight){
+            //     $user->removeWeight($Weight);
+            // }
+            $heightRepository->removeByUser($user);
+            $weightRepository->removeByUser($user);
             $entityManager->remove($user);
             $entityManager->flush();
         }
@@ -171,22 +156,39 @@ class UserController extends AbstractController
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 
+    #[Route('/{id}/poste-cache', name: 'app_user_cacheposte', methods: ['GET'])]
+    public function poste_cache(user $user, LoggerInterface $logger): Response
+    {
+        if (!$this->isAccessGranted($user)) {
+            throw $this->createAccessDeniedException('Access denied.');
+        }
+
+        return $this->render('user/hiddenposte.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
     #[Route('/{id}/poste', name: 'app_user_poste', methods: ['GET'])]
     public function poste(user $user, LoggerInterface $logger): Response
     {
-        // $logger->debug('poste() user->getFirstname() = ' . $user->getFirstname());
+        if (!$this->isAccessGranted($user)) {
+            throw $this->createAccessDeniedException('Access denied.');
+        }
+
         return $this->render('user/poste.html.twig', [
             'user' => $user,
         ]);
     }
 
-    #[Route('/{id}/poste-cache', name: 'app_user_cacheposte', methods: ['GET'])]
-    public function poste_cache(user $user, LoggerInterface $logger): Response
+    private function isAccessGranted(User $user): bool
     {
-        // $logger->debug('poste() user->getFirstname() = ' . $user->getFirstname());
-        return $this->render('user/hiddenposte.html.twig', [
-            'user' => $user,
-        ]);
+        $currentUser = $this->getUser();
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+        
+        return $currentUser && $currentUser->getId() === $user->getId();
     }
 
     #[Route('/poste/poste-coach', name: 'app_user_coach', methods: ['GET'])]

@@ -13,22 +13,33 @@ class CategoryFixtures extends Fixture
     // Cette méthode est appelée lors du chargement des fixtures et est utilisée pour peupler la base de données avec des données d'exemple.
     public function load(ObjectManager $manager): void
     {
-        // Crée 4 catégories avec des noms comme "U10", "U11", "U12" et "U13".
-        for ($i = 10; $i <= 13; $i++) {
-            $category = new Category();
+        // Création de "U10"
+        $category1 = new Category();
+        $category1->setName("10");
+        $category1->setImage("U10.jpg");
+        $category1->setColor("#AA26CF");
+        $manager->persist($category1);
 
-            // Définit le nom de la catégorie, par exemple, "U10".
-            $category->setName("U" . $i);
+        // Création de "U11"
+        $category2 = new Category();
+        $category2->setName("11");
+        $category2->setImage("U11.jpg");
+        $category2->setColor("#19B839");
+        $manager->persist($category2);
 
-            // Définit le nom de l'image pour la catégorie, par exemple, "U10.jpg".
-            $category->setImage("U" . $i . ".jpg");
+        // Création de "U12"
+        $category3 = new Category();
+        $category3->setName("12");
+        $category3->setImage("U12.jpg");
+        $category3->setColor("#D4871C");
+        $manager->persist($category3);
 
-            // Définit le code couleur pour la catégorie, par exemple, "#FF5A5A".
-            $category->setColor("#FF5A5A");
-
-            // Persiste l'objet catégorie pour le préparer à être sauvegardé dans la base de données.
-            $manager->persist($category);
-        }
+        // Création de "U13"
+        $category4 = new Category();
+        $category4->setName("13");
+        $category4->setImage("U13.jpg");
+        $category4->setColor("#B71515");
+        $manager->persist($category4);
 
         // Flush (sauvegarde) tous les objets catégorie persistés dans la base de données.
         $manager->flush();

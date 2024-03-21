@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\AttendanceRepository;
+use App\Repository\EquipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,7 @@ class AttendanceController extends AbstractController
         $this->logger = $logger;
     }
 
-    // Page principale d'appel
+    // Page principale d'appel qui affiche les catégories
     #[Route('/appel', name: 'app_attendance')]
     public function index(CategoryRepository $CategoryRepository): Response
     {
@@ -52,9 +53,29 @@ class AttendanceController extends AbstractController
         ]);
     }
 
-    // Page d'appel pour une catégorie spécifique
-    #[Route('/appel/{category}', name: 'app_attendance_u')]
-    public function attendance(string $category, UserRepository $UserRepository): Response
+    // Page du choix d'appel (entraînement ou match)
+    #[Route('/appel/choix/{category}', name: 'app_attendance_choice')]
+    public function choice(string $category): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/choice_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'category' => $category,
+        ]);
+    }
+
+    // Page d'appel pour un entraînement
+    #[Route('/appel/entraînement/{category}', name: 'app_attendance_training')]
+    public function training(string $category, UserRepository $UserRepository): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -74,15 +95,83 @@ class AttendanceController extends AbstractController
         });
 
         // Rendre le modèle en fonction de la catégorie
-        return $this->render('attendance/attendance.html.twig', [
+        return $this->render('attendance/training_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
             'category' => $category,
             'users' => $usersInCategory,
         ]);
     }
 
-    #[Route('/create-attendance-{category}', name: 'create_attendance', methods: ['POST'])]
-    public function createAttendance(Request $request, EntityManagerInterface $entityManager): Response
+    // Page d'appel pour un match
+    #[Route('/appel/match/{category}', name: 'app_attendance_match_choice')]
+    public function choiceMatch(string $category, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // $category = "U10" / "U11" / ...
+
+        // Extract the numerical part of the category (removing the 'U')
+        $categoryNumber = intval(substr($category, 1));
+
+        // Trouver l'entité Category par le nom
+        $this_year = new \DateTime('now');
+        $result = $this_year->format('Y');
+        $name = $result - $categoryNumber + 1;
+        $findCategory = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
+
+        // Check if category exists
+        if (!$findCategory) {
+            throw $this->createNotFoundException('Category non trouvée');
+        }
+        
+        // Now you have the $category entity, you can access its ID
+        $categoryId = $findCategory->getId();
+
+        // Query EquipeRepository to find all Equipe entities with this category ID
+        $allTeams = $equipeRepository->findBy(['category' => $categoryId]);
+
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/match_choice_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'category' => $category,
+            'teams' => $allTeams,
+        ]);
+    }
+
+    // Page d'appel pour un match
+    #[Route('/appel/match/{category}/{team}', name: 'app_attendance_match')]
+    public function match(string $category, string $team, string $teamId, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // trouver tous les utilisateurs dans l'équipe $team
+
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/match_choice_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'category' => $category,
+            'team' => $team,
+            'teamId' => $teamId,
+        ]);
+    }
+
+    // Crée un nouvel entraînement avec la catégorie et les joueurs
+    #[Route('/create-training-attendance-{category}', name: 'create_training_attendance', methods: ['POST'])]
+    public function createTrainingAttendance(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -103,7 +192,10 @@ class AttendanceController extends AbstractController
         $type = $requestData['type'];
 
         // Trouver l'entité Category par le nom
-        $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $categoryName]);
+        $this_year = new \DateTime('now');
+        $result = $this_year->format('Y');
+        $name = $result - $categoryName + 1;
+        $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
 
         if (!$category) {
             return new JsonResponse(['error' => 'Catégorie invalide'], Response::HTTP_BAD_REQUEST);
@@ -124,7 +216,7 @@ class AttendanceController extends AbstractController
         if ($madeByUser) {
             $gathering->setMadeBy($madeByUser);
         } else {
-            return new JsonResponse(['error' => 'Utilisateur invalide pour MadeBy'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => 'Utilisateur invalide'], Response::HTTP_BAD_REQUEST);
         }
 
         $entityManager->persist($gathering);
@@ -163,11 +255,12 @@ class AttendanceController extends AbstractController
         // Envoyer les modifications à la base de données
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Matches played updated successfully']);
+        return new JsonResponse(['message' => 'Entraînement créée avec succès']);
     }
 
+    // Affichage la page permettant la modification d'appel
     #[Route('/modify-attendance/{gathering}', name: 'modify_attendance', methods: ['GET'])]
-    public function modifyAttendance(string $gathering, UserRepository $UserRepository, AttendanceRepository $attendanceRepository): Response
+    public function modifyAttendance(string $gathering, UserRepository $UserRepository, AttendanceRepository $attendanceRepository, ): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -179,7 +272,7 @@ class AttendanceController extends AbstractController
         }
 
         // Récupère les présences pour le rassemblement donné
-        $attendances = $attendanceRepository->findBy(['Gathering' => $gathering]);     
+        $attendances = $attendanceRepository->findBy(['Gathering' => $gathering]);
         $category = $attendances[0]->getUser()->getCategory();
 
         // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
@@ -196,281 +289,77 @@ class AttendanceController extends AbstractController
             'category' => $category,
             'users' => $usersInCategory,
             'gathering' => $gathering,
-            'attendances' => $attendances,            
+            'attendances' => $attendances,
         ]);
     }
-    
+
+    // Modifie l'appel pour le rassemblement de l'équipe choisie par le coach
     #[Route('/update-attendance/{gathering}', name: 'update_attendance', methods: ['POST'])]
-    public function updateAttendance(Request $request, Gathering $gathering): JsonResponse
+    public function updateAttendance(string $gathering, UserRepository $userRepository, AttendanceRepository $attendanceRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
-        // Get data from the request
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // Récupérer le gathering spécifié
+        $gatheringEntity = $entityManager->getRepository(Gathering::class)->find($gathering);
+
+        if (!$gatheringEntity) {
+            return new JsonResponse(['error' => 'Gathering not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Analyser les données JSON de la requête
         $requestData = json_decode($request->getContent(), true);
+
+        $type = $requestData['type'];
+        $parisTimezone = new DateTimeZone('Europe/Paris');
+        $datetime = new \DateTime($requestData['datetime'], $parisTimezone);
+
         $presentUserIds = $requestData['presentUserIds'];
         $absentUserIds = $requestData['absentUserIds'];
-        $type = $requestData['type'];
-        $datetime = new \DateTime($requestData['datetime']);
-    
-        // Get the EntityManager
-        $entityManager = $this->getDoctrine()->getManager();
-    
-        try {
-            // Update the gathering details
-            $gathering->setType($type);
-            $gathering->setGatheringHappenedDate($datetime);
 
-            // Update every attendance details one by one
-            foreach ($gathering->getAttendances() as $attendance) {
-                // Update attendance details
-                // $attendance->setIsPresent(False);
-                // $attendance->setReason("test");
+        $gatheringEntity->setType($type);
+        $gatheringEntity->setGatheringHappenedDate($datetime);
 
-                // $entityManager->persist($attendance);
+        // Mettre à jour les enregistrements de présence pour les utilisateurs présents
+        foreach ($presentUserIds as $userId) {
+            $user = $userRepository->find($userId);
 
-                // Update attendance records for present users
-                foreach ($presentUserIds as $userId) {
-                    $user = $entityManager->getRepository(User::class)->find($userId);
-        
-                    if ($user == $userId) {
-                        $attendance->setIsPresent(true);
-                        $attendance->setReason(null);
-                        $entityManager->persist($attendance);
-                    }
-                }
-
-                // Update attendance records for absent users
-                foreach ($absentUserIds as $userData) {
-                    $userId = $userData['userId'];
-                    $reason = $userData['reason'];
-        
-                    $user = $entityManager->getRepository(User::class)->find($userId);
-        
-                    if ($user == $userId) {
-                        $attendance->setIsPresent(false);
-                        $attendance->setReason($reason);
-                        $entityManager->persist($attendance);
-                    }
+            if ($user) {
+                $attendance = $attendanceRepository->findOneBy(['User' => $user, 'Gathering' => $gatheringEntity]);
+                if ($attendance) {
+                    $attendance->setIsPresent(true);
+                    $attendance->setReason(null);
+                    $entityManager->persist($attendance);
                 }
             }
-
-            // Commit changes to the database
-            $entityManager->flush();
-    
-            return new JsonResponse(['message' => 'Gathering attendance updated successfully']);
-        } catch (\Exception $e) {
-            return new JsonResponse(['error' => 'An error occurred during attendance update'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
 
-    #[Route('/update-attendance2/{gathering}', name: 'update_attendance2', methods: ['POST'])]
-    public function updateAttendance2(Request $request, Gathering $gathering, AttendanceRepository $attendanceRepository): JsonResponse
-    {
-        // Get data from the request
-        $requestData = json_decode($request->getContent(), true);
-        $presentUserIds = $requestData['presentUserIds'];
-        $absentUserIds = $requestData['absentUserIds'];
-        $type = $requestData['type'];
-        $datetime = new \DateTime($requestData['datetime']);
-    
-        // Get the EntityManager
-        $entityManager = $this->getDoctrine()->getManager();
-    
-        try {
-            // Update the gathering details
-            $gathering->setType($type);
-            $gathering->setGatheringHappenedDate($datetime);
-    
-            // Delete existing attendance records for the gathering
-            // $existingAttendances = $entityManager->getRepository(Attendance::class)->findBy(['gathering' => $gathering]);
-            // $existingAttendances = $entityManager->getRepository(Attendance::class);
- 
-            // $existingAttendances = $attendanceRepository;
+        // Mettre à jour les enregistrements de présence pour les utilisateurs absents
+        foreach ($absentUserIds as $userData) {
+            $userId = $userData['userId'];
+            $reason = $userData['reason'];
 
-            // foreach ($existingAttendances as $attendance) {
-            //     $entityManager->remove($attendance);
-            // }
+            $user = $userRepository->find($userId);
 
-            // Commit changes to the database
-            $entityManager->flush();
-
-            // // Create new attendance records for present users
-            // foreach ($presentUserIds as $userId) {
-            //     $user = $entityManager->getRepository(User::class)->find($userId);
-    
-            //     if ($user) {
-            //         $attendance = new Attendance();
-            //         $attendance->setUser($user);
-            //         $attendance->setGathering($gathering);
-            //         $attendance->setIsPresent(true);
-            //         $attendance->setReason(null);
-            //         $entityManager->persist($attendance);
-            //     }
-            // }
-    
-            // // Create new attendance records for absent users
-            // foreach ($absentUserIds as $userData) {
-                // $userId = $userData['userId'];
-                // $reason = $userData['reason'];
-    
-            //     $user = $entityManager->getRepository(User::class)->find($userId);
-    
-            //     if ($user) {
-            //         $attendance = new Attendance();
-            //         $attendance->setUser($user);
-            //         $attendance->setGathering($gathering);
-            //         $attendance->setIsPresent(false);
-            //         $attendance->setReason($reason);
-            //         $entityManager->persist($attendance);
-            //     }
-            // }
-    
-            // Commit changes to the database
-            // $entityManager->flush();
-    
-            return new JsonResponse(['message' => 'Gathering attendance updated successfully']);
-        } catch (\Exception $e) {
-            return new JsonResponse(['error' => 'An error occurred during attendance update'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            if ($user) {
+                $attendance = $attendanceRepository->findOneBy(['User' => $user, 'Gathering' => $gatheringEntity]);
+                if ($attendance) {
+                    $attendance->setIsPresent(false);
+                    $attendance->setReason($reason);
+                    $entityManager->persist($attendance);
+                }
+            }
         }
+
+        // Envoyer les modifications à la base de données
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Attendance modified successfully']);
     }
-
-    // #[Route('/update-attendance/{gathering}2', name: 'update_attendance2', methods: ['POST'])]
-    // public function updateAttendance2(Request $request, Gathering $gathering): JsonResponse
-    // {
-    //     // Get data from the request
-    //     $requestData = json_decode($request->getContent(), true);
-    //     $presentUserIds = $requestData['presentUserIds'];
-    //     $absentUserIds = $requestData['absentUserIds'];
-    //     $type = $requestData['type'];
-    //     $datetime = new \DateTime($requestData['datetime']);
-
-    //     // Get the EntityManager
-    //     $entityManager = $this->getDoctrine()->getManager();
-
-    //     try {
-    //         // Update the gathering details
-    //         $gathering->setType($type);
-    //         $gathering->setGatheringHappenedDate($datetime);
-
-    //         // Update existing attendance records for users present
-    //         foreach ($presentUserIds as $userId) {
-    //             $user = $entityManager->getRepository(User::class)->find($userId);
-
-    //             if ($user) {
-    //                 // Check if attendance record exists for the user and gathering
-    //                 $attendance = $entityManager->getRepository(Attendance::class)->findOneBy([
-    //                     'user' => $user,
-    //                     'gathering' => $gathering,
-    //                 ]);
-
-    //                 // If the attendance record exists, update it
-    //                 if ($attendance) {
-    //                     $attendance->setIsPresent(true);
-    //                     $attendance->setReason(null);
-    //                 } else {
-    //                     // If the attendance record doesn't exist, create a new one
-    //                     $attendance = new Attendance();
-    //                     $attendance->setUser($user);
-    //                     $attendance->setGathering($gathering);
-    //                     $attendance->setIsPresent(true);
-    //                     $attendance->setReason(null);
-    //                     $entityManager->persist($attendance);
-    //                 }
-    //             }
-    //         }
-
-    //         // Update existing attendance records for users absent
-    //         foreach ($absentUserIds as $userData) {
-    //             $userId = $userData['userId'];
-    //             $reason = $userData['reason'];
-
-    //             $user = $entityManager->getRepository(User::class)->find($userId);
-
-    //             if ($user) {
-    //                 // Check if attendance record exists for the user and gathering
-    //                 $attendance = $entityManager->getRepository(Attendance::class)->findOneBy([
-    //                     'user' => $user,
-    //                     'gathering' => $gathering,
-    //                 ]);
-
-    //                 // If the attendance record exists, update it
-    //                 if ($attendance) {
-    //                     $attendance->setIsPresent(false);
-    //                     $attendance->setReason($reason);
-    //                 } else {
-    //                     // If the attendance record doesn't exist, create a new one
-    //                     $attendance = new Attendance();
-    //                     $attendance->setUser($user);
-    //                     $attendance->setGathering($gathering);
-    //                     $attendance->setIsPresent(false);
-    //                     $attendance->setReason($reason);
-    //                     $entityManager->persist($attendance);
-    //                 }
-    //             }
-    //         }
-
-    //         // Commit changes to the database
-    //         $entityManager->flush();
-
-    //         return new JsonResponse(['message' => 'Gathering attendance updated successfully']);
-    //     } catch (\Exception $e) {
-    //         return new JsonResponse(['error' => 'An error occurred during attendance update'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-    //     }
-    // }
-
-    // #[Route('/update-attendance/{gathering}', name: 'update_attendance', methods: ['POST'])]
-    // public function updateAttendance(Request $request, Gathering $gathering): JsonResponse
-    // {
-    //     // Get data from the request
-    //     $requestData = json_decode($request->getContent(), true);
-    //     $presentUserIds = $requestData['presentUserIds'];
-    //     $absentUserIds = $requestData['absentUserIds'];
-    //     $type = $requestData['type'];
-    //     $datetime = new \DateTime($requestData['datetime']);
-
-    //     // Get the EntityManager
-    //     $entityManager = $this->getDoctrine()->getManager();
-
-    //     try {
-    //         // Update the gathering details
-    //         $gathering->setType($type);
-    //         $gathering->setGatheringHappenedDate($datetime);
-
-    //         // Mettre à jour les enregistrements de présence pour les utilisateurs présents
-    //         foreach ($presentUserIds as $userId) {
-    //             $user = $entityManager->getRepository(User::class)->find($userId);
-
-    //             if ($user) {
-    //                 $attendance = new Attendance();
-    //                 $attendance->setUser($user);
-    //                 $attendance->setGathering($gathering);
-    //                 $attendance->setIsPresent(true);
-    //                 $attendance->setReason(null);
-    //                 $entityManager->persist($attendance);
-    //             }
-    //         }
-
-    //         // Mettre à jour les enregistrements de présence pour les utilisateurs absents
-    //         foreach ($absentUserIds as $userData) {
-    //             $userId = $userData['userId'];
-    //             $reason = $userData['reason'];
-
-    //             $user = $entityManager->getRepository(User::class)->find($userId);
-
-    //             if ($user) {
-    //                 $attendance = new Attendance();
-    //                 $attendance->setUser($user);
-    //                 $attendance->setGathering($gathering);
-    //                 $attendance->setIsPresent(false);
-    //                 $attendance->setReason($reason);
-    //                 $entityManager->persist($attendance);
-    //             }
-    //         }
-
-    //         // Commit changes to the database
-    //         $entityManager->flush();
-
-    //         return new JsonResponse(['message' => 'Gathering attendance updated successfully']);
-    //     } catch (\Exception $e) {
-    //         return new JsonResponse(['error' => 'An error occurred during attendance update'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-    //     }
-    // }
 }

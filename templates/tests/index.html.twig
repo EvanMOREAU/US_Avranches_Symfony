@@ -73,6 +73,7 @@
             <a href="{{ path('app_tests_index', {'order': 'alphabetical'}) }}" class="btn btn-secondary {% if app.request.query.get('order') == 'alphabetical' %}active{% endif %}">
                 <i class="fas fa-sort-alpha-down"></i> Par ordre alphabétique
             </a>
+
         </div>
     </div>
             <div class="mt-4">
@@ -128,7 +129,6 @@
                                                 Conduite de balle : {{ test.conduiteballe|number_format(3, '.', '') }}s<br>
                                                 Vitesse : {{ test.vitesse|number_format(3, '.', '') }}s<br>
                                                 Date du test : {{ test.date|date('à H:i:s') }} le {{ test.date|date('d/m/Y') }}<br>
-
 
                                                {% if test.video %}
                                                         <div class="d-flex justify-content-center">

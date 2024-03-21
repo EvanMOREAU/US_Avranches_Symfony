@@ -4,10 +4,6 @@
 
 {% block body %}
 
-  <div id='calendar-container' class="mt-5">
-    <div id='calendar'></div>
-  </div>
-
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap" rel="stylesheet">
 
@@ -23,12 +19,51 @@
   <script src='/js/interaction.js'></script>
   <script src='/js/daygrid.js'></script>
   <script src='/js/timegrid.js'></script>
-  <script src='/js/list.js'></script>   
+  <script src='/js/list.js'></script>
+
+  <div class="container">
+    <div id='calendar-container' class="mt-5 pt-5">
+      <div id='calendar'></div>
+    </div>
+
+    <div class="container mt-5 pt-5">
+      <div class="row">
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6 mx-auto">
+          <div class="form-floating">
+            <select id="filter-select" class="form-select" aria-label="Catégorie(s)">
+              <option value="all" selected>Toutes</option>
+              {% for category in categories %}
+                <option value='{{ category.name }}'>{{ category.name }}</option>
+              {% endfor %}
+            </select>
+            <label for="filter-select">Catégorie(s)</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var calendarEl = document.getElementById('calendar');
       var isMobile = window.innerWidth < 1920;
+      var allEvents = [
+        {% for gathering in gatherings %}
+          {
+            title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
+            start: '{{ gathering.gatheringHappenedDate|date("Y-m-d") }}',
+            {% if gathering.type == 'Entraînement' %}
+              // color: '{{ gathering.category.color }}',
+              color: '#5b9ad4',
+            {% else %}
+              // color: '{{ gathering.category.color }}',
+              // borderColor: '#000000',
+              color: '#92d050',
+            {% endif %}
+            url: '/rassemblement/{{ gathering.id }}',
+          },
+        {% endfor %}
+      ];
 
       var calendar = new FullCalendar.Calendar(calendarEl, {
         plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
@@ -43,28 +78,28 @@
         editable: false,
         eventLimit: true,
         firstDay: 1,
-        events: [
-          {% for gathering in gatherings %}
-            {
-              title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
-              start: '{{ gathering.gatheringHappenedDate|date("Y-m-d") }}',
-              {% if gathering.type == 'Entraînement' %}
-                color: '{{ gathering.category.color }}',
-              {% else %}
-                backgroundColor: '#ffffff',
-                borderColor: '{{ gathering.category.color }}',
-                textColor: '{{ gathering.category.color }}',
-              {% endif %}
-              url: '/rassemblement/{{ gathering.id }}',
-            },
-          {% endfor %}
-        ]
+        events: allEvents
       });
 
       calendar.render();
+
+      // Add event listener to the filter select
+      var filterSelect = document.getElementById('filter-select');
+      filterSelect.addEventListener('change', function() {
+        var selectedCategory = this.value;
+        var filteredEvents = allEvents.filter(function(event) {
+          if (selectedCategory === 'all') {
+            return true; // Show all events
+          } else {
+            return event.title.includes(selectedCategory); // Filter by selected category
+          }
+        });
+        calendar.removeAllEvents();
+        calendar.addEventSource(filteredEvents);
+      });
     });
   </script>
 
   <script src="js/main.js"></script>
-  
+
 {% endblock %}

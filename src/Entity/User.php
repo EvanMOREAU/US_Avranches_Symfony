@@ -115,8 +115,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $palier = 0;
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Equipe $equipe = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $lastConnection = null;
+
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Palier $palier = null;
 
     public function getId(): ?int
     {
@@ -507,15 +514,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPalier(): ?int
+    public function getEquipe(): ?Equipe
+    {
+        return $this->equipe;
+    }
+
+    public function setEquipe(?Equipe $equipe): static
+    {
+        $this->equipe = $equipe;
+
+        return $this;
+    }
+    
+    public function getPalier(): ?Palier_
     {
         return $this->palier;
     }
 
-    public function setPalier(int $palier): static
+
+    public function setPalier(?Palier $palier): static
     {
         $this->palier = $palier;
 
+
         return $this;
     }
+
+    public function getLastConnection(): ?\DateTimeInterface
+    {
+        return $this->lastConnection;
+    }
+
+    public function setLastConnection(?\DateTimeInterface $lastConnection): static
+    {
+        $this->lastConnection = $lastConnection;
+
+        return $this;
+    }
+
+
 }

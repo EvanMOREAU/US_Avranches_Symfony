@@ -35,3 +35,4 @@ class WeightFixtures extends Fixture
         $manager->flush();
     }
 }
+

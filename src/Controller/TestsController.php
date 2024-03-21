@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Tests;
+use App\Entity\Palier;
 use App\Form\TestsFormType;
 use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
+use App\Repository\PalierRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +33,7 @@ class TestsController extends AbstractController
     }
 
     #[Route('/', name: 'app_tests_index')]
-    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository): Response
+    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, PalierRepository $palierRepository): Response
     {
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -92,6 +94,7 @@ class TestsController extends AbstractController
     #[Route('/new', name: 'app_tests_new', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_SUPER_ADMIN")]
     public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
@@ -103,7 +106,6 @@ class TestsController extends AbstractController
     
         // Vérifier si le formulaire est vide
         $formIsEmpty = empty($request->request->all());
-
             // Si le formulaire est vide, récupérez le dernier test de l'utilisateur
             if ($formIsEmpty) {
                 $lastTest = $testsRepository->findLastTestByUser($this->getUser());
@@ -335,7 +337,6 @@ class TestsController extends AbstractController
             return 'Other';
         }
     }
-
 
     #[Route('/cancel-test/{id}', name: 'app_cancel_test', methods: ['GET', 'POST'])]
     public function cancelTest(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
