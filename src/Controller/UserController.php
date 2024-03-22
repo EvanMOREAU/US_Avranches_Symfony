@@ -165,6 +165,7 @@ class UserController extends AbstractController
 
         return $this->render('user/hiddenposte.html.twig', [
             'user' => $user,
+            'location' => 'e',
         ]);
     }
 
@@ -177,6 +178,7 @@ class UserController extends AbstractController
 
         return $this->render('user/poste.html.twig', [
             'user' => $user,
+            'location' => 'e',
         ]);
     }
 

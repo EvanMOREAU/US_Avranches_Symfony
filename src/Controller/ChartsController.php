@@ -55,6 +55,7 @@ class ChartsController extends AbstractController
 
         return $this->render('charts/index.html.twig', [
             'chartData' => $chartData,
+            'location' => 'b',
         ]);
     }
 

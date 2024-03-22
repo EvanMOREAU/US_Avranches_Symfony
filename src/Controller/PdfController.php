@@ -259,6 +259,7 @@ class PdfController extends AbstractController
 
         return $this->render('pdf/choose_user_pdf.html.twig', [
             'users' => $users,
+            'location' => 'f',
         ]);
     }
 }
