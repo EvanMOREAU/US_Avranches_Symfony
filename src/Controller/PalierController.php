@@ -38,7 +38,7 @@ class PalierController extends AbstractController
             ]);
         }
 
-
+    }
     #[Route('/new', name: 'app_palier_new', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_SUPER_ADMIN")]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
