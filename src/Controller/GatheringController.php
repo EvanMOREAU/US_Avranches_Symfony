@@ -27,7 +27,7 @@ class GatheringController extends AbstractController
 {
     // Affiche la liste des rassemblements
     #[Route('/', name: 'app_gathering')]
-    public function index(GatheringRepository $GatheringRepository, CategoryRepository $CategoryRepository): Response
+    public function index(GatheringRepository $GatheringRepository, CategoryRepository $CategoryRepository, AttendanceRepository $attendanceRepository): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -43,6 +43,8 @@ class GatheringController extends AbstractController
             'controller_name' => 'GatheringController',
             'gatherings' => $GatheringRepository->findAll(),
             'categories' => $CategoryRepository->findAll(),
+            'attendances' =>  $attendanceRepository->findall(),
+
         ]);
     }
 

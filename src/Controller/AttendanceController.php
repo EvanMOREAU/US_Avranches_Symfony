@@ -325,14 +325,12 @@ class AttendanceController extends AbstractController
         // Analyser les données JSON de la requête
         $requestData = json_decode($request->getContent(), true);
 
-        $type = $requestData['type'];
         $parisTimezone = new DateTimeZone('Europe/Paris');
         $datetime = new \DateTime($requestData['datetime'], $parisTimezone);
 
         $presentUserIds = $requestData['presentUserIds'];
         $absentUserIds = $requestData['absentUserIds'];
 
-        $gatheringEntity->setType($type);
         $gatheringEntity->setGatheringHappenedDate($datetime);
 
         // Mettre à jour les enregistrements de présence pour les utilisateurs présents
