@@ -181,7 +181,7 @@
                     // Continuer le processus de finalisation de l'appel
                     const createAttendance = '{{ path('create_training_attendance', {'category': category|replace({'U': ''}) }) }}';
                     const reasonSelectors = document.querySelectorAll('.reason-selector select');
-                    const type = "Entraînement";
+                    const type = "Match";
                     const datetime = document.getElementById('attendanceDate').value;
 
                     reasonSelectors.forEach((select) => {

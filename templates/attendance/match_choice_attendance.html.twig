@@ -18,7 +18,7 @@
         {% set sortedTeams = teams|sort((a, b) => a.name <=> b.name) %}
             {% for team in sortedTeams %}
                 {# <a href="{{ path('app_team_detail', {'id': team.id}) }}" class="btn btn-primary btn-block">{{ team.name }}</a> #}
-                <a href="/appel/match/{{ category }}/{{ team.name }}" class="btn btn-primary">{{ team.name }}</a>
+                <a href="/appel/match/{{ category }}/{{ team.name }}/{{ team.id }}" class="btn btn-primary">{{ team.name }}</a>
             {% endfor %}
 		</div>
 
