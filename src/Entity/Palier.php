@@ -32,6 +32,9 @@ class Palier
     public function __construct()
     {
         $this->users = new ArrayCollection();
+
+        $this->numero = 0; // Initialisez le numéro à 0 par défaut
+
     }
 
     public function getId(): ?int

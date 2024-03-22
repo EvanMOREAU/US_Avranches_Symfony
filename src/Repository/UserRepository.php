@@ -66,6 +66,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $this->getEntityManager()->flush();
         }
     }
+    public function findUsersByPalier($palierNumero)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.palier = :palierNumero')
+            ->setParameter('palierNumero', $palierNumero)
+            ->getQuery()
+            ->getResult();
+    }
+
     // public function incrementMatchesPlayedForSelectedUsers(array $selectedUserIds): void
     // {
     //     $qb = $this->createQueryBuilder('user');

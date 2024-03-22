@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste Paliers{% endblock %}
+
+{% block body %}
+    <style>
+        .carousel-item {
+            height: 70vh;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .carousel-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            height: 70vh;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            width: 80%;
+        }
+
+        .carousel-caption h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .carousel-caption h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .carousel-caption p {
+            font-size: 1.2rem;
+            margin-bottom: 0;
+        }
+
+        .carousel-control-prev, .carousel-control-next {
+            width: 5%;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: white;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            color: white;
+        }
+        
+        /* Overlay semi-transparent */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Styles pour l'icône de cadenas */
+        .lock-icon {
+            font-size: 5rem;
+            color: white;
+        }
+    </style>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 position-relative">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for palier in paliers %}
+                            <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+                                <img src="..." alt="...">
+                                <div class="carousel-caption">
+                                    <h1>Palier - {{ palier.numero }}</h1>
+                                    <h2>{{ palier.name }}</h2>
+                                    <p>{{ palier.objectif }}</p>
+                                   <form method="post" enctype="multipart/form-data" action="{{ path('upload_video') }}">
+                                        <input type="hidden" name="palier_numero" value="{{ palier.numero }}">
+                                        <input type="hidden" name="user_username" value="{{ app.user.username }}">
+                                        <input type="file" name="video">
+                                        <button type="submit">Upload</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="carousel-item">
+                                <img src="..." alt="...">
+                                <div class="carousel-caption">
+                                    <h1>&nbsp;</h1>
+                                    <h2>&nbsp;</h2>
+                                    <p>&nbsp;</p>
+                                </div>
+                                {% if not is_granted('ROLE_SUPER_ADMIN') %}
+                                    <div class="overlay">
+                                        <i class="fas fa-lock lock-icon"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

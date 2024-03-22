@@ -146,12 +146,20 @@ class TestsFormType extends AbstractType
             'label' => 'Vitesse (en millisecondes)',
             'required' => false,
         ])
-        ->add('palier', EntityType::class, [
-            'class' => Palier::class,
-            'choices' => $options['paliers'],
-            'choice_label' => 'name',
-            'placeholder' => 'Sélectionner un palier',
-            'required' => false,
+
+        ->add('video', FileType::class, [
+            'label' => 'Vidéo',
+            'required' => false, // Le champ n'est pas obligatoire lors de la modification
+            'constraints' => [
+                new File([
+                    'maxSize' => '1024M',
+                    'mimeTypes' => [
+                        'video/*',
+                    ],
+                    'mimeTypesMessage' => 'Please upload a valid video file',
+                ]),
+            ],
+
         ])
 
 
