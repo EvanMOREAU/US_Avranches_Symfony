@@ -1,26 +1,37 @@
-<body class='bg-dark'>
+<body>
 {% block body %}
     <link rel="icon" href="/img/logo_usa.ico">
-    <link href="/css/login.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-    <div class="row">
+      <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  <!-- Nucleo Icons -->
+  <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <!-- CSS Files -->
+  <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+  <!-- Nepcha Analytics (nepcha.com) -->
+  <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
+  <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+
+    {# <div class="row">
         <div class="col-md-10 col-lg-5 mx-auto d-flex flex-column justify-content-center vh-100">
             <form action="{{ path('app_register') }}" method="post" class="p-4 p-md-5 border rounded-3 bg-body-tertiary">
                 {{ form_row(registrationForm._token) }}
                 <div align="center"><img src='/images/logo.png' width='30%'></div><br><br>
                 
-                {# Email field #}
+                Email field
                 <div class="form-floating mb-3">
                     {{ form_row(registrationForm.email, { 'attr': { 'autocomplete': 'off', 'class': 'form-control', 'placeholder': 'Adresse Email' } }) }}
                 </div>
 
-                {# Username field #}
+
                 <!-- Repeat the above structure for other fields -->
                 <div class="form-floating mb-3">
                     {{ form_row(registrationForm.username, { 'attr': { 'autocomplete': 'off', 'class': 'form-control', 'placeholder': 'Nom d\'utilisateur' } }) }}
                 </div>
-                {# Username field #}
+    
                 <div class="form-floating mb-3">
                     {{ form_row(registrationForm.plainPassword, { 'attr': { 'autocomplete': 'off', 'class': 'form-control', 'placeholder': 'Mot de passe' } }) }}
                 </div>
@@ -48,6 +59,89 @@
                 <button class="w-100 btn btn-lg btn-success" type="submit">S'inscrire</button>
             </form>
         </div>
-    </div>
+    </div> #}
+
+
+    <div class="container position-sticky z-index-sticky top-0">
+  </div>
+  <main class="main-content  mt-0">
+    <section>
+      <div class="page-header min-vh-100">
+        <div class="container">
+          <div class="row">
+            <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
+              <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url('/assets/img/illustrations/illustration-signup.jpg'); background-size: cover;">
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
+              <div class="card card-plain">
+                <div class="card-header">
+                  <h4 class="font-weight-bolder">Inscription</h4>
+                  <p class="mb-0">Entrez les informations pour créer un compte</p>
+                </div>
+                <div class="card-body">
+                  <form role="form" action="{{ path('app_register') }}" method="post">
+                    {{ form_row(registrationForm._token) }}
+                    <div class="input-group input-group-outline mb-3 row">
+                        {{ form_row(registrationForm.email, { 'attr': { 'class': 'form-control' , 'type' : 'email', 'placeholder' : 'Email'} }) }}
+                    </div>
+                    <div class="input-group input-group-outline mb-3 row">
+                        {{ form_row(registrationForm.username, { 'attr': { 'class': 'form-control', 'placeholder' : 'Nom d\'utilisateur' } }) }}
+                    </div>
+                    <div class="input-group input-group-outline mb-3 row">
+                        {{ form_row(registrationForm.plainPassword, { 'attr': { 'class': 'form-control', 'placeholder' : 'Mot de passe' } }) }}
+                    </div>
+                    <div class="input-group input-group-outline mb-3 row">
+                        {{ form_row(registrationForm.first_name, { 'attr': { 'class': 'form-control', 'placeholder' : 'Prénom' } }) }}
+                    </div>
+                    <div class="input-group input-group-outline mb-3 row">
+                        {{ form_row(registrationForm.last_name, { 'attr': { 'class': 'form-control', 'placeholder' : 'Nom'} }) }}
+                    </div>
+                    <div class="input-group input-group-outline mb-3 row">
+                        {{ form_row(registrationForm.date_naissance, { 'attr': { 'autocomplete': 'off', 'class': 'form-control datepicker', 'placeholder': 'Date de naissance' } }) }}
+                    </div>
+                    <div class="form-check form-check-info text-start ps-0">
+                        {{ form_widget(registrationForm.agreeTerms, { 'attr': {'class': 'form-check-input', 'type': 'checkbox', 'id' : 'flexCheckDefault' } }) }}
+                      <label class="form-check-label" for="flexCheckDefault">
+                        Accepter les <a href="/cu" class="text-dark font-weight-bolder">Termes et Conditions d'Utilisation</a>
+                      </label>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Inscription</button>
+                    </div>
+                  </form>
+                </div>
+                <div class="card-footer text-center pt-0 px-lg-2 px-1">
+                  <p class="mb-2 text-sm mx-auto">
+                    Vous possedez déjà un compte ?
+                    <a href="/pages/sign-in.html" class="text-primary text-gradient font-weight-bold">Connectez vous !</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!--   Core JS Files   -->
+  <script src="/assets/js/core/popper.min.js"></script>
+  <script src="/assets/js/core/bootstrap.min.js"></script>
+  <script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="/assets/js/material-dashboard.min.js?v=3.1.0"></script>
 {% endblock %}
 </body>

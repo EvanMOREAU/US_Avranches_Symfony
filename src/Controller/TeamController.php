@@ -19,6 +19,7 @@ class TeamController extends AbstractController
     {
         return $this->render('myTeam/index.html.twig', [
             'teams' => $teamRepository->findAll(),
+            'location' => '',
         ]);
     }
 
@@ -47,6 +48,7 @@ class TeamController extends AbstractController
     {
         return $this->render('team/show.html.twig', [
             'team' => $team,
+            'location' => '',
         ]);
     }
 

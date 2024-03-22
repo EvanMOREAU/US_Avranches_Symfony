@@ -66,6 +66,7 @@ class PlayerController extends AbstractController
 
         return $this->render('player/index.html.twig', [
             'players' => $playerRepository->findAll(),
+            'location' => '',
         ]);
     }
 
@@ -102,6 +103,7 @@ class PlayerController extends AbstractController
 
         return $this->render('player/show.html.twig', [
             'player' => $player,
+            'location' => '',
         ]);
     }
 
@@ -152,6 +154,7 @@ class PlayerController extends AbstractController
         // $logger->debug('poste() player->getFirstname() = ' . $player->getFirstname());
         return $this->render('player/poste.html.twig', [
             'player' => $player,
+            'location' => '',
         ]);
     }
 
@@ -161,6 +164,7 @@ class PlayerController extends AbstractController
         // $logger->debug('poste() player->getFirstname() = ' . $player->getFirstname());
         return $this->render('player/hiddenposte.html.twig', [
             'player' => $player,
+            'location' => '',
         ]);
     }
 
@@ -171,6 +175,7 @@ class PlayerController extends AbstractController
 
         return $this->render('player/coachposte.html.twig', [
             'players' => $players,
+            'location' => '',
         ]);
     }
 

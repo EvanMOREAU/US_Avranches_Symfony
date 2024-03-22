@@ -19,6 +19,7 @@ class HeightController extends AbstractController
     {
         return $this->render('height/index.html.twig', [
             'heights' => $heightRepository->findAll(),
+            'location' => '',
         ]);
     }
 
@@ -44,6 +45,7 @@ class HeightController extends AbstractController
         return $this->renderForm('height/new.html.twig', [
             'height' => $height,
             'form' => $form,
+            'location' => '',
         ]);
     }
 
@@ -52,6 +54,7 @@ class HeightController extends AbstractController
     {
         return $this->render('height/show.html.twig', [
             'height' => $height,
+            'location' => '',
         ]);
     }
 

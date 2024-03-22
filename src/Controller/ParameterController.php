@@ -58,6 +58,7 @@ class ParameterController extends AbstractController
         return $this->render('parameter/modify.html.twig', [
             'controller_name' => 'ParameterController',
             'form'            => $formView,
+            'location' => '',
         ]);
     }
 }
