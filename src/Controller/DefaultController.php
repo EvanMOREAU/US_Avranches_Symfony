@@ -41,12 +41,15 @@ class DefaultController extends AbstractController
             $user->setLastConnection(new \DateTime());
             $this->getDoctrine()->getManager()->flush();
             $playerId = $user->getId();
-            $playerElementsCount = $testsRepository->countPlayerElements($playerId);
+            // $playerElementsCount = $testsRepository->countPlayerElements($playerId);
             $equipe = $user->getEquipe();
             $currentPalierNumber =  $user->getPalier()->getNumero();
             if($equipe){
                 $usersInSameTeam = $userRepository->findBy(['equipe' => $equipe]);
                 $countUsersInSameTeam = $userRepository->count(['equipe' => $equipe]);
+            }else{
+                $usersInSameTeam = [];
+                $countUsersInSameTeam = 0;
             }
             $latestWeightDate = $weightRepository->getLatestWeightDate($playerId);
         }else{
@@ -64,7 +67,7 @@ class DefaultController extends AbstractController
                 else if($weightVerif == 1){
                     return $this->render('base.html.twig', [
                         'controller_name' => 'DefaultController',
-                        'testcount' => $playerElementsCount,
+                        'testcount' => $testsRepository->count([]),
                         'addedtest' => $testsRepository->countTestsAddedThisMonth($playerId),
                         'category' => $user->getCategory(),
                         'usercount' => $userRepository->count([]),

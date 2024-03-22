@@ -54,4 +54,20 @@ class TestsRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function countTestsAddedThisMonth($playerId): int
+    {
+        $startOfMonth = new \DateTime('first day of this month');
+        $endOfMonth = new \DateTime('last day of this month');
+        return $this->createQueryBuilder('t')
+            ->select('COUNT(t.id)')
+            ->andWhere('t.user = :userId')
+            ->andWhere('t.date BETWEEN :startDate AND :endDate')
+            ->setParameter('userId', $playerId)
+            ->setParameter('startDate', $startOfMonth)
+            ->setParameter('endDate', $endOfMonth)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 }

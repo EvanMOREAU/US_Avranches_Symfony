@@ -530,7 +530,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
     
-    public function getPalier(): ?Palier_
+    public function getPalier(): ?Palier
     {
         return $this->palier;
     }
