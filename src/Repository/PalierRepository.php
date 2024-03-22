@@ -20,6 +20,15 @@ class PalierRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Palier::class);
     }
+    
+    public function findByNumeroLessThan($currentPalierNumber): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.numero <= :currentPalierNumber')
+            ->setParameter('currentPalierNumber', $currentPalierNumber)
+            ->getQuery()
+            ->getResult();
+    }
 
 //    /**
 //     * @return Palier[] Returns an array of Palier objects

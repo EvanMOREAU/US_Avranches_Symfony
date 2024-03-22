@@ -1,0 +1,346 @@
+
+<body >
+    <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="test.css">
+
+    <div class="wrapper">
+      <header class="header">
+          <a href="#" class="btn-appointment">Make an appointment</a>
+          <div class="profile">
+              <div class="image">
+                  <img src="https://i.pravatar.cc/150?img=26" />
+                  <div class="notification"></div>
+              </div>
+
+              <select>
+                  <option value="Maria waters">Maria Waters</option>
+              </select>
+          </div>
+      </header>
+      <aside class="aside">
+          <ul>
+              <li class="logo hide">
+                  <a href="#"><img src="https://ozcanzaferayan.github.io/healthcare-dashboard/img/logo.png" alt="logo" width="25"></a>
+              </li>
+              <li class="active"><a href="#"><i class="fas fa-columns"></i></a></li>
+              <li><a href="#"><i class="fa fa-folder" aria-hidden="true"></i></a></li>
+              <li><a href="#"><i class="fas fa-chart-area    "></i></a></li>
+              <li><a href="#"><i class="fas fa-pills    "></i></a></li>
+              <li class="hide"><a href="#"><i class="fas fa-calendar-check    "></i></a></li>
+              <li class="hide"><a href="#"><i class="fas fa-file-invoice-dollar    "></i></a></li>
+              <li class="hide"><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i>
+                  <!-- <span class="count">8</span> -->
+              </a></li>
+          </ul>
+      </aside>
+      <main class="main">
+          <div class="top">
+              <div class="upcoming-appointments card">
+                  <div class="card-header">
+                      <h1>Upcoming appointments</h1>
+                      <a href="#"><i class="fa fa-ellipsis-h right" aria-hidden="true"></i></a>
+                  </div>
+                  <div class="card-body">
+                      <div class="appointment">
+                          <img class="image" src="https://i.pravatar.cc/150?img=45" />
+                          <span class="name">dr Anthony Wagner</span>
+                          <span class="title">dermatologist</span>
+                          <span class="date"><i class="fa fa-calendar" aria-hidden="true"></i> 22/07/2018</span>
+                          <span class="time"><i class="fas fa-clock"></i> 2:30 PM</span>
+                          <a href="#" class="check"><i class="far fa-check-circle" aria-hidden="true"></i></a>
+                          <a href="#" class="times"><i class="far fa-times-circle" aria-hidden="true"></i></a>
+                      </div>
+                      <div class="appointment">
+                          <img class="image gray" src="https://i.pravatar.cc/150?img=1" />
+                          <span class="name">dr Caroline Fields</span>
+                          <span class="title">psycologist</span>
+                          <span class="date"><i class="fa fa-calendar" aria-hidden="true"></i> 22/07/2018</span>
+                          <span class="time"><i class="fas fa-clock"></i> 2:30 PM</span>
+                          <a href="#" class="check"><i class="fas fa-check-circle" aria-hidden="true"></i></a>
+                          <a href="#" class="times"><i class="far fa-times-circle" aria-hidden="true"></i></a>
+                      </div>
+                      <div class="appointment">
+                          <img class="image red" src="https://i.pravatar.cc/150?img=30" />
+                          <span class="name">dr Natalie Smith</span>
+                          <span class="title">dentist</span>
+                          <span class="date"><i class="fa fa-calendar" aria-hidden="true"></i> 22/07/2018</span>
+                          <span class="time"><i class="fas fa-clock"></i> 2:30 PM</span>
+                          <a href="#" class="check"><i class="far fa-check-circle" aria-hidden="true"></i></a>
+                          <a href="#" class="times"><i class="far fa-times-circle" aria-hidden="true"></i></a>
+                      </div>
+                  </div>
+              </div>
+              <div class="recent-results card">
+                  <div class="card-header">
+                      <div class="header-container">
+                          <h1>Recent results </h1>
+                          <span>Glucose</span>
+                      </div>
+                      <select>
+                          <option value="May 2018">May 2018</option>
+                      </select>
+                      <a href="#"><i class="fa fa-ellipsis-h right" aria-hidden="true"></i></a>
+                  </div>
+
+                  <div class="card-body">
+                      <div class="chart-container">
+                          <canvas id="recentResultsChart"></canvas>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="bottom">
+              <div class="news card">
+                  <div class="card-header">
+                      <h1>News</h1>
+                      <a href="#"><i class="fa fa-ellipsis-h right" aria-hidden="true"></i></a>
+                  </div>
+                  <div class="card-body">
+                      <ul class="news-list">
+                          <li>
+                              <a href="#" class="news">
+                                  <span class="title">10% off for dermatlogist conslutation</span>
+                                  <span class="subtitle">Save money for first visit</span>
+                                  <i class="fas fa-caret-right"></i>
+                                  <hr>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="#" class="news">
+                                  <span class="title">Free visit to the cardiologist on May 2-6</span>
+                                  <span class="subtitle">Take care Of your health, do medical examination</span>
+                                  <i class="fas fa-caret-right"></i>
+                                  <hr>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="#" class="news">
+                                  <span class="title">50% discount on allergy tests</span>
+                                  <span class="subtitle"> Spring is coming, take control Of allergy</span>
+                                  <i class="fas fa-caret-right"></i>
+                                  <hr>
+                              </a>
+                          </li>
+                          <li class="more"><a href="#">More...</a></li>
+                      </ul>
+
+                  </div>
+              </div>
+              <div class="current-prescription-container">
+                  <div class="current-prescription card">
+                      <div class="card-header">
+                          <h1>Current prescription </h1>
+                          <a href="#"><i class="fa fa-ellipsis-h right" aria-hidden="true"></i></a>
+                      </div>
+                      <ul>
+                          <li>
+                              <a href="#" class="prescription-item">
+                                  <div class="dot gray"></div>
+                                  <span class="title">Vitamin D</span>
+                                  <span class="description">5mg - 2x per day</span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="#" class="prescription-item">
+                                  <div class="dot violet"></div>
+                                  <span class="title">Cetirizine</span>
+                                  <span class="description">10mg - once per day at the morning</span>
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+                  <div class="card alert">
+                      <div class="card-header">
+                          <h1>Alert</h1>
+                          <a href="#"><i class="fa fa-ellipsis-h right" aria-hidden="true"></i></a>
+                      </div>
+                      <span>Air pollution: <b>230%</b> of norm</span>
+                  </div>
+              </div>
+              <div class="notifications card">
+                  <div class="card-header">
+                      <h1>Notifications </h1>
+                      <a href="#"><i class="fa fa-ellipsis-h right" aria-hidden="true"></i></a>
+                  </div>
+                  <div class="card-body">
+                      <ul>
+                          <li>
+                              <a href="#" class="notification">
+                                  <div class="dot green"></div>
+                                  <span class="title">You confirmed visit to dermatologist</span>
+                                  <span class="date">2 days ago</span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="#" class="notification">
+                                  <div class="dot green"></div>
+                                  <span class="title">Your results are available to download</span>
+                                  <span class="date">3 days ago</span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="#" class="notification">
+                                  <div class="dot green"></div>
+                                  <span class="title">Dr. John Smith cancelled your visit</span>
+                                  <span class="date">3 days ago</span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="#" class="notification">
+                                  <div class="dot green"></div>
+                                  <span class="title">Dr. Ann Doe changed date of your visit</span>
+                                  <span class="date">3 days ago</span>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="#" class="notification">
+                                  <div class="dot green"></div>
+                                  <span class="title">You changed date of appointment</span>
+                                  <span class="date">5 days ago</span>
+                              </a>
+                          </li>
+                          <li class="more"><a href="#">More...</a></li>
+                      </ul>
+
+                  </div>
+              </div>
+          </div>
+      </main>
+  </div>
+  <script>// JS
+
+var ctx = document.getElementById('recentResultsChart').getContext('2d');
+var gradientFill = ctx.createLinearGradient(0, 0, 0, 200);
+gradientFill.addColorStop(0.1, "rgba(109,110,227, .3)");
+gradientFill.addColorStop(1, "rgba(255,255,255, .3)");
+
+
+var data = {
+    labels: ["", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", ""],
+    datasets: [{
+        backgroundColor: "rgba(0,0,0,0)",
+        borderColor: "#6d6ee3",
+        borderWidth: 2,
+        fill: true,
+        backgroundColor: gradientFill,
+        data: [3, 5, 4, 10, 8, 9, 3, 15, 14, 17],
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        pointColor: "#FFFFFF",
+        fillColor: "#FFFFFF",
+        strokeColor: "#FF0000",
+
+    }]
+};
+
+var options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: {
+        display: false
+    },
+    tooltips: {
+        mode: 'index',
+        intersect: true,
+        yPadding: 10,
+        xPadding: 10,
+        caretSize: 8,
+        backgroundColor: '#fff',
+        titleFontColor: "#6d6ee3",
+        bodyFontStyle: 'bold',
+        bodyFontColor: "#737295",
+        displayColors: false,
+        callbacks: {
+            label: function(tooltipItems, data) {
+                return "10.5";
+            }
+        },
+        bevelWidth: 3,
+        bevelHighlightColor: 'rgba(255, 255, 255, 0.75)',
+        bevelShadowColor: 'rgba(0, 0, 0, 0.5)'
+    },
+    showAllTooltips: true,
+    scales: {
+        yAxes: [{
+            display: true,
+            ticks: {
+                maxTicksLimit: 5,
+                min: 0,
+            },
+            gridLines: {
+                display: true
+            }
+        }],
+        xAxes: [{
+            display: true,
+            ticks: {
+                fontSize: 12,
+                fontColor: '#c3c6de'
+            },
+            gridLines: {
+                display: false
+            }
+        }]
+    },
+    elements: {
+        point: {
+            radius: 0
+        }
+    }
+};
+
+Chart.pluginService.register({
+    beforeRender: function(chart) {
+        if (chart.config.options.showAllTooltips) {
+            // create an array of tooltips
+            // we can't use the chart tooltip because there is only one tooltip per chart
+            chart.pluginTooltips = [];
+            chart.config.data.datasets.forEach(function(dataset, i) {
+                chart.getDatasetMeta(i).data.forEach(function(sector, j) {
+                    chart.pluginTooltips.push(new Chart.Tooltip({
+                        _chart: chart.chart,
+                        _chartInstance: chart,
+                        _data: chart.data,
+                        _options: chart.options.tooltips,
+                        _active: [sector]
+                    }, chart));
+                });
+            });
+
+            // turn off normal tooltips
+            chart.options.tooltips.enabled = false;
+        }
+    },
+    afterDraw: function(chart, easing) {
+        if (chart.config.options.showAllTooltips) {
+            // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
+            if (!chart.allTooltipsOnce) {
+                if (easing !== 1)
+                    return;
+                chart.allTooltipsOnce = true;
+            }
+
+            // turn on tooltips
+            chart.options.tooltips.enabled = true;
+            Chart.helpers.each(chart.pluginTooltips, function(tooltip, i) {
+                if (i !== 3) return;
+                tooltip.initialize();
+                tooltip.update();
+                // we don't actually need this since we are not animating tooltips
+                tooltip.pivot();
+                tooltip.transition(easing).draw();
+            });
+            chart.options.tooltips.enabled = false;
+        }
+    }
+});
+var myLineChart = new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: options
+});</script>
+  </body>
+  
+  </html>
