@@ -132,9 +132,6 @@
             </div> #}
           </div>
           <ul class="navbar-nav  justify-content-end">
-            <li class="nav-item d-flex align-items-center">
-              <a class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" href="https://www.creative-tim.com/builder?ref=navbar-material-dashboard">Online Builder</a>
-            </li>
             <li class="mt-2">
             </li>
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -374,12 +371,12 @@
                         {% set currentPalierNumber = app.user.getPalier().getNumero() %}
 
                         {% if palier.getNumero() < currentPalierNumber %}
-                            <i class="fa-solid fa-check"></i>
+                            <i class="fa-solid fa-check text-success"></i>
                         {% elseif palier.getNumero() > currentPalierNumber %}
-                          <i class="fa-solid fa-lock"></i> 
+                          <i class="fa-solid fa-lock text-danger"></i> 
                         {% else %}
-                          <i class="fa-solid fa-hourglass-half"></i>
-                        {% endif %}                    
+                          <i class="fa-solid fa-hourglass-half text-warning"></i>
+                        {% endif %}                      
                       </span>
                       <div class="timeline-content">
                         <h6 class="text-dark text-sm font-weight-bold mb-0">Palier {{palier.numero}} - {{ palier.name }}</h6>
