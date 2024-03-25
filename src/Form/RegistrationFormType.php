@@ -54,6 +54,7 @@ class RegistrationFormType extends AbstractType
                 'format' => 'dd MM yyyy', // Format de la date
                 'years' => range(date('Y') - 20, date('Y')), // La plage d'années que vous voulez afficher (ici, les 100 dernières années)
                 'label' => false, // Étiquette du champ
+                'html5' => true,
 
             ])
             ->add('first_name', null, [
