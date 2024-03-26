@@ -49,6 +49,7 @@ class AttendanceController extends AbstractController
         // Rendre la vue avec les catégories pour l'appel
         return $this->render('attendance/index.html.twig', [
             'controller_name' => 'AttendanceController',
+            'location' => 'g',
             'categories' => $CategoryRepository->findAll(),
         ]);
     }
@@ -69,6 +70,7 @@ class AttendanceController extends AbstractController
         // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/choice_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
+            'location' => 'g',
             'category' => $category,
         ]);
     }
@@ -97,6 +99,7 @@ class AttendanceController extends AbstractController
         // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/training_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
+            'location' => 'g',
             'category' => $category,
             'users' => $usersInCategory,
         ]);
@@ -140,6 +143,7 @@ class AttendanceController extends AbstractController
         // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/match_choice_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
+            'location' => 'g',
             'category' => $category,
             'teams' => $allTeams,
         ]);
@@ -171,6 +175,7 @@ class AttendanceController extends AbstractController
         // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/match_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
+            'location' => 'g',
             'category' => $category,
             'teams' => $team,
             'teamId' => $teamid,
@@ -295,6 +300,7 @@ class AttendanceController extends AbstractController
         // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/modify_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
+            'location' => 'g',
             'category' => $category,
             'users' => $usersInCategory,
             'gathering' => $gathering,

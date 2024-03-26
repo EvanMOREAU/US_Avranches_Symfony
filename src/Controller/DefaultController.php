@@ -53,7 +53,7 @@ class DefaultController extends AbstractController
             }
             $latestWeightDate = $weightRepository->getLatestWeightDate($playerId);
         }else{
-            return $this->render('/login/index.html.twig', ['controller_name' => 'SecurityController',]);
+            return $this->render('/login/index.html.twig', ['controller_name' => 'SecurityController','location' => 'a',]);
         }
 
         if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
@@ -66,6 +66,7 @@ class DefaultController extends AbstractController
                 else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
                 else if($weightVerif == 1){
                     return $this->render('base.html.twig', [
+                        'location' => 'a',
                         'controller_name' => 'DefaultController',
                         'testcount' => $testsRepository->count([]),
                         'addedtest' => $testsRepository->countTestsAddedThisMonth($playerId),
@@ -79,6 +80,7 @@ class DefaultController extends AbstractController
                     ]);}
                 return $this->render('base.html.twig', [
                     'controller_name' => 'DefaultController',
+                    'location' => 'a',
                     
                 ]);
             }

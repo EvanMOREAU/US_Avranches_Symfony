@@ -31,10 +31,12 @@ class PalierController extends AbstractController
         if ($this->isGranted('ROLE_SUPER_ADMIN')) {
             return $this->render('palier/index_admin.html.twig', [
                 'paliers' => $paliers,
+                'location' => 'd',
             ]);
         } else {
             return $this->render('palier/index_user.html.twig', [
                 'paliers' => $paliers,
+                'location' => 'd',
             ]);
         }
 
@@ -72,6 +74,7 @@ class PalierController extends AbstractController
 
         return $this->renderForm('palier/new.html.twig', [
             'palier' => $palier,
+            'location' => 'd',
             'form' => $form,
         ]);
     }
@@ -84,6 +87,7 @@ class PalierController extends AbstractController
 
         return $this->render('palier/show.html.twig', [
             'palier' => $palier,
+            'location' => 'd',
         ]);
     }
 
@@ -105,6 +109,7 @@ class PalierController extends AbstractController
         return $this->renderForm('palier/edit.html.twig', [
             'palier' => $palier,
             'form' => $form,
+            'location' => 'd',
         ]);
     }
 
@@ -172,6 +177,7 @@ class PalierController extends AbstractController
 
         return $this->render('validation.html.twig', [
             'users' => $users,
+            'location' => 'd',
         ]);
 
     }

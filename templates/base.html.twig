@@ -4,398 +4,36 @@
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
-      <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+      <link rel="icon" type="image/png" href="/images/logo.png">
       <title>
-        Material Dashboard 2 by Creative Tim
+        US Avranches
       </title>
-      <!--     Fonts and icons     -->
-      <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
-      <!-- Nucleo Icons -->
-      <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
-      <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
-      <script src="https://kit.fontawesome.com/62ccc46a5c.js" crossorigin="anonymous"></script>
-      <!-- Font Awesome Icons -->
-      <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-      <!-- Material Icons -->
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-      <!-- CSS Files -->
-                  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-      <link rel="stylesheet" href="bootstrap/css/styles.css">
-      <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
-      <!-- Nepcha Analytics (nepcha.com) -->
-      <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
-      {# <script defer data-site="evanmoreau.fr" src="https://api.nepcha.com/js/nepcha-analytics.js"></script> #}
-      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-
     </head>
-    {# <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}Accueil{% endblock %}</title>
-        <link rel="icon" href="images\logo.svg" sizes="any" type="image/svg+xml">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
-            {# <!-- Implémentation locale de Boostrap -->
-            <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-            <!-- Implémentation distante de Boostrap si la première ne fonctionne pas -->
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-            <!-- Feuille de styles CSS -->
-            {# <link rel="stylesheet" href="bootstrap/css/styles.css"> 
-            <link href="/css/pagebase.css" rel="stylesheet" />
-            <link href="/css/param.css" rel="stylesheet" />
-            <!--Styles.css-->
-            <link rel="stylesheet" href="/css/bootstrap.css"> #}
+          <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+          <!-- Nucleo Icons -->
+          <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
+          <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
+
+          <!-- Material Icons -->
+          <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+          <!-- CSS Files -->
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+          <link rel="stylesheet" href="bootstrap/css/styles.css">
+          <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
 
         {% endblock %}
 
         {% block javascripts %}
-            {# <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-
-            <script type="text/javascript" src="/js/tests.js"></script>
-            {{ encore_entry_script_tags('app') }}
-            <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script> #}
+            <script src="https://kit.fontawesome.com/62ccc46a5c.js" crossorigin="anonymous"></script>
+            <!-- Font Awesome Icons -->
+            <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
         {% endblock %}
-            {# <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
 
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-
-      .b-example-divider {
-        width: 100%;
-        height: 3rem;
-        background-color: rgba(0, 0, 0, .1);
-        border: solid rgba(0, 0, 0, .15);
-        border-width: 1px 0;
-        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-      }
-
-      .b-example-vr {
-        flex-shrink: 0;
-        width: 1.5rem;
-        height: 100vh;
-      }
-
-      .bi {
-        vertical-align: -.125em;
-        fill: currentColor;
-      }
-
-      .nav-scroller {
-        position: relative;
-        z-index: 2;
-        height: 2.75rem;
-        overflow-y: hidden;
-      }
-
-      .nav-scroller .nav {
-        display: flex;
-        flex-wrap: nowrap;
-        padding-bottom: 1rem;
-        margin-top: -1px;
-        overflow-x: auto;
-        text-align: center;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .btn-bd-primary {
-        --bd-violet-bg: #712cf9;
-        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-
-        --bs-btn-font-weight: 600;
-        --bs-btn-color: var(--bs-white);
-        --bs-btn-bg: var(--bd-violet-bg);
-        --bs-btn-border-color: var(--bd-violet-bg);
-        --bs-btn-hover-color: var(--bs-white);
-        --bs-btn-hover-bg: #6528e0;
-        --bs-btn-hover-border-color: #6528e0;
-        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-        --bs-btn-active-color: var(--bs-btn-hover-color);
-        --bs-btn-active-bg: #5a23c8;
-        --bs-btn-active-border-color: #5a23c8;
-      }
-
-      .bd-mode-toggle {
-        z-index: 1500;
-      }
-
-      .bd-mode-toggle .dropdown-menu .active .bi {
-        display: block !important;
-      }
-
-      
-    </style>
-    </head>
-     #} 
-    {#<body class= 'bg-dark'>
- <nav class="navbar navbar-dark fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand"></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title text-light" id="offcanvasDarkNavbarLabel">Navigation personnalisée</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body h-100">
-        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Accueil</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/poste">Poste</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/charts">Graphiques</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Matchs</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="/rassemblement" href="#">Calendrier des matchs</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/pdf">Mes tests</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/pdf">Mes paliers</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Mon équipe</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/user/{{ app.user.id }}/poste-cache">Poste</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/pdf">PDF</a>
-          </li>
-          {% if is_granted('ROLE_SUPER_ADMIN') %}
-          <hr> <h5 class="offcanvas-title text-light" id="offcanvasDarkNavbarLabel">Administration</h5><br>
-
-          
-
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/appel">Appel</a>
-          </li>
-        </ul>{% endif %}<hr>
-        <div class='col'></div>
-        <div class='col'></div>
-        <div class='col'></div>
-        <div class='col'></div>
-            <div class="row align-bottom row-cols-1">
-                <div class='col'>
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle text-light" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="{% if app.user.getProfileImage() != "" %}/uploads/images/{{ app.user.getProfileImage() }}{% else %} /uploads/images/Anonyme.jpg{% endif %}" alt="" width="32" height="32" class="rounded-circle me-2">
-                            <strong class='text-light'> {{ app.user.getFirstName() }} {{ app.user.getLastName() }}</strong>
-                        </a>
-                        <ul class="dropdown-menu text-small shadow">
-                            <li><a class="dropdown-item" href=""></a></li>
-                            <li><a class="dropdown-item" href="/parameter/modify">Paramètres</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout">Déconnexion</a></li>
-                        </ul>
-                    </div>
-                <!-- Déplacez le bloc du menu utilisateur ici -->
-                </div>
-            </div>
-      </div>
-    </div>
-  </div>
-</nav>
-
-    {% block body %} 
-    <link href="/css/nav2.css" rel="stylesheet" />
-    <link href="/css/nav3.css" rel="stylesheet" />
-            <main class="site-wrapper">
-            <div class="pt-table desktop-768">
-                <div class="pt-tablecell page-home relative" style="background-image: path('images/joueur.jpg');
-                    background-position: center;
-                    background-size: cover;">
-                                  <div class="container">
-                                      <div class="row">
-                                          <div class="col-xs-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8">
-                                              <div class="hexagon-menu clear">
-                                                  <div class="hexagon-item">
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <a  class="hex-content" href='/charts'>
-                                                          <span class="hex-content-inner">
-                                                              <span class="icon">
-                                                                  <i class="fa fa-universal-access"></i>
-                                                              </span>
-                                                              <span class="title">Graphiques</span>
-                                                          </span>
-                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                                      </a>
-                                                  </div>
-                                                  <div class="hexagon-item">
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <a  class="hex-content" href=''>
-                                                          <span class="hex-content-inner">
-                                                              <span class="icon">
-                                                                  <i class="fa fa-bullseye"></i>
-                                                              </span>
-                                                              <span class="title">Matchs /!\</span>
-                                                          </span>
-                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                                      </a>
-                                                  </div>
-                                                  <div class="hexagon-item">
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <a  class="hex-content" href='/tests'>
-                                                          <span class="hex-content-inner">
-                                                              <span class="icon">
-                                                                  <i class="fa fa-braille"></i>
-                                                              </span>
-                                                              <span class="title">Tests</span>
-                                                          </span>
-                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                                      </a>    
-                                                  </div>
-                                                  <div class="hexagon-item">
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                        <a class="hex-content" href="{{ is_granted('ROLE_COACH') ? path('app_admin_index') : path('app_team_index') }}">
-                                                          <span class="hex-content-inner" >
-                                                              <span class="icon">
-                                                                  <i class="fa fa-id-badge"></i>
-                                                              </span>
-                                                            <span class="title">{{ is_granted('ROLE_COACH') ? 'Administration' : 'Mon équipe' }}</span>
-                                                          </span>
-                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                                      </a>
-                                                  </div>
-                                                  <div class="hexagon-item">
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <a  class="hex-content" href='/user/{{ app.user.id }}/poste-cache'>
-                                                          <span class="hex-content-inner">
-                                                              <span class="icon">
-                                                                  <i class="fa fa-life-ring"></i>
-                                                              </span>
-                                                              <span class="title">Poste</span>
-                                                          </span>
-                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                                      </a>
-                                                  </div>
-                                                  <div class="hexagon-item">
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <a  class="hex-content" href='/pdf'>
-                                                          <span class="hex-content-inner">
-                                                              <span class="icon">
-                                                                  <i class="fa fa-clipboard"></i>
-                                                              </span>
-                                                              <span class="title">PDF</span>
-                                                          </span>
-                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                                      </a>
-                                                  </div>
-                                                  <div class="hexagon-item">
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <div class="hex-item">
-                                                          <div></div>
-                                                          <div></div>
-                                                          <div></div>
-                                                      </div>
-                                                      <a  class="hex-content" href='/user/{{ app.user.getId()}}/edit'>
-                                                          <span class="hex-content-inner">
-                                                              <span class="icon">
-                                                                  <i class="fa fa-map-signs"></i>
-                                                              </span>
-                                                              <span class="title">Paramètres</span>
-                                                          </span>
-                                                          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-                                                      </a>
-                                                      
-                                                  </div>
-                                              </div>
-
-                                          </div>
-                                      </div>
-                                  
-      {% endblock %}
-
-            </div>
-          </div>
-        </div>
-      </main> 
-      
-    </body>#}
-
-    <body class="g-sidenav-show  bg-gray-200">
+<body class="g-sidenav-show  bg-gray-200">
   <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark" id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
@@ -408,7 +46,7 @@
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link text-white active bg-gradient-primary" href="/">
+          <a class="nav-link text-white {% if location == "a" %} active bg-gradient-primary{% endif %}" href="/">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">dashboard</i>
             </div>
@@ -416,7 +54,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="/charts">
+          <a class="nav-link {% if location == "b" %} active bg-gradient-primary{% endif %} text-white " href="/charts">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="fa-solid fa-chart-line"></i>
             </div>
@@ -424,7 +62,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="/tests">
+          <a class="nav-link text-white {% if location == "c" %} active bg-gradient-primary{% endif %}" href="/tests">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="fa-solid fa-medal"></i>
             </div>
@@ -432,7 +70,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="/palier">
+          <a class="nav-link text-white {% if location == "d" %} active bg-gradient-primary{% endif %}" href="/palier">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="fa-solid fa-flag"></i>
             </div>
@@ -440,7 +78,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="/user/{{ app.user.id }}/poste-cache">
+          <a class="nav-link text-white {% if location == "e" %} active bg-gradient-primary{% endif %}" href="/user/{{ app.user.id }}/poste-cache">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="fa-solid fa-signs-post"></i>
             </div>
@@ -448,7 +86,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="/pdf" target="_blank">
+          <a class="nav-link text-white {% if location == "f" %} active bg-gradient-primary{% endif %}" href="/pdf" target="_blank">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="fa-solid fa-file-pdf"></i>
             </div>
@@ -461,7 +99,7 @@
             <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Administration</h6>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white " href="/appel">
+            <a class="nav-link text-white {% if location == "g" %} active bg-gradient-primary{% endif %} " href="/appel">
               <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="fa-solid fa-address-book"></i>
               </div>
@@ -494,9 +132,6 @@
             </div> #}
           </div>
           <ul class="navbar-nav  justify-content-end">
-            <li class="nav-item d-flex align-items-center">
-              <a class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" href="https://www.creative-tim.com/builder?ref=navbar-material-dashboard">Online Builder</a>
-            </li>
             <li class="mt-2">
             </li>
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -736,12 +371,12 @@
                         {% set currentPalierNumber = app.user.getPalier().getNumero() %}
 
                         {% if palier.getNumero() < currentPalierNumber %}
-                            <i class="fa-solid fa-check"></i>
+                            <i class="fa-solid fa-check text-success"></i>
                         {% elseif palier.getNumero() > currentPalierNumber %}
-                          <i class="fa-solid fa-lock"></i> 
+                          <i class="fa-solid fa-lock text-danger"></i> 
                         {% else %}
-                          <i class="fa-solid fa-hourglass-half"></i>
-                        {% endif %}                    
+                          <i class="fa-solid fa-hourglass-half text-warning"></i>
+                        {% endif %}                      
                       </span>
                       <div class="timeline-content">
                         <h6 class="text-dark text-sm font-weight-bold mb-0">Palier {{palier.numero}} - {{ palier.name }}</h6>
@@ -845,253 +480,6 @@
   <script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
   <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
   <script src="/assets/js/plugins/chartjs.min.js"></script>
-  <script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
-
-    new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ["M", "T", "W", "T", "F", "S", "S"],
-        datasets: [{
-          label: "Sales",
-          tension: 0.4,
-          borderWidth: 0,
-          borderRadius: 4,
-          borderSkipped: false,
-          backgroundColor: "rgba(255, 255, 255, .8)",
-          data: [50, 20, 10, 22, 50, 10, 40],
-          maxBarThickness: 6
-        }, ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              suggestedMin: 0,
-              suggestedMax: 500,
-              beginAtZero: true,
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-              color: "#fff"
-            },
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
-
-
-    var ctx2 = document.getElementById("chart-line").getContext("2d");
-
-    new Chart(ctx2, {
-      type: "line",
-      data: {
-        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-          label: "Mobile apps",
-          tension: 0,
-          borderWidth: 0,
-          pointRadius: 5,
-          pointBackgroundColor: "rgba(255, 255, 255, .8)",
-          pointBorderColor: "transparent",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderWidth: 4,
-          backgroundColor: "transparent",
-          fill: true,
-          data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
-          maxBarThickness: 6
-
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
-
-    var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
-
-    new Chart(ctx3, {
-      type: "line",
-      data: {
-        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-          label: "Mobile apps",
-          tension: 0,
-          borderWidth: 0,
-          pointRadius: 5,
-          pointBackgroundColor: "rgba(255, 255, 255, .8)",
-          pointBorderColor: "transparent",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderWidth: 4,
-          backgroundColor: "transparent",
-          fill: true,
-          data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-          maxBarThickness: 6
-
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              display: true,
-              padding: 10,
-              color: '#f8f9fa',
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
-  </script>
   <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {

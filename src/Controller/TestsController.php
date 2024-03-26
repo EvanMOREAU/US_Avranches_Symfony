@@ -81,6 +81,7 @@ class TestsController extends AbstractController
         // Passage des tests triés au template Twig
         return $this->render('tests/index.html.twig', [
             'controller_name' => 'TestsController',
+            'location' => 'c',
             'tests' => $testsArray,
             'users' => $userRepository->findAll(),
             'user' => $user,
@@ -183,6 +184,7 @@ class TestsController extends AbstractController
         
             return $this->renderForm('tests/new.html.twig', [
                 'test' => $test,
+                'location' => 'c',
                 'form' => $form,
             ]);
         }
@@ -255,6 +257,7 @@ class TestsController extends AbstractController
         
         return $this->renderForm('tests/edit.html.twig', [
             'test' => $test,
+            'location' => 'c',
             'form' => $form,
         ]);
     }

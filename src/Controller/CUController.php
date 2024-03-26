@@ -13,6 +13,7 @@ class CUController extends AbstractController
     {
         return $this->render('cu/index.html.twig', [
             'controller_name' => 'CUController',
+            'location' => '',
         ]);
     }
 }
