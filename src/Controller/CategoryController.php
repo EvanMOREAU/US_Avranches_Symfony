@@ -72,6 +72,7 @@ class CategoryController extends AbstractController
         return $this->renderForm('category/new.html.twig', [
             'category' => $category,
             'form' => $form,
+            'location' => '',
         ]);
     }
 
@@ -130,6 +131,7 @@ class CategoryController extends AbstractController
         return $this->renderForm('category/edit.html.twig', [
             'category' => $category,
             'form' => $form,
+            'location' => '',
         ]);
     }
 
