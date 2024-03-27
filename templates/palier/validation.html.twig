@@ -4,6 +4,50 @@
 
 {% block body %}
     <div class="container">
+       {% set users_exist = false %}
+{% for user in users %}
+    {% if videos[user.username] is defined %}
+        {% set users_exist = true %}
+    {% endif %}
+{% endfor %}
+
+{% if users_exist %}
+
+    <h1 class="text-center mb-4">User ayant un palier à valider</h1>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Vidéo</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    {% if videos[user.username] is defined %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>
+                                <button class="btn btn-info" onclick="openVideoModal('/uploads/videos/{{ user.username }}_palier.mp4')">Voir la vidéo</button>
+                            </td>
+                            <td>
+                                <form action="{{ path('app_validation', {'palierNumero': palierNumero}) }}" method="post">
+                                    <input type="hidden" name="username" value="{{ user.username }}">
+                                    <button type="submit" class="btn btn-success">Valider la vidéo et augmenter le palier</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+<div class="alert alert-danger alert-dismissible text-white text-center" role="alert">Aucun utilisateur n'attend de validation ! </div>
+{% endif %}
+
+
         <h1 class="text-center mb-4">Users ayant le palier {{ palierNumero }}</h1>
         <div class="table-responsive">
             <table class="table table-striped">
@@ -20,7 +64,7 @@
                             <td>{{ user.username }}</td>
                             <td>
                                 {% if videos[user.username] is defined %}
-                                    <button class="btn btn-primary" onclick="openVideoModal('/uploads/videos/{{ user.username }}_palier.mp4')">Voir la vidéo</button>
+                                    <button class="btn btn-info" onclick="openVideoModal('/uploads/videos/{{ user.username }}_palier.mp4')">Voir la vidéo</button>
                                 {% else %}
                                     Aucune vidéo disponible.
                                 {% endif %}
@@ -62,14 +106,16 @@
         </div>
     </div>
 
-    <script>
-        function openVideoModal(videoPath) {
-            // Mettez à jour la source vidéo avec le chemin passé
-            document.getElementById('videoSource').setAttribute('src', videoPath);
-            // Rafraîchissez le lecteur vidéo
-            document.getElementById('videoPlayer').load();
-            // Affichez la modal
-            $('#videoModal').modal('show');
-        }
-    </script>
+
+        <script>
+            function openVideoModal(videoPath) {
+                // Mettez à jour la source vidéo avec le chemin passé
+                document.getElementById('videoSource').setAttribute('src', videoPath);
+                // Rafraîchissez le lecteur vidéo
+                document.getElementById('videoPlayer').load();
+                // Affichez la modal
+                document.getElementById('videoModal').classList.add('show');
+                document.getElementById('videoModal').style.display = 'block';
+            }
+        </script>
 {% endblock %}
