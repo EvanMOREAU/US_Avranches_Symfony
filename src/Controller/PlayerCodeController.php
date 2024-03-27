@@ -31,6 +31,7 @@ class PlayerCodeController extends AbstractController
 
         return $this->render('player_code/index.html.twig', [
             'player_codes' => $playerCodeRepository->findAll(),
+            'location' => '',
         ]);
     }
 
@@ -67,6 +68,7 @@ class PlayerCodeController extends AbstractController
 
         return $this->render('player_code/show.html.twig', [
             'player_code' => $playerCode,
+            'location' => '',
         ]);
     }
 

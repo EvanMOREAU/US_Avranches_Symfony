@@ -43,10 +43,12 @@ class PalierController extends AbstractController
                 'paliers' => $paliers,
                 'users' => $userRepository->findAll(),
                 'videosToValidate' => $videosToValidate, // Passer le tableau des vidéos restantes à valider au template Twig
+                'location' => 'd',
             ]);
         } else {
             return $this->render('palier/index_user.html.twig', [
                 'paliers' => $paliers,
+                'location' => 'd',
             ]);
         }
     }
@@ -84,6 +86,7 @@ class PalierController extends AbstractController
 
         return $this->renderForm('palier/new.html.twig', [
             'palier' => $palier,
+            'location' => 'd',
             'form' => $form,
         ]);
     }
@@ -96,6 +99,7 @@ class PalierController extends AbstractController
 
         return $this->render('palier/show.html.twig', [
             'palier' => $palier,
+            'location' => 'd',
         ]);
     }
 
@@ -117,6 +121,7 @@ class PalierController extends AbstractController
         return $this->renderForm('palier/edit.html.twig', [
             'palier' => $palier,
             'form' => $form,
+            'location' => 'd',
         ]);
     }
 
@@ -250,6 +255,7 @@ class PalierController extends AbstractController
             'users' => $users,
             'videos' => $videos, // Passez le tableau des vidéos à la vue
             'palierNumero' => $palierNumero,
+            'location' => 'd',
         ]);
     }
 

@@ -32,6 +32,7 @@ class CategoryController extends AbstractController
         // Affiche la vue avec la liste des catégories
         return $this->render('category/index.html.twig', [
             'categories' => $categoryRepository->findAll(),
+            'location' => '',
         ]);
     }
 
@@ -71,6 +72,7 @@ class CategoryController extends AbstractController
         return $this->renderForm('category/new.html.twig', [
             'category' => $category,
             'form' => $form,
+            'location' => '',
         ]);
     }
 
@@ -90,6 +92,7 @@ class CategoryController extends AbstractController
         // Affiche la vue avec les détails de la catégorie
         return $this->render('category/show.html.twig', [
             'category' => $category,
+            'location' => '',
         ]);
     }
 
@@ -128,6 +131,7 @@ class CategoryController extends AbstractController
         return $this->renderForm('category/edit.html.twig', [
             'category' => $category,
             'form' => $form,
+            'location' => '',
         ]);
     }
 

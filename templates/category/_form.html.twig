@@ -11,7 +11,7 @@
 			{{ form_row(form.name, { 
     'label': 'Nom', 
     'attr': { 'class': 'form-control mb-4', 'id': 'name', 'name': '_name', 'aria-label': 'name' }, 
-    'label_attr': {'class': 'form-label text-white'}, 
+    'label_attr': {'class': 'form-label'}, 
     'separator': '<br><br>' 
 }) }}
 		</div>
@@ -21,7 +21,7 @@
 		{{ form_row(form.color, { 
     'label': 'Couleur', 
     'attr': { 'class': 'form-control mb-4', 'id': 'image', 'name': '_image', 'aria-label': 'image' }, 
-    'label_attr': {'class': 'form-label text-white'},
+    'label_attr': {'class': 'form-label'},
     'separator': '<br><br>' 
 }) }}
 	</div>
@@ -31,7 +31,7 @@
 			{{ form_row(form.image, { 
     'label': 'Image', 
     'attr': { 'class': 'form-control mb-4', 'id': 'image', 'name': '_image', 'aria-label': 'image' }, 
-    'label_attr': {'class': 'form-label text-white'},
+    'label_attr': {'class': 'form-label'},
     'separator': '<br><br>' 
 }) }}
 		</div>
@@ -42,7 +42,7 @@
 		</div>
 	</div>
 
-	<button class="btn btn-primary btn-sm mt-2">{{ button_label|default('Créer') }}</button>
+	<button class="btn btn-success btn-sm mt-2">{{ button_label|default('Créer') }}</button>
 	{{ form_end(form) }}
 
 </div>

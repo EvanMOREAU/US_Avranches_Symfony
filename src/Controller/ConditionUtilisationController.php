@@ -13,6 +13,7 @@ class ConditionUtilisationController extends AbstractController
     {
         return $this->render('condition_utilisation/index.html.twig', [
             'controller_name' => 'ConditionUtilisationController',
+            'location' => '',
         ]);
     }
 }
