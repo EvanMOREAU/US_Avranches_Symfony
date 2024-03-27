@@ -45,9 +45,8 @@ Commencer u10 jusqu’en u17 —> permettre à l’administrateur de créer une 
 
 ===========================================================
 
-
-En cours: 
-
-Upload d'image de profile.
-Extension installé : vich/uploader-bundle
-
+A faire : 
+ Bouton "active" dans la barre des tâches
+ Gestion A2F
+ Utilisateur -> Edit + Index
+ Parameter
