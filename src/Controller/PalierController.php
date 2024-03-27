@@ -24,21 +24,33 @@ class PalierController extends AbstractController
 {
 
     #[Route('/', name: 'app_palier_index', methods: ['GET', 'POST'])]
-    public function index(PalierRepository $palierRepository): Response
+    public function index(PalierRepository $palierRepository, UserRepository $userRepository): Response
     {
-        $paliers = $palierRepository->findBy([], ['numero' => 'ASC']);
-        
+        // Récupérer tous les paliers
+        $paliers = $palierRepository->findAll();
+
+        // Tableau pour stocker le nombre de vidéos restantes à valider pour chaque palier
+        $videosToValidate = [];
+
+        // Parcourir chaque palier
+        foreach ($paliers as $palier) {
+            // Appeler la méthode countVideosByPalier pour chaque palier
+            $videosToValidate[$palier->getId()] = $this->countVideosByPalier($palier);
+        }
+
         if ($this->isGranted('ROLE_SUPER_ADMIN')) {
             return $this->render('palier/index_admin.html.twig', [
                 'paliers' => $paliers,
+                'users' => $userRepository->findAll(),
+                'videosToValidate' => $videosToValidate, // Passer le tableau des vidéos restantes à valider au template Twig
             ]);
         } else {
             return $this->render('palier/index_user.html.twig', [
                 'paliers' => $paliers,
             ]);
         }
-
     }
+
     #[Route('/new', name: 'app_palier_new', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_SUPER_ADMIN")]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -165,14 +177,130 @@ class PalierController extends AbstractController
     }
 
     
-    #[Route('/users/{palierNumero}', name: 'app_validation', methods: ['GET'])]
-    public function validation(Request $request, $palierNumero, UserRepository $userRepository): Response
+    #[Route('/users/{palierNumero}', name: 'app_validation', methods: ['GET', 'POST'])]
+    public function validation(Request $request, $palierNumero, UserRepository $userRepository, PalierRepository $palierRepository, EntityManagerInterface $entityManager): Response
     {
-        $users = $userRepository->findUsersByPalier($palierNumero);
+        // Récupérer le palier correspondant au numéro donné
+        $palier = $palierRepository->findOneBy(['numero' => $palierNumero]);
 
-        return $this->render('validation.html.twig', [
+        // Vérifier si le palier existe
+        if (!$palier) {
+            throw $this->createNotFoundException('Palier non trouvé');
+        }
+
+        // Récupérer les utilisateurs associés à ce palier
+        $users = $palier->getUsers();
+
+        // Si la requête est de type POST, cela signifie qu'un utilisateur a été validé
+        if ($request->isMethod('POST')) {
+            // Récupérer le nom d'utilisateur à partir de la requête
+            $username = $request->request->get('username');
+
+            // Récupérer l'utilisateur correspondant au nom d'utilisateur
+            $user = $userRepository->findOneBy(['username' => $username]);
+
+            // Vérifier si l'utilisateur existe
+            if (!$user) {
+                throw $this->createNotFoundException('Utilisateur non trouvé');
+            }
+
+            // Récupérer le chemin de la vidéo à supprimer
+            $videoPath = 'uploads/videos/' . $user->getUsername() . '_palier.mp4';
+
+            // Vérifier si le fichier vidéo existe
+            if (file_exists($videoPath)) {
+                // Supprimer la vidéo du répertoire
+                unlink($videoPath);
+            }
+
+            // Récupérer le palier suivant
+            $nextPalier = $palierRepository->findOneBy(['numero' => $palierNumero + 1]);
+
+            // Vérifier si le palier suivant existe
+            if (!$nextPalier) {
+                throw $this->createNotFoundException('Palier suivant non trouvé');
+            }
+
+            // Associer le palier suivant à l'utilisateur
+            $user->setPalier($nextPalier);
+
+            // Enregistrer les modifications dans la base de données
+            $entityManager->flush();
+
+            // Rediriger vers la page de validation avec le même palier
+            return $this->redirectToRoute('app_validation', ['palierNumero' => $palierNumero]);
+        }
+
+        // Créez un tableau pour stocker les informations de la vidéo de chaque utilisateur
+        $videos = [];
+
+        // Parcourez chaque utilisateur pour récupérer la vidéo s'il existe
+        foreach ($users as $user) {
+            // Construire le chemin de la vidéo
+            $videoPath = 'uploads/videos/' . $user->getUsername() . '_palier.mp4';
+
+            // Vérifiez si le fichier vidéo existe
+            if (file_exists($videoPath)) {
+                // Ajoutez le chemin de la vidéo au tableau
+                $videos[$user->getUsername()] = $videoPath;
+            }
+        }
+
+        return $this->render('palier/validation.html.twig', [
             'users' => $users,
+            'videos' => $videos, // Passez le tableau des vidéos à la vue
+            'palierNumero' => $palierNumero,
         ]);
-
     }
+
+    private function countVideos(): int
+    {
+        // Chemin du dossier contenant les vidéos
+        $videoDirectory = 'uploads/videos/';
+
+        // Compteur pour stocker le nombre total de vidéos
+        $videoCount = 0;
+
+        // Vérifiez si le dossier existe
+        if (file_exists($videoDirectory)) {
+            // Comptez les fichiers dans le dossier (à l'exclusion des répertoires)
+            $videoCount = count(glob($videoDirectory . '/*.{mp4}', GLOB_BRACE));
+        }
+
+        // Retournez le nombre total de vidéos
+        return $videoCount;
+    }
+    private function countVideosByPalier(Palier $palier): int
+    {
+        // Chemin du dossier contenant les vidéos
+        $videoDirectory = 'uploads/videos/';
+
+        // Compteur pour stocker le nombre de vidéos restantes à valider pour ce palier
+        $videoCount = 0;
+
+        // Récupérer les utilisateurs associés à ce palier
+        $users = $palier->getUsers();
+
+        // Parcourez chaque utilisateur pour vérifier s'ils ont téléchargé une vidéo pour ce palier
+        foreach ($users as $user) {
+            // Vérifiez si l'utilisateur a le même palier que celui fourni en argument
+            if ($user->getPalier() === $palier) {
+                // Construire le nom de fichier pour la vidéo de ce palier et cet utilisateur
+                $videoName = $user->getUsername() . '_palier';
+
+                // Construire le chemin de la vidéo
+                $videoPath = $videoDirectory . '/' . $videoName . '.mp4';
+
+                // Vérifiez si le fichier vidéo existe
+                if (file_exists($videoPath)) {
+                    // S'il n'existe pas, incrémentez le compteur
+                    $videoCount++;
+                }
+            }
+        }
+
+        // Retournez le nombre total de vidéos restantes à valider pour ce palier
+        return $videoCount;
+    }
+
 }
