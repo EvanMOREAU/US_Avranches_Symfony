@@ -9,6 +9,9 @@
     <style>
         img {
             filter: grayscale(100%) brightness(50%);
+            background-size: cover;
+            object-fit: cover;
+            object-position: center;
         }
 
         .toast {
@@ -16,6 +19,26 @@
             bottom: 2%;
             right: 2%;
             z-index: 1000;
+        }
+
+        @media(min-width: 1200px) {
+			.card-attendance-u img {
+				width: 100%;
+				height: 25vh;
+				z-index: 0;
+				transition: transform 0.4s;
+				object-fit: cover;
+			}
+		}
+
+		@media(max-width: 1200px) {
+			.card-attendance-u img {
+				width: 100%;
+				height: 20vh;
+				z-index: 0;
+				transition: transform 0.4s;
+				object-fit: cover;
+			}
         }
     </style>
     <script src="/js/jquery-3.3.1.min.js"></script>
@@ -31,7 +54,11 @@
             {% for user in usersSorted %}
                 <div class="col">
                     <div class="img card-attendance-u" data-user-id="{{ user.id }}">
-                        <div class="abs present"><img src="/images/arthur-delacour.png" class="card-img-top zoom" alt="..."></div>
+                        {% if user.profileImage %}
+                            <div class="abs present"><img src="/uploads/images/{{ user.profileImage }}" class="card-img-top zoom" alt="..."></div>
+                        {% else %}
+                            <div class="abs present"><img src="/images/inconnu.jpg" class="card-img-top zoom" alt="..."></div>
+                        {% endif %}
                         <div class="card-body">
                             <!-- Affiche le nom de famille uniquement sur les écrans plus grands (md et plus) -->
                             <h5 class="card-title text-center pt-1 d-none d-md-block">{{ user.firstName }} {{ user.lastName }}</h5>
