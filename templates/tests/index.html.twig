@@ -10,7 +10,7 @@
     <div class="text-center">
         <h1 class="h1">{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH")%} Index des Tests {% else %}Liste de vos tests {{ app.user.getFirstName() }}{% endif %}</h1>
         {% if is_granted("ROLE_SUPER_ADMIN") %}
-        <a href="{{ path('app_tests_new') }}" class="btn btn-info">Créer un nouveau test</a>
+        <a href="{{ path('app_tests_new') }}" class="btn btn-info">Inscrire un nouveau test</a>
         {% endif %}
     </div>
 
