@@ -40,6 +40,7 @@ class EquipeController extends AbstractController
         return $this->renderForm('equipe/new.html.twig', [
             'equipe' => $equipe,
             'form' => $form,
+            'location' => '',
         ]);
     }
 
@@ -67,6 +68,7 @@ class EquipeController extends AbstractController
         return $this->renderForm('equipe/edit.html.twig', [
             'equipe' => $equipe,
             'form' => $form,
+            'location' => '',
         ]);
     }
 

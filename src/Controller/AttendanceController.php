@@ -150,8 +150,8 @@ class AttendanceController extends AbstractController
     }
 
     // Page d'appel pour un match
-    #[Route('/appel/match/{category}/{team}', name: 'app_attendance_match')]
-    public function match(string $category, string $team, string $teamId, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
+    #[Route('/appel/match/{category}/{team}/{teamid}', name: 'app_attendance_match')]
+    public function match(string $category, string $team, string $teamid, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -162,15 +162,24 @@ class AttendanceController extends AbstractController
             }
         }
 
-        // trouver tous les utilisateurs dans l'équipe $team
+        // Get the team entity based on teamid
+        $teamEntity = $equipeRepository->find($teamid);
+
+        if (!$teamEntity) {
+            throw $this->createNotFoundException('Équipe non trouvée');
+        }
+
+        // Get all users belonging to the team
+        $usersInTeam = $UserRepository->findBy(['equipe' => $teamEntity]);
 
         // Rendre le modèle en fonction de la catégorie
-        return $this->render('attendance/match_choice_attendance.html.twig', [
+        return $this->render('attendance/match_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
             'location' => 'g',
             'category' => $category,
-            'team' => $team,
-            'teamId' => $teamId,
+            'teams' => $team,
+            'teamId' => $teamid,
+            'users' => $usersInTeam,
         ]);
     }
 
@@ -322,14 +331,12 @@ class AttendanceController extends AbstractController
         // Analyser les données JSON de la requête
         $requestData = json_decode($request->getContent(), true);
 
-        $type = $requestData['type'];
         $parisTimezone = new DateTimeZone('Europe/Paris');
         $datetime = new \DateTime($requestData['datetime'], $parisTimezone);
 
         $presentUserIds = $requestData['presentUserIds'];
         $absentUserIds = $requestData['absentUserIds'];
 
-        $gatheringEntity->setType($type);
         $gatheringEntity->setGatheringHappenedDate($datetime);
 
         // Mettre à jour les enregistrements de présence pour les utilisateurs présents
