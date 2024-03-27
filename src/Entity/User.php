@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Tests;
 use App\Entity\Height;
 use App\Entity\Weight;
+use App\Entity\Palier;
 use App\Entity\Gathering;
 use App\Entity\Attendance;
 use Doctrine\DBAL\Types\Types;
@@ -81,6 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tests = new ArrayCollection();
         $this->weights = new ArrayCollection();
         $this->heights = new ArrayCollection();
+        $this->games = new ArrayCollection();
     }
 
 
@@ -123,6 +125,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Palier $palier = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Game::class)]
+    private Collection $games;
 
     public function getId(): ?int
     {
@@ -453,7 +458,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->weights->contains($weight)) {
             $this->weights->add($weight);
-            $weight->setUserId($this);
+            $weight->setUser($this);
         }
 
         return $this;
@@ -463,8 +468,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->weights->removeElement($weight)) {
             // set the owning side to null (unless already changed)
-            if ($weight->getUserId() === $this) {
-                $weight->setUserId(null);
+            if ($weight->getUser() === $this) {
+                $weight->setUser(null);
             }
         }
 
@@ -513,7 +518,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
     public function getEquipe(): ?Equipe
     {
         return $this->equipe;
@@ -522,12 +526,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEquipe(?Equipe $equipe): static
     {
         $this->equipe = $equipe;
+
+        return $this;
     }
     
     public function getPalier(): ?Palier
     {
         return $this->palier;
     }
+
 
     public function setPalier(?Palier $palier): static
     {
@@ -545,6 +552,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastConnection(?\DateTimeInterface $lastConnection): static
     {
         $this->lastConnection = $lastConnection;
+    
+        return $this;
+    }
+    
+
+    /**
+     * @return Collection<int, Game>
+     */
+    public function getGames(): Collection
+    {
+        return $this->games;
+    }
+
+    public function addGame(Game $game): static
+    {
+        if (!$this->games->contains($game)) {
+            $this->games->add($game);
+            $game->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGame(Game $game): static
+    {
+        if ($this->games->removeElement($game)) {
+            // set the owning side to null (unless already changed)
+            if ($game->getUser() === $this) {
+                $game->setUser(null);
+            }
+        }
 
         return $this;
     }

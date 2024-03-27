@@ -54,6 +54,7 @@ class RegistrationFormType extends AbstractType
                 'format' => 'dd MM yyyy', // Format de la date
                 'years' => range(date('Y') - 20, date('Y')), // La plage d'années que vous voulez afficher (ici, les 100 dernières années)
                 'label' => false, // Étiquette du champ
+                'html5' => true,
 
             ])
             ->add('first_name', null, [
@@ -65,9 +66,6 @@ class RegistrationFormType extends AbstractType
             ->add('email', EmailType::class, [
                 'label' => false,
                 'required' => true,
-                'attr' => [
-                    'placeholder' => 'Votre adresse email',
-                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer votre adresse email.',

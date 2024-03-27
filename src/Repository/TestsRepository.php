@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use DateTime;
 use App\Entity\Tests;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Tests>
@@ -53,13 +54,20 @@ class TestsRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-    public function findTestsByValidation($isValidated)
+
+    public function countTestsAddedThisMonth($playerId): int
     {
+        $startOfMonth = new \DateTime('first day of this month');
+        $endOfMonth = new \DateTime('last day of this month');
         return $this->createQueryBuilder('t')
-            ->andWhere('t.is_validated = :is_validated')
-            ->setParameter('is_validated', $isValidated)
-            ->orderBy('t.date', 'DESC')
+            ->select('COUNT(t.id)')
+            ->andWhere('t.user = :userId')
+            ->andWhere('t.date BETWEEN :startDate AND :endDate')
+            ->setParameter('userId', $playerId)
+            ->setParameter('startDate', $startOfMonth)
+            ->setParameter('endDate', $endOfMonth)
             ->getQuery()
-            ->getResult();
+            ->getSingleScalarResult();
     }
+
 }

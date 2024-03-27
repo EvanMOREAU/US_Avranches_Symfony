@@ -72,6 +72,7 @@ class UserController extends AbstractController
 
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
+            'location' => '',
         ]);
     }
     
@@ -84,6 +85,7 @@ class UserController extends AbstractController
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
+            'location' => '',
         ]);
     }
 
@@ -131,6 +133,7 @@ class UserController extends AbstractController
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
+            'location' => '',
         ]);
     }
 
@@ -165,6 +168,7 @@ class UserController extends AbstractController
 
         return $this->render('user/hiddenposte.html.twig', [
             'user' => $user,
+            'location' => 'e',
         ]);
     }
 
@@ -177,6 +181,7 @@ class UserController extends AbstractController
 
         return $this->render('user/poste.html.twig', [
             'user' => $user,
+            'location' => 'e',
         ]);
     }
 

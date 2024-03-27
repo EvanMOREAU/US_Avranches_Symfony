@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}users ayant le palier {{ palierNumero }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mb-4">users ayant le palier {{ palierNumero }}</h1>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Pseudo</th>
+                        <!-- Ajoutez d'autres colonnes si nécessaire -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.nom }}</td>
+                            <td>{{ user.pseudo }}</td>
+                            <!-- Ajoutez d'autres colonnes si nécessaire -->
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="2" class="text-center">Aucun user pour ce palier.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

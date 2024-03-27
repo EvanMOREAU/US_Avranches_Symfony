@@ -24,9 +24,11 @@ class CategoryType extends AbstractType
                 }, range(0, 99)),
                 'choice_label' => function ($value) {
                     return 'U' . $value;
+                    // return $value;
                 },
+                // 'choice_label' => 'name',
                 // Permet de choisir la valeur par défaut dans le dropdown, à changer pour mettre celui de la catégorie
-                // 'data' => 'U0',
+                // 'data' => 'U10',
             ]);
         $builder->add('image', FileType::class, [
             'label' => 'Image',

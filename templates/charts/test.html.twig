@@ -1,0 +1,394 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<!--
+=========================================================
+* Material Dashboard 2 - v3.1.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-dashboard
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<body class="g-sidenav-show  bg-gray-200">
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                <i class="fa-solid fa-server"></i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Nombre de données relative à vous</p>
+                <h4 class="mb-0">{{ totalDataCount }}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+{{totalDataCountThisMonth}} </span>nouvelles données ce mois-ci</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+                <i class="fa-solid fa-calendar"></i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Date de la première donnée</p>
+                <h4 class="mb-0">{{earliestDate|date('d/m/Y')}}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <p class="mb-0">La donnée était de type :<span class="text-success text-sm font-weight-bolder">{% if earliestDateWithType == 'Weight' %} Poids {% elseif earliestDateWithType == 'Height' %} Taille {% elseif earliestDateWithType == 'Tests' %}Test{% else %} ERROR {% endif %}</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                <i class="fa-regular fa-calendar"></i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Date de la dernière donnée</p>
+                <h4 class="mb-0">{{latestDate|date('d/m/Y')}}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <p class="mb-0">La donnée était de type :<span class="text-success text-sm font-weight-bolder">{% if latestDateWithType == 'Weight' %} Poids {% elseif latestDateWithType == 'Height' %} Taille {% elseif latestDateWithType == 'Tests' %}Test{% else %} ERROR {% endif %}</p>
+            </div>
+          </div>
+        </div>
+        {% set poid = 0 %}
+        {% set taille = 0 %}
+        {% set imc = 0 %}
+        {% set date1 = null %}
+        {% set date2 = null %}
+        {% for chart in chartData %}
+            {% if chart.name == "Poids" %}
+                {% set poid = chart.data.values|last %}
+                {% set date1 = chart.data.labels|last %}
+            {% elseif chart.name == "Taille" %}
+                {% set taille = chart.data.values|last %}
+                {% set date2 = chart.data.labels|last %}
+            {% endif %}
+        {% endfor %}
+
+        {% if poid != 0 and taille != 0 %}
+            {% set imc = poid / (taille * taille) %}
+            {% if date1 > date2 %}
+                {% set recentDate = date1 %}
+            {% else %}
+                {% set recentDate = date2 %}
+            {% endif %}
+        {% endif %}
+
+        <div class="col-xl-3 col-sm-6">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                <i class="fa-solid fa-weight-hanging"></i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Votre IMC d'après vos dernières données</p>
+                <h4 class="mb-0">{% if imc != 0 %}{{imc|number_format(2, '.', ',')}}{% else %} ERROR {% endif %}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <p class="mb-0">Valable à partir du <span class="text-success text-sm font-weight-bolder">{{ recentDate|date('d/m/Y') }} </span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+        <div class="row mt-4">
+        {% for chart in chartData %}
+            {% if chart.name == 'Taille' %}
+            <div class="col-lg-4 col-md-6 mt-4 mb-4">
+            <div class="card z-index-2 ">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+                    <div class="chart">
+                    <canvas id="chart{{chart.name}}" class="chart-canvas" height="170"></canvas>
+                    </div>
+                </div>
+                </div>
+                <div class="card-body">
+                <h6 class="mb-0 ">{{chart.name}} </h6>
+                <p class="text-sm "> </p>
+                <hr class="dark horizontal">
+                <div class="d-flex ">
+                    <i class="fa-solid fa-arrow-up-9-1"></i>
+                    <p class="mb-0 text-sm"> {{ chart.data.values|length }} données enregistrés</p>
+                </div>
+                </div>
+            </div>
+            </div>
+            {% endif %}
+            {% if chart.name == 'Poids' %}
+            <div class="col-lg-4 col-md-6 mt-4 mb-4">
+            <div class="card z-index-2  ">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1">
+                    <div class="chart">
+                    <canvas id="chart{{chart.name}}" class="chart-canvas" height="170"></canvas>
+                    </div>
+                </div>
+                </div>
+                <div class="card-body">
+                <h6 class="mb-0 "> {{chart.name}} </h6>
+                <p class="text-sm "> <span class="font-weight-bolder"></span></p>
+                <hr class="dark horizontal">
+                <div class="d-flex ">
+                    <i class="fa-solid fa-arrow-up-9-1"></i>
+                    <p class="mb-0 text-sm">{{ chart.data.values|length }} données enregistrés</p>
+                </div>
+                </div>
+            </div>
+            </div>
+            {% endif %}
+            {% if chart.name == 'VMA Classique' %}
+            <div class="col-lg-4 mt-4 mb-3">
+            <div class="card z-index-2 ">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
+                    <div class="chart">
+                    <canvas id="chart{{ chart.name|replace({' ': '_'}) }}" class="chart-canvas" height="170"></canvas>
+                    </div>
+                </div>
+                </div>
+                <div class="card-body">
+                <h6 class="mb-0 ">{{chart.name}}</h6>
+                <p class="text-sm "></p>
+                <hr class="dark horizontal">
+                <div class="d-flex ">
+                    <i class="fa-solid fa-arrow-up-9-1"></i>
+                    <p class="mb-0 text-sm">{{ chart.data.values|length }} données enregistrés</p>
+                </div>
+                </div>
+            </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="container-fluid pt-3">
+            <a class="btn bg-gradient-primary w-100" href="/charts/details" type="button">Voir plus de Graphiques</a>
+        </div>
+      <div class="row mb-4">
+        <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+          <div class="card">
+            <div class="card-header pb-0">
+              <div class="row">
+                <div class="col-lg-6 col-7">
+                  <h6>Données</h6>
+                  <p class="text-sm mb-0">
+                    <i class="fa fa-check text-info" aria-hidden="true"></i>
+                    <span class="font-weight-bold ms-1">6 dernières données</span> enregistrés
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive">
+                <table class="table align-items-center mb-0">
+                    <thead>
+                        <tr>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Type</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Valeur</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in sixLastRecord %}
+
+                            <tr>
+                            <td>
+                                <div class="d-flex px-2 py-1">
+                                <div>
+                                    {% if record.type == "Weight" %}<i class="fa-solid fa-weight-scale me-3"></i>{% elseif record.type == "Height" %}<i class="fa-solid fa-text-height me-3"></i>{% elseif record.type == "Tests" %}<i class="fa-solid fa-gauge me-3"></i>{% endif %}
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">{% if record.type == "Weight" %}Poids{% elseif record.type == "Height" %}Taille{% elseif record.type == "Tests" %}Test{% endif %}</h6>
+                                </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{ record.date|date('d/m/Y')}}
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                               {% if record.type == "Weight" %} {{record.value}} Kg{% elseif record.type == "Height" %}{{record.value}} cm {% elseif record.type == "Tests" %}<a class="btn bg-gradient-primary w-100" href="/tests" type="button">Voir</a>{% endif %}
+                            </td>
+                            </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100">
+              <div class="card-header pb-0">
+                <h6>Paliers</h6>
+                <p class="text-sm">
+                  <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
+                  Palier actuel :<span class="font-weight-bold"> Palier {{ app.user.getPalier().numero }}</span>
+                </p>
+              </div>
+              <div class="card-body p-3">
+                <div class="timeline timeline-one-side">
+                  {% for palier in paliers %}
+                    <div class="timeline-block mb-3">
+                      <span class="timeline-step">
+                        {% set currentPalierNumber = app.user.getPalier().getNumero() %}
+
+                        {% if palier.getNumero() < currentPalierNumber %}
+                            <i class="fa-solid fa-check text-success"></i>
+                        {% elseif palier.getNumero() > currentPalierNumber %}
+                          <i class="fa-solid fa-lock text-danger"></i> 
+                        {% else %}
+                          <i class="fa-solid fa-hourglass-half text-warning"></i>
+                        {% endif %}                    
+                      </span>
+                      <div class="timeline-content">
+                        <h6 class="text-dark text-sm font-weight-bold mb-0">Palier {{palier.numero}} - {{ palier.name }}</h6>
+                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{ palier.objectif }}</p>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+      <footer class="footer py-4  ">
+        <div class="container-fluid">
+          <div class="row align-items-center justify-content-lg-between">
+            <div class="col-lg-6 mb-lg-0 mb-4">
+              <div class="copyright text-center text-sm text-muted text-lg-start">
+                Créé par les BTS SIO 2 NDLP (2023/2024).
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </main>
+      
+<script>
+    {% for chart in chartData %}
+        var ctx{{ chart.name|replace({' ': '_'}) }} = document.getElementById("chart{{ chart.name|replace({' ': '_'}) }}").getContext("2d");
+        const configData{{ chart.name|replace({' ': '_'}) }} = {
+            labels: {{ chart.data.labels | json_encode | raw }},
+            values: {{ chart.data.values | json_encode | raw }}
+        };
+        
+        new Chart(ctx{{ chart.name|replace({' ': '_'}) }}, {
+            type: "line",
+            data: {
+                labels: configData{{ chart.name|replace({' ': '_'}) }}.labels,
+                datasets: [{
+                    label: "{{ chart.name }}",
+                    tension: 0.2,
+                    borderWidth: 0,
+                    pointRadius: 5,
+                    pointBackgroundColor: "rgba(255, 255, 255, .8)",
+                    pointBorderColor: "transparent",
+                    borderColor: "rgba(255, 255, 255, .8)",
+                    borderWidth: 4,
+                    backgroundColor: "transparent",
+                    fill: true,
+                    data: configData{{ chart.name|replace({' ': '_'}) }}.values,
+                    maxBarThickness: 6
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5],
+                            color: 'rgba(255, 255, 255, .2)'
+                        },
+                        ticks: {
+                            display: true,
+                            color: '#f8f9fa',
+                            padding: 10,
+                            font: {
+                                size: 14,
+                                weight: 300,
+                                family: "Roboto",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            color: '#f8f9fa',
+                            padding: 10,
+                            font: {
+                                size: 14,
+                                weight: 300,
+                                family: "Roboto",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                },
+            },
+        });
+    {% endfor %}
+</script>
+
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+</body>
+
+{% endblock %}

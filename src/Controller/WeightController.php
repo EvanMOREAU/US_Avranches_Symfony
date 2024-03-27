@@ -19,6 +19,7 @@ class WeightController extends AbstractController
     {
         return $this->render('weight/index.html.twig', [
             'weights' => $weightRepository->findAll(),
+            'location' => '',
         ]);
     }
 
@@ -38,12 +39,13 @@ class WeightController extends AbstractController
             $entityManager->persist($weight);
             $entityManager->flush();
             
-            return $this->redirectToRoute('app_weight_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_default', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('weight/new.html.twig', [
             'weight' => $weight,
             'form' => $form,
+            'location' => '',
         ]);
     }
 
@@ -52,6 +54,7 @@ class WeightController extends AbstractController
     {
         return $this->render('weight/show.html.twig', [
             'weight' => $weight,
+            'location' => '',
         ]);
     }
 

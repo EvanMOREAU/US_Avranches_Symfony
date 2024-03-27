@@ -1,84 +1,98 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Charts index{% endblock %}
+{% block title %}ChartConfiguration index{% endblock %}
 
 {% block body %}
 <style>
-    body {
-        color: white;
-        margin: 10%;
+    canvas{
+        margin-left : 10%;
+        margin-right : 10%;
+        margin-bottom : 10%;
     }
 </style>
-
+<script>
+    const up = (ctx, value) => ctx.p0.parsed.y < ctx.p1.parsed.y ? value : undefined;
+    const down = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y ? value : undefined;
+    const equal = (ctx, value) => ctx.p0.parsed.y = ctx.p1.parsed.y ? value : undefined;
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="accordion">
+{% for chartId, chartData in chartData %}
 
-{% for chart in charts %}
-    <div class="accordion">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ chart.id }}" aria-expanded="false" aria-controls="collapse{{ chart.id }}">
-                    Graphique {{ chart.data }} :
-                </button>
-            </h2>
-            <div id="collapse{{ chart.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <canvas id="canvas{{ chart.id }}" width="400" height="200"></canvas>
-                    <br />
-                    <br />
-                    <script>
-                        const ctx{{ chart.id }} = document.getElementById('canvas{{ chart.id }}');
-                        new Chart(ctx{{ chart.id }}, {
-                            type: '{{ chart.type }}',
-                            data: {
-                                {% if chart.type == 'line' %}
-                                labels: ['2024-01-11', '2024-09-11', '2025-10-11', '2025-10-11'],
-                                datasets: [{
-                                    label: '{{ chart.id }}',
-                                    data: [{{ chart.source_data | raw }}],
-                                    backgroundColor: 'red',         
-                                    borderColor: 'red',
-                                    borderWidth: 2
-                                }]
-                                {% elseif chart.type == 'radar' %}
-                                labels: ['Technique', 'Morale', 'Physique', 'Tactique'],
-                                datasets: [
-                                    {
-                                        label: 'joueurs',
-                                        data: [{{ chart.source_data | raw }}],
-                                        borderColor: 'red',
-                                        backgroundColor: 'rgba(0,0,0,0)',
-                                        borderWidth: 2
-                                    },
-                                    {
-                                        label: 'COACH',
-                                        data: [2, 3, 1, 4],
-                                        borderColor: 'blue',
-                                        backgroundColor: 'rgba(0,0,0,0)',
-                                        borderWidth: 2
-                                    }
-                                ]
-                                {% endif %}
-                            },
-                            options: {
-                                scales: {
-                                    {% if chart.type == 'line' %}
-                                    y: {
-                                        min: {{ chart.datascalemin }},
-                                        max: {{ chart.datascalemax }}
-                                    }
-                                    {% elseif chart.type == 'radar' %}
-                                    r: {
-                                        min: {{ chart.datascalemin }},
-                                        max: {{ chart.datascalemax }}
-                                    }
-                                    {% endif %}
-                                }
-                            }
-                        });
-                    </script>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h5 style="color:white;">{{ chartData.name }}</h5>
+    <canvas id="canvas{{ chartId }}" width="50%" style="background-color : white;"></canvas>
+    <script>
+        const ctx{{ chartId }} = document.getElementById('canvas{{ chartId }}');
+        const configData{{ chartId }} = {{ chartData.data | json_encode | raw }};
+        const colors{{ chartId }} = configData{{ chartId }}.values.map((value, index) => {
+            const previousValue = configData{{ chartId }}.values[index - 1];
+                if ({{ chartId }} === 6 || {{ chartId }} === 10){
+                    if (value >= (({{ chartData.max }} - {{ chartData.min }}) / 3) * 2) {   return 'red';   }
+                    else if (value >= ({{ chartData.max }} - {{ chartData.min }}) / 3 ) {   return 'green'; }
+                    else                                                                {   return 'orange';}
+                }else{
+                    if (value >= (({{ chartData.max }} - {{ chartData.min }}) / 3) * 2) {   return 'green'; } 
+                    else if (value <= ({{ chartData.max }} - {{ chartData.min }}) / 3 ) {   return 'red';   }
+                    else                                                                {   return 'orange';}
+                }         
+
+        });
+        
+        let borderColor{{ chartId }} = "";
+        if ({{ chartId }} === 6 ||{{ chartId }} === 10) {
+            borderColor{{ chartId }} = ctx{{ chartId }} => up(ctx{{ chartId }}, 'red') || down(ctx{{ chartId }}, 'green') || equal(ctx{{ chartId }}, 'orange');
+        }else{
+            borderColor{{ chartId }} =  ctx{{ chartId }} => up(ctx{{ chartId }}, 'green') || down(ctx{{ chartId }}, 'red') || equal(ctx{{ chartId }}, 'orange');
+        }
+
+
+
+        new Chart(ctx{{ chartId }}, {
+            type: '{{ chartData.chartType }}',
+            data: {
+                labels: configData{{ chartId }}.labels,
+                datasets: [{
+                    label: '{{ chartData.name }}',
+                    data: configData{{ chartId }}.values,
+                    borderColor: colors{{ chartId }}, // Utilisez la liste de couleurs déterminée précédemment
+                    backgroundColor : colors{{ chartId }},
+                    borderWidth: 3,
+                    segment: {
+                        borderColor: borderColor{{ chartId }}, 
+                    },
+                    spanGaps: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        min: {{ chartData.min }},
+                        max: {{ chartData.max }},
+                        grid:{
+                            color :'rgba(0,0,0,0.5)'
+                        },
+                        title: {
+                        color: 'black',
+                        display: true,
+                        text: 'Resultats des tests'
+                        }
+                    },
+                    x: {
+                        grid:{
+                            color :'rgba(0,0,0,0.5)',
+                        },
+                        title: {
+                        color: 'black',
+                        display: true,
+                        text: 'Date de passage des tests'
+                        }
+                    }
+                },
+            }
+        });
+    </script>
+    
 {% endfor %}
+</div>
 {% endblock %}

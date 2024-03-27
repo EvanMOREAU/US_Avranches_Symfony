@@ -44,14 +44,57 @@
                 });
             });
     </script>
-
     <div class="container">
         <h1>Nouveau Test</h1>
+        {% if app.user and is_granted("ROLE_SUPER_ADMIN") %}
+            <script src="/js/redirect.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const conduiteBalleInput = document.querySelector('#{{ form.conduiteballe.vars.id }}');
+                    const vitesseInput = document.querySelector('#{{ form.vitesse.vars.id }}');
+                    const videoInput = document.querySelector('#{{ form.video.vars.id }}');
 
+                    conduiteBalleInput.addEventListener('input', function () {
+                        formatTimeInput(this);
+                    });
+
+                    vitesseInput.addEventListener('input', function () {
+                        formatTimeInput(this);
+                    });
+
+                    // Ajout de la gestion du glisser-déposer pour la vidéo
+                    const fileDropZone = document.querySelector('.file-drop-zone');
+
+                    fileDropZone.addEventListener('dragover', function (e) {
+                        e.preventDefault();
+                        this.classList.add('active');
+                    });
+
+                    fileDropZone.addEventListener('dragleave', function () {
+                        this.classList.remove('active');
+                    });
+
+                    fileDropZone.addEventListener('drop', function (e) {
+                        e.preventDefault();
+                        this.classList.remove('active');
+
+                        const file = e.dataTransfer.files[0];
+                        videoInput.files = new DataTransfer().files;
+                        videoInput.files.add(file);
+                    });
+
+                    // Ajout de la logique pour masquer le champ des paliers
+                    const palierGroup = document.querySelector('.form-group[data-field="palier"]');
+                    if (!{{ is_granted("ROLE_SUPER_ADMIN") ? 'true' : 'false' }}) {
+                        palierGroup.style.display = 'none';
+                    }
+                });
+            </script>
+        {% endif %}
        {{ form_start(form, {'method': 'POST'}) }}
         
         <div class="form-group {% if form.vma.vars.errors|length > 0 %}has-error{% endif %}">
-            {{ form_label(form.vma, 'VMA (0 à 20 km/h)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.vma, 'VMA', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.vma, {'attr': {'class': 'form-input'}}) }}
             {{ form_errors(form.vma, {'attr': {'class': 'error-message'}}) }}
         </div>
@@ -69,19 +112,19 @@
         </div>
 
         <div class="form-group {% if form.jongle_gauche.vars.errors|length > 0 %}has-error{% endif %}">
-            {{ form_label(form.jongle_gauche, 'Jongle Gauche (0 à 50)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.jongle_gauche, 'Jongle Gauche', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.jongle_gauche, {'attr': {'class': 'form-input'}}) }}
             {{ form_errors(form.jongle_gauche, {'attr': {'class': 'error-message'}}) }}
         </div>
 
         <div class="form-group {% if form.jongle_droit.vars.errors|length > 0 %}has-error{% endif %}">
-            {{ form_label(form.jongle_droit, 'Jongle Droit (0 à 50)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.jongle_droit, 'Jongle Droite', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.jongle_droit, {'attr': {'class': 'form-input'}}) }}
             {{ form_errors(form.jongle_droit, {'attr': {'class': 'error-message'}}) }}
         </div>
 
         <div class="form-group {% if form.jongle_tete.vars.errors|length > 0 %}has-error{% endif %}">
-            {{ form_label(form.jongle_tete, 'Jongle Tête (0 à 30)', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.jongle_tete, 'Jongle Tête', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.jongle_tete, {'attr': {'class': 'form-input'}}) }}
             {{ form_errors(form.jongle_tete, {'attr': {'class': 'error-message'}}) }}
         </div>
@@ -110,24 +153,14 @@
             {{ form_errors(form.video, {'attr': {'class': 'error-message'}}) }}
         </div>
 
-        <div class="form-group {% if form.palier.vars.errors|length > 0 %}has-error{% endif %}">
-            {{ form_label(form.palier, 'Palier', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.palier, {'attr': {'class': 'form-input', 'placeholder': 'Sélectionner un palier'}}) }}
-            {{ form_errors(form.palier, {'attr': {'class': 'error-message'}}) }}
-        </div>
-
-
         {% if is_granted("ROLE_SUPER_ADMIN") %}
             <div class="form-group {% if form.user.vars.errors|length > 0 %}has-error{% endif %}">
                 {{ form_label(form.user, 'Joueur', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.user, {'attr': {'class': 'form-input', 'placeholder': 'Sélectionner un utilisateur'}}) }}
+                {{ form_widget(form.user, {'attr': {'class': 'form-input'}}) }}
                 {{ form_errors(form.user, {'attr': {'class': 'error-message'}}) }}
             </div>
         {% endif %}
         
-
-
-
         <br>
         <button onClick='redirectToPage("/tests")' class="form-button btn-gray"><i class="fas fa-arrow-left"></i> Retour</button>
         <button type="submit" class="form-button"><i class="fas fa-plus"></i> Créer</button>

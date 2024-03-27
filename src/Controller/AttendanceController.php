@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\AttendanceRepository;
+use App\Repository\EquipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,13 +49,35 @@ class AttendanceController extends AbstractController
         // Rendre la vue avec les catégories pour l'appel
         return $this->render('attendance/index.html.twig', [
             'controller_name' => 'AttendanceController',
+            'location' => 'g',
             'categories' => $CategoryRepository->findAll(),
         ]);
     }
 
-    // Page d'appel pour une catégorie spécifique, choisie précédemment par le coach
-    #[Route('/appel/{category}', name: 'app_attendance_u')]
-    public function attendance(string $category, UserRepository $UserRepository): Response
+    // Page du choix d'appel (entraînement ou match)
+    #[Route('/appel/choix/{category}', name: 'app_attendance_choice')]
+    public function choice(string $category): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/choice_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'location' => 'g',
+            'category' => $category,
+        ]);
+    }
+
+    // Page d'appel pour un entraînement
+    #[Route('/appel/entraînement/{category}', name: 'app_attendance_training')]
+    public function training(string $category, UserRepository $UserRepository): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -74,16 +97,86 @@ class AttendanceController extends AbstractController
         });
 
         // Rendre le modèle en fonction de la catégorie
-        return $this->render('attendance/attendance.html.twig', [
+        return $this->render('attendance/training_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
+            'location' => 'g',
             'category' => $category,
             'users' => $usersInCategory,
         ]);
     }
 
-    // Crée un nouveau rassemblement avec la catégorie et les joueurs
-    #[Route('/create-attendance-{category}', name: 'create_attendance', methods: ['POST'])]
-    public function createAttendance(Request $request, EntityManagerInterface $entityManager): Response
+    // Page d'appel pour un match
+    #[Route('/appel/match/{category}', name: 'app_attendance_match_choice')]
+    public function choiceMatch(string $category, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // $category = "U10" / "U11" / ...
+
+        // Extract the numerical part of the category (removing the 'U')
+        $categoryNumber = intval(substr($category, 1));
+
+        // Trouver l'entité Category par le nom
+        $this_year = new \DateTime('now');
+        $result = $this_year->format('Y');
+        $name = $result - $categoryNumber + 1;
+        $findCategory = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
+
+        // Check if category exists
+        if (!$findCategory) {
+            throw $this->createNotFoundException('Category non trouvée');
+        }
+        
+        // Now you have the $category entity, you can access its ID
+        $categoryId = $findCategory->getId();
+
+        // Query EquipeRepository to find all Equipe entities with this category ID
+        $allTeams = $equipeRepository->findBy(['category' => $categoryId]);
+
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/match_choice_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'location' => 'g',
+            'category' => $category,
+            'teams' => $allTeams,
+        ]);
+    }
+
+    // Page d'appel pour un match
+    #[Route('/appel/match/{category}/{team}', name: 'app_attendance_match')]
+    public function match(string $category, string $team, string $teamId, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+
+        // trouver tous les utilisateurs dans l'équipe $team
+
+        // Rendre le modèle en fonction de la catégorie
+        return $this->render('attendance/match_choice_attendance.html.twig', [
+            'controller_name' => 'AttendanceController',
+            'location' => 'g',
+            'category' => $category,
+            'team' => $team,
+            'teamId' => $teamId,
+        ]);
+    }
+
+    // Crée un nouvel entraînement avec la catégorie et les joueurs
+    #[Route('/create-training-attendance-{category}', name: 'create_training_attendance', methods: ['POST'])]
+    public function createTrainingAttendance(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -104,7 +197,10 @@ class AttendanceController extends AbstractController
         $type = $requestData['type'];
 
         // Trouver l'entité Category par le nom
-        $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $categoryName]);
+        $this_year = new \DateTime('now');
+        $result = $this_year->format('Y');
+        $name = $result - $categoryName + 1;
+        $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
 
         if (!$category) {
             return new JsonResponse(['error' => 'Catégorie invalide'], Response::HTTP_BAD_REQUEST);
@@ -164,7 +260,7 @@ class AttendanceController extends AbstractController
         // Envoyer les modifications à la base de données
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Matches played updated successfully']);
+        return new JsonResponse(['message' => 'Entraînement créée avec succès']);
     }
 
     // Affichage la page permettant la modification d'appel
@@ -195,6 +291,7 @@ class AttendanceController extends AbstractController
         // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/modify_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
+            'location' => 'g',
             'category' => $category,
             'users' => $usersInCategory,
             'gathering' => $gathering,
@@ -226,7 +323,9 @@ class AttendanceController extends AbstractController
         $requestData = json_decode($request->getContent(), true);
 
         $type = $requestData['type'];
-        $datetime = new \DateTime($requestData['datetime']);
+        $parisTimezone = new DateTimeZone('Europe/Paris');
+        $datetime = new \DateTime($requestData['datetime'], $parisTimezone);
+
         $presentUserIds = $requestData['presentUserIds'];
         $absentUserIds = $requestData['absentUserIds'];
 

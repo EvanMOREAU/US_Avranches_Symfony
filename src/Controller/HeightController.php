@@ -19,6 +19,7 @@ class HeightController extends AbstractController
     {
         return $this->render('height/index.html.twig', [
             'heights' => $heightRepository->findAll(),
+            'location' => '',
         ]);
     }
 
@@ -38,12 +39,13 @@ class HeightController extends AbstractController
             $entityManager->persist($height);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_height_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_default', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('height/new.html.twig', [
             'height' => $height,
             'form' => $form,
+            'location' => '',
         ]);
     }
 
@@ -52,6 +54,7 @@ class HeightController extends AbstractController
     {
         return $this->render('height/show.html.twig', [
             'height' => $height,
+            'location' => '',
         ]);
     }
 
