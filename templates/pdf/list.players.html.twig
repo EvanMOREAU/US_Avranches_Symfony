@@ -1,0 +1,14 @@
+{# templates/user/list_players.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des joueurs{% endblock %}
+
+{% block body %}
+    <h1>Liste des joueurs</h1>
+    <ul>
+        {% for player in players %}
+            <li>{{ player.getFirstName() }} {{ player.getLastName() }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

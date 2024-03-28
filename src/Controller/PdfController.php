@@ -83,7 +83,6 @@ class PdfController extends AbstractController
                 $pdf->SetTitle('Fiche joueur');
                 $pdf->SetFont('times', '', 14);
 
-
                 // Ajout d'une nouvelle page
                 $pdf->AddPage();
                 $pdf->setJPEGQuality(75);
@@ -136,8 +135,15 @@ class PdfController extends AbstractController
                 $pdf->SetFont('helvetica', '', 10);
                 $pdf->writeHTMLCell(65, 230, '', '', $contentInfos, 0, 0, 0, true, '', true);
 
-                // Ajout d'une image au PDF
-                $pdf->Image('img/anonyme.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                $profileImagePath = 'uploads/images/' . $user->getId() . '.jpg';
+
+                if (file_exists($profileImagePath)) {
+                    // L'image existe, utilisez-la
+                    $pdf->Image($profileImagePath, 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                } else {
+                    // Utilisez une image anonyme
+                    $pdf->Image('img/anonyme.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                }
 
                 foreach ($tests as $test) {
 
@@ -228,6 +234,19 @@ class PdfController extends AbstractController
                 return $pdf->Output('US-Avranches-' . '.pdf', 'I');
             }
         }
+
+
+        // Vérifiez si l'utilisateur est un coach
+        if ($this->isGranted('ROLE_COACH')) {
+            // Si c'est le cas, récupérez la liste des utilisateurs avec le rôle ROLE_PLAYER
+            $players = $userRepository->findByRole('ROLE_PLAYER');
+
+            // Affichez une liste des joueurs pour que le coach puisse en sélectionner un
+            return $this->render('pdf/select_player.html.twig', [
+                'players' => $players,
+            ]);
+        }
+
         // Gestion des cas d'erreur
         return new Response('Erreur');
     }
@@ -259,4 +278,23 @@ class PdfController extends AbstractController
 
         return $nearestWeightDate ? new \DateTimeImmutable($nearestWeightDate) : null;
     }
+    #[Route('/pdf/{userId}', name: 'app_pdf_user')]
+    public function pdfForUser(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, EntityManagerInterface $entityManager, int $userId): Response
+    {
+        // Votre code actuel pour la génération du PDF
+
+        // Récupérez l'utilisateur sélectionné
+        $selectedUser = $userRepository->find($userId);
+
+        // Vérifiez que l'utilisateur existe et qu'il a le rôle ROLE_PLAYER
+        if ($selectedUser && $selectedUser->hasRole('ROLE_PLAYER')) {
+            // Générez et affichez le PDF pour cet utilisateur
+            // Vous pouvez appeler votre méthode existante pour générer le PDF ici
+            return $this->redirectToRoute('app_pdf', ['userId' => $userId]);
+        }
+
+        // Si l'utilisateur n'existe pas ou n'a pas le rôle approprié, redirigez ou gérez l'erreur
+        return $this->redirectToRoute('app_pdf'); // Redirigez vers la page principale des PDF
+    }
+
 }
