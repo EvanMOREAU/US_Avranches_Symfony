@@ -15,28 +15,28 @@ class CategoryFixtures extends Fixture
     {
         // Création de "U10"
         $category1 = new Category();
-        $category1->setName("10");
+        $category1->setName("U10");
         $category1->setImage("U10.jpg");
         $category1->setColor("#AA26CF");
         $manager->persist($category1);
 
         // Création de "U11"
         $category2 = new Category();
-        $category2->setName("11");
+        $category2->setName("U11");
         $category2->setImage("U11.jpg");
         $category2->setColor("#19B839");
         $manager->persist($category2);
 
         // Création de "U12"
         $category3 = new Category();
-        $category3->setName("12");
+        $category3->setName("U12");
         $category3->setImage("U12.jpg");
         $category3->setColor("#D4871C");
         $manager->persist($category3);
 
         // Création de "U13"
         $category4 = new Category();
-        $category4->setName("13");
+        $category4->setName("U13");
         $category4->setImage("U13.jpg");
         $category4->setColor("#B71515");
         $manager->persist($category4);
