@@ -240,14 +240,5 @@ class UserController extends AbstractController
         $entityManager->flush();
     }
 
-    #[Route('/players', name: 'app_list_players', methods: ['GET'])]
-    public function listPlayers(UserRepository $userRepository): Response
-    {
-        // Récupérez les utilisateurs ayant le rôle ROLE_PLAYER
-        $players = $userRepository->findByRole('ROLE_PLAYER');
-    
-        // Affichez une vue ou retournez une réponse JSON contenant la liste des joueurs
-        return $this->json($players, Response::HTTP_OK, [], ['groups' => 'user:read']); // Utilisez le groupe de sérialisation approprié si vous utilisez des groupes de sérialisation
-    }
     //////////////////////////////
 }

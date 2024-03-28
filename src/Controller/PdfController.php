@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+#[Route('/pdf', name: 'app_pdf')]
 class PdfController extends AbstractController
 {
     private $userVerificationService;
@@ -24,19 +25,14 @@ class PdfController extends AbstractController
         $this->userVerificationService = $userVerificationService;
     }
 
-    #[Route('/pdf', name: 'app_pdf')]
-
+    #[Route('/', name: 'app_pdf_index')]
     public function pdf(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, EntityManagerInterface $entityManager): Response
     {
-
         // Récupérer l'ID de l'utilisateur à partir de la route
         $userId = $request->attributes->get('userId');
 
-        // Vérifier si l'utilisateur est super admin
-        // if ($this->isGranted('ROLE_SUPER_ADMIN')) {
-        //     // Rediriger vers la page de sélection du PDF pour les super admins
-        //     return $this->redirectToRoute('app_choose_user_pdf');
-        // }
+        // Vérifiez si l'utilisateur a le rôle ROLE_COACH
+
 
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -231,20 +227,13 @@ class PdfController extends AbstractController
 
                 // Génération du PDF et envoi en réponse
                 ob_clean(); // Efface la sortie tampon
-                return $pdf->Output('US-Avranches-' . '.pdf', 'I');
+                $pdfContent = $pdf->Output('US-Avranches-' . '.pdf', 'S');
+
+                return new Response($pdfContent, Response::HTTP_OK, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="US-Avranches.pdf"',
+                ]);
             }
-        }
-
-
-        // Vérifiez si l'utilisateur est un coach
-        if ($this->isGranted('ROLE_COACH')) {
-            // Si c'est le cas, récupérez la liste des utilisateurs avec le rôle ROLE_PLAYER
-            $players = $userRepository->findByRole('ROLE_PLAYER');
-
-            // Affichez une liste des joueurs pour que le coach puisse en sélectionner un
-            return $this->render('pdf/select_player.html.twig', [
-                'players' => $players,
-            ]);
         }
 
         // Gestion des cas d'erreur
@@ -278,23 +267,39 @@ class PdfController extends AbstractController
 
         return $nearestWeightDate ? new \DateTimeImmutable($nearestWeightDate) : null;
     }
-    #[Route('/pdf/{userId}', name: 'app_pdf_user')]
-    public function pdfForUser(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, EntityManagerInterface $entityManager, int $userId): Response
+
+    #[Route('/list-players', name: 'app_pdf_list_players')]
+    public function listPlayers(UserRepository $userRepository): Response
     {
-        // Votre code actuel pour la génération du PDF
+        // Récupérez la liste des utilisateurs ayant le rôle ROLE_PLAYER
+        $players = $userRepository->findByRole('ROLE_PLAYER');
 
-        // Récupérez l'utilisateur sélectionné
-        $selectedUser = $userRepository->find($userId);
+        // Affichez la liste des joueurs dans une vue
+        return $this->render('pdf/list.players.html.twig', [
+            'players' => $players,
+        ]);
+    }
 
-        // Vérifiez que l'utilisateur existe et qu'il a le rôle ROLE_PLAYER
-        if ($selectedUser && $selectedUser->hasRole('ROLE_PLAYER')) {
-            // Générez et affichez le PDF pour cet utilisateur
-            // Vous pouvez appeler votre méthode existante pour générer le PDF ici
-            return $this->redirectToRoute('app_pdf', ['userId' => $userId]);
+    #[Route('/{userId}', name: 'app_pdf_view_pdf')]
+    public function viewPdf(int $userId, Request $request, UserRepository $userRepository, TestsRepository $testsRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Récupérez l'utilisateur
+        $user = $userRepository->find($userId);
+
+        // Vérifiez si l'utilisateur existe et a le rôle ROLE_PLAYER
+        if (!$user || !in_array('ROLE_PLAYER', $user->getRoles(), true)) {
+            // Redirigez vers une page d'erreur ou affichez un message d'erreur
+            throw $this->createNotFoundException('Utilisateur non trouvé ou n\'a pas le rôle de joueur.');
         }
 
-        // Si l'utilisateur n'existe pas ou n'a pas le rôle approprié, redirigez ou gérez l'erreur
-        return $this->redirectToRoute('app_pdf'); // Redirigez vers la page principale des PDF
+        // Créez une nouvelle instance de la classe Request avec les paramètres appropriés
+        $request = new Request([], [], ['userId' => $userId]);
+
+        // Appel de la méthode pdf avec le nouvel objet Request
+        $pdfResponse = $this->pdf($request, $userRepository, $testsRepository, $entityManager);
+
+        // Retournez la réponse du PDF
+        return $pdfResponse;
     }
 
 }
