@@ -5,9 +5,6 @@
 
 
     <link rel="icon" href="/img/logo_usa.ico">
-
-
-
     <div class="container-fluid pt-3">
         <div class="card mb-4">
             <div class="card-header">
@@ -54,7 +51,7 @@
                         <div class="col-lg-4">
                             <div class="form-group {% if form.date_naissance.vars.errors|length > 0 %}has-error{% endif %}">
                                 {{ form_label(form.date_naissance, 'Date de naissance : ', {'label_attr': {'class': 'form-label'}}) }}
-                                {{ form_widget(form.date_naissance, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_widget(form.date_naissance, {'attr': {'class': 'date-select', "id": 'datepicker'}}) }}
                                 {{ form_errors(form.date_naissance, {'attr': {'class': 'error-message'}}) }}
                             </div>
                         </div>
@@ -76,7 +73,6 @@
                     <button type="submit" class="btn btn-info"><i class="fas fa-plus"></i> Enregistrer</button>
                 </div>
             </div>
-
         </div>
     </div>
 {{ form_end(form) }}

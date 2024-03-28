@@ -12,3 +12,26 @@
     outline: none;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
 }
+
+.date-select,
+.date-control {
+    border: none;
+    border-radius: 8px; 
+    padding: 10px; 
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.date-select:focus,
+.date-control:focus {
+    outline: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Personnalisation de la sélection à l'intérieur du cadre */
+.date-select,
+.date-control {
+    background-color: white; /* Couleur de fond de la sélection */
+    color: black; /* Couleur du texte de la sélection */
+    border: 1px solid #ccc; /* Bordure de la sélection */
+}
