@@ -77,6 +77,7 @@
             <span class="nav-link-text ms-1">Graphiques</span>
           </a>
         </li>
+        {% if not is_granted("ROLE_SUPER_ADMIN") and not is_granted("ROLE_COACH") %}
         <li class="nav-item">
           <a class="nav-link text-white {% if location == "c" %} active bg-gradient-info{% endif %}" href="/tests">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -85,6 +86,7 @@
             <span class="nav-link-text ms-1">Tests</span>
           </a>
         </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link text-white {% if location == "d" %} active bg-gradient-info{% endif %}" href="/palier">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">

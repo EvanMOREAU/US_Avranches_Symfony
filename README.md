@@ -48,5 +48,5 @@ Commencer u10 jusqu’en u17 —> permettre à l’administrateur de créer une 
 A faire : 
  Bouton "active" dans la barre des tâches -> Fait
  Gestion A2F -> Fait
- Utilisateur -> Edit + Index
- Parameter
+ Utilisateur -> Edit + Index -> Fait
+ Parameter -> Fait
