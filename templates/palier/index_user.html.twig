@@ -4,132 +4,188 @@
 
 {% block body %}
     <style>
-        .carousel-item {
-            height: 70vh;
-            position: relative;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        .carousel-item img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            min-width: 100%;
-            height: 70vh;
-            object-fit: cover;
-        }
-
-        .carousel-caption {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
+        .palier-card {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
             border-radius: 10px;
-            color: white;
-            width: 80%;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative; /* Ajout de position relative */
+            overflow: hidden; /* Pour le flou */
         }
 
-        .carousel-caption h1 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .carousel-caption h2 {
-            font-size: 2rem;
+        .palier-title {
+            font-size: 24px;
+            font-weight: bold;
             margin-bottom: 10px;
-            text-transform: uppercase;
         }
 
-        .carousel-caption p {
-            font-size: 1.2rem;
-            margin-bottom: 0;
+        .palier-description {
+            font-size: 18px;
+            margin-bottom: 20px;
         }
 
-        .carousel-control-prev, .carousel-control-next {
-            width: 5%;
-            background: none;
-            border: none;
-            font-size: 2rem;
-            color: white;
-            top: 50%;
-            transform: translateY(-50%);
+        .check-icon {
+            position: absolute;
+            top: 10px; /* Ajustez selon vos besoins */
+            right: 10px; /* Ajustez selon vos besoins */
+            color: #28a745; /* Couleur verte */
+            font-size: 24px;
         }
 
-        .carousel-control-prev-icon, .carousel-control-next-icon {
-            color: white;
+        .hourglass-icon {
+            position: absolute;
+            top: 10px; /* Ajustez selon vos besoins */
+            right: 10px; /* Ajustez selon vos besoins */
+            color: #ffc107; /* Couleur jaune */
+            font-size: 24px;
         }
-        
-        /* Overlay semi-transparent */
-        .overlay {
+
+        .lock-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent */
+            backdrop-filter: blur(10px); /* Effet de flou */
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+
+        .lock-icon {
+            color: rgba(0, 0, 0, 0.5); /* Couleur grise */
+            font-size: 48px; /* Taille du cadenas */
+        }
+
+        .file-upload-form {
+            margin-top: 20px;
+        }
+
+        .file-upload-input {
+            margin-bottom: 10px;
+        }
+
+        .file-upload-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
             z-index: 1000;
         }
-
-        /* Styles pour l'icône de cadenas */
-        .lock-icon {
-            font-size: 5rem;
-            color: white;
+        
+        .custom-file-upload {
+            border: 1px solid #ccc;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border-radius: 5px;
         }
+
+        .custom-file-upload:hover {
+            background-color: #e9ecef;
+        }
+
     </style>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 position-relative">
-                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        {% for palier in paliers %}
-                            <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
-                                <img src="..." alt="...">
-                                <div class="carousel-caption">
-                                    <h1>Palier - {{ palier.numero }}</h1>
-                                    <h2>{{ palier.name }}</h2>
-                                    <p>{{ palier.objectif }}</p>
-                                   <form method="post" enctype="multipart/form-data" action="{{ path('upload_video') }}">
-                                        <input type="hidden" name="palier_numero" value="{{ palier.numero }}">
-                                        <input type="hidden" name="user_username" value="{{ app.user.username }}">
-                                        <input type="file" name="video">
-                                        <button type="submit">Upload</button>
-                                    </form>
+    <div class="container mt-4 text-black">
+        <div class="container-fluid pt-3">
+            {% for palier in paliers %}
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="palier-card {% if app.user.palier.numero < palier.numero %}locked{% endif %}">
+                            {% if app.user.palier.numero < palier.numero %}
+                                <div class="lock-overlay">
+                                    <i class="fas fa-lock lock-icon"></i>
                                 </div>
+                            {% endif %}
+                            {% if app.user.palier.numero > palier.numero %}
+                                <div class="check-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                            {% elseif app.user.palier.numero == palier.numero %}
+                                <i class="fas fa-hourglass-half hourglass-icon"></i>
+                            {% endif %}
+                            <div class="palier-title">Palier - {{ palier.numero }}</div>
+                            <div class="palier-description">
+                                <strong>Titre:</strong> {{ palier.name }}<br>
+                                <strong>Objectif:</strong> {{ palier.objectif }}
                             </div>
-                        {% else %}
-                            <div class="carousel-item">
-                                <img src="..." alt="...">
-                                <div class="carousel-caption">
-                                    <h1>&nbsp;</h1>
-                                    <h2>&nbsp;</h2>
-                                    <p>&nbsp;</p>
-                                </div>
-                                {% if not is_granted('ROLE_SUPER_ADMIN') %}
-                                    <div class="overlay">
-                                        <i class="fas fa-lock lock-icon"></i>
+                            {% if app.user.palier.numero == palier.numero %}
+                                <form method="post" enctype="multipart/form-data" action="{{ path('upload_video') }}" class="file-upload-form" id="upload-form">
+                                    <input type="hidden" name="palier_numero" value="{{ palier.numero }}">
+                                    <input type="hidden" name="user_username" value="{{ app.user.username }}">
+                                    <div class="file-upload-input">
+                                        <label for="video">Télécharger une vidéo:</label>
+                                        <input type="file" name="video" id="video" class="custom-file-upload">
                                     </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
+                                    <button type="submit" class="btn btn-primary">Upload</button>                          
+                                </form>
+                            {% endif %}
+                        </div>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
                 </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
+
+    <script>
+        // Afficher un message lorsque le formulaire est soumis avec succès
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Empêcher l'envoi du formulaire par défaut
+            const form = event.target;
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: form.method,
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    showMessage('La vidéo a été téléchargée avec succès.');
+                    form.reset(); // Effacer le formulaire après le téléchargement réussi
+                } else {
+                    showMessage('Une erreur est survenue lors du téléchargement de la vidéo.');
+                }
+            })
+            .catch(error => {
+                showMessage('Une erreur est survenue lors du téléchargement de la vidéo.');
+                console.error('Error:', error);
+            });
+        });
+
+        // Afficher un message pendant quelques secondes
+        function showMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.textContent = message;
+            document.body.appendChild(messageElement);
+            setTimeout(() => {
+                messageElement.style.opacity = '1';
+            }, 100);
+            setTimeout(() => {
+                messageElement.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(messageElement);
+                }, 500);
+            }, 3000);
+        }
+    </script>
 {% endblock %}
