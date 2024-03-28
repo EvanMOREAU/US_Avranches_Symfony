@@ -2,11 +2,14 @@
 
 namespace App\Form;
 
+use App\Entity\User;
 use App\Entity\Tests;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -30,18 +33,6 @@ class TestsFormType extends AbstractType
         ->add('vma', NumberType::class, [
             'label' => 'VMA',
             'required' => false,
-            'attr' => [
-                'min' => 0,   // Valeur minimale
-                'max' => 20,  // Valeur maximale
-            ],
-            'constraints' => [
-                new Range([
-                    'min' => 0,
-                    'max' => 20,
-                    'minMessage' => 'La VMA ne doit pas être négative.',
-                    'maxMessage' => 'La VMA ne doit pas dépasser les 20.',
-                ]),
-            ],
         ])  
         ->add('demicooper', NumberType::class, [
             'label' => 'Demi-Cooper',
@@ -64,7 +55,7 @@ class TestsFormType extends AbstractType
             'required' => false,
             'attr' => [
                 'min' => 0,   // Valeur minimale
-                'max' => 10000,  // Valeur maximale
+                'max' => 100000,  // Valeur maximale
             ],
             'constraints' => [
                 new Range([
@@ -78,50 +69,14 @@ class TestsFormType extends AbstractType
         ->add('jongle_gauche', NumberType::class, [
             'label' => 'Jongle Gauche',
             'required' => false,
-            'attr' => [
-                'min' => 0,   // Valeur minimale
-                'max' => 50,  // Valeur maximale
-            ],
-            'constraints' => [
-                new Range([
-                    'min' => 0,
-                    'max' => 50,
-                    'minMessage' => 'Le nombre de jongles du pied gauche ne doit pas être négatif.',
-                    'maxMessage' => 'Le nombre de jongles du pied gauche doit être inférieur à 50.',
-                ]),
-            ],
         ])
         ->add('jongle_droit', NumberType::class, [
             'label' => 'Jongle Droit',
             'required' => false,
-            'attr' => [
-                'min' => 0,   // Valeur minimale
-                'max' => 50,  // Valeur maximale
-            ],
-            'constraints' => [
-                new Range([
-                    'min' => 0,
-                    'max' => 50,
-                    'minMessage' => 'Le nombre de jongles du pied droit ne doit pas être négatif.',
-                    'maxMessage' => 'Le nombre de jongles du pied droit doit être inférieur à 50.',
-                ]),
-            ],
         ])
         ->add('jongle_tete', NumberType::class, [
             'label' => 'Jongle Tête',
             'required' => false,
-            'attr' => [
-                'min' => 0,   // Valeur minimale
-                'max' => 30,  // Valeur maximale
-            ],
-            'constraints' => [
-                new Range([
-                    'min' => 0,
-                    'max' => 30,
-                    'minMessage' => 'Le nombre de jongles de la tête ne doit pas être négatif.',
-                    'maxMessage' => 'Le nombre de jongles de la tête doit être inférieur à 30.',
-                ]),
-            ],
         ])
         ->add('conduiteballe', TextType::class, [
             'label' => 'Conduite de balle (en millisecondes)',
@@ -130,16 +85,20 @@ class TestsFormType extends AbstractType
         ->add('vitesse', TextType::class, [
             'label' => 'Vitesse (en millisecondes)',
             'required' => false,
+        ])
+        ->add('user', EntityType::class, [
+            'class' => User::class,
+            'choice_label' => function ($user) {
+                return $user->getFirstName() . ' ' . $user->getLastName();
+            },
+            'label' => 'Utilisateur :',
+            'placeholder' => 'Choisir un utilisateur',
+            'query_builder' => function (EntityRepository $er) {
+                return $er->createQueryBuilder('u')
+                    ->orderBy('u.first_name', 'ASC') // Tri par prénom d'utilisateur par ordre alphabétique
+                    ->addOrderBy('u.last_name', 'ASC'); // Ensuite, tri par nom de famille d'utilisateur par ordre alphabétique
+            },
         ]);
-
-        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
-            $builder->add('user', ChoiceType::class, [
-                'choices' => $this->getUserChoices(),
-                'label' => 'Sélectionner un utilisateur',
-                'required' => true,
-            ]);
-        }
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void

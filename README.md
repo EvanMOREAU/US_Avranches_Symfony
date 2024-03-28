@@ -51,3 +51,5 @@ En cours:
 Upload d'image de profile.
 Extension installé : vich/uploader-bundle
 
+
+Modal pour supprimer des cruds
