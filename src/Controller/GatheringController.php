@@ -44,7 +44,7 @@ class GatheringController extends AbstractController
             'gatherings' => $GatheringRepository->findAll(),
             'categories' => $CategoryRepository->findAll(),
             'attendances' =>  $attendanceRepository->findall(),
-            'location' => '',
+            'location' => 'h',
         ]);
     }
 
@@ -69,7 +69,7 @@ class GatheringController extends AbstractController
             'controller_name' => 'GatheringController',
             'attendances' => $attendances,
             'gathering' => $gathering,
-            'location' => '',
+            'location' => 'h',
         ]);
     }
 }

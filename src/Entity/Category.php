@@ -90,6 +90,8 @@ class Category
 
     public function setName(string $name): static
     {
+        $name = substr($name, 1);
+
         $this_year = new \DateTime('now');
         $result = $this_year->format('Y');
         $year = $result - $name + 1;

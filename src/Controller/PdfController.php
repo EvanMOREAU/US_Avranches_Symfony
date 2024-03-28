@@ -28,6 +28,16 @@ class PdfController extends AbstractController
 
     public function pdf(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, EntityManagerInterface $entityManager): Response
     {
+
+        // Récupérer l'ID de l'utilisateur à partir de la route
+        $userId = $request->attributes->get('userId');
+
+        // Vérifier si l'utilisateur est super admin
+        // if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        //     // Rediriger vers la page de sélection du PDF pour les super admins
+        //     return $this->redirectToRoute('app_choose_user_pdf');
+        // }
+
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -36,17 +46,17 @@ class PdfController extends AbstractController
         $token = $this->get('security.token_storage')->getToken();
 
         // Vérifiez le rôle de l'utilisateur
-        if ($this->isGranted('ROLE_COACH')) {
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
             // L'utilisateur est super admin, vérifiez s'il a sélectionné un autre utilisateur
             $selectedUserId = $request->query->get('userId'); // Use 'userId' as the parameter name
-    
+
             if ($selectedUserId) {
                 $selectedUser = $userRepository->find($selectedUserId);
-    
+
                 if (!$selectedUser) {
                     throw $this->createNotFoundException('Utilisateur non trouvé');
                 }
-    
+
                 $user = $selectedUser;
             }
         } elseif ($token instanceof TokenInterface) {
@@ -159,10 +169,10 @@ class PdfController extends AbstractController
                             $formatted_date = $date->format("d-m-Y");
 
                             $contentTests .= '<b>' . $formatted_date . ' :</b> ' . $weight->getValue() . ' kg';
-                        }else {
+                        } else {
                             $contentTests .= "fail";
                         }
-                            // } else {
+                        // } else {
                         //     $contentTests .= $weight->getValue() . ' kg';
                         // }
                         // Affichez la date du poids sur le PDF si elle est disponible
@@ -248,18 +258,5 @@ class PdfController extends AbstractController
             ->getOneOrNullResult(\Doctrine\ORM\Query::HYDRATE_SINGLE_SCALAR);
 
         return $nearestWeightDate ? new \DateTimeImmutable($nearestWeightDate) : null;
-    }
-
-    #[Route('/choose-user-pdf', name: 'app_choose_user_pdf')]
-    public function chooseUserPdf(UserRepository $userRepository): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_COACH');
-
-        $users = $userRepository->findBy([], ['last_name' => 'ASC']);
-
-        return $this->render('pdf/choose_user_pdf.html.twig', [
-            'users' => $users,
-            'location' => 'f',
-        ]);
     }
 }

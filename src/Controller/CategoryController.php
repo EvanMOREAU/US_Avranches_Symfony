@@ -32,7 +32,7 @@ class CategoryController extends AbstractController
         // Affiche la vue avec la liste des catégories
         return $this->render('category/index.html.twig', [
             'categories' => $categoryRepository->findAll(),
-            'location' => '',
+            'location' => 'k',
         ]);
     }
 
@@ -72,27 +72,7 @@ class CategoryController extends AbstractController
         return $this->renderForm('category/new.html.twig', [
             'category' => $category,
             'form' => $form,
-            'location' => '',
-        ]);
-    }
-
-    // Affiche les détails d'une catégorie
-    #[Route('/{id}', name: 'app_category_show', methods: ['GET'])]
-    public function show(Category $category): Response
-    {
-        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
-        }
-
-        // Affiche la vue avec les détails de la catégorie
-        return $this->render('category/show.html.twig', [
-            'category' => $category,
-            'location' => '',
+            'location' => 'k',
         ]);
     }
 
@@ -131,7 +111,7 @@ class CategoryController extends AbstractController
         return $this->renderForm('category/edit.html.twig', [
             'category' => $category,
             'form' => $form,
-            'location' => '',
+            'location' => 'k',
         ]);
     }
 
