@@ -29,8 +29,25 @@ class PdfController extends AbstractController
 
     public function pdf(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, ChartsRepository $chartsRepository, EntityManagerInterface $entityManager): Response
     {
+
+        // Récupérer l'ID de l'utilisateur à partir de la route
+        $userId = $request->attributes->get('userId');
+
+        // Vérifier si l'utilisateur est super admin
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Rediriger vers la page de sélection du PDF pour les super admins
+            return $this->redirectToRoute('app_choose_user_pdf');
+        }
+
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        }
+
+        // Récupérez l'utilisateur sélectionné en utilisant l'ID passé dans la route
+        $selectedUser = $userRepository->find($userId);
+
+        if (!$selectedUser) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
         }
 
         // Récupérez le token d'authentification de l'utilisateur actuellement connecté.
@@ -249,17 +266,5 @@ class PdfController extends AbstractController
             ->getOneOrNullResult(\Doctrine\ORM\Query::HYDRATE_SINGLE_SCALAR);
 
         return $nearestWeightDate ? new \DateTimeImmutable($nearestWeightDate) : null;
-    }
-
-    #[Route('/choose-user-pdf', name: 'app_choose_user_pdf')]
-    public function chooseUserPdf(UserRepository $userRepository): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
-
-        $users = $userRepository->findBy([], ['last_name' => 'ASC']);
-
-        return $this->render('pdf/choose_user_pdf.html.twig', [
-            'users' => $users,
-        ]);
     }
 }

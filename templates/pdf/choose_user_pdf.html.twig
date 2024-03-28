@@ -1,14 +1,16 @@
-{# choose_user_pdf.html.twig #}
+{# pdf/choose_user_pdf.html.twig #}
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Choose User{% endblock %}
+{% block title %}Choose User PDF{% endblock %}
 
 {% block body %}
-    <h1>Choose User</h1>
-    
-    {% for user in users %}
-        <p>
-            <a href="{{ path('app_pdf', {'userId': user.id}) }}">{{ user.firstName }} {{ user.lastName }}</a>
-        </p>
-    {% endfor %}
+    <h1>Choose User PDF</h1>
+    <ul>
+        {% for user in users %}
+            <li>
+                <a href="{{ path('app_pdf', {'userId': user.id}) }}">{{ user.firstName }} {{ user.lastName }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

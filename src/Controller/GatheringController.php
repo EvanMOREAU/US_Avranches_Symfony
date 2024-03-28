@@ -27,7 +27,7 @@ class GatheringController extends AbstractController
 {
     // Affiche la liste des rassemblements
     #[Route('/', name: 'app_gathering')]
-    public function index(GatheringRepository $GatheringRepository, CategoryRepository $CategoryRepository): Response
+    public function index(GatheringRepository $gatheringRepository, CategoryRepository $categoryRepository): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
@@ -41,8 +41,8 @@ class GatheringController extends AbstractController
         // Affiche la vue avec la liste des rassemblements
         return $this->render('gathering/index.html.twig', [
             'controller_name' => 'GatheringController',
-            'gatherings' => $GatheringRepository->findAll(),
-            'categories' => $CategoryRepository->findAll(),
+            'gatherings' => $gatheringRepository->findAll(),
+            'categories' => $categoryRepository->findAll(),
         ]);
     }
 
