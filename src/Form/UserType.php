@@ -5,12 +5,13 @@ use App\Entity\User;
 use App\Entity\Equipe;
 use App\Entity\Palier;
 
+use App\Repository\EquipeRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Constraints\Length;
 
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -34,6 +35,14 @@ class UserType extends AbstractType
             ])
             ->add('equipe', EntityType::class, [
                 'class' => Equipe::class,
+                'query_builder' => function (EquipeRepository $er) use ($options) {
+                    $category = $options['category'];
+                    return $er->createQueryBuilder('e')
+                        ->leftJoin('e.category', 'c')
+                        ->andWhere('c.id = :category_id')
+                        ->setParameter('category_id', $category);
+                },
+                
                 'choice_label' => 'name',
             ])
             ->add('first_name')
@@ -63,6 +72,8 @@ class UserType extends AbstractType
         $resolver->setDefaults([
             'data_class' => User::class,
             'exclude_date_naissance' => false,
+            'category' => false,
         ]);
+       
     }
 }

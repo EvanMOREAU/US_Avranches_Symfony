@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Entity\Category;
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -95,19 +96,27 @@ class UserController extends AbstractController
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
-
-        if ($this->isGranted('ROLE_PLAYER')) {
-            $form = $this->createForm(UserType::class, $user, ['exclude_date_naissance' => true]);
-        } else {
-            $form = $this->createForm(UserType::class, $user);
-        }
         
-        $form->handleRequest($request);
+        // Récupérer la date de naissance du joueur
+        $dateNaissance = $user->getDateNaissance();
+
+        // Extrayez l'année de la date de naissance
+        $anneeNaissance = $dateNaissance->format('Y');
+
+        // Recherchez dans les catégories celle qui correspond à l'année de naissance
+        $categoryRepository = $entityManager->getRepository(Category::class);
+        $category = $categoryRepository->findOneBy(['name' => $anneeNaissance]);
+
+            
+        // Créer le formulaire
+        $form = $this->createForm(UserType::class, $user, [
+            'category' => $category->getId(),
+        ]);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Récupérer la valeur du champ de mot de passe
             $plainPassword = $form->get('plainPassword')->getData();
-
+    
             // Vérifier si le mot de passe n'est pas vide (indiquant un changement de mot de passe)
             if (!empty($plainPassword)) {
                 // Encoder le nouveau mot de passe
@@ -115,21 +124,21 @@ class UserController extends AbstractController
                 // Définir le mot de passe encodé dans l'entité User
                 $user->setPassword($encodedPassword);
             }
-
+    
             $profimg = $form->get('profile_image')->getData();
             if (isset($profimg)) {
                 $errorMessage = $imageUploaderHelper->uploadImage($form, $user);
                 if (!empty($errorMessage)) {
-                    $this->addFlash('danger', 'An error has occurred: ' . $errorMessage);
+                    $this->addFlash('danger', 'Une erreur s\'est produite : ' . $errorMessage);
                 }
                 $userRepository->save($user, true);
             }
-
+    
             $entityManager->flush();
-
+    
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
