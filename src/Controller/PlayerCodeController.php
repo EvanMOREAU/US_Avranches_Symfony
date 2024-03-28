@@ -54,6 +54,8 @@ class PlayerCodeController extends AbstractController
         return $this->renderForm('player_code/edit.html.twig', [
             'player_code' => $playerCode,
             'form' => $form,
+            'location' => 'm',
+
         ]);
     }
 }

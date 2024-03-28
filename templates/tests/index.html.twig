@@ -124,7 +124,7 @@
                                     <p class="text-gradient text-dark mb-2 text-sm">{{ test.user.getCategory() }}</p>
                                     <a href="javascript:;">
                                         <h5>
-                                            {{ test.getUser().getFirstName() }} {{test.getUser().getLastName()}}
+                                            {{ test.getUser().getFirstName() }} {{test.getUser().getLastName()}} - {{ test.date|date('d/m/Y') }}
                                         </h5>
                                     </a>
                                     <p class="mb-4 text-sm">
@@ -136,8 +136,7 @@
                                         Jongle Tête : {{ test.jongletete }}<br>
                                         Conduite de balle : {{ test.conduiteballe|number_format(3, '.', '') }}s<br>
                                         Vitesse : {{ test.vitesse|number_format(3, '.', '') }}s<br>
-                                        Date du test : {{ test.date|date('à H:i:s') }} le
-                                        {{ test.date|date('d/m/Y') }}<br>
+                                        Heure du test : {{ test.date|date('à H:i:s') }}<br>
                                     </p>
 
                                     <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-info">

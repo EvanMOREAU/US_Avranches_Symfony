@@ -55,10 +55,6 @@ class UserType extends AbstractType
                     ])
                 ],
             ])
-            ->add('palier', EntityType::class, [
-                'class' => Palier::class,
-                'choice_label' => 'numero',
-            ])
         ;
     }
     

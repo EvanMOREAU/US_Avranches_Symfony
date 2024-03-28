@@ -5,22 +5,21 @@
 <link rel="stylesheet" href="/css/PlayerCode.css">
     <div class="center-container">
         {% for player_code in player_codes %}
-            <button class='buttoncode' onClick='redirectToPage("{{ path('app_player_code_edit', {'id': player_code.id}) }}")'>
-                <div class="text">
-                    <span>Voir</span>
-                    <span>le</span>
-                    <span>code</span>
+        <div class="container-fluid pt-3">
+            <div class="row removable">
+                <div class="col-lg-12">
+                    <div class="card mb-4 h-100">
+                        <div class="card-body p-3">
+                            <div class="text-center">
+                                <h1>Le code A2F actuel est : <u>{{ player_code.code }}</u></h1>
+                                <br>
+                                <a href="/playercode/{{ player_code.id }}/edit" class="btn btn-info">Modifier</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="clone">
-                    <span>{{ player_code.code }}</span>
-
-                </div>
-                <svg width="20px" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-            </button>
+            </div>
+        </div>
         {%endfor%}
     </div>
-
-    <a href="">Create new</a>
 {% endblock %}
