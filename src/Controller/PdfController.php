@@ -277,6 +277,7 @@ class PdfController extends AbstractController
         // Affichez la liste des joueurs dans une vue
         return $this->render('pdf/list.players.html.twig', [
             'players' => $players,
+            'location' => 'f',
         ]);
     }
 

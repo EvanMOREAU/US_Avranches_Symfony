@@ -1,23 +1,59 @@
-{# templates/pdf/list_players.html.twig #}
+{% extends 'base.html.twig' %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Liste des joueurs</title>
-</head>
-<body>
-    <h1>Liste des joueurs</h1>
-    <ul>
-        {% for player in players %}
-            <li>
-                {{ player.firstName }} {{ player.lastName }}
-                {% if player.getProfileImage() %}
-                    <img src="{{ asset(player.getProfileImage()) }}" alt="Photo de profil">
-                {% endif %}
-                <a href="/pdf/{{ player.id }}">Voir PDF</a>
-            </li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% block title %}Liste de vos tests
+{% endblock %}
+
+{% block body %}
+ <div class="container-fluid pt-3">
+            <div class="row removable">
+                <div class="col-lg-12">
+                    <div class="row removable mb-4">
+                        <div class="col-12">
+                            <div class="card mb-4">
+                                <div class="card-header pb-0 p-3">
+                                    <h6 class="mb-1">Projects</h6>
+                                    <p class="text-sm">Architects design houses</p>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="row">
+										{% for player in players %}
+											<div class="col-xl-3 col-md-6 mb-4">
+												<div class="card card-blog card-plain">
+													<div class="position-relative">
+														<a class="d-block shadow-xl border-radius-xl">
+															{% if player.getProfileImage() != null %}
+															<img src="/uploads/images/{{ player.getProfileImage()}}"
+																alt="img-blur-shadow" class="img-fluid shadow border-radius-xl">
+															{% else %}
+															<img src="/uploads/defaultpp.jpg" alt="img-blur-shadow"
+																class="img-fluid shadow border-radius-xl">
+															{% endif %}
+														</a>
+													</div>
+													<div class="card-body px-1 pb-0">
+														<p class="text-gradient text-dark mb-2 text-sm">{{ player.getCategory()}}</p>
+														<a href="javascript:;">
+															<h5>
+																{{player.getFirstName}} {{player.getLastName}}
+															</h5>
+														</a>
+														<p class="mb-4 text-sm">
+															{{ player.getDateNaissance|date('d/m/Y') 	}}
+														</p>
+														<div class="d-flex align-items-center justify-content-between">
+															<a href='/pdf/{{player.getId()}}' type="button" class="btn btn-outline-info btn-sm mb-0">Accéder au PDF</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										{% endfor %}                                      
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
