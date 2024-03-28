@@ -45,8 +45,19 @@ Commencer u10 jusqu’en u17 —> permettre à l’administrateur de créer une 
 
 ===========================================================
 
+
+
+En cours: 
+
+Upload d'image de profile.
+Extension installé : vich/uploader-bundle
+
+
+Modal pour supprimer des cruds
+
 A faire : 
  Bouton "active" dans la barre des tâches -> Fait
  Gestion A2F -> Fait
  Utilisateur -> Edit + Index -> Fait
  Parameter -> Fait
+

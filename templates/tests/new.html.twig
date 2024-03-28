@@ -2,95 +2,111 @@
 {% block title %}Nouveau Test{% endblock %}
 
 {% block body %}
-<link rel="stylesheet" href="/assets/css/form.css">
-
-{% if app.user %}
-<script src="/js/redirect.js"></script>
-<div class="container">
-    <h1>Nouveau Test</h1>
+    {% if app.user %}
+    <link rel="stylesheet" href="/assets/css/form.css">
     <script src="/js/redirect.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const conduiteBalleInput = document.querySelector('#{{ form.conduiteballe.vars.id }}');
-            const vitesseInput = document.querySelector('#{{ form.vitesse.vars.id }}');
-            conduiteBalleInput.addEventListener('input', function() {
-                formatTimeInput(this);
-            });
-            vitesseInput.addEventListener('input', function() {
-                formatTimeInput(this);
-            });
-        });
-    </script>
-    {% endif %}
-    {{ form_start(form, {'method': 'POST'}) }}
-    <div class="container-fluid pt-3">
-        <div class="card mb-4">
-            <div class="card-header">
-                <div class="row align-items-center">
-                    <div class="col-8">
-                        <h6 class="mb-0">{% if is_granted("ROLE_SUPER_ADMIN") %}
-                            <div class="form-group {% if form.user.vars.errors|length > 0 %}has-error{% endif %}">
-                                {{ form_label(form.user, 'Joueur : ', {'label_attr': {'class': 'form-label'}}) }}
-                                {{ form_widget(form.user, {'attr': {'class': 'form-select'}}) }}
+    <div class="container">
+        <h1>Nouveau Test</h1>
+            <script src="/js/redirect.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const conduiteBalleInput = document.querySelector('#{{ form.conduiteballe.vars.id }}');
+                    const vitesseInput = document.querySelector('#{{ form.vitesse.vars.id }}');
+
+                    conduiteBalleInput.addEventListener('input', function () {
+                        formatTimeInput(this);
+                    });
+
+                    vitesseInput.addEventListener('input', function () {
+                        formatTimeInput(this);
+                    });
+                });
+            </script>
+        {% endif %}
+       {{ form_start(form, {'method': 'POST'}) }}
+       <div class="container-fluid pt-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <div class="form-group">
+                                {{ form_label(form.user, 'Utilisateur :', {'label_attr': {'class': 'form-control-label'}}) }}
+                                {{ form_widget(form.user, {'attr': {'class': 'form-control'}}) }}
                                 {{ form_errors(form.user, {'attr': {'class': 'error-message'}}) }}
                             </div>
-                            {% endif %}
-                        </h6>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <h6 class="heading-small text-muted mb-4">Données du test</h6>
-                <div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group {% if form.vma.vars.errors|length > 0 %}has-error{% endif %}">
-                                <label class="form-control-label" for="input-username">VMA</label>
-                                {{ form_widget(form.vma, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.vma, {'attr': {'class': 'error-message'}}) }}
+                <div class="card-body">
+                        <h6 class="heading-small text-muted mb-4">Données du test</h6>
+                        <div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group {% if form.vma.vars.errors|length > 0 %}has-error{% endif %}">
+                                        <label class="form-control-label" for="input-username">VMA</label>
+                                        {{ form_widget(form.vma, {'attr': {'class': 'form-control', 'placeholder': 'Entrez la VMA'}}) }}
+                                        {{ form_errors(form.vma, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group {% if form.cooper.vars.errors|length > 0 %}has-error{% endif %}">
-                                <label class="form-control-label" for="input-first-name">Cooper (en mètres)</label>
-                                {{ form_widget(form.cooper, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.cooper, {'attr': {'class': 'error-message'}}) }}
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group {% if form.cooper.vars.errors|length > 0 %}has-error{% endif %}">
+                                        <label class="form-control-label" for="input-first-name">Cooper (en mètres)</label>
+                                        {{ form_widget(form.cooper, {'attr': {'class': 'form-control', 'placeholder': 'Entrez la distance du test de cooper en mètres'}}) }}
+                                        {{ form_errors(form.cooper, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group {% if form.demicooper.vars.errors|length > 0 %}has-error{% endif %}">
+                                        <label class="form-control-label" for="input-email">Demi-cooper (en mètres)</label>
+                                        {{ form_widget(form.demicooper, {'attr': {'class': 'form-control', 'placeholder': 'Entrez la distance du test de demi-cooper en mètres'}}) }}
+                                        {{ form_errors(form.demicooper, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group {% if form.demicooper.vars.errors|length > 0 %}has-error{% endif %}">
-                                <label class="form-control-label" for="input-email">Demi-cooper (en mètres)</label>
-                                {{ form_widget(form.demicooper, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.demicooper, {'attr': {'class': 'error-message'}}) }}
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group {% if form.jongle_droit.vars.errors|length > 0 %}has-error{% endif %}">
+                                        <label class="form-control-label" for="input-first-name">Jongle du pied droit</label>
+                                        {{ form_widget(form.jongle_droit, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le nombre de jongles du pied droit'}}) }}
+                                        {{ form_errors(form.jongle_droit, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group {% if form.jongle_gauche.vars.errors|length > 0 %}has-error{% endif %}">
+                                        <label class="form-control-label" for="input-email">Jongle du pied gauche</label>
+                                        {{ form_widget(form.jongle_gauche, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le nombre de jongles du pied gauche'}}) }}
+                                        {{ form_errors(form.jongle_gauche, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group {% if form.jongle_tete.vars.errors|length > 0 %}has-error{% endif %}">
+                                        <label class="form-control-label" for="input-email">Jongle de la tête</label>
+                                        {{ form_widget(form.jongle_tete, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le nombre de jongles de la tête'}}) }}
+                                        {{ form_errors(form.jongle_tete, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <div
-                                class="form-group {% if form.jongle_droit.vars.errors|length > 0 %}has-error{% endif %}">
-                                <label class="form-control-label" for="input-first-name">Jongle du pied droit</label>
-                                {{ form_widget(form.jongle_droit, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.jongle_droit, {'attr': {'class': 'error-message'}}) }}
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group {% if form.conduiteballe.vars.errors|length > 0 %}has-error{% endif %}">
+                                        <label class="form-control-label" for="input-first-name">Conduite de balle</label>
+                                        {{ form_widget(form.conduiteballe, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le temps de la conduite de balle en secondes', 'type': 'text'}}) }}
+                                        {{ form_errors(form.conduiteballe, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group {% if form.vitesse.vars.errors|length > 0 %}has-error{% endif %}">
+                                        <label class="form-control-label" for="input-email">Vitesse</label>
+                                        {{ form_widget(form.vitesse, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le temps de la vitesse en secondes', 'type': 'text'}}) }}
+                                        {{ form_errors(form.vitesse, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div
-                                class="form-group {% if form.jongle_gauche.vars.errors|length > 0 %}has-error{% endif %}">
-                                <label class="form-control-label" for="input-email">Jongle du pied gauche</label>
-                                {{ form_widget(form.jongle_gauche, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.jongle_gauche, {'attr': {'class': 'error-message'}}) }}
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div
-                                class="form-group {% if form.jongle_tete.vars.errors|length > 0 %}has-error{% endif %}">
-                                <label class="form-control-label" for="input-email">Jongle de la tête</label>
-                                {{ form_widget(form.jongle_tete, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.jongle_tete, {'attr': {'class': 'error-message'}}) }}
-                            </div>
+                            <button onClick='redirectToPage("/tests")' class="btn btn-primary"><i class="fas fa-arrow-left"></i> Retour</button>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Créer</button>
+
                         </div>
                     </div>
                     <div class="row">

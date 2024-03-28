@@ -32,6 +32,8 @@
                 <div class="card-body p-3">
                     <div class="mt-3 text-center">
                         <h1 class="h1 mb-2 display-4" style="color: black">Liste des paliers</h1>
+                        <a href="{{ path('app_palier_new', {'numero': 0}) }}" class="btn btn-primary"><i
+                                class="fas fa-plus"></i> Ajouter un palier</a>
                     </div>
 
                     <div class="rg-4 pt-5 table-responsive">
@@ -40,7 +42,7 @@
                                 <tr>
                                     <th>Numéro</th>
                                     <th>Nom</th>
-                                    <th>Objectif(s)</th>
+                                    <th>Objectifs</th>
                                     <th>Membres</th>
                                     <th>Paliers à valider</th>
                                     <th class="actions-column">Actions</th>
@@ -96,8 +98,6 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                        <a href="{{ path('app_palier_new', {'numero': 0}) }}" class="btn btn-info"><i
-                                class="fas fa-plus"></i> Ajouter un palier</a>
                     </div>
                 </div>
             </div>

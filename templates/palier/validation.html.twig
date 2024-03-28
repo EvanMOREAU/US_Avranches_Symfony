@@ -3,6 +3,8 @@
 {% block title %}Users ayant le palier {{ palierNumero }}{% endblock %}
 
 {% block body %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <div class="container">
        {% set users_exist = false %}
 {% for user in users %}

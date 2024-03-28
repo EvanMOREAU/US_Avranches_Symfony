@@ -5,15 +5,23 @@
 {% block title %}Liste de vos tests{% endblock %}
 
 {% block body %}
+<style>
+    .form-select {
+        border: none; /* Supprimer la bordure par défaut */
+        border-radius: 8px; /* Ajouter des coins arrondis */
+        padding: 10px; /* Ajouter un espacement à l'intérieur du champ de sélection */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Ajouter une ombre douce */
+        transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Ajouter une transition fluide */
+    }
+
+    /* Style pour la bordure inférieure lorsqu'un champ de sélection est en focus */
+    .form-select:focus {
+        outline: none; /* Supprimer l'effet d'ombre en focus */
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Ajouter une ombre plus prononcée en focus */
+    }
+</style>
 
 <div class="container-fluid">
-    <div class="text-center">
-        <h1 class="h1">{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH")%} Index des Tests {% else %}Liste de vos tests {{ app.user.getFirstName() }}{% endif %}</h1>
-        {% if is_granted("ROLE_SUPER_ADMIN") %}
-        <a href="{{ path('app_tests_new') }}" class="btn btn-info">Inscrire un nouveau test</a>
-        {% endif %}
-    </div>
-
     <div class="mt-4">
         {% for message in app.flashes('success') %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -46,14 +54,19 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-header pb-0 p-3">
+                    <div class="text-center">
+                        <h1 class="h1">{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH")%} Index des Tests {% else %}Liste de vos tests {{ app.user.getFirstName() }}{% endif %}</h1>
+                        {% if is_granted("ROLE_SUPER_ADMIN") %}
+                        <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
+                        {% endif %}
+                    </div>
                     <h6 class="mb-1">Liste{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH") %} des
                         {% else %} de vos {% endif %}Tests</h6>
                     <p class="text-sm">Nombre de tests : {{ tests|length }}</p>
                     <div class="user-dropdown-container mt-3">
                         {% if is_granted("ROLE_SUPER_ADMIN") %}
                         <select class="form-select" id="userDropdown" name="userDropdown">
-                            <option value="" {% if selectedUserId is null %}selected{% endif %}>Tous les utilisateurs
-                            </option>
+                            <option value="" {% if selectedUserId is null %}selected{% endif %}>Tous les utilisateurs</option>
 
                             {% set allUsers = usersByCategory is defined and usersByCategory is not null ? usersByCategory : [users] %}
 
@@ -63,7 +76,7 @@
                             {% set mergedUsers = mergedUsers|merge(users) %}
                             {% endfor %}
 
-                            {% set sortedUsers = mergedUsers|sort((a, b) => a.getCategory() <=> b.getCategory() == 0 ? a.getFirstName() <=> b.getFirstName() : a.getCategory() <=> b.getCategory()) %}
+                            {% set sortedUsers = mergedUsers|sort((a, b) => a.getCategory() <=> b.getCategory() == 0 ? a.getFirstName() ~ a.getLastName() <=> b.getFirstName() ~ b.getLastName() : a.getCategory() <=> b.getCategory()) %}
 
                             {% set currentCategory = '' %}
 
@@ -77,14 +90,14 @@
                                 {% endif %}
                                 <option value="{{ user.getId() }}"
                                     {% if selectedUserId == user.getId() %}selected{% endif %}>
-                                    {{ user.getFirstName() }}
+                                    {{ user.getFirstName() }} {{ user.getLastName() }}
                                 </option>
                                 {% endfor %}
                             </optgroup>
                         </select>
-
                         {% endif %}
-                    </div><br>
+                    </div>
+                    <br>
                     <div class="btn-group" role="group" aria-label="Trie">
                         <a href="{{ path('app_tests_index', {'order': 'asc'}) }}"
                             class="btn btn-warning {% if app.request.query.get('order') == 'asc' %}active{% endif %}">
