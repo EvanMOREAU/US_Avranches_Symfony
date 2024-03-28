@@ -3,36 +3,8 @@
 
 {% block body %}
     {% if app.user %}
+    <link rel="stylesheet" href="/assets/css/form.css">
     <script src="/js/redirect.js"></script>
-    
-    <style>
-    .form-control {
-        border: none; /* Supprimer la bordure par défaut */
-        border-radius: 8px; /* Ajouter des coins arrondis */
-        padding: 10px; /* Ajouter un espacement à l'intérieur du champ de saisie */
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Ajouter une ombre douce */
-        transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Ajouter une transition fluide */
-    }
-
-    /* Style pour la bordure inférieure lorsqu'un champ de saisie est en focus */
-    .form-control:focus {
-        outline: none; /* Supprimer l'effet d'ombre en focus */
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Ajouter une ombre plus prononcée en focus */
-    }
-    .form-select {
-        border: none; /* Supprimer la bordure par défaut */
-        border-radius: 8px; /* Ajouter des coins arrondis */
-        padding: 10px; /* Ajouter un espacement à l'intérieur du champ de sélection */
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Ajouter une ombre douce */
-        transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Ajouter une transition fluide */
-    }
-
-    /* Style pour la bordure inférieure lorsqu'un champ de sélection est en focus */
-    .form-select:focus {
-        outline: none; /* Supprimer l'effet d'ombre en focus */
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Ajouter une ombre plus prononcée en focus */
-    }
-    </style>
     <div class="container">
         <h1>Nouveau Test</h1>
             <script src="/js/redirect.js"></script>
@@ -134,12 +106,35 @@
                             </div>
                             <button onClick='redirectToPage("/tests")' class="btn btn-primary"><i class="fas fa-arrow-left"></i> Retour</button>
                             <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Créer</button>
-                        </div>
-                </div>
 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div
+                                class="form-group {% if form.conduiteballe.vars.errors|length > 0 %}has-error{% endif %}">
+                                <label class="form-control-label" for="input-first-name">Conduite de balle</label>
+                                {{ form_widget(form.conduiteballe, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le temps en secondes', 'type': 'text'}})
+                                }}
+                                {{ form_errors(form.conduiteballe, {'attr': {'class': 'error-message'}}) }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group {% if form.vitesse.vars.errors|length > 0 %}has-error{% endif %}">
+                                <label class="form-control-label" for="input-email">Vitesse</label>
+                                {{ form_widget(form.vitesse, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le temps en secondes', 'type': 'text'}})
+                                }}
+                                {{ form_errors(form.vitesse, {'attr': {'class': 'error-message'}}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <button onClick='redirectToPage("/tests")' class="btn btn-secondary"><i
+                            class="fas fa-arrow-left"></i> Retour</button>
+                    <button type="submit" class="btn btn-info"><i class="fas fa-plus"></i> Créer</button>
+                </div>
             </div>
         </div>
-        {{ form_end(form) }}
     </div>
+    {{ form_end(form) }}
+</div>
 {% endblock %}
-

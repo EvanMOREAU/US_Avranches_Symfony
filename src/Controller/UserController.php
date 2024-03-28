@@ -72,7 +72,7 @@ class UserController extends AbstractController
 
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
-            'location' => '',
+            'location' => 'n',
         ]);
     }
     
@@ -85,7 +85,7 @@ class UserController extends AbstractController
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
-            'location' => '',
+            'location' => 'n',
         ]);
     }
 
@@ -133,7 +133,7 @@ class UserController extends AbstractController
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
-            'location' => '',
+            'location' => 'n',
         ]);
     }
 

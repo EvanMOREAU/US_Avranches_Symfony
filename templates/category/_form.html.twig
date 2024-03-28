@@ -1,49 +1,57 @@
-{# {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }} #}
 
-<div class="col-lg-8 mx-auto p-5 py-md-5">
-
-	{{ form_start(form) }}
-	<div class="row">
-		<div>
-			{{ form_row(form.name, { 
-    'label': 'Nom', 
-    'attr': { 'class': 'form-control mb-4', 'id': 'name', 'name': '_name', 'aria-label': 'name' }, 
-    'label_attr': {'class': 'form-label'}, 
-    'separator': '<br><br>' 
-}) }}
+<link rel="stylesheet" href="/assets/css/form.css">
+<div class="container-fluid pt-3">
+	<div class="row removable">
+		<div class="col-lg-12">
+			<div class="card mb-4">
+				<div class="card-header">
+					<div class="row align-items-center">
+						<div class="col-8">
+							<h6 class="mb-0">Gestion de catégorie</h6>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					{{ form_start(form) }}
+					<form>
+						<h6 class="heading-small text-muted mb-4">Information</h6>
+						<div>
+							<div class="row">
+								{{ form_row(form.name, { 
+									'label': 'Nom', 
+									'attr': { 'class': 'form-control mb-4', 'id': 'name', 'name': '_name', 'aria-label': 'name' }, 
+									'label_attr': {'class': 'form-label'}, 
+								}) }}
+							</div>
+						</div>
+						<hr
+						class="horizontal dark my-4">
+						<h6 class="heading-small text-muted mb-4">Affichage</h6>
+						<div>
+							<div class="row">
+								{{ form_row(form.color, { 
+									'label': 'Couleur', 
+									'attr': { 'class': 'form-control mb-4', 'id': 'image', 'name': '_image', 'aria-label': 'image' }, 
+									'label_attr': {'class': 'form-label'},
+								}) }}
+								{{ form_row(form.image, { 
+									'label': 'Image', 
+									'attr': { 'class': 'form-control mb-4', 'id': 'image', 'name': '_image', 'aria-label': 'image' }, 
+									'label_attr': {'class': 'form-label'},
+								}) }}
+							</div>
+						</div>
+						{% if category.image %}
+							<h6 class="heading-small text-muted mb-4">Image existante :</h6>
+							<center><img style="max-width: 15em; width: auto;" src="{{ asset('uploads/images/' ~ category.image) }}"></center>
+						{% endif %}
+						<div class="text-center"><br>
+							<button class="btn btn-info">{{ button_label|default('Créer') }}</button>
+						</div>
+					</form>
+					{{ form_end(form) }}
+				</div>
+			</div>
 		</div>
 	</div>
-
-	<div class="mb-4 col-lg-1">
-		{{ form_row(form.color, { 
-    'label': 'Couleur', 
-    'attr': { 'class': 'form-control mb-4', 'id': 'image', 'name': '_image', 'aria-label': 'image' }, 
-    'label_attr': {'class': 'form-label'},
-    'separator': '<br><br>' 
-}) }}
-	</div>
-
-	<div class="row row-cols-1 row-cols-md-2">
-		<div class="col">
-			{{ form_row(form.image, { 
-    'label': 'Image', 
-    'attr': { 'class': 'form-control mb-4', 'id': 'image', 'name': '_image', 'aria-label': 'image' }, 
-    'label_attr': {'class': 'form-label'},
-    'separator': '<br><br>' 
-}) }}
-		</div>
-		<div class="col mb-4">
-			{% if category.image %}
-				<center><img style="max-width: 15em; width: auto;" src="{{ asset('uploads/images/' ~ category.image) }}"></center>
-			{% endif %}
-		</div>
-	</div>
-
-	<button class="btn btn-success btn-sm mt-2">{{ button_label|default('Créer') }}</button>
-	{{ form_end(form) }}
-
 </div>
-

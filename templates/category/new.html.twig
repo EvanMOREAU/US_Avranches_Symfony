@@ -6,13 +6,6 @@
 {% block body %}
     <script src="https://kit.fontawesome.com/54e9e3700c.js" crossorigin="anonymous"></script>
 
-	<h1>Create new Category</h1>
-
 	{{ include('category/_form.html.twig') }}
-
-
-	<a class="btn btn-primary btn-sm mt-2" href="{{ path('app_category_index') }}">
-		<i class="fa-solid fa-arrow-left"></i>
-		Revenir à la liste</a>
 {% endblock %}
 
