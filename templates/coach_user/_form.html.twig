@@ -1,0 +1,68 @@
+{{ form_start(form) }}
+    <div class="container-fluid pt-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <div class="form-group">
+                                {{ form_label(form.username, 'Nom d\'utilisateur :', {'label_attr': {'class': 'form-control-label'}}) }}
+                                {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.username, {'attr': {'class': 'error-message'}}) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                        <h6 class="heading-small text-muted mb-4">Données du test</h6>
+                        <div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-username">Mot de passe</label>
+                                        {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': 'Entrez un mot de passe', 'type': 'password'}}) }}
+                                        {{ form_errors(form.password, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-first-name">Date de naissance<label>
+                                        {{ form_widget(form.date_naissance, {'attr': {'class': 'form-date'}}) }}
+                                        {{ form_errors(form.date_naissance, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-email">Prénom</label>
+                                        {{ form_widget(form.first_name, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+                                        {{ form_errors(form.first_name, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-first-name">Nom</label>
+                                        {{ form_widget(form.last_name, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+                                        {{ form_errors(form.last_name, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-email">Email</label>
+                                        {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+                                        {{ form_errors(form.email, {'attr': {'class': 'error-message'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Créer</button>
+
+                            <button onClick='redirectToPage("/tests")' class="btn btn-primary"><i class="fas fa-arrow-left"></i> Retour</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{{ form_end(form) }}

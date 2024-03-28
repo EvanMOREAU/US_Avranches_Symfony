@@ -71,30 +71,31 @@
             </div>
           </div>
         </div>
-        {% set poid = 0 %}
-        {% set taille = 0 %}
-        {% set imc = 0 %}
-        {% set date1 = null %}
-        {% set date2 = null %}
-        {% for chart in chartData %}
-            {% if chart.name == "Poids" %}
-                {% set poid = chart.data.values|last %}
-                {% set date1 = chart.data.labels|last %}
-            {% elseif chart.name == "Taille" %}
-                {% set taille = chart.data.values|last %}
-                {% set date2 = chart.data.labels|last %}
-            {% endif %}
-        {% endfor %}
+          {% set poid = 0 %}
+          {% set taille = 0 %}
+          {% set imc = 0 %}
+          {% set date1 = null %}
+          {% set date2 = null %}
+          {% set recentDate = null %} {# Initialiser recentDate en dehors de la boucle if #}
 
-        {% if poid != 0 and taille != 0 %}
-            {% set imc = poid / (taille * taille) %}
-            {% if date1 > date2 %}
-                {% set recentDate = date1 %}
-            {% else %}
-                {% set recentDate = date2 %}
-            {% endif %}
-        {% endif %}
+          {% for chart in chartData %}
+              {% if chart.name == "Poids" %}
+                  {% set poid = chart.data.values|last %}
+                  {% set date1 = chart.data.labels|last %}
+              {% elseif chart.name == "Taille" %}
+                  {% set taille = chart.data.values|last %}
+                  {% set date2 = chart.data.labels|last %}
+              {% endif %}
+          {% endfor %}
 
+          {% if poid != 0 and taille != 0 %}
+              {% set imc = poid / (taille * taille) %}
+              {% if date1 > date2 %}
+                  {% set recentDate = date1 %}
+              {% else %}
+                  {% set recentDate = date2 %}
+              {% endif %}
+          {% endif %}
         <div class="col-xl-3 col-sm-6">
           <div class="card">
             <div class="card-header p-3 pt-2">

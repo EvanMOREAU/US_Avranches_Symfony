@@ -114,14 +114,10 @@ class UserController extends AbstractController
         ]);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer la valeur du champ de mot de passe
             $plainPassword = $form->get('plainPassword')->getData();
     
-            // Vérifier si le mot de passe n'est pas vide (indiquant un changement de mot de passe)
             if (!empty($plainPassword)) {
-                // Encoder le nouveau mot de passe
                 $encodedPassword = $passwordHasher->hashPassword($user, $plainPassword);
-                // Définir le mot de passe encodé dans l'entité User
                 $user->setPassword($encodedPassword);
             }
     
