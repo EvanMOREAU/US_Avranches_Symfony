@@ -15,7 +15,7 @@ class ChartsFixtures extends Fixture
         $heightConfig = new ChartConfiguration();
         $heightConfig->setChartType('line');
         $heightConfig->setName('Taille');
-        $heightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 1, 'max' => 2, 'field' => 'value', 'date_field' => 'date']);
+        $heightConfig->setConfigData(['entity' => 'App\Entity\Height', 'min' => 100, 'max' => 200, 'field' => 'value', 'date_field' => 'date']);
         $manager->persist($heightConfig);
 
         $weightConfig = new ChartConfiguration();

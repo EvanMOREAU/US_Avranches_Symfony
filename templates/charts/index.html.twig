@@ -22,7 +22,7 @@
             <div class="card mb-2">
                 <div class="card-body">
                     <div class="mt-1 text-center">
-                        <h1 style="color:black;">Graphiques</h5>
+                        <h1 style="color:black;">Stats</h5>
                     </div>
                  </div>
             </div>      
@@ -51,13 +51,15 @@
         const colors{{ chartId }} = configData{{ chartId }}.values.map((value, index) => {
             const previousValue = configData{{ chartId }}.values[index - 1];
                 if ({{ chartId }} === 6 || {{ chartId }} === 10){
-                    if (value >= (({{ chartData.max }} - {{ chartData.min }}) / 3) * 2) {   return 'red';   }
-                    else if (value >= ({{ chartData.max }} - {{ chartData.min }}) / 3 ) {   return 'green'; }
-                    else                                                                {   return 'orange';}
+                    // dans le cadre des test de vitesse
+                    if (value >= {{ chartData.min }} + ((({{ chartData.max }} - {{ chartData.min }}) / 3) * 2)) {   return 'red'; } 
+                    else if (value <= {{ chartData.min }} + (({{ chartData.max }} - {{ chartData.min }}) / 3 )) {   return 'green';   }
+                    else                                                                                        {   return 'orange';}
                 }else{
-                    if (value >= (({{ chartData.max }} - {{ chartData.min }}) / 3) * 2) {   return 'green'; } 
-                    else if (value <= ({{ chartData.max }} - {{ chartData.min }}) / 3 ) {   return 'red';   }
-                    else                                                                {   return 'orange';}
+                    // dans le cadre des autres tests
+                    if (value >= {{ chartData.min }} + ((({{ chartData.max }} - {{ chartData.min }}) / 3) * 2)) {   return 'green'; } 
+                    else if (value <= {{ chartData.min }} + (({{ chartData.max }} - {{ chartData.min }}) / 3 )) {   return 'red';   }
+                    else                                                                                        {   return 'orange';}
                 }         
 
         });
