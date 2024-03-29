@@ -10,7 +10,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/coach-account')]
@@ -66,5 +68,26 @@ class CoachUserController extends AbstractController
             'form' => $form,
             'location' => 'p',
         ]);
+    }
+    #[Route('/{id}', name: 'app_coach_user_delete', methods: ['POST'])]
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
+            if (!$this->isGranted('ROLE_COACH')) {
+                // Si l'utilisateur n'a aucun rôle, refuser l'accès
+                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+            }
+        }
+        
+        // Vérifie le jeton CSRF et supprime la catégorie
+            $entityManager->remove($user);
+            $entityManager->flush();
+
+            // Répond avec un objet JSON indiquant le succès de la suppression
+            return new JsonResponse(['success' => true]);
+
+    
     }
 }
