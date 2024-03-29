@@ -9,6 +9,8 @@ use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\HeightVerificationService;
+use App\Service\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,10 +21,14 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 class PdfController extends AbstractController
 {
     private $userVerificationService;
+    private $heightVerificationService;
+    private $weightVerificationService;
 
-    public function __construct(UserVerificationService $userVerificationService)
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService)
     {
         $this->userVerificationService = $userVerificationService;
+        $this->heightVerificationService = $heightVerificationService;
+        $this->weightVerificationService = $weightVerificationService; 
     }
 
     #[Route('/', name: 'app_pdf_index')]
@@ -271,14 +277,29 @@ class PdfController extends AbstractController
     #[Route('/list-players', name: 'app_pdf_list_players')]
     public function listPlayers(UserRepository $userRepository): Response
     {
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
+
         // Récupérez la liste des utilisateurs ayant le rôle ROLE_PLAYER
         $players = $userRepository->findByRole('ROLE_PLAYER');
-
-        // Affichez la liste des joueurs dans une vue
-        return $this->render('pdf/list.players.html.twig', [
-            'players' => $players,
-            'location' => 'f',
-        ]);
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    // Affichez la liste des joueurs dans une vue
+                    return $this->render('pdf/list.players.html.twig', [
+                        'players' => $players,
+                        'location' => 'f',
+                    ]);
+                }
+            }
+        }
     }
 
     #[Route('/{userId}', name: 'app_pdf_view_pdf')]
