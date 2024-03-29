@@ -34,13 +34,13 @@
 											<td>{{ user.username }}</td>
 											<td>{{ user.firstName }}</td>
 											<td>{{ user.lastName }}</td>
-											<td>{{ user.dateNaissance ? user.dateNaissance|date('Y-m-d') : '' }}</td>
+											<td>{{ user.dateNaissance ? user.dateNaissance|date('d/m/Y') : '' }}</td>
 											<td>
 												{% if user.profileImage != '' %}Oui{% else %}Non
 												{% endif %}
 											</td>
 											<td>{{ user.palier }}</td>
-											<td>{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:m:s') : '' }}</td>
+											<td>{{ user.lastConnection ? user.lastConnection|date('d/m/Y H:m:s') : '' }}</td>
 											<td>
 												<a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-warning">
 													<i class="fa-solid fa-pen"></i>
