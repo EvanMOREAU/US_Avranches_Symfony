@@ -55,8 +55,9 @@
             <div class="card mb-4">
                 <div class="card-header pb-0 p-3">
                     <div class="text-center">
-                        <h1 class="h1">{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH")%} Index des Tests {% else %}Index de vos tests{% endif %}</h1>
+                        <h1 class="h1"> Index{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH")%} des  {% else %} de vos {% endif %} Tests</h1>
                         {% if is_granted("ROLE_SUPER_ADMIN") %}
+
                         <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
                         {% endif %}
                     </div>
@@ -155,30 +156,30 @@
                                     <a href="{{ path('app_tests_edit', {'id': test.id}) }}" class="btn btn-info">
                                         <i class="fa fa-edit"></i> Modifier
                                     </a>
+                                   <!-- Lien de suppression -->
                                     <a href="#" class="btn btn-danger"
-                                        onclick="displayDeletionConfirmationModal('{{ path('app_tests_delete', {'id': test.id}) }}', {{ test.id }})">
+                                        onclick="displayConfirmationModal('{{ path('app_tests_delete', {'id': test.id}) }}', {{ test.id }}, 'Voulez-vous vraiment supprimer ce test ?')">
                                         <i class="fa fa-trash"></i> Supprimer
                                     </a>
+
+                                    <!-- Boîte de dialogue de confirmation -->
                                     <div class="modal fade" id="deletionConfirmationModal" tabindex="-1"
                                         aria-labelledby="deletionConfirmationModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="deletionConfirmationModalLabel">
-                                                        Confirmation de suppression</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
+                                                    <h5 class="modal-title" id="deletionConfirmationModalLabel">Confirmation de suppression</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body" id="deletionConfirmationModalBody"></div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-warning"
-                                                        data-bs-dismiss="modal">Annuler</button>
-                                                    <button type="button" class="btn btn-danger"
-                                                        id="confirmDeletionButton">Confirmer</button>
+                                                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Annuler</button>
+                                                    <button type="button" class="btn btn-danger" id="confirmDeletionButton">Confirmer</button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
 
                                     <div class="modal fade" id="displayValidationConfirmationModal{{ test.id }}"
                                         tabindex="-1"

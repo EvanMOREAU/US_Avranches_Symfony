@@ -30,33 +30,57 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-function cancelTest(cancelUrl, testId) {
-    // Envoi de la requête AJAX pour annuler le test
-    fetch(cancelUrl, {
-        method: 'POST',
+function sendRequest(url, method, data, successCallback, errorCallback) {
+    fetch(url, {
+        method: method,
         headers: {
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
         },
-        body: JSON.stringify({ testId }),
+        body: JSON.stringify(data),
     })
     .then(response => response.json())
     .then(data => {
-        // Gestion de la réponse du serveur
-        console.log('Response from server:', data);
-
-        if (data.success) {
-            // Actualisez la page ou effectuez d'autres actions nécessaires
-            window.location.reload();
-        } else {
-            alert('Erreur lors de l\'annulation du test : ' + data.message);
-        }
+        successCallback(data);
     })
     .catch(error => {
-        console.error('Erreur lors de l\'annulation du test:', error);
+        errorCallback(error);
     });
 }
-function confirmDeletion(deletionUrl, testId) {
+
+function cancelAction(cancelUrl, entityId) {
+    sendRequest(cancelUrl, 'POST', { entityId: entityId }, 
+        function(data) {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert('Erreur lors de l\'annulation : ' + data.message);
+            }
+        }, 
+        function(error) {
+            console.error('Erreur lors de l\'annulation :', error);
+        }
+    );
+}
+
+function displayConfirmationModal(deletionUrl, entityId, confirmationMessage) {
+    // Afficher la modal de confirmation Bootstrap
+    $('#deletionConfirmationModal').modal('show');
+
+    // Mettre à jour le texte de la modal avec le message de confirmation
+    $('#deletionConfirmationModalBody').text(confirmationMessage);
+
+    // Gérer l'événement lorsque l'utilisateur confirme l'action
+    $('#confirmDeletionButton').on('click', function () {
+        // Appeler la fonction correspondante pour confirmer la suppression
+        confirmDeletion(deletionUrl, entityId);
+
+        // Cacher la modal après confirmation
+        $('#deletionConfirmationModal').modal('hide');
+    });
+}
+
+function confirmDeletion(deletionUrl, entityId) {
     // Envoi de la requête AJAX pour supprimer le test
     fetch(deletionUrl, {
         method: 'POST',
@@ -64,7 +88,7 @@ function confirmDeletion(deletionUrl, testId) {
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
         },
-        body: JSON.stringify({ testId }),
+        body: JSON.stringify({ entityId: entityId }),
     })
     .then(response => response.json())
     .then(data => {
@@ -77,25 +101,5 @@ function confirmDeletion(deletionUrl, testId) {
     })
     .catch(error => {
         console.error('Erreur lors de la suppression du test:', error);
-    });
-}
-
-function displayDeletionConfirmationModal(deletionUrl, testId) {
-    // Construire le message de confirmation
-    const deletionConfirmationMessage = `Voulez-vous vraiment supprimer ce test ?`;
-
-    // Afficher la modal de confirmation Bootstrap pour la suppression
-    $('#deletionConfirmationModal').modal('show');
-
-    // Mettre à jour le texte de la modal avec le message de confirmation de suppression
-    $('#deletionConfirmationModalBody').text(deletionConfirmationMessage);
-
-    // Gérer l'événement lorsque l'utilisateur confirme la suppression
-    $('#confirmDeletionButton').on('click', function () {
-        // Appeler la fonction pour supprimer le test
-        confirmDeletion(deletionUrl, testId);
-
-        // Cacher la modal après confirmation
-        $('#deletionConfirmationModal').modal('hide');
     });
 }
