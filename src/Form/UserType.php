@@ -31,10 +31,17 @@ class UserType extends AbstractType
             ->add('username')
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
+                'invalid_message' => 'Les mots de passe doivent correspondre.',
                 'required' => false,
-                'first_options'  => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Répétez le mot de passe'],
-            ])
+                'first_options'  => [
+                    'label' => 'Mot de passe',
+                    'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
+                ],
+                'second_options' => [
+                    'label' => 'Répétez le mot de passe',
+                    'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
+                ],
+            ])  
             ->add('equipe', EntityType::class, [
                 'class' => Equipe::class,
                 'query_builder' => function (EquipeRepository $er) use ($options) {
@@ -49,7 +56,15 @@ class UserType extends AbstractType
             ])
             ->add('first_name')
             ->add('last_name')
-            ->add('date_naissance')
+            ->add('date_naissance', DateType::class, [
+                'label' => 'Date de naissance',
+                'widget' => 'single_text', // Affichage en un seul champ de texte
+                'html5' => false, // Utiliser le type HTML standard
+                'attr' => [
+                    'class' => 'form-control date-select', // Classe pour Flatpickr
+                    'placeholder' => 'YYYY-MM-DD', // Placeholder pour le format de date
+                ],
+            ])
             ->add('profile_image', FileType::class, [
                 'label' => 'Image de profil',
                 'mapped' => false,

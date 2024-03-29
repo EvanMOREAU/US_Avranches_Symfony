@@ -24,9 +24,15 @@ class ParameterType extends AbstractType
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les mots de passe doivent correspondre.',
                 'required' => false,
-                'first_options'  => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Répétez le mot de passe'],
-            ])
+                'first_options'  => [
+                    'label' => 'Mot de passe',
+                    'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
+                ],
+                'second_options' => [
+                    'label' => 'Répétez le mot de passe',
+                    'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
+                ],
+            ])            
             ->add('profile_image', FileType::class, [
                 'label' => 'Image de profil',
                 'mapped' => false,
@@ -39,7 +45,7 @@ class ParameterType extends AbstractType
                             'image/jpeg',
                             'image/png',
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid image file',
+                        'mimeTypesMessage' => 'Veuillez télécharger un fichier image valide',
                     ])
                 ],
             ])
