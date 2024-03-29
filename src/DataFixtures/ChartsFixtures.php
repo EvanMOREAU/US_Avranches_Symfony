@@ -47,7 +47,7 @@ class ChartsFixtures extends Fixture
         $controlConfig = new ChartConfiguration();
         $controlConfig->setChartType('line');
         $controlConfig->setName('Controle de balle');
-        $controlConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 20, 'max' => 5, 'field' => 'conduiteballe', 'date_field' => 'date']);
+        $controlConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 5, 'max' => 20, 'field' => 'conduiteballe', 'date_field' => 'date']);
         $manager->persist($controlConfig);
 
         $vmaConfig = new ChartConfiguration();
@@ -71,7 +71,7 @@ class ChartsFixtures extends Fixture
         $vitesseConfig = new ChartConfiguration();
         $vitesseConfig->setChartType('line');
         $vitesseConfig->setName('Test Vitesse');
-        $vitesseConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 20, 'max' => 5, 'field' => 'vitesse', 'date_field' => 'date']);
+        $vitesseConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 5, 'max' => 20, 'field' => 'vitesse', 'date_field' => 'date']);
         $manager->persist($vitesseConfig);
 
         // $generalConfig = new ChartConfiguration();
