@@ -52,6 +52,20 @@ class DefaultController extends AbstractController
                 $countUsersInSameTeam = 0;
             }
             $latestWeightDate = $weightRepository->getLatestWeightDate($playerId);
+            // Récupérer tous les utilisateurs
+            $users = $userRepository->findAll();
+
+            // Initialiser un tableau pour stocker les utilisateurs ayant le rôle "ROLE_COACH"
+            $coachUsers = [];
+
+            // Parcourir tous les utilisateurs
+            foreach ($users as $user) {
+                // Vérifier si l'utilisateur a le rôle "ROLE_COACH"
+                if (in_array('ROLE_COACH', $user->getRoles())) {
+                    // Ajouter l'utilisateur au tableau des utilisateurs ayant le rôle "ROLE_COACH"
+                    $coachUsers[] = $user;
+                }
+            }
         }else{
             return $this->render('/login/index.html.twig', ['controller_name' => 'SecurityController','location' => 'a',]);
         }
@@ -76,6 +90,7 @@ class DefaultController extends AbstractController
                         'equipeusercount' => $countUsersInSameTeam,
                         'paliers' => $palierRepository->findAll(),
                         'weightIn' => $latestWeightDate,
+                        'coachUsers' => $coachUsers,
  
                     ]);}
                 return $this->render('base.html.twig', [

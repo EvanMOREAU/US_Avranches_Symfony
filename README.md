@@ -89,3 +89,11 @@ PDF
 ALL
     -> revoir la sécurité
     -> Installer les sécu Poid/Taille partout
+
+
+lien redirection page login non fonctionnels -> Résolu
+Tester reset password
+Refaire front de la selection de date
+Refaire les modals pour les CRUD
+Changer invalid credentials du Login
+Changer les plain password dans les paramètres (Frontend)
