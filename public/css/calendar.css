@@ -38,12 +38,19 @@ h2 {
   #calendar .fc-toolbar.fc-header-toolbar .fc-center {
     display: block; }
 
-#calendar-container {
+/* #calendar-container {
   position: fixed;
   top: 0;
   left: 20px;
   right: 20px;
-  bottom: 20px; }
+  bottom: 20px; } */
+
+#calendar-container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  height: 150vh;
+}
 
 .fc-left {
     color: #ffffff;
