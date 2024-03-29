@@ -121,6 +121,8 @@ class UserController extends AbstractController
             'category' => $category->getId(),
         ]);
         $OK = 1;
+        // dump($form);
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $OK = 2;
             $plainPassword = $form->get('plainPassword')->getData();

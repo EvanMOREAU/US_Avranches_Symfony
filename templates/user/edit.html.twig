@@ -98,16 +98,16 @@
                             </div>
                         </div>
                     </div>
-                    {# <div class="row">
+                    <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group drop-container" id="dropContainer">
-                                <span class="drop-title">Déposez le fichier ici</span> {{ debug }}
+                                <span class="drop-title">Déposez le fichier ici</span>
                                 ou
                                 {{ form_widget(form.profile_image, { 'id': form.profile_image.vars.id, 'attr': {'class': 'form-control', 'onchange': 'handleFileSelect(event)'} }) }}
                             </div>
                         </div>
-                    </div><br> #}
-                    <button type="submit" class="btn btn-info"><i class="fas fa-plus"></i> Enregistrer</button>
+                    </div><br>
+                    <button type="submit" class="btn btn-info"><i class="fas fa-plus"></i> Enregistrer</button> {{ debug }}
 
                 </div>
             </div>
@@ -115,7 +115,7 @@
     </div>
 <script>
     flatpickr('.date-select', {
-        dateFormat: 'd-m-Y',   // Format de la date
+        dateFormat: 'Y-m-d',   // Format de la date
         allowInput: false ,       // Permettre la saisie manuelle de la date
         locale : 'fr'
     });
