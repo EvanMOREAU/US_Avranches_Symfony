@@ -21,27 +21,26 @@
   <script src='/js/timegrid.js'></script>
   <script src='/js/list.js'></script>
 
-    <div class="container mt-3 pt-3">
+    <div class="container">
       <div class="row">
         <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6 mx-auto">
           <div class="form-group">
-            <select class="form-select"  style="background-color: #ededed;" id="filter-select">
+            <label for="filter-select">Catégorie(s)</label>
+            <select class="form-select" id="filter-select">
               <option value="all" selected>Toutes</option>
               {% for category in categories %}
                 <option value='{{ category.name }}'>{{ category.name }}</option>
               {% endfor %}
             </select>
-            <label for="filter-select">Catégorie(s)</label>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="container">
-    <div id='calendar-container container-fluid'>
-      <div id='calendar'></div>
-    </div>
+  <div id='calendar-container' class="col-10" style="margin-left: auto; margin-right: auto;">
+    <div id='calendar'></div>
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
