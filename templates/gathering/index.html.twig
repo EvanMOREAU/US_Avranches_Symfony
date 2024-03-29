@@ -26,7 +26,7 @@
         <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6 mx-auto">
           <div class="form-group">
             <label for="filter-select">Catégorie(s)</label>
-            <select class="form-select"  style="background-color: #ededed;" id="filter-select">
+            <select class="form-select" id="filter-select">
               <option value="all" selected>Toutes</option>
               {% for category in categories %}
                 <option value='{{ category.name }}'>{{ category.name }}</option>
@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <div id='calendar-container'>
+  <div id='calendar-container' class="col-10" style="margin-left: auto; margin-right: auto;">
     <div id='calendar'></div>
   </div>
 
