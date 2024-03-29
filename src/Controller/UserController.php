@@ -99,7 +99,6 @@ class UserController extends AbstractController
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserRepository $userRepository, ImageUploaderHelper $imageUploaderHelper, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $OK = 0;
 
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -116,15 +115,11 @@ class UserController extends AbstractController
         $category = $categoryRepository->findOneBy(['name' => $anneeNaissance]);
 
             
-        // Créer le formulaire
         $form = $this->createForm(UserType::class, $user, [
             'category' => $category->getId(),
         ]);
-        $OK = 1;
-        // dump($form);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $OK = 2;
             $plainPassword = $form->get('plainPassword')->getData();
     
             if (!empty($plainPassword)) {
@@ -150,7 +145,6 @@ class UserController extends AbstractController
             'user' => $user,
             'form' => $form->createView(),
             'location' => 'n',
-            'debug' => $OK,
         ]);
     }
 
