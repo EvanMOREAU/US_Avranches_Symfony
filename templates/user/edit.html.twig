@@ -1,43 +1,128 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 
-
-
-
-{{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
-
-
-<script>
-  const dropContainer = document.getElementById('dropContainer');
-  const fileInput = document.getElementById('{{ form.profile_image.vars.id }}');
-
-  dropContainer.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropContainer.classList.add('drag-over');
-  });
-
-  dropContainer.addEventListener('dragleave', () => {
-    dropContainer.classList.remove('drag-over');
-  });
-
-  dropContainer.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropContainer.classList.remove('drag-over');
-    const files = e.dataTransfer.files;
-    fileInput.files = files;
-    handleFileSelect(e);
-  });
-
-  function handleFileSelect(event) {
-    const file = event.target.files[0];
-    const fileNameElement = document.getElementById('file-name');
-    if (file) {
-      fileNameElement.textContent = file.name;
-    } else {
-      fileNameElement.textContent = '';
+<style>
+    .form-control {
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        transition: box-shadow 0.3s ease, background-color 0.3s ease;
     }
-  }
+
+    .form-control:focus {
+        outline: none;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-select {
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+    .form-select:focus {
+        outline: none;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .date-select:hover {
+        cursor: pointer;
+    }
+</style>
+
+<link rel="icon" href="/img/logo_usa.ico">
+<div class="container-fluid pt-3">
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col-8">
+                    <h6 class="mb-0">
+                        <div class="form-group {% if form.username.vars.errors|length > 0 %}has-error{% endif %}">
+                            {{ form_label(form.username, 'Nom d\'utilisateur : ', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.username, {'attr': {'class': 'error-message'}}) }}
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group {% if form.plainPassword.vars.errors|length > 0 %}has-error{% endif %}">
+                                {{ form_widget(form.plainPassword) }}
+                                {{ form_errors(form.plainPassword, {'attr': {'class': 'error-message'}}) }}
+                            </div>
+                        </div>
+                    </h6>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <h6 class="heading-small text-muted mb-4">Informations</h6>
+            <div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group {% if form.first_name.vars.errors|length > 0 %}has-error{% endif %}">
+                            {{ form_label(form.first_name, 'Prénom : ', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.first_name, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.first_name, {'attr': {'class': 'error-message'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group {% if form.last_name.vars.errors|length > 0 %}has-error{% endif %}">
+                            {{ form_label(form.last_name, 'Nom : ', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.last_name, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.last_name, {'attr': {'class': 'error-message'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group {% if form.date_naissance.vars.errors|length > 0 %}has-error{% endif %}">
+                            {{ form_label(form.date_naissance, 'Date de naissance : ', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.date_naissance, {'attr': {'class': 'form-control date-select'}}) }}
+                            {{ form_errors(form.date_naissance, {'attr': {'class': 'error-message'}}) }}
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group {% if form.equipe.vars.errors|length > 0 %}has-error{% endif %}">
+                            {{ form_label(form.equipe, 'Équipe : ', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.equipe, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.equipe, {'attr': {'class': 'error-message'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group drop-container" id="dropContainer">
+                            <span class="drop-title">Déposez le fichier ici</span>
+                            ou
+                            {{ form_widget(form.profile_image, { 'id': form.profile_image.vars.id, 'attr': {'class': 'form-control', 'onchange': 'handleFileSelect(event)'} }) }}
+                        </div>
+                    </div>
+                </div><br>
+                <button type="submit" class="btn btn-info"><i class="fas fa-plus"></i> Enregistrer</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    flatpickr('.date-select', {
+        dateFormat: 'd-m-Y',   // Format de la date
+        allowInput: false ,       // Permettre la saisie manuelle de la date
+        locale : 'fr'
+    });
 </script>
+
+{{ form_start(form) }}
+{{ form_widget(form._token) }}
+
+
+{{ form_end(form) }}
 
 {% endblock %}
