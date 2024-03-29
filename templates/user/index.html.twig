@@ -27,37 +27,6 @@
 									<th>actions</th>
 								</tr>
 							</thead>
-							<tbody>
-								{% for user in users %}
-									<tr>
-										<td>{{ user.id }}</td>
-										<td>{{ user.username }}</td>
-										<td>{{ user.firstName }}</td>
-										<td>{{ user.lastName }}</td>
-										<td>{{ user.dateNaissance ? user.dateNaissance|date('Y-m-d') : '' }}</td>
-										<td>{% if user.profileImage != '' %}Oui{% else %}Non{% endif %}</td>
-										<td>{{ user.palier }}</td>
-										<td>{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:m:s') : '' }}</td>
-										<td>
-											<a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-warning">
-												<i class="fa-solid fa-pen"></i> 
-											</a>
-											{{ include('user/_delete_form.html.twig') }}
-										</td>
-									</tr>
-								{% else %}
-									<tr>
-										<th>Id</th>
-										<th>Nom d'utilisateur</th>
-										<th>Prénom</th>
-										<th>Nom</th>
-										<th>Date de naissance</th>
-										<th>Image de profile</th>
-										<th>Palier</th>
-										<th>Dernière connexion</th>
-										<th>actions</th>
-									</tr>
-								</thead>
 								<tbody>
 									{% for user in users %}
 										<tr>

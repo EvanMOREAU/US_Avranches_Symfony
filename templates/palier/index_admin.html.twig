@@ -64,12 +64,6 @@
                                     <td class="align-middle">{{ videosToValidate[palier.id] }}</td> {# Affiche le nombre de vidéos restantes à valider pour ce palier #}
                                     <td class="align-middle">
                                         <div class="d-flex justify-content-center align-items-center">
-                                            <div class="btn-group me-2" role="group">
-                                                <a href="{{ path('app_palier_show', {'id': palier.id}) }}"
-                                                    class="btn btn-info">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </div>
 
                                             <div class="btn-group me-2" role="group">
                                                 <a href="{{ path('app_palier_edit', {'id': palier.id}) }}"

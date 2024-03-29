@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Entity\Category;
 use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
 use App\Repository\HeightRepository;
@@ -11,22 +12,27 @@ use App\Repository\WeightRepository;
 use App\Services\ImageUploaderHelper;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\HeightVerificationService;
+use App\Service\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use App\Entity\Category;
 
 #[Route('/user')]
 class UserController extends AbstractController
 {
 
     private $userVerificationService;
+    private $heightVerificationService;
+    private $weightVerificationService;
 
-    public function __construct(UserVerificationService $userVerificationService)
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService)
     {
         $this->userVerificationService = $userVerificationService;
+        $this->heightVerificationService = $heightVerificationService;
+        $this->weightVerificationService = $weightVerificationService; 
     }
   
     #[Route('/poste/set-poste-principal/{id}', name: 'app_set_poste_principal')]
@@ -93,6 +99,8 @@ class UserController extends AbstractController
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserRepository $userRepository, ImageUploaderHelper $imageUploaderHelper, UserPasswordHasherInterface $passwordHasher): Response
     {
+        $OK = 0;
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -112,8 +120,9 @@ class UserController extends AbstractController
         $form = $this->createForm(UserType::class, $user, [
             'category' => $category->getId(),
         ]);
-
+        $OK = 1;
         if ($form->isSubmitted() && $form->isValid()) {
+            $OK = 2;
             $plainPassword = $form->get('plainPassword')->getData();
     
             if (!empty($plainPassword)) {
@@ -139,6 +148,7 @@ class UserController extends AbstractController
             'user' => $user,
             'form' => $form->createView(),
             'location' => 'n',
+            'debug' => $OK,
         ]);
     }
 
@@ -170,11 +180,25 @@ class UserController extends AbstractController
         if (!$this->isAccessGranted($user)) {
             throw $this->createAccessDeniedException('Access denied.');
         }
-
-        return $this->render('user/hiddenposte.html.twig', [
-            'user' => $user,
-            'location' => 'e',
-        ]);
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    return $this->render('user/hiddenposte.html.twig', [
+                        'user' => $user,
+                        'location' => 'e',
+                    ]);
+                }
+            }
+        }
     }
 
     #[Route('/{id}/poste', name: 'app_user_poste', methods: ['GET'])]
@@ -183,11 +207,25 @@ class UserController extends AbstractController
         if (!$this->isAccessGranted($user)) {
             throw $this->createAccessDeniedException('Access denied.');
         }
-
-        return $this->render('user/poste.html.twig', [
-            'user' => $user,
-            'location' => 'e',
-        ]);
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    return $this->render('user/poste.html.twig', [
+                        'user' => $user,
+                        'location' => 'e',
+                    ]);
+                }
+            }
+        }
     }
 
     private function isAccessGranted(User $user): bool

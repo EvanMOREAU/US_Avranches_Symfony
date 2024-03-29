@@ -65,22 +65,22 @@ class UserType extends AbstractType
                     'placeholder' => 'YYYY-MM-DD', // Placeholder pour le format de date
                 ],
             ])
-            ->add('profile_image', FileType::class, [
-                'label' => 'Image de profil',
-                'mapped' => false,
-                'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '2048k',
-                        'mimeTypes' => [
-                            'image/jpg',
-                            'image/jpeg',
-                            'image/png',
-                        ],
-                        'mimeTypesMessage' => 'Please upload a valid image file',
-                    ])
-                ],
-            ])
+            // ->add('profile_image', FileType::class, [
+            //     'label' => 'Image de profil',
+            //     'mapped' => false,
+            //     'required' => false,
+            //     'constraints' => [
+            //         new File([
+            //             'maxSize' => '2048k',
+            //             'mimeTypes' => [
+            //                 'image/jpg',
+            //                 'image/jpeg',
+            //                 'image/png',
+            //             ],
+            //             'mimeTypesMessage' => 'Please upload a valid image file',
+            //         ])
+            //     ],
+            // ])
         ;
     }
     
