@@ -97,3 +97,5 @@ Refaire front de la selection de date
 Refaire les modals pour les CRUD
 Changer invalid credentials du Login
 Changer les plain password dans les paramètres (Frontend)
+
+Ajouter le lien vers la doc utilisateur dans la personalisation de la page.
