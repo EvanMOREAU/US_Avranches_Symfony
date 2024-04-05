@@ -29,11 +29,11 @@
 									{% set sortedEquipes = equipes|sort((a, b) => 
                         (a.getCategory().name <=> b.getCategory().name) ?: 
                         (a.name <=> b.name)
-                    ) %}
+                    			) %}
 									{% for equipe in sortedEquipes %}
 										<tr>
-											<td>{{ equipe.name }}</td>
-											<td>{{ equipe.getCategory().name }}</td>
+											<td class="align-middle">{{ equipe.name }}</td>
+											<td class="align-middle">{{ equipe.getCategory().name }}</td>
 											<td class="align-middle">
 												<div class="d-flex justify-content-center align-items-center">
 													<div class="btn-group me-2" role="group">
@@ -48,7 +48,6 @@
 													</div>
 												</div>
 											</td>
-
 										</tr>
 									{% else %}
 										<tr>
