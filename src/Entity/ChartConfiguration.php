@@ -22,15 +22,6 @@ class ChartConfiguration
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column]
-    private ?float $PremierPalier = null;
-
-    #[ORM\Column]
-    private ?float $DeuxiemePalier = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?float $TroisiemePalier = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -72,39 +63,4 @@ class ChartConfiguration
         return $this;
     }
 
-    public function getPremierPalier(): ?float
-    {
-        return $this->PremierPalier;
-    }
-
-    public function setPremierPalier(float $PremierPalier): static
-    {
-        $this->PremierPalier = $PremierPalier;
-
-        return $this;
-    }
-
-    public function getDeuxiemePalier(): ?float
-    {
-        return $this->DeuxiemePalier;
-    }
-
-    public function setDeuxiemePalier(float $DeuxiemePalier): static
-    {
-        $this->DeuxiemePalier = $DeuxiemePalier;
-
-        return $this;
-    }
-
-    public function getTroisiemePalier(): ?float
-    {
-        return $this->TroisiemePalier;
-    }
-
-    public function setTroisiemePalier(?float $TroisiemePalier): static
-    {
-        $this->TroisiemePalier = $TroisiemePalier;
-
-        return $this;
-    }
 }

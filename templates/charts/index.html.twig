@@ -65,17 +65,50 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
                             <button type="submit" class="btn btn-primary" form="updateScaleForm{{ chartId }}">Appliquer</button>
                         </div>
                         </div>
                     </div>
                     </div>
                     </form>
+                    {# ici on va taffer la partie sur la modification du palier #}
+                    <center>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalchart{{ chartId }}" data-bs-whatever="@mdo" data-chart-id="{{ chartId }}" palier-inf="{{ chart.PremierPalier }}" palier-sup="{{ chart.DeuxiemePalier }}">Modifier le palier du graphe</button>
+                    </center>
+                    <form id="updatePalierForm{{ chartId }}" action="/charts/update" method="POST">
+                        <input type="hidden" name="chartId" value="{{ chartId }}">
+                        <div class="modal fade" id="modalchart{{ chartId }}" tabindex="-1" aria-labelledby="modalchart{{ chartId }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="modalchart{{ chartId }}">Modification des paliers du graphe {{ chartData.name }}</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                <div class="modal-body" style="background-color: white;">
+                                    <form>
+                                        <div class="mb-3" style=" color: black; ">
+                                            <label for="palierinf" class="col-form-label">Palier Inferieur:</label>
+                                            <input type="number" class="form-control" id="palierinf{{ chartId }}" name="NewInf">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="paliersup" class="col-form-label">Palier Supperieur:</label>
+                                            <input type="number" class="form-control" id="paliersup{{ chartId }}" name="NewSup">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary" form="updatePalierForm{{ chartId }}">Appliquer</button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    {# fin #}
                 </div>
             </div>      
         </div>
     </div>
+    
     <script>
         const ctx{{ chartId }} = document.getElementById('canvas{{ chartId }}');
         const configData{{ chartId }} = {{ chartData.data | json_encode | raw }};

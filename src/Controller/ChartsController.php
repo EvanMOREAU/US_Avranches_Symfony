@@ -261,22 +261,51 @@ class ChartsController extends AbstractController
         // Stocker les anciennes valeurs
         $oldMin = $chartConfig->getConfigData()['min'];
         $oldMax = $chartConfig->getConfigData()['max'];
+        // ca ca sert a faire le debogage
 
-       // Mettre à jour les valeurs d'échelle dans le champ array
+       // MAJ des valeurs d'échelle 
         $configData = $chartConfig->getConfigData();
         $configData['min'] = $newMin;
         $configData['max'] = $newMax;
-        
-        // Enregistrer les changements dans le champ array
         $chartConfig->setConfigData($configData);
 
         // on fous les modifs dans la base de données
         $entityManager->flush();
 
-
-
         // Rediriger vers la page précédente
         return $this->redirectToRoute('app_charts_index');
  
+    }
+
+    #[Route('/update', name: 'app_charts_update', methods: ['POST'])]
+    public function updateChartPalier(Request $request, EntityManagerInterface $entityManager): Response    
+    {
+        // Récupérer l'ID du graphique et les nouvelles valeurs d'échelle du formulaire
+        $chartId = $request->request->get('chartId');
+        $newMin = $request->request->get('NewMin');
+        $newMax = $request->request->get('NewMax');
+
+        // Récupérer la configuration du graphique
+        $chartConfig = $entityManager->getRepository(ChartConfiguration::class)->find($chartId);
+        if (!$chartConfig) {
+            throw $this->createNotFoundException('Chart configuration not found');
+        }
+
+        // Stocker les anciennes valeurs
+        $oldMin = $chartConfig->getConfigData()['min'];
+        $oldMax = $chartConfig->getConfigData()['max'];
+        // ca ca sert a faire le debogage
+
+       // MAJ des valeurs d'échelle 
+        $configData = $chartConfig->getConfigData();
+        $configData['min'] = $newMin;
+        $configData['max'] = $newMax;
+        $chartConfig->setConfigData($configData);
+
+        // on fous les modifs dans la base de données
+        $entityManager->flush();
+
+        // Rediriger vers la page précédente
+        return $this->redirectToRoute('app_charts_details');
     }
 }
