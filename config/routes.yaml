@@ -5,3 +5,8 @@ index:
 verif_code_page:
     path: /verif-code
     controller: App\Controller\CodeController::enterCode
+
+app_charts_index:
+    path: /charts/
+    controller: App\Controller\ChartsController::test
+    methods: GET

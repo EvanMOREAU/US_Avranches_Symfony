@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use DateTime;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Tests;
 use App\Entity\Height;
 use App\Entity\Weight;
@@ -12,7 +14,6 @@ use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\HeightVerificationService;
 use App\Service\WeightVerificationService;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ChartConfigurationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -243,5 +244,39 @@ class ChartsController extends AbstractController
         return $lastSixRecords;
     }
     
-    
+    #[Route('/update', name: 'app_charts_update', methods: ['POST'])]
+    public function updateChartScale(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer l'ID du graphique et les nouvelles valeurs d'échelle du formulaire
+        $chartId = $request->request->get('chartId');
+        $newMin = $request->request->get('NewMin');
+        $newMax = $request->request->get('NewMax');
+
+        // Récupérer la configuration du graphique
+        $chartConfig = $entityManager->getRepository(ChartConfiguration::class)->find($chartId);
+        if (!$chartConfig) {
+            throw $this->createNotFoundException('Chart configuration not found');
+        }
+
+        // Stocker les anciennes valeurs
+        $oldMin = $chartConfig->getConfigData()['min'];
+        $oldMax = $chartConfig->getConfigData()['max'];
+
+       // Mettre à jour les valeurs d'échelle dans le champ array
+        $configData = $chartConfig->getConfigData();
+        $configData['min'] = $newMin;
+        $configData['max'] = $newMax;
+        
+        // Enregistrer les changements dans le champ array
+        $chartConfig->setConfigData($configData);
+
+        // on fous les modifs dans la base de données
+        $entityManager->flush();
+
+
+
+        // Rediriger vers la page précédente
+        return $this->redirectToRoute('app_charts_index');
+ 
+    }
 }

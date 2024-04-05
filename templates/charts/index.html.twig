@@ -7,7 +7,8 @@
     canvas{
         margin-left : 10%;
         margin-right : 10%;
-        margin-bottom : 10%;
+        margin-bottom : 5%;
+        margin-top : 5%;
     }
 </style>
 <script>
@@ -38,13 +39,43 @@
                     <div class="mt-3 text-left">
                         <h3 style="color:black;">{{ chartData.name }}</h5>
                     </div>
-                        <canvas id="canvas{{ chartId }}" width="50%" style="background-color : white;"></canvas>
+                    <canvas id="canvas{{ chartId }}" width="50%" style="background-color : white;"></canvas>
+                    <center>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalchart{{ chartId }}" data-bs-whatever="@mdo" data-chart-id="{{ chartId }}" data-min="{{ chartData.min }}" data-max="{{ chartData.max }}">Modifier l'échelle du graphe</button>
+                    </center>
+                    <form id="updateScaleForm{{ chartId }}" action="/charts/update" method="POST">
+                        <input type="hidden" name="chartId" value="{{ chartId }}">
+                        <div class="modal fade" id="modalchart{{ chartId }}" tabindex="-1" aria-labelledby="modalchart{{ chartId }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="modalchart{{ chartId }}">Modification de l'échelle du graphe {{ chartData.name }}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="background-color: white;">
+                            <form>
+                                <div class="mb-3" style=" color: black; ">
+                                    <label for="echellemin" class="col-form-label">Echelle Min:</label>
+                                    <input type="number" class="form-control" id="echellemin{{ chartId }}" name="NewMin">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="echellemax" class="col-form-label">Echelle Max:</label>
+                                    <input type="number" class="form-control" id="echellemax{{ chartId }}" name="NewMax">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary" form="updateScaleForm{{ chartId }}">Appliquer</button>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                    </form>
                 </div>
             </div>      
         </div>
     </div>
-                
-    
     <script>
         const ctx{{ chartId }} = document.getElementById('canvas{{ chartId }}');
         const configData{{ chartId }} = {{ chartData.data | json_encode | raw }};
@@ -111,7 +142,7 @@
                         title: {
                         color: 'black',
                         display: true,
-                        text: 'Date de passage des tests'
+                        text: 'Date de réalisation des tests'
                         }
                     }
                 },
