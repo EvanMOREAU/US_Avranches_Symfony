@@ -97,3 +97,12 @@ Refaire front de la selection de date
 Refaire les modals pour les CRUD
 Changer invalid credentials du Login
 Changer les plain password dans les paramètres (Frontend)
+
+
+
+
+
+
+
+===============
+composer require intervention/image -> En test (PDF)
