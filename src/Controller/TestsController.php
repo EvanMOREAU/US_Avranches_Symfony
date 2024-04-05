@@ -53,10 +53,10 @@ class TestsController extends AbstractController
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
 
-        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             $selectedUser = $userRepository->find($selectedUserId);
             $tests = $selectedUser ? $selectedUser->getTests() : [];
-        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
             if ($selectedCategory) {
                 $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
@@ -128,10 +128,10 @@ class TestsController extends AbstractController
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
 
-        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             $selectedUser = $userRepository->find($selectedUserId);
             $tests = $selectedUser ? $selectedUser->getTests() : [];
-        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
             if ($selectedCategory) {
                 $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
