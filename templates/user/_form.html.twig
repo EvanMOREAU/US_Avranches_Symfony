@@ -1,13 +1,9 @@
-{{ form_start(form) }}
-{{ form_widget(form._token) }}
-
-
-
-
-    <link rel="icon" href="/img/logo_usa.ico">
-    <div class="container-fluid pt-3">
-        <div class="card mb-4">
+{# <link rel="icon" href="/img/logo_usa.ico">
+<div class="container-fluid pt-3">
+    <div class="card mb-4">
+        {{ form_start(form) }}
             <div class="card-header">
+                {{ form_widget(form._token) }}
                 <div class="row align-items-center">
                     <div class="col-8">
                         <h6 class="mb-0">
@@ -48,14 +44,14 @@
 
                     </div>
                     <div class="row">
-                        <div class="col-lg-4">
+                        {# <div class="col-lg-4">
                             <div class="form-group {% if form.date_naissance.vars.errors|length > 0 %}has-error{% endif %}">
                                 {{ form_label(form.date_naissance, 'Date de naissance : ', {'label_attr': {'class': 'form-label'}}) }}
                                 {{ form_widget(form.date_naissance, {'attr': {'class': 'date-select', "id": 'datepicker'}}) }}
                                 {{ form_errors(form.date_naissance, {'attr': {'class': 'error-message'}}) }}
                             </div>
-                        </div>
-                        <div class="col-lg-4">
+                        </div> #}
+                        {#<div class="col-lg-4">
                             <div
                                 class="form-group {% if form.equipe.vars.errors|length > 0 %}has-error{% endif %}">
                                 {{ form_label(form.equipe, 'Équipe : ', {'label_attr': {'class': 'form-label'}}) }}
@@ -70,9 +66,9 @@
                         </div>
                     </div><br>
                 
-                    <button type="submit" class="btn btn-info"><i class="fas fa-plus"></i> Enregistrer</button>
+                    <button type="submit" class="btn btn-info">{{ button_label|default('Créer') }}</button>
                 </div>
             </div>
-        </div>
+        {{ form_end(form) }}
     </div>
-{{ form_end(form) }}
+</div> #}

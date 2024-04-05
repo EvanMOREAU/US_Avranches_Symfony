@@ -69,7 +69,6 @@ class DefaultController extends AbstractController
         }else{
             return $this->render('/login/index.html.twig', ['controller_name' => 'SecurityController','location' => 'a',]);
         }
-
         if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
         else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
         else if($userVerif == 1) {
@@ -91,8 +90,8 @@ class DefaultController extends AbstractController
                         'paliers' => $palierRepository->findAll(),
                         'weightIn' => $latestWeightDate,
                         'coachUsers' => $coachUsers,
- 
-                    ]);}
+                    ]);
+                }
                 return $this->render('base.html.twig', [
                     'controller_name' => 'DefaultController',
                     'location' => 'a',

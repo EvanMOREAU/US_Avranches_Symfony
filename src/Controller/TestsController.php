@@ -12,6 +12,8 @@ use App\Repository\TestsRepository;
 use App\Repository\PalierRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\HeightVerificationService;
+use App\Service\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,17 +29,21 @@ class TestsController extends AbstractController
 {
 
     private $userVerificationService;
+    private $heightVerificationService;
+    private $weightVerificationService;
 
-    public function __construct(UserVerificationService $userVerificationService, TestsRepository $testsRepository){
+    public function __construct( TestsRepository $testsRepository,UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService){
         $this->userVerificationService = $userVerificationService;
+        $this->heightVerificationService = $heightVerificationService;
+        $this->weightVerificationService = $weightVerificationService; 
     }
 
     #[Route('/', name: 'app_tests_index')]
     public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, PalierRepository $palierRepository): Response
     {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
 
         $tests = $testsRepository->findAll();
         
@@ -78,17 +84,29 @@ class TestsController extends AbstractController
             }
         });
 
-        // Passage des tests triés au template Twig
-        return $this->render('tests/index.html.twig', [
-            'controller_name' => 'TestsController',
-            'location' => 'c',
-            'tests' => $testsArray,
-            'users' => $userRepository->findAll(),
-            'user' => $user,
-            'selectedUserId' => $selectedUserId,
-            'usersByCategory' => $usersByCategory, // Passer la variable usersByCategory au template Twig
-            'order' => $order, // Passer l'ordre de tri au template Twig
-        ]);
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    // Passage des tests triés au template Twig
+                    return $this->render('tests/index.html.twig', [
+                        'controller_name' => 'TestsController',
+                        'location' => 'c',
+                        'tests' => $testsArray,
+                        'users' => $userRepository->findAll(),
+                        'user' => $user,
+                        'selectedUserId' => $selectedUserId,
+                        'usersByCategory' => $usersByCategory, // Passer la variable usersByCategory au template Twig
+                        'order' => $order, // Passer l'ordre de tri au template Twig
+                    ]);
+                }
+            }
+        }
 
     }
     
