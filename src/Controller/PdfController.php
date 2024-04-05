@@ -36,42 +36,30 @@ class PdfController extends AbstractController
     {
         // Récupérer l'ID de l'utilisateur à partir de la route
         $userId = $request->attributes->get('userId');
-
-        // Vérifiez si l'utilisateur a le rôle ROLE_COACH
-
-
-        if (!$this->userVerificationService->verifyUser()) {
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        // Récupérez le token d'authentification de l'utilisateur actuellement connecté.
-        $token = $this->get('security.token_storage')->getToken();
-
-        // Vérifiez le rôle de l'utilisateur
-        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
-            // L'utilisateur est super admin, vérifiez s'il a sélectionné un autre utilisateur
-            $selectedUserId = $request->query->get('userId'); // Use 'userId' as the parameter name
-
-            if ($selectedUserId) {
-                $selectedUser = $userRepository->find($selectedUserId);
-
-                if (!$selectedUser) {
-                    throw $this->createNotFoundException('Utilisateur non trouvé');
-                }
-
-                $user = $selectedUser;
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($this->isGranted('ROLE_COACH') || $this->isGranted('ROLE_SUPER_ADMIN')) {
+            // L'utilisateur a le rôle ROLE_COACH ou ROLE_SUPER_ADMIN, récupérer les données du joueur ciblé
+            $user = $userRepository->find($userId);
+    
+            if (!$user) {
+                throw $this->createNotFoundException('Utilisateur non trouvé');
             }
-        } elseif ($token instanceof TokenInterface) {
-            // Si ce n'est pas un super admin, utilisez l'utilisateur du token
+        } else {
+            // Utilisateur ordinaire, utiliser les données de l'utilisateur actuellement connecté
+            $token = $this->get('security.token_storage')->getToken();
+    
+            if (!$token) {
+                // Rediriger vers une page d'erreur ou afficher un message d'erreur
+                throw new \Exception('Token d\'authentification non trouvé');
+            }
+    
             $user = $token->getUser();
         }
-
-        // Créez une nouvelle instance de la classe PDF.
+    
         $pdf = new Pdf();
 
-        if ($token instanceof TokenInterface) {
-            // Récupérez l'utilisateur à partir du token d'authentification.
-            $user = $token->getUser();
+        if ($user !== null ) {
 
             if ($user instanceof User) {
 
@@ -116,8 +104,6 @@ class PdfController extends AbstractController
                     <p><b>Date de naissance : </b>' . $user->getDateNaissance()->format('d/m/Y') . '
                     <br><hr><br><div></div>
                     <b>Catégorie : </b>' . $user->getCategory() . '
-                    <br><hr><br><div></div>
-                    <b>Nombre de matchs joués :</b> 2
                     <br><hr><br><div></div>
                     </p>
                     <p><b> Contact :</b>
@@ -245,7 +231,7 @@ class PdfController extends AbstractController
         // Gestion des cas d'erreur
         return new Response('Erreur');
     }
-
+    
     private function getWeightsForUser(User $user, EntityManagerInterface $entityManager): array
     {
         // Utilisez le repository de l'entité Weight pour récupérer tous les poids triés par date
@@ -318,7 +304,7 @@ class PdfController extends AbstractController
         $request = new Request([], [], ['userId' => $userId]);
 
         // Appel de la méthode pdf avec le nouvel objet Request
-        $pdfResponse = $this->pdf($request, $userRepository, $testsRepository, $entityManager);
+        $pdfResponse = $this->pdf($request, $userRepository, $testsRepository, $entityManager, $userId);
 
         // Retournez la réponse du PDF
         return $pdfResponse;
