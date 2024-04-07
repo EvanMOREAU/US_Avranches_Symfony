@@ -40,83 +40,80 @@ class PdfController extends AbstractController
     {
         // Récupérer l'ID de l'utilisateur à partir de la route
         $userId = $request->attributes->get('userId');
-
+    
         // Vérifier le rôle de l'utilisateur
         if ($this->isGranted('ROLE_COACH') || $this->isGranted('ROLE_SUPER_ADMIN')) {
             // L'utilisateur a le rôle ROLE_COACH ou ROLE_SUPER_ADMIN, récupérer les données du joueur ciblé
             $user = $userRepository->find($userId);
-
+    
             if (!$user) {
                 throw $this->createNotFoundException('Utilisateur non trouvé');
             }
-
         } else {
             // Utilisateur ordinaire, utiliser les données de l'utilisateur actuellement connecté
             $token = $this->get('security.token_storage')->getToken();
-
+    
             if (!$token) {
                 // Rediriger vers une page d'erreur ou afficher un message d'erreur
                 throw new \Exception('Token d\'authentification non trouvé');
             }
-
+    
             $user = $token->getUser();
         }
-
+    
         $pdf = new Pdf();
-
+    
         if ($user !== null) {
-
             if ($user instanceof User) {
-
                 $tests = $testsRepository->findBy(['user' => $user]);
-
-                // Récupérez les tests triés par date décroissante
+    
+                // Récupérer les tests triés par date décroissante
                 $tests = $testsRepository->findBy(['user' => $user], ['date' => 'DESC']);
-
+    
                 // Configuration du PDF
                 $pdf->SetAuthor('SIO TEAM ! 💻');
                 $pdf->SetTitle('Fiche joueur');
                 $pdf->SetFont('times', '', 14);
-
+    
                 // Ajout d'une nouvelle page
                 $pdf->AddPage();
                 $pdf->setJPEGQuality(75);
-
+    
                 // Calcul des dimensions de la page
                 $largeurPage = $pdf->getPageWidth() + 30;
                 $hauteurPage = $pdf->getPageHeight() - 25;
-
+    
                 // Configuration de la police et des couleurs
                 $pdf->SetFont('helvetica', '', 20);
                 $pdf->SetTextColor(0, 0, 0);
-
+    
                 // MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0)
-
+    
                 // Ajout du nom du joueur
                 $pdf->MultiCell(70, 10, $user->getFirstName() . ' ' . $user->getLastName(), 0, 'C', 0, 1, '0', '40', true);
-
+    
                 // Configuration de la police et des couleurs pour le contenu du joueur
                 $pdf->SetFont('helvetica', 'B', 20);
                 $pdf->SetTextColor(0, 0, 0);
-
+    
                 // Récupérer les données de taille et de poids associées à l'utilisateur
                 $heights = $entityManager->getRepository(Height::class)->findBy(['user' => $user], ['date' => 'ASC']);
                 $weights = $entityManager->getRepository(Weight::class)->findBy(['user' => $user], ['date' => 'ASC']);
-
+    
                 // Construction du contenu des tailles
                 $contentHeights = '';
                 foreach ($heights as $height) {
                     $contentHeights .= '<b>Taille :</b> ' . $height->getValue() . ' cm (' . $height->getDate()->format('d/m/Y') . ')<br>';
                     $contentHeights .= '<br>'; // Ajout d'un espace entre chaque ligne de taille
                 }
-
+    
                 // Construction du contenu des poids
                 $contentWeights = '';
                 foreach ($weights as $weight) {
                     $contentWeights .= '<b>Poids :</b> ' . $weight->getValue() . ' kg (' . $weight->getDate()->format('d/m/Y') . ')<br>';
                     $contentWeights .= '<br>'; // Ajout d'un espace entre chaque ligne de poids
                 }
-
+    
                 // Contenu du joueur (avec HTML)
                 $contentInfos = '
                     <style>.link { color: rgb(42, 56, 114) }</style>
@@ -131,11 +128,11 @@ class PdfController extends AbstractController
                     <br><hr><br><div></div>
                     ' . $contentWeights . '
                     </p>';
-
+    
                 // Ajout du contenu du joueur au PDF
                 $pdf->SetFont('helvetica', '', 10);
                 $pdf->writeHTMLCell(65, 230, '', '', $contentInfos, 0, 0, 0, true, '', true);
-
+    
                 // Déplacer le curseur vers le bas de la page
                 $pdf->SetY($hauteurPage - 60); // Ajustez la valeur en fonction de la position souhaitée
                 // Contenu du paragraphe "Contact"
@@ -152,38 +149,36 @@ class PdfController extends AbstractController
                     <span class="link"><u>partenaires@us-avranches.fr</u></span><br>
                     <span class="link"><u>us.avranches@orange.fr</u></span>
                     </p>';
-
+    
                 // Ajout du contenu du paragraphe "Contact" au PDF
                 $pdf->writeHTMLCell(0, 0, '', '', $contentContact, 0, 1, 0, true, '', true);
-
+    
                 $profileImagePath = 'uploads/images/' . $user->getId() . '.jpg';
-
+    
                 if (file_exists($profileImagePath)) {
-
                     // Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false)
                     $pdf->Image($profileImagePath, 14, 50, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
                 } else {
                     // Utilisez une image anonyme
                     $pdf->Image('img/anonyme.jpg', 14, 50, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
                 }
-
+    
                 foreach ($tests as $test) {
-
                     // Ajout d'une nouvelle page pour chaque test
                     $pdf->AddPage();
                     $pdf->setJPEGQuality(75);
-
+    
                     // Calcul des dimensions de la page
                     $largeurPage = $pdf->getPageWidth() + 30;
                     $hauteurPage = $pdf->getPageHeight() - 25;
-
+    
                     $pdf->SetFontSize(16); // Définir la taille de police à 16 points (ajustez selon vos besoins)
                     $pdf->MultiCell(70, 10, $user->getFirstName() . ' ' . $user->getLastName(), 0, 'C', 0, 1, '', '', true);
                     $pdf->SetFontSize(10); // Rétablir la taille de police à la valeur par défaut (si nécessaire)
-
+    
                     // --- Contenu du pdf ---
                     $contentTests = '<br><br><br>';
-
+    
                     $contentTests .= '<br><hr><br><div></div>
                     <b>Taille :</b> 173 cm
                     <br><hr><br><div></div>
@@ -205,11 +200,11 @@ class PdfController extends AbstractController
                     <br><hr><br><div></div>
                     <b>Vitesse : </b>' . $test->getVitesse() . ' secondes
                     </p>';
-
+    
                     $pdf->writeHTMLCell(65, 230, '', '', $contentTests, 0, 0, 0, true, '', true);
                     // Ajout d'une image au PDF
                     $pdf->Image('img/graph_' . $user->getFirstName() . '.jpg', 95, 150, 100, 100, '', '', '', false, 300, '', false, false, 1, false, false, false);
-
+    
                     // Insérer la date au dessus de l'image et faire en sorte qu'elle soit bien visible.
                     $posX = 145;
                     $posY = 33.3;
@@ -218,24 +213,26 @@ class PdfController extends AbstractController
                     $pdf->MultiCell($posX, $posY, $test->getDate()->format('d/m/Y, H:i:s'), 0, 'C', 0, 1, '', '', true);
                     $pdf->SetFontSize(10);
                     $pdf->SetTextColor(0, 0, 0);
-
+    
                     $pdf->Image('img/joueur.jpg', 130, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
-                    
+                }
+    
                 // Génération du PDF et envoi en réponse
                 ob_clean(); // Efface la sortie tampon
                 $pdfContent = $pdf->Output('US-Avranches-' . '.pdf', 'S');
-
-                return new Response($pdfContent, Response::HTTP_OK, [
+    
+                $response = new Response($pdfContent, Response::HTTP_OK, [
                     'Content-Type' => 'application/pdf',
                     'Content-Disposition' => 'inline; filename="US-Avranches.pdf"',
                 ]);
+    
+                return $response;
             }
         }
-
+    
         // Gestion des cas d'erreur
         return new Response('Erreur');
     }
-}
 
     #[Route('/list-players', name: 'app_pdf_list_players')]
     public function listPlayers(UserRepository $userRepository): Response
