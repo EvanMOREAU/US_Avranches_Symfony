@@ -71,6 +71,8 @@ class ChartsController extends AbstractController
                 'data' => $this->generateLineChartData($data, $config->getConfigData()['field']),
                 'min' => $config->getConfigData()['min'],
                 'max' => $config->getConfigData()['max'],
+                'paliermin' => $config->getConfigData()['paliermin'],
+                'paliermax' => $config->getConfigData()['paliermax'],
             ];
         }
         if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
@@ -244,8 +246,8 @@ class ChartsController extends AbstractController
         return $lastSixRecords;
     }
     
-    #[Route('/update', name: 'app_charts_update', methods: ['POST'])]
-    public function updateChartScale(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/charts/updatescale', name: 'app_charts_update_scale', methods: ['POST'])]
+    public function updateChartScale(Request $request, EntityManagerInterface $entityManager): Response 
     {
         // Récupérer l'ID du graphique et les nouvelles valeurs d'échelle du formulaire
         $chartId = $request->request->get('chartId');
@@ -273,17 +275,17 @@ class ChartsController extends AbstractController
         $entityManager->flush();
 
         // Rediriger vers la page précédente
-        return $this->redirectToRoute('app_charts_index');
+        return $this->redirectToRoute('app_charts_details');
  
     }
 
-    #[Route('/update', name: 'app_charts_update', methods: ['POST'])]
-    public function updateChartPalier(Request $request, EntityManagerInterface $entityManager): Response    
+    #[Route('/charts/updatepalier', name: 'app_charts_update_palier', methods: ['POST'])]
+    public function updateChartPalier(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Récupérer l'ID du graphique et les nouvelles valeurs d'échelle du formulaire
         $chartId = $request->request->get('chartId');
-        $newMin = $request->request->get('NewMin');
-        $newMax = $request->request->get('NewMax');
+        $newPalierMin = $request->request->get('NewPalierMin');
+        $newPalierMax = $request->request->get('NewPalierMax');
 
         // Récupérer la configuration du graphique
         $chartConfig = $entityManager->getRepository(ChartConfiguration::class)->find($chartId);
@@ -292,14 +294,14 @@ class ChartsController extends AbstractController
         }
 
         // Stocker les anciennes valeurs
-        $oldMin = $chartConfig->getConfigData()['min'];
-        $oldMax = $chartConfig->getConfigData()['max'];
+        $oldMin = $chartConfig->getConfigData()['paliermin'];
+        $oldMax = $chartConfig->getConfigData()['paliermax'];
         // ca ca sert a faire le debogage
 
        // MAJ des valeurs d'échelle 
         $configData = $chartConfig->getConfigData();
-        $configData['min'] = $newMin;
-        $configData['max'] = $newMax;
+        $configData['paliermin'] = $newPalierMin;
+        $configData['paliermax'] = $newPalierMax;
         $chartConfig->setConfigData($configData);
 
         // on fous les modifs dans la base de données
