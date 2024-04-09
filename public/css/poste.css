@@ -3,8 +3,6 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: rgb(33,33,83);
-    background: linear-gradient(90deg, rgba(33,33,83,1) 0%, rgba(13,82,139,1) 35%, rgba(22,61,116,1) 100%);
 }
 
 /* Fond bouton de selection (base de la page) */
