@@ -322,13 +322,12 @@
                 <h4 class="mb-0">{{ today|date('d/m/Y') }}</h4>
                 {% set lastDayOfMonth = today|date_modify('last day of this month') %}
                 {% set daysRemaining = lastDayOfMonth|date_modify('-' ~ today|date('j') ~ ' day')|date('j') %}
-
               </div>
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
               <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">{{ daysRemaining }}</span> jour(s)
-                restant avant le mois prochain</p>
+                restant(s) avant le mois prochain</p>
             </div>
           </div>
         </div>
@@ -340,7 +339,7 @@
                 <i class="fa-solid fa-scale-balanced"></i>
               </div>
               <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">Prochain enregistrement poid/taille</p>
+                <p class="text-sm mb-0 text-capitalize">Prochain enregistrement poids/taille</p>
                 {% set modifiedDate = weightIn|date_modify('+3 months') %}
                 <h4 class="mb-0">{{ modifiedDate|date('d/m/Y') }}</h4>
               </div>
@@ -353,7 +352,7 @@
                 {% set currentDateYmd = currentDate|date("Y-m-d") %}
                 {% set diff = modifiedDateYmd|date_modify("midnight")|date("U") - currentDateYmd|date_modify("midnight")|date("U") %}
                 {% set remainingDays = (diff / (24 * 3600))|round %}
-                <span class="text-danger text-sm font-weight-bolder">{{ remainingDays }}</span> jours restant
+                <span class="text-danger text-sm font-weight-bolder">{{ remainingDays }}</span> jour(s) restant(s)
               </p>
             </div>
           </div>

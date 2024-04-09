@@ -21,6 +21,10 @@ class CoachUserController extends AbstractController
     #[Route('/', name: 'app_coach_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         // Récupérer tous les utilisateurs
         $users = $userRepository->findAll();
     
@@ -38,6 +42,10 @@ class CoachUserController extends AbstractController
     #[Route('/new', name: 'app_coach_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, PalierRepository $palierRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         $user = new User();
         $form = $this->createForm(User1Type::class, $user);
         $form->handleRequest($request);
@@ -72,6 +80,10 @@ class CoachUserController extends AbstractController
     #[Route('/{id}', name: 'app_coach_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
             // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH

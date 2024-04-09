@@ -53,10 +53,10 @@ class TestsController extends AbstractController
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
 
-        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             $selectedUser = $userRepository->find($selectedUserId);
             $tests = $selectedUser ? $selectedUser->getTests() : [];
-        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
             if ($selectedCategory) {
                 $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
@@ -111,10 +111,11 @@ class TestsController extends AbstractController
     }
     
     #[Route('/new', name: 'app_tests_new', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
 
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -128,10 +129,10 @@ class TestsController extends AbstractController
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
 
-        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             $selectedUser = $userRepository->find($selectedUserId);
             $tests = $selectedUser ? $selectedUser->getTests() : [];
-        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
             if ($selectedCategory) {
                 $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
@@ -218,9 +219,12 @@ class TestsController extends AbstractController
 
 
     #[Route('/tests/{id}/edit', name: 'app_tests_edit', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function edit(Request $request, TestsRepository $testsRepository, $id): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -259,9 +263,12 @@ class TestsController extends AbstractController
         ]);
     }
     #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET', 'POST', 'DELETE'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function delete(Request $request, TestsRepository $testsRepository, $id): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -341,6 +348,10 @@ class TestsController extends AbstractController
     #[Route('/cancel-test/{id}', name: 'app_cancel_test', methods: ['GET', 'POST'])]
     public function cancelTest(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         // Récupérez le test à partir de l'ID
         $test = $entityManager->getRepository(Tests::class)->find($id);
         

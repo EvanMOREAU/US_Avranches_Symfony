@@ -25,6 +25,10 @@ class PlayerCodeController extends AbstractController
     #[Route('/', name: 'app_player_code_index', methods: ['GET'])]
     public function index(PlayerCodeRepository $playerCodeRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -38,6 +42,10 @@ class PlayerCodeController extends AbstractController
     #[Route('/{id}/edit', name: 'app_player_code_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, PlayerCode $playerCode, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }

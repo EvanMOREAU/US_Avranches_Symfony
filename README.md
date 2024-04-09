@@ -98,4 +98,15 @@ Refaire les modals pour les CRUD
 Changer invalid credentials du Login
 Changer les plain password dans les paramètres (Frontend)
 
+<<<<<<< HEAD
 Ajouter le lien vers la doc utilisateur dans la personalisation de la page.
+=======
+
+
+
+
+
+
+===============
+composer require intervention/image -> En test (PDF)
+>>>>>>> 6b69fad984dad2ff6585b37e41e57f69ce90560c

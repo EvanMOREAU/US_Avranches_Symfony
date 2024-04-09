@@ -63,7 +63,7 @@
                     </div>
                     <h6 class="text-sm">Nombre de tests : {{ tests|length }}</h6>
                     <div class="user-dropdown-container mt-3">
-                        {% if is_granted("ROLE_SUPER_ADMIN") %}
+                        {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH")%}
                             <select class="form-select" id="userDropdown" name="userDropdown">
                                 <option value="" {% if selectedUserId is null %}selected{% endif %}>Tous les utilisateurs</option>
 
@@ -83,7 +83,7 @@
                                     {% set userRoles = user.getRoles() %}
                                     {% set includeUser = true %}
                                     {% for role in userRoles %}
-                                        {% if role == 'ROLE_SUPER_ADMIN' %}
+                                        {% if role == 'ROLE_SUPER_ADMIN' or role == 'ROLE_COACH' %}
                                             {% set includeUser = false %}
                                         {% endif %}
                                     {% endfor %}
@@ -165,7 +165,7 @@
                                    <!-- Lien de suppression -->
                                     <a href="#" class="btn btn-danger"
                                         onclick="displayConfirmationModal('{{ path('app_tests_delete', {'id': test.id}) }}', {{ test.id }}, 'Voulez-vous vraiment supprimer ce test ?')">
-                                        <i class="fa fa-trash"></i> Supprimer
+                                        <i class="fa fa-trash"></i>
                                     </a>
 
                                     <!-- Boîte de dialogue de confirmation -->
