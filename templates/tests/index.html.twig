@@ -56,9 +56,8 @@
                 <div class="card-body p-3">
                     <div class="mt-3 text-center">
                         <h1 class="h1"> Liste{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH")%} des  {% else %} de vos {% endif %} Tests</h1>
-                        {% if is_granted("ROLE_SUPER_ADMIN") %}
-
-                        <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
+                        {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH")%}
+                            <a href="{{ path('app_tests_new') }}" class="btn btn-primary">Créer un nouveau test</a>
                         {% endif %}
                     </div>
                     <h6 class="text-sm">Nombre de tests : {{ tests|length }}</h6>
@@ -126,7 +125,7 @@
                     <div class="row">
                         {% set hasTests = false %}
                         {% for test in tests %}
-                        {% if is_granted("ROLE_SUPER_ADMIN") %}
+                        {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH") %}
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card card-blog card-plain">
                                 <div class="position-relative">
@@ -220,7 +219,7 @@
                         {% endif %}
                         {% endfor %}
                         {% for test in tests %}
-                        {% if (app.user == test.user) and not is_granted("ROLE_SUPER_ADMIN")%}
+                        {% if (app.user == test.user) and not is_granted("ROLE_SUPER_ADMIN") and not is_granted("ROLE_COACH")%}
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card card-blog card-plain">
                                 <div class="position-relative">

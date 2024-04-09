@@ -48,13 +48,8 @@ class GatheringController extends AbstractController
     #[Route('/{gathering}', name: 'app_gathering_u')]
     public function attendance(string $gathering, AttendanceRepository $attendanceRepository): Response
     {
-        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
         // Récupère les présences pour le rassemblement donné

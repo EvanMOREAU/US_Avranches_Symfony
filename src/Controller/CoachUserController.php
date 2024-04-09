@@ -84,15 +84,6 @@ class CoachUserController extends AbstractController
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
         
-        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
-        }
-        
         // Vérifie le jeton CSRF et supprime la catégorie
             $entityManager->remove($user);
             $entityManager->flush();
