@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ChartConfigurationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 #[Route('/pdf', name: 'app_pdf')]
 class PdfController extends AbstractController
@@ -25,12 +26,15 @@ class PdfController extends AbstractController
     private $userVerificationService;
     private $heightVerificationService;
     private $weightVerificationService;
+    private $tokenStorage;
 
-    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService)
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService, TokenStorageInterface $tokenStorage)
     {
         $this->userVerificationService = $userVerificationService;
         $this->heightVerificationService = $heightVerificationService;
         $this->weightVerificationService = $weightVerificationService;
+        $this->tokenStorage = $tokenStorage;
+
     }
 
     #[Route('/', name: 'app_pdf_index')]
@@ -49,14 +53,11 @@ class PdfController extends AbstractController
             }
         } else {
             // Utilisateur ordinaire, utiliser les données de l'utilisateur actuellement connecté
-            $token = $this->get('security.token_storage')->getToken();
-
-            if (!$token) {
+            $user = $this->getUser();
+            if (!$user) {
                 // Rediriger vers une page d'erreur ou afficher un message d'erreur
                 throw new \Exception('Token d\'authentification non trouvé');
             }
-
-            $user = $token->getUser();
         }
 
         $pdf = new Pdf();

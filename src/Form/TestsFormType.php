@@ -89,7 +89,7 @@ class TestsFormType extends AbstractType
         ->add('user', EntityType::class, [
             'class' => User::class,
             'choice_label' => function ($user) {
-                return $user->getFirstName() . ' ' . $user->getLastName();
+                return $user->getFirstName() . ' ' . $user->getLastName() . ' - ' . $user->getCategory();
             },
             'label' => 'Utilisateur :',
             'placeholder' => 'Choisir un utilisateur',

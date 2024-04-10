@@ -27,9 +27,9 @@
 								</thead>
 								<tbody>
 									{% set sortedEquipes = equipes|sort((a, b) => 
-                        (a.getCategory().name <=> b.getCategory().name) ?: 
-                        (a.name <=> b.name)
-                    			) %}
+										(a.getCategory().name <=> b.getCategory().name) ?: 
+										(a.name <=> b.name)
+									) %}
 									{% for equipe in sortedEquipes %}
 										<tr>
 											<td class="align-middle">{{ equipe.name }}</td>

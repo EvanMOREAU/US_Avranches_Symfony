@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/height')]
 class HeightController extends AbstractController
@@ -23,7 +24,7 @@ class HeightController extends AbstractController
 
         return $this->render('height/index.html.twig', [
             'heights' => $heightRepository->findAll(),
-            'location' => '',
+            'location' => 'q',
         ]);
     }
 
@@ -35,8 +36,7 @@ class HeightController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $token = $this->get('security.token_storage')->getToken();
-            $user = $token->getUser();
+            $user = $this->getUser();
             $height->setUserId($user);
             $currentDate = new \DateTime();
             $height->setDate($currentDate);
@@ -49,42 +49,7 @@ class HeightController extends AbstractController
         return $this->renderForm('height/new.html.twig', [
             'height' => $height,
             'form' => $form,
-            'location' => '',
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_height_show', methods: ['GET'])]
-    public function show(Height $height): Response
-    {
-        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
-            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-        }
-
-        return $this->render('height/show.html.twig', [
-            'height' => $height,
-            'location' => '',
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_height_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Height $height, EntityManagerInterface $entityManager): Response
-    {
-        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
-            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-        }
-
-        $form = $this->createForm(HeightType::class, $height);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_height_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('height/edit.html.twig', [
-            'height' => $height,
-            'form' => $form,
+            'location' => 'q',
         ]);
     }
 

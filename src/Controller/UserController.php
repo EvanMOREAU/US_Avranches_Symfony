@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -37,8 +38,12 @@ class UserController extends AbstractController
     }
   
     #[Route('/poste/set-poste-principal/{id}', name: 'app_set_poste_principal')]
-    public function setPostePrincipal(user $user, Request $request, LoggerInterface $logger): Response
+    public function setPostePrincipal(user $user, Request $request, LoggerInterface $logger, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_PLAYER')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         $logger->debug('setPostePrincipal() user->getFirstname() = ' . $user->getFirstname());
 
         // Récupérez les données de la requête AJAX
@@ -48,14 +53,17 @@ class UserController extends AbstractController
         // Mettez à jour l'entité user
         $user->setPostePrincipal($postePrincipal);
 
-        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($user);
         $entityManager->flush();
     }
 
     #[Route('/poste/set-poste-secondaire/{id}', name: 'app_set_poste_secondaire')]
-    public function setPosteSecondaire(user $user, Request $request, LoggerInterface $logger): Response
+    public function setPosteSecondaire(user $user, Request $request, LoggerInterface $logger, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_PLAYER')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         $logger->debug('setPosteSecondaire() user->getFirstname() = ' . $user->getFirstname());
 
         // Récupérez les données de la requête AJAX
@@ -65,7 +73,6 @@ class UserController extends AbstractController
         // Mettez à jour l'entité user
         $user->setPosteSecondaire($posteSecondaire);
 
-        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($user);
         $entityManager->flush();
     }
@@ -226,10 +233,10 @@ class UserController extends AbstractController
 
 
     #[Route('/poste/poste-coach', name: 'app_user_coach', methods: ['GET'])]
-    public function poste_coach(LoggerInterface $logger): Response
+    public function poste_coach(EntityManagerInterface $entityManager): Response
     {
-        $users = $this->getDoctrine()->getRepository(user::class)->findAll();
-        $equipes = $this->getDoctrine()->getRepository(Equipe::class)->findAll();
+        $users = $entityManager->getRepository(user::class)->findAll();
+        $equipes = $entityManager->getRepository(Equipe::class)->findAll();
 
         return $this->render('user/coachposte.html.twig', [
             'users' => $users,
@@ -239,7 +246,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/poste/set-poste-cache-x/{id}', name: 'app_set_poste_cache_x')]
-    public function setPosteCacheX(user $user, Request $request, LoggerInterface $logger): Response
+    public function setPosteCacheX(user $user, Request $request, LoggerInterface $logger, EntityManagerInterface $entityManager): Response
     {
         $logger->debug('setPosteCacheX() user->getFirstname() = ' . $user->getFirstname());
 
@@ -250,13 +257,12 @@ class UserController extends AbstractController
         // Mettez à jour l'entité user
         $user->setPosteCoordX($coord);
 
-        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($user);
         $entityManager->flush();
     }
 
     #[Route('/poste/set-poste-cache-y/{id}', name: 'app_set_poste_cache_y')]
-    public function setPosteCacheY(user $user, Request $request, LoggerInterface $logger): Response
+    public function setPosteCacheY(user $user, Request $request, LoggerInterface $logger, EntityManagerInterface $entityManager): Response
     {
         $logger->debug('setPosteCacheY() user->getFirstname() = ' . $user->getFirstname());
 
@@ -267,7 +273,6 @@ class UserController extends AbstractController
         // Mettez à jour l'entité user
         $user->setPosteCordY($coord);
 
-        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($user);
         $entityManager->flush();
     }

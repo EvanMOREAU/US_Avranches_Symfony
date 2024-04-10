@@ -222,7 +222,7 @@ class TestsController extends AbstractController
 
 
     #[Route('/tests/{id}/edit', name: 'app_tests_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, TestsRepository $testsRepository, $id): Response
+    public function edit(Request $request,EntityManagerInterface $entityManagerInterface, TestsRepository $testsRepository, $id ): Response
     {
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -253,7 +253,7 @@ class TestsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {       
             // Enregistrez l'entité modifiée
-            $this->getDoctrine()->getManager()->flush();
+            $entityManagerInterface->flush();
 
             // Redirection vers la page index après l'enregistrement
             return $this->redirectToRoute('app_tests_index');
@@ -266,7 +266,7 @@ class TestsController extends AbstractController
         ]);
     }
     #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET', 'POST', 'DELETE'])]
-    public function delete(Request $request, TestsRepository $testsRepository, $id): Response
+    public function delete(Request $request, EntityManagerInterface $entityManagerInterface, TestsRepository $testsRepository, $id): Response
     {
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -282,9 +282,8 @@ class TestsController extends AbstractController
             throw $this->createNotFoundException('Test non trouvé');
         }
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($test);
-        $entityManager->flush();
+        $entityManagerInterface->remove($test);
+        $entityManagerInterface->flush();
 
         // Ajoutez un message flash pour la suppression réussie
         $this->addFlash('success', 'La suppression a été réalisée avec succès.');
