@@ -31,15 +31,18 @@ class TestsController extends AbstractController
     private $userVerificationService;
     private $heightVerificationService;
     private $weightVerificationService;
+    private $entityManager;
 
-    public function __construct( TestsRepository $testsRepository,UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService){
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService, EntityManagerInterface $entityManager){
         $this->userVerificationService = $userVerificationService;
         $this->heightVerificationService = $heightVerificationService;
         $this->weightVerificationService = $weightVerificationService; 
+        $this->entityManager = $entityManager;
     }
 
+    
     #[Route('/', name: 'app_tests_index')]
-    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, PalierRepository $palierRepository): Response
+    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository): Response
     {
         $userVerif = $this->userVerificationService->verifyUser();
         $heightVerif = $this->heightVerificationService->verifyHeight();
@@ -63,7 +66,7 @@ class TestsController extends AbstractController
                 $tests = $this->getTestsByCategory($userRepository, $selectedCategory);
             } else {
                 $usersByCategory = $this->getUsersGroupedByCategory($userRepository);
-                $tests = $this->getDoctrine()->getRepository(Tests::class)->findAll();
+                $tests = $this->entityManager->getRepository(Tests::class)->findAll();
             }
         } else {
             $tests = $user ? $user->getTests() : [];
