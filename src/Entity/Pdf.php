@@ -14,7 +14,7 @@ class Pdf extends \TCPDF
         // disable auto-page-break
         $this->SetAutoPageBreak( false, 0 );
         // set bacground image
-        $img_file = 'img/US-Avranches.jpg';
+        $img_file = 'img/pdfmodal.png';
         $this->Image( $img_file, 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0 );
         // restore auto-page-break status
         $this->SetAutoPageBreak( $auto_page_break, $bMargin );

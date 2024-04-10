@@ -5,11 +5,47 @@
 {% endblock %}
 
 {% block body %}
+    <style>
+        .absent img {
+            filter: grayscale(100%) brightness(50%);
+            background-size: cover;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2%;
+            right: 2%;
+            z-index: 1000;
+        }
+
+        @media(min-width: 1200px) {
+			.card-attendance-u img {
+				width: 100%;
+				height: 25vh;
+				z-index: 0;
+				transition: transform 0.4s;
+				object-fit: cover;
+			}
+		}
+
+		@media(max-width: 1200px) {
+			.card-attendance-u img {
+				width: 100%;
+				height: 20vh;
+				z-index: 0;
+				transition: transform 0.4s;
+				object-fit: cover;
+			}
+        }
+    </style>
+
 	<link href="/css/attendance.css" rel="stylesheet"/>
 
 	<div class="col-lg-8 mx-auto p-5 py-md-5">
 		<div class="mt-3 text-center">
-			<h1 class="h1 mb-2 display-4 text-white">Rassemblement n°{{ gathering }}</h1>
+			<h1 class="h1 mb-2 display-4">Rassemblement n°{{ gathering }}</h1>
 		</div>
 
 		<div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 g-4 pt-5">
@@ -18,7 +54,11 @@
 				<div class="col">
 					<div class="img card-attendance-u" data-user-id="1">
 						<div class="abs present">
-							<img src="/images/arthur-delacour.png" {% if attendance.isPresent == 0 %} style="filter: grayscale(100%) brightness(50%);" {% endif %} class="card-img-top zoom" alt="...">
+						{% if attendance.getUser().profileImage %}
+							<img src="/uploads/images/{{ attendance.getUser().profileImage }}" class="card-img-top zoom" {% if attendance.isPresent == 0 %} style="filter: grayscale(100%) brightness(50%);" {% endif %} alt="...">
+                        {% else %}
+                            <img src="/images/inconnu.jpg" {% if attendance.isPresent == 0 %} style="filter: grayscale(100%) brightness(50%);" {% endif %} class="card-img-top zoom" alt="...">
+                        {% endif %}
 						</div>
 
 						<div class="card-body">
@@ -47,7 +87,7 @@
 
 		<div class="g-4 pt-5">
 			<div class="col text-center" style="text-align: start;">
-				<a href="/" class="btn btn-secondary">
+				<a href="/" class="btn btn-info">
 					<i class="fa-solid fa-house"></i>
 					Accueil</a>
 			</div>

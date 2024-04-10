@@ -10,25 +10,34 @@
 <link rel="stylesheet" href="/css/poste.css">
 
 <center>
-
-    <div class="terrain">
-        <img src="/images/terrain.jpg" alt="terrain">
-        <button id="gardien" class="poste-button">Gardien</button>
-        <button id="defenseurg" class="poste-button">Défenseur Gauche</button>
-        <button id="defenseurd" class="poste-button">Défenseur Droit</button>
-        <button id="milieug" class="poste-button">Milieu Gauche</button>
-        <button id="milieuoff" class="poste-button">Milieu Offensif</button>
-        <button id="milieudef" class="poste-button">Milieu Defensif</button>
-        <button id="milieud" class="poste-button">Milieu Droit</button>
-        <button id="attaquant" class="poste-button">Attaquant</button>
+<div class="container-fluid pt-3">
+    <div class="row removable">
+        <div class="col-lg-12">
+            <div class="card mb-4 h-100">
+                <div class="card-body p-3">
+                    <div class="terrain">
+                        <img src="/images/terrain.jpg" alt="terrain">
+                        <button id="gardien" class="poste-button">Gardien</button>
+                        <button id="defenseurg" class="poste-button">Défenseur Gauche</button>
+                        <button id="defenseurd" class="poste-button">Défenseur Droit</button>
+                        <button id="milieug" class="poste-button">Milieu Gauche</button>
+                        <button id="milieuoff" class="poste-button">Milieu Offensif</button>
+                        <button id="milieudef" class="poste-button">Milieu Defensif</button>
+                        <button id="milieud" class="poste-button">Milieu Droit</button>
+                        <button id="attaquant" class="poste-button">Attaquant</button>
+                    </div>
+                    <table>
+                        <tr>
+                            <td align="center"><div class="poste"><p><button id="selec-pri" class="poste-selec-button">POSTE PRINCIPALE</button><br>Poste sélectionné : <span id="poste-pri">{% if user.postePrincipal != null %}{{ user.postePrincipal }}{% else %}Aucun{% endif %}</span></p></div></td>
+                            <td align="center"><div class="poste"><p><button id="selec-sec" class="poste-selec-button">POSTE SECONDAIRE</button><br>Poste sélectionné : <span id="poste-sec">{% if user.posteSecondaire != null %}{{ user.posteSecondaire }}{% else %}Aucun{% endif %}</span></p></div></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <table>
-        <tr>
-            <td align="center"><div class="poste"><p><button id="selec-pri" class="poste-selec-button">POSTE PRINCIPAL</button><br>Poste sélectionné : <span id="poste-pri">{% if user.postePrincipal != null %}{{ user.postePrincipal }}{% else %}Aucun{% endif %}</span></p></div></td>
-            <td align="center"><div class="poste"><p><button id="selec-sec" class="poste-selec-button">POSTE SECONDAIRE</button><br>Poste sélectionné : <span id="poste-sec">{% if user.posteSecondaire != null %}{{ user.posteSecondaire }}{% else %}Aucun{% endif %}</span></p></div></td>
-        </tr>
-    </table>
+
 
 </center>
 

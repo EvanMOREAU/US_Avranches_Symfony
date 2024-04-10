@@ -16,6 +16,10 @@ class ExcelController extends AbstractController
     #[Route('/excel', name: 'app_excel')]
     public function excel(): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         // Récupérez les données de la base de données
         $users = $this->getDoctrine()->getRepository(User::class)->findByRole('ROLE_PLAYER');
 
@@ -71,6 +75,7 @@ class ExcelController extends AbstractController
                 $testSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $user->getLastName() . ' ' . $user->getFirstName() . ' - Tests');
                 $spreadsheet->addSheet($testSheet);
                 $spreadsheet->setActiveSheetIndexByName($user->getLastName() . ' ' . $user->getFirstName() . ' - Tests');
+                $testRow = 1;
 
                 // Ajoutez les en-têtes de colonnes pour les tests
                 $testSheet->setCellValue('A1', 'Numéro du test');
@@ -83,11 +88,17 @@ class ExcelController extends AbstractController
                 $testSheet->setCellValue('H1', 'Date test');
                 $testSheet->setCellValue('I1', 'Conduite de balle (secondes)');
                 $testSheet->setCellValue('J1', 'Vitesse (secondes)');
-                $testSheet->setCellValue('K1', 'Poids (kilogrammes)');
-                $testSheet->setCellValue('L1', 'Taille (centimètres)');
+                $testSheet->setCellValue('K1', '');
+                $testSheet->setCellValue('L1', 'Date');
+                $testSheet->setCellValue('M1', 'Poids (kilogrammes)');
+                $testSheet->setCellValue('N1', '');
+                $testSheet->setCellValue('O1', 'Date');
+                $testSheet->setCellValue('P1', 'Taille (centimètres)');
+                
+                $testRow++;
 
                 // Mettez en gras les en-têtes
-                $headerStyle = $testSheet->getStyle('A1:J1');
+                $headerStyle = $testSheet->getStyle('A1:P1');
                 $headerFont = $headerStyle->getFont();
                 $headerFont->setBold(true);
 
@@ -102,8 +113,12 @@ class ExcelController extends AbstractController
                 $testSheet->getColumnDimension('H')->setWidth(30);
                 $testSheet->getColumnDimension('I')->setWidth(30);
                 $testSheet->getColumnDimension('J')->setWidth(30);
-                $testSheet->getColumnDimension('K')->setWidth(30);
+                $testSheet->getColumnDimension('K')->setWidth(10);
                 $testSheet->getColumnDimension('L')->setWidth(30);
+                $testSheet->getColumnDimension('M')->setWidth(30);
+                $testSheet->getColumnDimension('N')->setWidth(10);
+                $testSheet->getColumnDimension('O')->setWidth(30);
+                $testSheet->getColumnDimension('P')->setWidth(30);
 
                 // Ajoutez les données à la feuille de calcul pour les tests
                 $testRow = 2; // Commencez à partir de la ligne .
@@ -124,102 +139,50 @@ class ExcelController extends AbstractController
                     // Continuez à ajouter les données nécessaires dans les colonnes suivantes
                     $testRow++;
                 }
-            }
-
-            //------------------- POIDS -------------------
-
-            // Réinitialisez le numéro du test à l'intérieur de la boucle des utilisateurs
-            $numWeight = 0;
-
-            if ($user->getWeights()->count() > 0) {
-                // Créez une nouvelle feuille pour chaque test
-                $weightSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $user->getLastName() . ' ' . $user->getFirstName() . ' - POIDS');
-                $spreadsheet->addSheet($weightSheet);
-                $spreadsheet->setActiveSheetIndexByName($user->getLastName() . ' ' . $user->getFirstName() . ' - POIDS');
-
+                //--------------------------POIDS--------------------------------
                 // Ajoutez les en-têtes de colonnes pour les tests
-                $weightSheet->setCellValue('A1', 'Numéro du test');
-                $weightSheet->setCellValue('B1', 'Date');
-                $weightSheet->setCellValue('C1', 'Poids (kilogrammes)');
-
-                // Mettez en gras les en-têtes
-                $headerStyle = $weightSheet->getStyle('A1:C1');
-                $headerFont = $headerStyle->getFont();
-                $headerFont->setBold(true);
-
-                // Ajoutez d'autres en-têtes et définissez la largeur des colonnes comme nécessaire
-                $weightSheet->getColumnDimension('A')->setWidth(30); // Par exemple, largeur de la colonne A
-                $weightSheet->getColumnDimension('B')->setWidth(30); // Par exemple, largeur de la colonne B
-                $weightSheet->getColumnDimension('C')->setWidth(30);
-
+                $testSheet->setCellValue('L1', 'Date');
+                $testSheet->setCellValue('M1', 'Poids (kilogrammes)');
 
                 $weightRow = 2; // Commencez à partir de la ligne .
                 foreach ($user->getWeights() as $weight) {
 
                     // Récupérez les informations de poids
-                    $weight = $this->getDoctrine()->getRepository(Weight::class)->findOneBy(['user' => $user]);
+                    // $weight = $this->getDoctrine()->getRepository(Weight::class)->findOneBy(['user' => $user]);
 
-                    $numWeight++; // Incrémentez le numéro du poids à chaque itération
-                    $weightSheet->setCellValue('A' . $weightRow, 'n°' . $numWeight);
-                    $weightSheet->setCellValue('B' . $weightRow, $weight->getDate()->format('d/m/Y'));
+                    // $numWeight++; // Incrémentez le numéro du poids à chaque itération
+                    $testSheet->setCellValue('L' . $weightRow, $weight->getDate()->format('d/m/Y'));
 
                     // Vérifiez si l'objet Weight n'est pas null avant d'appeler getValue()
-                    $weightSheet->setCellValue('C' . $weightRow, $weight ? $weight->getValue() . ' kg' : '');
+                    $testSheet->setCellValue('M' . $weightRow, $weight ? $weight->getValue() . ' kg' : '');
 
                     // Continuez à ajouter les données nécessaires dans les colonnes suivantes
                     $weightRow++;
                 }
-            }
-
-
-            //------------------- TAILLE -------------------
-
-            // Réinitialisez le numéro du test à l'intérieur de la boucle des utilisateurs
-            $numHeight = 0;
-
-            // Vérifiez si l'utilisateur a des hauteurs avant d'entrer dans la boucle
-            if ($user->getHeights()->count() > 0) {
-                // Créez une nouvelle feuille pour chaque test
-                $heightSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $user->getLastName() . ' ' . $user->getFirstName() . ' - TAILLE');
-                $spreadsheet->addSheet($heightSheet);
-                $spreadsheet->setActiveSheetIndexByName($user->getLastName() . ' ' . $user->getFirstName() . ' - TAILLE');
-
+                //--------------------TAILLE--------------------
                 // Ajoutez les en-têtes de colonnes pour les tests
-                $heightSheet->setCellValue('A1', 'Numéro du test');
-                $heightSheet->setCellValue('B1', 'Date');
-                $heightSheet->setCellValue('C1', 'Taille (centimètres)');
-
-                // Mettez en gras les en-têtes
-                $headerStyle = $heightSheet->getStyle('A1:C1');
-                $headerFont = $headerStyle->getFont();
-                $headerFont->setBold(true);
-
-                // Ajoutez d'autres en-têtes et définissez la largeur des colonnes comme nécessaire
-                $heightSheet->getColumnDimension('A')->setWidth(30); // Par exemple, largeur de la colonne A
-                $heightSheet->getColumnDimension('B')->setWidth(30); // Par exemple, largeur de la colonne B
-                $heightSheet->getColumnDimension('C')->setWidth(30);
+                $testSheet->setCellValue('O1', 'Date');
+                $testSheet->setCellValue('P1', 'Taille (centimètres)');
 
                 $heightRow = 2; // Commencez à partir de la ligne .
 
                 // Déclarez la variable $height avant la boucle
                 $height = null;
-
                 foreach ($user->getHeights() as $height) {
                     // Récupérez les informations de poids
-                    $height = $this->getDoctrine()->getRepository(Height::class)->findOneBy(['user' => $user]);
+                    // $height = $this->getDoctrine()->getRepository(Height::class)->findOneBy(['user' => $user]);
 
-                    $numHeight++; // Incrémentez le numéro du poids à chaque itération
-                    $heightSheet->setCellValue('A' . $heightRow, 'n°' . $numHeight);
-                    $heightSheet->setCellValue('B' . $heightRow, $height->getDate()->format('d/m/Y'));
+                    // $numHeight++; // Incrémentez le numéro du poids à chaque itération
+                    $testSheet->setCellValue('O' . $heightRow, $height->getDate()->format('d/m/Y'));
 
                     // Vérifiez si l'objet Height n'est pas null avant d'appeler getValue()
-                    $heightSheet->setCellValue('C' . $heightRow, $height ? $height->getValue() . ' cm' : '');
+                    $testSheet->setCellValue('P' . $heightRow, $height ? $height->getValue() . ' cm' : '');
 
                     // Continuez à ajouter les données nécessaires dans les colonnes suivantes
                     $heightRow++;
                 }
-            }
 
+            }
 
             // Sélectionnez la première feuille pour la prochaine itération
             $spreadsheet->setActiveSheetIndex(0);
@@ -236,6 +199,27 @@ class ExcelController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment; filename="export.xlsx"');
         $response->setContent($excelUsers);
+
+        return $response;
+
+        // Créez un objet Spreadsheet
+        $spreadsheet = new Spreadsheet();
+
+        // Définissez le nom de la feuille Excel
+        $spreadsheet->getActiveSheet()->setTitle('Calendrier des rassemblements');
+
+        // Ajoutez votre code pour ajouter les événements au fichier Excel ici
+
+        // Créez une réponse pour le fichier Excel
+        $response = new Response();
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        ob_start();
+        $writer->save('php://output');
+        $excelContent = ob_get_clean();
+
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment; filename="calendrier_rassemblements.xlsx"');
+        $response->setContent($excelContent);
 
         return $response;
     }

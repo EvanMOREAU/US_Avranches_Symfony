@@ -18,8 +18,8 @@ class Tests
     #[ORM\Column(nullable: true)]
     private ?float $vma = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $cooper = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $cooper = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $jongle_gauche = null;
@@ -71,12 +71,12 @@ class Tests
         return $this;
     }
 
-    public function getCooper(): ?string
+    public function getCooper(): ?int
     {
         return $this->cooper;
     }
 
-    public function setCooper(?string $cooper): self
+    public function setCooper(?int $cooper): self
     {
         $this->cooper = $cooper;
 

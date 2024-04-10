@@ -11,7 +11,7 @@ class CUController extends AbstractController
     #[Route('/conditions-utilisation', name: 'app_condiutil')]
     public function index(): Response
     {
-        return $this->render('cu/index.html.twig', [
+        return $this->render('condition_utilisation/index.html.twig', [
             'controller_name' => 'CUController',
             'location' => '',
         ]);

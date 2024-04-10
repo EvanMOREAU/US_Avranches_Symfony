@@ -2,7 +2,7 @@
 
 body {
   background-color: #f4f4f4;
-  color: #FFFFFF;
+  color: #000000;
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -74,7 +74,7 @@ body {
 
 .cards .card.green {
   background-color: #ccc;
-  color: #fff;
+  color: rgb(0, 0, 0);
 }
 
 .card-title {
@@ -116,7 +116,7 @@ body {
 .button-left:hover,
 .button-right:hover {
   background-color: #333;
-  color: #fff;
+  color: rgb(0, 0, 0);
 }
 
 .close-btn {
@@ -134,7 +134,7 @@ body {
   left: 10px;
   font-weight: bold;
   font-size: 12px;
-  color: #1a0af8;
+  color: #000000;
 }
 
 /* Ajout de styles spécifiques pour le message de connexion */

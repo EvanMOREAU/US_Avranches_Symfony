@@ -71,30 +71,31 @@
             </div>
           </div>
         </div>
-        {% set poid = 0 %}
-        {% set taille = 0 %}
-        {% set imc = 0 %}
-        {% set date1 = null %}
-        {% set date2 = null %}
-        {% for chart in chartData %}
-            {% if chart.name == "Poids" %}
-                {% set poid = chart.data.values|last %}
-                {% set date1 = chart.data.labels|last %}
-            {% elseif chart.name == "Taille" %}
-                {% set taille = chart.data.values|last %}
-                {% set date2 = chart.data.labels|last %}
-            {% endif %}
-        {% endfor %}
+          {% set poid = 0 %}
+          {% set taille = 0 %}
+          {% set imc = 0 %}
+          {% set date1 = null %}
+          {% set date2 = null %}
+          {% set recentDate = null %} {# Initialiser recentDate en dehors de la boucle if #}
 
-        {% if poid != 0 and taille != 0 %}
-            {% set imc = poid / (taille * taille) %}
-            {% if date1 > date2 %}
-                {% set recentDate = date1 %}
-            {% else %}
-                {% set recentDate = date2 %}
-            {% endif %}
-        {% endif %}
+          {% for chart in chartData %}
+              {% if chart.name == "Poids" %}
+                  {% set poid = chart.data.values|last %}
+                  {% set date1 = chart.data.labels|last %}
+              {% elseif chart.name == "Taille" %}
+                  {% set taille = chart.data.values|last %}
+                  {% set date2 = chart.data.labels|last %}
+              {% endif %}
+          {% endfor %}
 
+          {% if poid != 0 and taille != 0 %}
+              {% set imc = poid / (taille * taille) %}
+              {% if date1 > date2 %}
+                  {% set recentDate = date1 %}
+              {% else %}
+                  {% set recentDate = date2 %}
+              {% endif %}
+          {% endif %}
         <div class="col-xl-3 col-sm-6">
           <div class="card">
             <div class="card-header p-3 pt-2">
@@ -119,7 +120,7 @@
             <div class="col-lg-4 col-md-6 mt-4 mb-4">
             <div class="card z-index-2 ">
                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+                <div class="bg-gradient-info shadow-primary border-radius-lg py-3 pe-1">
                     <div class="chart">
                     <canvas id="chart{{chart.name}}" class="chart-canvas" height="170"></canvas>
                     </div>
@@ -184,7 +185,7 @@
             {% endfor %}
         </div>
         <div class="container-fluid pt-3">
-            <a class="btn bg-gradient-primary w-100" href="/charts/details" type="button">Voir plus de Graphiques</a>
+            <a class="btn bg-gradient-info w-100" href="/charts/details" type="button">Voir plus de Graphiques</a>
         </div>
       <div class="row mb-4">
         <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
@@ -228,7 +229,7 @@
                                 {{ record.date|date('d/m/Y')}}
                             </td>
                             <td class="align-middle text-center text-sm">
-                               {% if record.type == "Weight" %} {{record.value}} Kg{% elseif record.type == "Height" %}{{record.value}} cm {% elseif record.type == "Tests" %}<a class="btn bg-gradient-primary w-100" href="/tests" type="button">Voir</a>{% endif %}
+                               {% if record.type == "Weight" %} {{record.value}} Kg{% elseif record.type == "Height" %}{{record.value}} cm {% elseif record.type == "Tests" %}<a class="btn bg-gradient-info w-100" href="/tests" type="button">Voir</a>{% endif %}
                             </td>
                             </tr>
 

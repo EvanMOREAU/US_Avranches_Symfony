@@ -1,11 +1,27 @@
-{% extends 'base.html.twig' %}
+<body>
+    <style>
+        body {
+            position: relative; /* Pour permettre le positionnement absolu du pseudo-élément */
+        }
 
-{% block title %}New Weight{% endblock %}
+        body::before {
+            content: ""; /* Obligatoire pour les pseudo-éléments */
+            position: absolute; /* Positionnement absolu pour couvrir l'image de fond */
+            top: 0;
+            left: 0;
+            width: 100%; /* Taille couvrant l'ensemble du corps */
+            height: 100%;
+            background-image: url('/images/fakebg.png'); /* Image de fond */
+                        background-size: cover; /* Redimensionne l'image pour couvrir toute la zone */
+            background-position: center; /* Centre l'image de fond */
 
-{% block body %}
-    {# <h1>Create new Weight</h1> #}
+            filter: blur(5px); /* Appliquer le flou */
+            z-index: -1; /* Placer le pseudo-élément derrière le contenu */
+        }
+    </style>
+    {% block body %}
 
-    {{ include('weight/_form.html.twig') }}
+        {{ include('weight/_form.html.twig') }}
 
-    {# <a href="{{ path('app_weight_index') }}">back to list</a> #}
-{% endblock %}
+    {% endblock %}
+</body>

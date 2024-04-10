@@ -3,26 +3,44 @@
 namespace App\Controller;
 
 use DateTime;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Tests;
 use App\Entity\Height;
 use App\Entity\Weight;
 use App\Entity\ChartConfiguration;
+use App\Repository\PalierRepository;
+use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Response;
+use App\Service\HeightVerificationService;
+use App\Service\WeightVerificationService;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ChartConfigurationRepository;
-use App\Repository\PalierRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/charts', name: 'app_charts')]
 class ChartsController extends AbstractController
 {
+    private $userVerificationService;
+    private $heightVerificationService;
+    private $weightVerificationService;
+
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService)
+    {
+        $this->userVerificationService = $userVerificationService;
+        $this->heightVerificationService = $heightVerificationService;
+        $this->weightVerificationService = $weightVerificationService; 
+    }
+    
     #[Route('/details', name: 'app_charts_details', methods: ['GET'])]
     public function index(ChartConfigurationRepository $configRepository, EntityManagerInterface $entityManager): Response
     {
         // Récupérer l'utilisateur connecté
         $user = $this->getUser();
 
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
         // Rediriger si l'utilisateur n'est pas authentifié
         if (!$user) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -53,19 +71,36 @@ class ChartsController extends AbstractController
                 'data' => $this->generateLineChartData($data, $config->getConfigData()['field']),
                 'min' => $config->getConfigData()['min'],
                 'max' => $config->getConfigData()['max'],
+                'paliermin' => $config->getConfigData()['paliermin'],
+                'paliermax' => $config->getConfigData()['paliermax'],
             ];
         }
-
-        return $this->render('charts/index.html.twig', [
-            'chartData' => $chartData,
-            'location' => 'b',
-        ]);
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+            else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+            else if($userVerif == 1) {
+                if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+                else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+                else if($heightVerif == 1){
+                    if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                    else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                    else if($weightVerif == 1){
+                        return $this->render('charts/index.html.twig', [
+                            'chartData' => $chartData,
+                            'location' => 'b',
+                        ]);
+                    }
+                }
+            }
     }
 
     #[Route('/', name: 'app_charts_index', methods: ['GET'])]
     public function test(ChartConfigurationRepository $configRepository, EntityManagerInterface $entityManager, PalierRepository $palierRepository): Response
     {
         $user = $this->getUser();
+
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
 
         if (!$user) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -128,20 +163,32 @@ class ChartsController extends AbstractController
                 'max' => $config->getConfigData()['max'],
             ];
         }
-        // dump($chartData);
-        return $this->render('charts/test.html.twig', [
-            'chartData' => $chartData,
-            'location' => 'b',
-            'totalDataCount' => $totalDataCount,
-            'totalDataCountThisMonth' => $totalDataCountThisMonth,
-            'earliestDate' => $earliestDate,
-            'latestDate' => $latestDate,
-            'earliestDateWithType' => $earliestDateWithType,
-            'latestDateWithType' => $latestDateWithType,
-            'paliers' => $palierRepository->findAll(),
-            'sixLastRecord' => $sixLastRecord,
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    // dump($chartData);
+                    return $this->render('charts/test.html.twig', [
+                        'chartData' => $chartData,
+                        'location' => 'b',
+                        'totalDataCount' => $totalDataCount,
+                        'totalDataCountThisMonth' => $totalDataCountThisMonth,
+                        'earliestDate' => $earliestDate,
+                        'latestDate' => $latestDate,
+                        'earliestDateWithType' => $earliestDateWithType,
+                        'latestDateWithType' => $latestDateWithType,
+                        'paliers' => $palierRepository->findAll(),
+                        'sixLastRecord' => $sixLastRecord,
 
-        ]);
+                    ]);
+                }
+            }
+        }
     }
 
     private function generateLineChartData($data, $field)
@@ -199,5 +246,68 @@ class ChartsController extends AbstractController
         return $lastSixRecords;
     }
     
-    
+    #[Route('/charts/updatescale', name: 'app_charts_update_scale', methods: ['POST'])]
+    public function updateChartScale(Request $request, EntityManagerInterface $entityManager): Response 
+    {
+        // Récupérer l'ID du graphique et les nouvelles valeurs d'échelle du formulaire
+        $chartId = $request->request->get('chartId');
+        $newMin = $request->request->get('NewMin');
+        $newMax = $request->request->get('NewMax');
+
+        // Récupérer la configuration du graphique
+        $chartConfig = $entityManager->getRepository(ChartConfiguration::class)->find($chartId);
+        if (!$chartConfig) {
+            throw $this->createNotFoundException('Chart configuration not found');
+        }
+
+        // Stocker les anciennes valeurs
+        $oldMin = $chartConfig->getConfigData()['min'];
+        $oldMax = $chartConfig->getConfigData()['max'];
+        // ca ca sert a faire le debogage
+
+       // MAJ des valeurs d'échelle 
+        $configData = $chartConfig->getConfigData();
+        $configData['min'] = $newMin;
+        $configData['max'] = $newMax;
+        $chartConfig->setConfigData($configData);
+
+        // on fous les modifs dans la base de données
+        $entityManager->flush();
+
+        // Rediriger vers la page précédente
+        return $this->redirectToRoute('app_charts_details');
+ 
+    }
+
+    #[Route('/charts/updatepalier', name: 'app_charts_update_palier', methods: ['POST'])]
+    public function updateChartPalier(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer l'ID du graphique et les nouvelles valeurs d'échelle du formulaire
+        $chartId = $request->request->get('chartId');
+        $newPalierMin = $request->request->get('NewPalierMin');
+        $newPalierMax = $request->request->get('NewPalierMax');
+
+        // Récupérer la configuration du graphique
+        $chartConfig = $entityManager->getRepository(ChartConfiguration::class)->find($chartId);
+        if (!$chartConfig) {
+            throw $this->createNotFoundException('Chart configuration not found');
+        }
+
+        // Stocker les anciennes valeurs
+        $oldMin = $chartConfig->getConfigData()['paliermin'];
+        $oldMax = $chartConfig->getConfigData()['paliermax'];
+        // ca ca sert a faire le debogage
+
+       // MAJ des valeurs d'échelle 
+        $configData = $chartConfig->getConfigData();
+        $configData['paliermin'] = $newPalierMin;
+        $configData['paliermax'] = $newPalierMax;
+        $chartConfig->setConfigData($configData);
+
+        // on fous les modifs dans la base de données
+        $entityManager->flush();
+
+        // Rediriger vers la page précédente
+        return $this->redirectToRoute('app_charts_details');
+    }
 }

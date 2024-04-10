@@ -27,15 +27,11 @@ class GatheringController extends AbstractController
 {
     // Affiche la liste des rassemblements
     #[Route('/', name: 'app_gathering')]
-    public function index(GatheringRepository $GatheringRepository, CategoryRepository $CategoryRepository): Response
+    public function index(GatheringRepository $GatheringRepository, CategoryRepository $CategoryRepository, AttendanceRepository $attendanceRepository): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
         // Affiche la vue avec la liste des rassemblements
@@ -43,7 +39,8 @@ class GatheringController extends AbstractController
             'controller_name' => 'GatheringController',
             'gatherings' => $GatheringRepository->findAll(),
             'categories' => $CategoryRepository->findAll(),
-            'location' => '',
+            'attendances' =>  $attendanceRepository->findall(),
+            'location' => 'h',
         ]);
     }
 
@@ -51,13 +48,8 @@ class GatheringController extends AbstractController
     #[Route('/{gathering}', name: 'app_gathering_u')]
     public function attendance(string $gathering, AttendanceRepository $attendanceRepository): Response
     {
-        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
         // Récupère les présences pour le rassemblement donné
@@ -68,7 +60,7 @@ class GatheringController extends AbstractController
             'controller_name' => 'GatheringController',
             'attendances' => $attendances,
             'gathering' => $gathering,
-            'location' => '',
+            'location' => 'h',
         ]);
     }
 }

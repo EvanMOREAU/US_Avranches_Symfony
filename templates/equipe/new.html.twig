@@ -4,10 +4,7 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Create new Equipe</h1>
 
-	{{ include('equipe/_form.html.twig') }}
-
-	<a href="{{ path('app_equipe_index') }}">back to list</a>
+	{{ include('equipe/_form.html.twig', {'button_label': 'Créer'}) }}
 {% endblock %}
 

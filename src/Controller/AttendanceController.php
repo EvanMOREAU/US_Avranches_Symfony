@@ -37,13 +37,8 @@ class AttendanceController extends AbstractController
     #[Route('/appel', name: 'app_attendance')]
     public function index(CategoryRepository $CategoryRepository): Response
     {
-        // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
         // Rendre la vue avec les catégories pour l'appel
@@ -59,12 +54,8 @@ class AttendanceController extends AbstractController
     public function choice(string $category): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
         // Rendre le modèle en fonction de la catégorie
@@ -80,12 +71,8 @@ class AttendanceController extends AbstractController
     public function training(string $category, UserRepository $UserRepository): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
         // Récupère tous les utilisateurs depuis le référentiel pour la catégorie donnée
@@ -110,12 +97,8 @@ class AttendanceController extends AbstractController
     public function choiceMatch(string $category, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
         // $category = "U10" / "U11" / ...
@@ -150,27 +133,32 @@ class AttendanceController extends AbstractController
     }
 
     // Page d'appel pour un match
-    #[Route('/appel/match/{category}/{team}', name: 'app_attendance_match')]
-    public function match(string $category, string $team, string $teamId, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
+    #[Route('/appel/match/{category}/{team}/{teamid}', name: 'app_attendance_match')]
+    public function match(string $category, string $team, string $teamid, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
-        // trouver tous les utilisateurs dans l'équipe $team
+        // Get the team entity based on teamid
+        $teamEntity = $equipeRepository->find($teamid);
+
+        if (!$teamEntity) {
+            throw $this->createNotFoundException('Équipe non trouvée');
+        }
+
+        // Get all users belonging to the team
+        $usersInTeam = $UserRepository->findBy(['equipe' => $teamEntity]);
 
         // Rendre le modèle en fonction de la catégorie
-        return $this->render('attendance/match_choice_attendance.html.twig', [
+        return $this->render('attendance/match_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
             'location' => 'g',
             'category' => $category,
-            'team' => $team,
-            'teamId' => $teamId,
+            'teams' => $team,
+            'teamId' => $teamid,
+            'users' => $usersInTeam,
         ]);
     }
 
@@ -179,12 +167,8 @@ class AttendanceController extends AbstractController
     public function createTrainingAttendance(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
         // Analyse les données JSON de la requête
@@ -268,12 +252,8 @@ class AttendanceController extends AbstractController
     public function modifyAttendance(string $gathering, UserRepository $UserRepository, AttendanceRepository $attendanceRepository, ): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
         // Récupère les présences pour le rassemblement donné
@@ -304,14 +284,9 @@ class AttendanceController extends AbstractController
     public function updateAttendance(string $gathering, UserRepository $userRepository, AttendanceRepository $attendanceRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
-        if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-            // Si non, vérifie si l'utilisateur a le rôle ROLE_COACH
-            if (!$this->isGranted('ROLE_COACH')) {
-                // Si l'utilisateur n'a aucun rôle, refuser l'accès
-                throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
-            }
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
-
         // Récupérer le gathering spécifié
         $gatheringEntity = $entityManager->getRepository(Gathering::class)->find($gathering);
 
@@ -322,14 +297,12 @@ class AttendanceController extends AbstractController
         // Analyser les données JSON de la requête
         $requestData = json_decode($request->getContent(), true);
 
-        $type = $requestData['type'];
         $parisTimezone = new DateTimeZone('Europe/Paris');
         $datetime = new \DateTime($requestData['datetime'], $parisTimezone);
 
         $presentUserIds = $requestData['presentUserIds'];
         $absentUserIds = $requestData['absentUserIds'];
 
-        $gatheringEntity->setType($type);
         $gatheringEntity->setGatheringHappenedDate($datetime);
 
         // Mettre à jour les enregistrements de présence pour les utilisateurs présents

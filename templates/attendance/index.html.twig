@@ -1,105 +1,105 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Page d'appel
+	Page d'appel
 {% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <link href="/css/attendance.css" rel="stylesheet"/>
-    <style>
-        /* Styles spécifiques à la page d'appel */
-        .card-attendance {
-            position: relative;
-            overflow: hidden;
-        }
+	{{ parent() }}
+	<link href="/css/attendance.css" rel="stylesheet"/>
+	<style>
+		/* Styles spécifiques à la page d'appel */
+		.card-attendance {
+			position: relative;
+			overflow: hidden;
+		}
 
-        .card-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            text-align: center;
-            z-index: 2;
-        }
+		.card-overlay {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: white;
+			text-align: center;
+			z-index: 2;
+		}
 
-        .card-overlay h1 {
-            margin: 0;
-            display: inline-block;
-            padding: 10px;
-            border: 2px solid white;
-            width: 125%; /* Ajustez la largeur selon vos besoins */
-            height: 100%;
-            box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur et la hauteur totales de l'élément */
-        }
+		.card-overlay h1 {
+			margin: 0;
+			display: inline-block;
+			padding: 10px;
+			border: 2px solid white;
+			width: 125%; /* Ajustez la largeur selon vos besoins */
+			height: 100%;
+			box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur et la hauteur totales de l'élément */
+		}
 
-        .card-attendance::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.75);
-            z-index: 1;
-        }
+		.card-attendance::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.75);
+			z-index: 1;
+		}
 
-        @media (min-width: 1200px) {
-            .card-attendance img {
-                width: 100%;
-                height: 75vh;
-                z-index: 0;
-                transition: transform 0.4s;
-                object-fit: cover;
-            }
-        }
+		@media(min-width: 1200px) {
+			.card-attendance img {
+				width: 100%;
+				height: 75vh;
+				z-index: 0;
+				transition: transform 0.4s;
+				object-fit: cover;
+			}
+		}
 
-        @media (max-width: 1200px) {
-            .card-attendance img {
-                width: 100%;
-                height: 50vh;
-                z-index: 0;
-                transition: transform 0.4s;
-                object-fit: cover;
-            }
-        }
+		@media(max-width: 1200px) {
+			.card-attendance img {
+				width: 100%;
+				height: 50vh;
+				z-index: 0;
+				transition: transform 0.4s;
+				object-fit: cover;
+			}
+		}
 
-        .card-attendance:hover img {
-            transform: scale(1.03);
-        }
-    </style>
+		.card-attendance:hover img {
+			transform: scale(1.03);
+		}
+	</style>
 {% endblock %}
 
 {% block body %}
-    <div class="col-lg-8 mx-auto p-5 py-md-5">
-        <div class="mt-3 text-center">
-            <h1 class="h1 mb-2 display-4">Page d'appel</h1>
-        </div>
+	<div class="container-fluid pt-3">
+		<div class="row removable">
+			<div class="col-lg-12">
+				<div class="card mb-4 h-100">
+					<div class="card-body p-3">
+						<div class="mt-3 text-center">
+							<h1 class="h1 mb-2 display-4">Page d'appel</h1>
+						</div>
 
-        <div class="row row-cols-1 row-cols-md-2 g-4 pt-5">
-            {% for categorie in categories %}
-                <div class="col">
-                    <a href="/appel/choix/{{ categorie.name }}">
-                        <div class="card-attendance">
-                            <div class="card-overlay">
-                                <h1 class="display-2" style="background-color: {{ categorie.color }}">{{ categorie.name }}</h1>
-                            </div>
-                            <img class="img-fluid" src="/uploads/images/{{ categorie.image }}" alt="{{ categorie.id }}">
-                        </div>
-                    </a>
-                </div>
-            {% else %}
-                <div class="text-white">Il n'y a aucune catégorie !</div>
-            {% endfor %}
-        </div>
-
-        <div class="g-4 pt-5">
-            <div class="col text-center" style="text-align: start;">
-                <a href="/" class="btn btn-secondary">
-                    <i class="fa-solid fa-house"></i>
-                    Accueil</a>
-            </div>
-        </div>
-    </div>
+						<div class="row row-cols-1 row-cols-md-2 g-4 pt-5 col-lg-10 text-center" style="margin-left: auto; margin-right: auto;">
+							{% for categorie in categories %}
+								<div class="col">
+									<a href="/appel/choix/{{ categorie.name }}">
+										<div class="card-attendance">
+											<div class="card-overlay">
+												<h1 class="display-2 text-white" style="background-color: {{ categorie.color }}">{{ categorie.name }}</h1>
+											</div>
+											<img class="img-fluid" src="/uploads/images/{{ categorie.image }}" alt="{{ categorie.id }}">
+										</div>
+									</a>
+								</div>
+							{% else %}
+								<div class="text-white">Il n'y a aucune catégorie !</div>
+							{% endfor %}
+						</div>	
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

@@ -4,9 +4,7 @@
 {% endblock %}
 
 {% block body %}
-    {{ include('equipe/_form.html.twig', {'button_label': 'Update'}) }}
+    <h1>Modification d'une équipe</h1>
 
-    <a href="{{ path('app_equipe_index') }}">back to list</a>
-
-    {{ include('equipe/_delete_form.html.twig') }}
+    {{ include('equipe/_form.html.twig', {'button_label': 'Enregistrer'}) }}
 {% endblock %}

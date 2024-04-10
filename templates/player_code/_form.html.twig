@@ -1,4 +1,33 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <link rel="stylesheet" href="/assets/css/form.css">
+    {{ form_widget(form._token) }}
+
+    <div class="container mt-4 text-white">
+        <div class="container-fluid pt-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mt-3 text-center">
+                        <h1 class="h1 mb-2 display-4" style="color: black">Modifier le code de connexion</h1>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="{{form.code.vars.id}}">Nouveau code :</label>
+                                        {{ form_widget(form.code, { 'id': form.code.vars.id, 'attr': {'class': 'form-control'} }) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div><br>
+                        <div class="text-center">
+                            <button class="btn btn-info"><i class="fas fa-save"></i> {{ button_label|default('Save') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {{ form_end(form) }}

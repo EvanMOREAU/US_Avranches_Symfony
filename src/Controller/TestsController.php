@@ -12,6 +12,8 @@ use App\Repository\TestsRepository;
 use App\Repository\PalierRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\HeightVerificationService;
+use App\Service\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,17 +29,24 @@ class TestsController extends AbstractController
 {
 
     private $userVerificationService;
+    private $heightVerificationService;
+    private $weightVerificationService;
+    private $entityManager;
 
-    public function __construct(UserVerificationService $userVerificationService, TestsRepository $testsRepository){
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService, EntityManagerInterface $entityManager){
         $this->userVerificationService = $userVerificationService;
+        $this->heightVerificationService = $heightVerificationService;
+        $this->weightVerificationService = $weightVerificationService; 
+        $this->entityManager = $entityManager;
     }
 
+    
     #[Route('/', name: 'app_tests_index')]
-    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, PalierRepository $palierRepository): Response
+    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository): Response
     {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
 
         $tests = $testsRepository->findAll();
         
@@ -47,17 +56,17 @@ class TestsController extends AbstractController
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
 
-        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH')) {
             $selectedUser = $userRepository->find($selectedUserId);
             $tests = $selectedUser ? $selectedUser->getTests() : [];
-        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
             if ($selectedCategory) {
                 $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
                 $tests = $this->getTestsByCategory($userRepository, $selectedCategory);
             } else {
                 $usersByCategory = $this->getUsersGroupedByCategory($userRepository);
-                $tests = $this->getDoctrine()->getRepository(Tests::class)->findAll();
+                $tests = $this->entityManager->getRepository(Tests::class)->findAll();
             }
         } else {
             $tests = $user ? $user->getTests() : [];
@@ -78,121 +87,147 @@ class TestsController extends AbstractController
             }
         });
 
-        // Passage des tests triés au template Twig
-        return $this->render('tests/index.html.twig', [
-            'controller_name' => 'TestsController',
-            'location' => 'c',
-            'tests' => $testsArray,
-            'users' => $userRepository->findAll(),
-            'user' => $user,
-            'selectedUserId' => $selectedUserId,
-            'usersByCategory' => $usersByCategory,
-            'order' => $order, // Passer l'ordre de tri au template Twig
-        ]);
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    // Passage des tests triés au template Twig
+                    return $this->render('tests/index.html.twig', [
+                        'controller_name' => 'TestsController',
+                        'location' => 'c',
+                        'tests' => $testsArray,
+                        'users' => $userRepository->findAll(),
+                        'user' => $user,
+                        'selectedUserId' => $selectedUserId,
+                        'usersByCategory' => $usersByCategory, // Passer la variable usersByCategory au template Twig
+                        'order' => $order, // Passer l'ordre de tri au template Twig
+                    ]);
+                }
+            }
+        }
 
     }
     
     #[Route('/new', name: 'app_tests_new', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
-
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
 
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
-        
+
         $test = new Tests();
-    
-        // Vérifier si le formulaire est vide
-        $formIsEmpty = empty($request->request->all());
-            // Si le formulaire est vide, récupérez le dernier test de l'utilisateur
-            if ($formIsEmpty) {
-                $lastTest = $testsRepository->findLastTestByUser($this->getUser());
-                
-                if ($lastTest) {
-                    // Remplir les champs avec les valeurs du dernier test
-                    $test->setVma($lastTest->getVma());
-                    $test->setDemicooper($lastTest->getDemicooper());
-                    $test->setCooper($lastTest->getCooper());
-                    $test->setJongleGauche($lastTest->getJongleGauche());
-                    $test->setJongleDroit($lastTest->getJongleDroit());
-                    $test->setJongleTete($lastTest->getJongleTete());
-                    $test->setConduiteBalle($lastTest->getConduiteBalle());
-                    $test->setVitesse($lastTest->getVitesse());
-                }
+
+        $user = $this->getUser(); // Obtenir l'utilisateur actuel
+
+        $selectedUserId = $request->query->get('userId');
+        $selectedCategory = $request->query->get('category');
+        $usersByCategory = null;
+
+        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH')) {
+            $selectedUser = $userRepository->find($selectedUserId);
+            $tests = $selectedUser ? $selectedUser->getTests() : [];
+        } elseif ($this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH')) {
+            // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
+            if ($selectedCategory) {
+                $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
+                $tests = $this->getTestsByCategory($userRepository, $selectedCategory);
+            } else {
+                $usersByCategory = $this->getUsersGroupedByCategory($userRepository);
+                $tests = $testsRepository->findAll();
             }
-        
-            $form = $this->createForm(TestsFormType::class, $test);
-        
-            $form->handleRequest($request);
-        
-            if ($form->isSubmitted() && $form->isValid()) {
-                // Ajoutez ces lignes pour définir la date actuelle
-                $currentDate = new \DateTime();
-                $test->setDate($currentDate);
-                // Si l'utilisateur est superadmin, attribuez le test à l'utilisateur sélectionné depuis le formulaire
-                if ($this->isGranted("ROLE_SUPER_ADMIN")) {
-                    $selectedUser = $form->get('user')->getData();
-        
-                    if ($selectedUser) {
-                        $test->setUser($selectedUser);
-                    }
-                } else {
-                    // Si l'utilisateur n'est pas superadmin, attribuez le test à l'utilisateur connecté
-                    $test->setUser($this->getUser());
-                }
-        
-                // Traitement du champ vidéo
-                $videoFile = $form->get('video')->getData();
-                if ($videoFile instanceof UploadedFile) {
-                    // Générez le nom du fichier vidéo en utilisant l'id du joueur
-                    if ($this->isGranted("ROLE_SUPER_ADMIN")) {
-                        // Si c'est un superadmin, utilisez l'id du joueur sélectionné depuis le formulaire
-                        $selectedUser = $form->get('user')->getData();
-                        $playerId = $selectedUser->getId();
-                    } else {
-                        // Sinon, utilisez l'id du joueur connecté
-                        $playerId = $this->getUser()->getId();
-                    }
-                    $videoFileName = $playerId .'.mp4'; // Utilisez uniqid() ou une autre méthode pour garantir l'unicité du nom du fichier
-
-                    // Définissez le nouveau nom du fichier dans l'entité
-                    $test->setVideo($videoFileName);
-
-                    // Obtenez le chemin complet du dossier uploads/videos
-                    $uploadDir = $this->getParameter('upload_dir');
-
-                    // Assurez-vous que le dossier existe, sinon, créez-le
-                    if (!file_exists($uploadDir)) {
-                        mkdir($uploadDir, 0777, true);
-                    }
-
-                    // Définissez le chemin complet du nouveau fichier en utilisant le nouveau nom
-                    $newFilePath = $uploadDir . $videoFileName;
-
-                    // Déplacez et renommez le fichier en utilisant la méthode move()
-                    $videoFile->move($uploadDir, $videoFileName);
-                }
-        
-                $entityManager->persist($test);
-                $entityManager->flush();
-        
-                return $this->redirectToRoute('app_tests_index', ['id' => $test->getId()]);
-            }
-        
-            return $this->renderForm('tests/new.html.twig', [
-                'test' => $test,
-                'location' => 'c',
-                'form' => $form,
-            ]);
+        } else {
+            $tests = $user ? $user->getTests() : [];
         }
 
+        $testsArray = is_array($tests) ? $tests : $tests->toArray();
+        // Récupération des paramètres de tri
+        $order = $request->query->get('order', 'desc');
+
+        // Tri des tests en fonction des paramètres
+        usort($testsArray, function ($a, $b) use ($order) {
+            if ($order === 'asc') {
+                return $a->getDate() <=> $b->getDate();
+            } elseif ($order === 'desc') {
+                return $b->getDate() <=> $a->getDate();
+            } elseif ($order === 'alphabetical') {
+                return $a->getUser()->getFirstName() <=> $b->getUser()->getFirstName();
+            }
+        });
+
+        // Si le formulaire est vide, récupérez le dernier test de l'utilisateur
+        if ($request->getMethod() === 'POST' && empty($request->request->all())) {
+            $lastTest = $testsRepository->findLastTestByUser($user);
+
+            if ($lastTest) {
+                // Remplir les champs avec les valeurs du dernier test
+                $test->setVma($lastTest->getVma());
+                $test->setDemicooper($lastTest->getDemicooper());
+                $test->setCooper($lastTest->getCooper());
+                $test->setJongleGauche($lastTest->getJongleGauche());
+                $test->setJongleDroit($lastTest->getJongleDroit());
+                $test->setJongleTete($lastTest->getJongleTete());
+                $test->setConduiteBalle($lastTest->getConduiteBalle());
+                $test->setVitesse($lastTest->getVitesse());
+            }
+        }
+
+        $form = $this->createForm(TestsFormType::class, $test);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Ajoutez ces lignes pour définir la date actuelle
+            $currentDate = new \DateTime();
+            $test->setDate($currentDate);
+            
+            // Obtenez l'utilisateur sélectionné à partir du formulaire
+            $selectedUser = $form->get('user')->getData();
+        
+            // Attribuez l'utilisateur au test
+            $test->setUser($selectedUser);
+        
+            // Persistez le test en base de données
+            $entityManager->persist($test);
+            $entityManager->flush();
+        
+            return $this->redirectToRoute('app_tests_index', ['id' => $test->getId()]);
+        }
+
+        // Récupérez tous les utilisateurs et triez-les par ordre alphabétique
+        $users = $userRepository->findAll();
+        usort($users, function($a, $b) {
+            return $a->getFirstName() <=> $b->getFirstName();
+        });
+
+        // Passez les utilisateurs triés au modèle Twig
+        return $this->renderForm('tests/new.html.twig', [
+            'test' => $test,
+            'location' => 'c',
+            'form' => $form,
+            'user' => $users,
+            'selectedUserId' => $selectedUserId,
+            'usersByCategory' => $usersByCategory, // Passer la variable usersByCategory au template Twig
+            'order' => $order, // Passer l'ordre de tri au template Twig
+        ]);
+    }
+
+
     #[Route('/tests/{id}/edit', name: 'app_tests_edit', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function edit(Request $request, TestsRepository $testsRepository, $id): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -203,15 +238,11 @@ class TestsController extends AbstractController
             throw $this->createNotFoundException('Test non trouvé');
         }
 
-        
-        // Sauvegardez le nom du fichier vidéo actuel avant de créer le formulaire
-        $currentVideo = $test->getVideo();
-
         $form = $this->createForm(TestsFormType::class, $test);
 
         $form->handleRequest($request);
 
-        if ($this->isGranted("ROLE_SUPER_ADMIN")) {
+        if ($this->isGranted("ROLE_SUPER_ADMIN") || $this->isGranted('ROLE_COACH')) {
             // Si c'est un superadmin, utilisez l'id du joueur sélectionné depuis le formulaire
             $selectedUser = $form->get('user')->getData();
             $playerId = $selectedUser->getId();
@@ -220,39 +251,12 @@ class TestsController extends AbstractController
             $playerId = $this->getUser()->getId();
         }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-        
-            // Vérifiez si un nouveau fichier vidéo a été téléchargé
-            $videoFile = $form->get('video')->getData();
-            if ($videoFile instanceof UploadedFile) {
-                // Supprimez l'ancien fichier vidéo s'il existe
-                $oldVideoPath = $this->getParameter('upload_dir') . DIRECTORY_SEPARATOR . $currentVideo;
-                if (file_exists($oldVideoPath)) {
-                    unlink($oldVideoPath);
-                }
-        
-                // Générez un nom de fichier unique (vous pouvez utiliser une logique différente ici)
-                $newVideoName = $playerId . '.mp4';
-        
-                // Déplacez le fichier vidéo vers le répertoire d'uploads avec le nouveau nom
-                $videoFile->move(
-                    $this->getParameter('upload_dir'), // Assurez-vous que 'upload_dir' est défini dans votre fichier services.yaml
-                    $newVideoName
-                );
-        
-                // Mettez à jour le champ video avec le nouveau nom de fichier
-                $test->setVideo($newVideoName);
-            } else {
-                // Si aucun nouveau fichier n'est téléchargé, rétablissez le nom du fichier vidéo actuel
-                $test->setVideo($currentVideo);
-            }
-        
+        if ($form->isSubmitted() && $form->isValid()) {       
             // Enregistrez l'entité modifiée
             $this->getDoctrine()->getManager()->flush();
 
             // Redirection vers la page index après l'enregistrement
             return $this->redirectToRoute('app_tests_index');
-
         }
         
         return $this->renderForm('tests/edit.html.twig', [
@@ -262,9 +266,12 @@ class TestsController extends AbstractController
         ]);
     }
     #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET', 'POST', 'DELETE'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function delete(Request $request, TestsRepository $testsRepository, $id): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -344,6 +351,10 @@ class TestsController extends AbstractController
     #[Route('/cancel-test/{id}', name: 'app_cancel_test', methods: ['GET', 'POST'])]
     public function cancelTest(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         // Récupérez le test à partir de l'ID
         $test = $entityManager->getRepository(Tests::class)->find($id);
         
@@ -357,18 +368,5 @@ class TestsController extends AbstractController
         // Répondez avec un JSON indiquant le succès de l'opération
         return new JsonResponse(['success' => true]);
     }
-    private function uploadVideo(UploadedFile $videoFile, string $videoName): string
-    {
-        // Définissez le répertoire où vous souhaitez stocker les vidéos
-        $videoDirectory = $this->getParameter('upload_dir');
 
-        // Utilisez le nom fourni dans le formulaire avec une extension "mp4"
-        $newFileName = $videoName . '.mp4';
-
-        // Déplacez le fichier dans le répertoire configuré
-        $videoFile->move($videoDirectory, $newFileName);
-
-        // Retournez le nom du fichier pour enregistrement dans la base de données
-        return $newFileName;
-    }
 }

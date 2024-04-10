@@ -21,26 +21,25 @@
   <script src='/js/timegrid.js'></script>
   <script src='/js/list.js'></script>
 
-  <div class="container">
-    <div id='calendar-container' class="mt-5 pt-5">
-      <div id='calendar'></div>
-    </div>
-
-    <div class="container mt-5 pt-5">
+    <div class="container">
       <div class="row">
         <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6 mx-auto">
-          <div class="form-floating">
-            <select id="filter-select" class="form-select" aria-label="Catégorie(s)">
+          <div class="form-group">
+            <label for="filter-select">Catégorie(s)</label>
+            <select class="form-select" id="filter-select">
               <option value="all" selected>Toutes</option>
               {% for category in categories %}
                 <option value='{{ category.name }}'>{{ category.name }}</option>
               {% endfor %}
             </select>
-            <label for="filter-select">Catégorie(s)</label>
           </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <div id='calendar-container' class="col-10" style="margin-left: auto; margin-right: auto;">
+    <div id='calendar'></div>
   </div>
 
   <script>
@@ -50,7 +49,17 @@
       var allEvents = [
         {% for gathering in gatherings %}
           {
-            title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
+            {% if gathering.type == 'Match' %}
+              {% set equipeName = null %}
+              {% for attendance in attendances %}
+                {% if attendance.getGathering() == gathering %}
+                  {% set equipeName = attendance.getUser().getEquipe().getName() %}
+                  title: isMobile ? '{{ gathering.category.name }} - {{ equipeName }}' : '{{ gathering.category.name }} - {{ equipeName }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              title: isMobile ? '{{ gathering.category.name }}' : '{{ gathering.category.name }} à {{ gathering.gatheringHappenedDate|date("H\\hi") }}',
+            {% endif %}
             start: '{{ gathering.gatheringHappenedDate|date("Y-m-d") }}',
             {% if gathering.type == 'Entraînement' %}
               // color: '{{ gathering.category.color }}',

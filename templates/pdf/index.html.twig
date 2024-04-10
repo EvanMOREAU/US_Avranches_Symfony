@@ -11,7 +11,7 @@
     <div class="example-wrapper">
         <h1>Génération de PDF ✅</h1>
 
-        {% if is_granted('ROLE_SUPER_ADMIN') %}
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted("ROLE_COACH") %}
             {# Afficher le formulaire de sélection d'utilisateur pour les super admins #}
             <form method="post" action="{{ path('app_pdf') }}">
                 {{ form_start(pdfForm) }}

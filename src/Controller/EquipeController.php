@@ -17,15 +17,23 @@ class EquipeController extends AbstractController
     #[Route('/', name: 'app_equipe_index', methods: ['GET'])]
     public function index(EquipeRepository $equipeRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         return $this->render('equipe/index.html.twig', [
             'equipes' => $equipeRepository->findAll(),
-            'location' => '',
+            'location' => 'l',
         ]);
     }
 
     #[Route('/new', name: 'app_equipe_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         $equipe = new Equipe();
         $form = $this->createForm(EquipeType::class, $equipe);
         $form->handleRequest($request);
@@ -40,21 +48,17 @@ class EquipeController extends AbstractController
         return $this->renderForm('equipe/new.html.twig', [
             'equipe' => $equipe,
             'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_equipe_show', methods: ['GET'])]
-    public function show(Equipe $equipe): Response
-    {
-        return $this->render('equipe/show.html.twig', [
-            'equipe' => $equipe,
-            'location' => '',
+            'location' => 'l',
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_equipe_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Equipe $equipe, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         $form = $this->createForm(EquipeType::class, $equipe);
         $form->handleRequest($request);
 
@@ -67,12 +71,17 @@ class EquipeController extends AbstractController
         return $this->renderForm('equipe/edit.html.twig', [
             'equipe' => $equipe,
             'form' => $form,
+            'location' => 'l',
         ]);
     }
 
     #[Route('/{id}', name: 'app_equipe_delete', methods: ['POST'])]
     public function delete(Request $request, Equipe $equipe, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         if ($this->isCsrfTokenValid('delete'.$equipe->getId(), $request->request->get('_token'))) {
             $entityManager->remove($equipe);
             $entityManager->flush();

@@ -33,7 +33,7 @@
 
     <div class="col-lg-8 mx-auto p-5 py-md-5">
         <div class="mt-3 text-center">
-            <h1 class="h1 mb-2 display-4" style="color: white">Palier {% if palier is defined %}{{ palier.numero }}{% endif %}</h1>
+            <h1 class="h1 mb-2 display-4" >Palier {% if palier is defined %}{{ palier.numero }}{% endif %}</h1>
         </div>
 
         <div class="rg-4 pt-5 table-responsive">
@@ -42,7 +42,7 @@
                     <tr>
                         <th>Numéro</th>
                         <th>Nom</th>
-                        <th>Objectif(s)</th>
+                        <th>Objectif</th>
                         <th class="actions-column">Actions</th>
                     </tr>
                 </thead>
@@ -71,7 +71,7 @@
                 </tbody>
             </table>
 
-            <a href="{{ path('app_palier_index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Retour à la liste</a>
+            <a href="{{ path('app_palier_index') }}" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Retour à la liste</a>
         </div>
     </div>
 
