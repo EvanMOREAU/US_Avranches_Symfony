@@ -150,14 +150,24 @@ class PdfController extends AbstractController
                             </tr>
                         </thead>
                         <tbody>';
+
+                // Compteur pour limiter l'affichage à un maximum de trois données
+                $count = 0;
+
                 // Ajouter les données des tailles et des poids dans le tableau
                 foreach ($lastFiveHeights as $index => $height) {
+                    if ($count >= 3) {
+                        break; // Arrêter la boucle une fois que trois données ont été ajoutées
+                    }
+
                     $weight = $lastFiveWeights[$index]; // Récupérer le poids correspondant
                     $htmlTable .= '
-                                <tr align="center">
-                                    <td width="' . $heightColumnWidth . '">' . $height->getValue() . ' cm (' . $height->getDate()->format('d/m/Y') . ')</td>
-                                    <td width="' . $weightColumnWidth . '">' . $weight->getValue() . ' kg (' . $weight->getDate()->format('d/m/Y') . ')</td>
-                                </tr>';
+                    <tr align="center">
+                        <td width="' . $heightColumnWidth . '">' . $height->getValue() . ' cm (' . $height->getDate()->format('d/m/Y') . ')</td>
+                        <td width="' . $weightColumnWidth . '">' . $weight->getValue() . ' kg (' . $weight->getDate()->format('d/m/Y') . ')</td>
+                    </tr>';
+
+                    $count++; // Incrémenter le compteur
                 }
                 $htmlTable .= '
                         </tbody>
@@ -270,15 +280,15 @@ class PdfController extends AbstractController
                             </tr>
                         </thead>
                         <tbody>';
-                            // Ajouter les données des tests dans le tableau (partie 1)
-                            $htmlTableTestsPart1 .= '
+                    // Ajouter les données des tests dans le tableau (partie 1)
+                    $htmlTableTestsPart1 .= '
                             <tr align="center">
                                 <td width="' . $vmaColumnWidth . '">' . $test->getVma() . '</td>
                                 <td width="' . $cooperColumnWidth . '">' . $test->getCooper() . '</td>
                                 <td width="' . $demiCooperColumnWidth . '">' . $test->getDemiCooper() . '</td>
                                 <td width="' . $jongleGaucheColumnWidth . '">' . $test->getJongleGauche() . '</td>
                             </tr>';
-                            $htmlTableTestsPart1 .= '
+                    $htmlTableTestsPart1 .= '
                         </tbody>
                     </table>';
 
@@ -294,15 +304,15 @@ class PdfController extends AbstractController
                             </tr>
                         </thead>
                         <tbody>';
-                            // Ajouter les données des tests dans le tableau (partie 2)
-                                $htmlTableTestsPart2 .= '
+                    // Ajouter les données des tests dans le tableau (partie 2)
+                    $htmlTableTestsPart2 .= '
                             <tr align="center">
                                 <td width="' . $jongleDroitColumnWidth . '">' . $test->getJongleDroit() . '</td>
                                 <td width="' . $jongleTeteColumnWidth . '">' . $test->getJongleTete() . '</td>
                                 <td width="' . $conduiteBalleColumnWidth . '">' . $test->getConduiteBalle() . '</td>
                                 <td width="' . $vitesseColumnWidth . '">' . $test->getVitesse() . '</td>
                             </tr>';
-                            $htmlTableTestsPart2 .= '
+                    $htmlTableTestsPart2 .= '
                         </tbody>
                     </table>';
 
@@ -314,7 +324,7 @@ class PdfController extends AbstractController
                     $htmlTableTestsPart1Y = ($pdf->getPageHeight() - $htmlTableTestsPart1Height - $htmlTableTestsPart2Height) / 2;
 
                     // Position Y du premier tableau
-                    $htmlTableTestsPart1Y = 150;
+                    $htmlTableTestsPart1Y = 130;
 
                     // Position Y du deuxième tableau
                     $htmlTableTestsPart2Y = $htmlTableTestsPart1Y + $htmlTableTestsPart1Height + 25;
