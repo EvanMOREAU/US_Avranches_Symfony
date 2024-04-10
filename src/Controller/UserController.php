@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Equipe;
 use App\Form\UserType;
 use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
@@ -200,9 +201,12 @@ class UserController extends AbstractController
     public function poste_coach(LoggerInterface $logger): Response
     {
         $users = $this->getDoctrine()->getRepository(user::class)->findAll();
+        $equipes = $this->getDoctrine()->getRepository(Equipe::class)->findAll();
 
         return $this->render('user/coachposte.html.twig', [
             'users' => $users,
+            'equipes' => $equipes,
+            'location' => 'e',
         ]);
     }
 

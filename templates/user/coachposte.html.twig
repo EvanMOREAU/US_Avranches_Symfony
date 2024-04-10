@@ -4,21 +4,7 @@
 
 {% block body %}
     <link rel="stylesheet" href="/css/poste.css">
-
-    {# <script>
-    // Sélectionnez les éléments nécessaires
-    const menuPrincipal = document.querySelector('#menu-principal');
-    const boutonMenu = document.querySelector('.bouton-menu');
-
-    // Fonction pour ouvrir et fermer le menu
-    function toggleMenu() {
-        menuPrincipal.classList.toggle('menu-ouvert');
-    }
-
-    // Ajoutez un écouteur d'événement sur le bouton pour ouvrir et fermer le menu
-    boutonMenu.addEventListener('click', toggleMenu);
-    </script> #}
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         h1 {
             color: white;
@@ -28,31 +14,19 @@
             visibility: visible;
         }
 
+        .terrain .cercle {
+            position: absolute;
+            max-width: 2%;
+            z-index: 2;
+        }
+
+        /* Ajustement de la position et de la visibilité des textes */
         .texte {
             position: absolute;
             color: white;
             visibility: hidden;
             background-color: rgba(13, 82, 139, 1);
         }
-
-        .terrain .cercle {
-            position: absolute;
-            max-width: 2%;
-            z-index: 2;
-        }
-        {# /* Styles généraux pour le menu */
-        nav {
-            position: relative;
-        }
-
-        #menu-principal {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: none;
-            width: 100%;
-            background-color: #333333;
-        } #}
 
         {% for user in users %}
             {% if user.posteCoordX is not null %}
@@ -69,23 +43,17 @@
         {% endfor %}
     </style>
 
-    {# <nav>
-        <ul id="menu-principal">
-            <li data-sous-menu="sous-menu-1"><a href="#">Equipe 1</a></li>
-            <li data-sous-menu="sous-menu-2"><a href="#">Equipe 2</a></li>
-            <li data-sous-menu="sous-menu-3"><a href="#">Equipe 3</a></li>
-        </ul>
-    </nav> #}
-
-    <label for="menuDeroulant">Choisir une option :</label>
-    <select id="menuDeroulant">
-        <option value="option1">Option 1</option>
-        <option value="option2">Option 2</option>
-        <option value="option3">Option 3</option>
-        <option value="option4">Option 4</option>
-    </select>
-
     <center>
+        <div>
+            <label for="equipe">Sélectionnez une équipe :</label>
+            <select id="equipe">
+                <option value="">Toutes les équipes</option>
+                {% for equipe in equipes %}
+                    <option value="{{ equipe.id }}">{{ equipe.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <div class="terrain">
             <h1>Position des joueurs</h1>
             <img src="/images/terrain.jpg" alt="terrain" id="terrain">
@@ -97,6 +65,7 @@
                         class="cercle"
                         data-coord-x="{{ user.posteCoordX }}"
                         data-coord-y="{{ user.posteCordY }}"
+                        data-equipe-id="{{ user.equipe.id }}"
                     >
                     <p class="texte" data-coord-x="{{ user.posteCoordX }}" data-coord-y="{{ user.posteCordY }}">
                         {{ user.getfirstname }} {{ user.getlastname }}
@@ -107,14 +76,29 @@
     </center>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-    var menuDeroulant = document.getElementById("menuDeroulant");
+        $(document).ready(function() {
+            $('#equipe').change(function() {
+                var equipeId = $(this).val();
+                $('.cercle').hide();
+                $('.texte').hide();
+                if (!equipeId) { // Si aucune équipe n'est sélectionnée
+                    $('.cercle').show();
+                } else {
+                    $('.cercle[data-equipe-id="' + equipeId + '"]').show();
+                    $('.texte[data-equipe-id="' + equipeId + '"]').show(); // Afficher les textes de l'équipe sélectionnée
+                }
+            }).trigger('change'); // Déclencher le changement au chargement de la page pour afficher tous les points
 
-    menuDeroulant.addEventListener("change", function() {
-        var selectedOption = menuDeroulant.options[menuDeroulant.selectedIndex].value;
-        console.log("Option sélectionnée :", selectedOption);
-    });
-    });
+            // Afficher le texte lors du survol
+            $('.cercle').hover(
+                function() {
+                    $(this).next('.texte').css('visibility', 'visible');
+                },
+                function() {
+                    $(this).next('.texte').css('visibility', 'hidden');
+                }
+            );
+        });
     </script>
 
 {% endblock %}

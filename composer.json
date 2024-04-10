@@ -28,7 +28,7 @@
         "symfony/validator": "5.4.*",
         "symfony/var-dumper": "5.4.*",
         "symfony/yaml": "5.4.*",
-        "symfonycasts/reset-password-bundle": "^1.19",
+        "symfonycasts/reset-password-bundle": "^1.21",
         "tecnickcom/tcpdf": "^6.6"
     },
     "config": {
