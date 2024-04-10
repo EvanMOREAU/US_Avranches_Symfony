@@ -27,13 +27,14 @@
 							<tbody>
 								{% for category in categories %}
 									<tr>
-										<td>{{ category.name }}</td>
-										<td>
-											
-											<a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-warning">
-												<i class="fa-solid fa-pen"></i>
-											</a>
-											{{ include('category/_delete_form.html.twig') }}
+										<td class="align-middle">{{ category.name }}</td>
+										<td class="align-middle">
+											<div class="d-flex justify-content-center align-items-center">
+												<button class="btn btn-warning mt-2" onclick="redirectToPage('/category/{{ category.id }}/edit')">
+													<i class="fa-solid fa-pen"></i>
+												</button>
+												<span style="margin-left: 5px;">{{ include('category/_delete_form.html.twig') }}</span>
+											</div>
 										</td>
 									</tr>
 								{% else %}
