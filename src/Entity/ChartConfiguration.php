@@ -62,4 +62,5 @@ class ChartConfiguration
 
         return $this;
     }
+
 }
