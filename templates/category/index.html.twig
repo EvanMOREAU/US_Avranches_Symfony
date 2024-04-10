@@ -39,7 +39,7 @@
 														</a>
 													</div>
 													<div class="btn-group me-2" role="group">
-														<form action="{{ path('app_category_delete', {'id': category.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette équipe ?')">
+														<form action="{{ path('app_category_delete', {'id': category.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')">
 															<input type="hidden" name="_method" value="DELETE">
 															<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
 															<button type="submit" class="btn btn-danger">
