@@ -16,6 +16,10 @@ class ExcelController extends AbstractController
     #[Route('/excel', name: 'app_excel')]
     public function excel(): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         // Récupérez les données de la base de données
         $users = $this->getDoctrine()->getRepository(User::class)->findByRole('ROLE_PLAYER');
 

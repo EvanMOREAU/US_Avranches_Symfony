@@ -17,6 +17,10 @@ class HeightController extends AbstractController
     #[Route('/', name: 'app_height_index', methods: ['GET'])]
     public function index(HeightRepository $heightRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         return $this->render('height/index.html.twig', [
             'heights' => $heightRepository->findAll(),
             'location' => '',
@@ -52,6 +56,10 @@ class HeightController extends AbstractController
     #[Route('/{id}', name: 'app_height_show', methods: ['GET'])]
     public function show(Height $height): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         return $this->render('height/show.html.twig', [
             'height' => $height,
             'location' => '',
@@ -61,6 +69,10 @@ class HeightController extends AbstractController
     #[Route('/{id}/edit', name: 'app_height_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Height $height, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         $form = $this->createForm(HeightType::class, $height);
         $form->handleRequest($request);
 
@@ -79,6 +91,10 @@ class HeightController extends AbstractController
     #[Route('/{id}', name: 'app_height_delete', methods: ['POST'])]
     public function delete(Request $request, Height $height, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         if ($this->isCsrfTokenValid('delete'.$height->getId(), $request->request->get('_token'))) {
             $entityManager->remove($height);
             $entityManager->flush();
