@@ -108,20 +108,23 @@ class UserController extends AbstractController
         // Recherchez dans les catégories celle qui correspond à l'année de naissance
         $categoryRepository = $entityManager->getRepository(Category::class);
         $category = $categoryRepository->findOneBy(['name' => $anneeNaissance]);
-
             
-        $form = $this->createForm(UserType::class, $user, [
-            'category' => $category->getId(),
-        ]);
+        $formOptions = [];
+        if ($category !== null) {
+            // If category exists, add it to the form options
+            $formOptions['category'] = $category->getId();
+        }
+        
+        $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form->get('plainPassword')->getData();
-    
+
             if (!empty($plainPassword)) {
                 $encodedPassword = $passwordHasher->hashPassword($user, $plainPassword);
                 $user->setPassword($encodedPassword);
             }
-    
+
             $profimg = $form->get('profile_image')->getData();
             if (isset($profimg)) {
                 $errorMessage = $imageUploaderHelper->uploadImage($form, $user);
@@ -130,12 +133,12 @@ class UserController extends AbstractController
                 }
                 $userRepository->save($user, true);
             }
-    
+
             $entityManager->flush();
-    
+
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
-    
+
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
