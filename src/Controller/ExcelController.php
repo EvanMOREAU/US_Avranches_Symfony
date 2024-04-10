@@ -16,6 +16,10 @@ class ExcelController extends AbstractController
     #[Route('/excel', name: 'app_excel')]
     public function excel(): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         // Récupérez les données de la base de données
         $users = $this->getDoctrine()->getRepository(User::class)->findByRole('ROLE_PLAYER');
 
@@ -144,7 +148,7 @@ class ExcelController extends AbstractController
                 foreach ($user->getWeights() as $weight) {
 
                     // Récupérez les informations de poids
-                    $weight = $this->getDoctrine()->getRepository(Weight::class)->findOneBy(['user' => $user]);
+                    // $weight = $this->getDoctrine()->getRepository(Weight::class)->findOneBy(['user' => $user]);
 
                     // $numWeight++; // Incrémentez le numéro du poids à chaque itération
                     $testSheet->setCellValue('L' . $weightRow, $weight->getDate()->format('d/m/Y'));
@@ -166,7 +170,7 @@ class ExcelController extends AbstractController
                 $height = null;
                 foreach ($user->getHeights() as $height) {
                     // Récupérez les informations de poids
-                    $height = $this->getDoctrine()->getRepository(Height::class)->findOneBy(['user' => $user]);
+                    // $height = $this->getDoctrine()->getRepository(Height::class)->findOneBy(['user' => $user]);
 
                     // $numHeight++; // Incrémentez le numéro du poids à chaque itération
                     $testSheet->setCellValue('O' . $heightRow, $height->getDate()->format('d/m/Y'));

@@ -7,7 +7,7 @@
 {% block body %}
     <link href="/css/attendance.css" rel="stylesheet"/>
     <style>
-        img {
+        .absent img {
             filter: grayscale(100%) brightness(50%);
         }
 
@@ -52,8 +52,8 @@
                 <div class="col">
                     <div class="img card-attendance-u" data-user-id="{{ attendance.getUser().id }}" data-user-reason="{{ attendance.getReason }}">
                         <div class="abs {% if attendance.isPresent == 0 %}absent{% else %}present{% endif %}">
-                        {% if user.profileImage %}
-                            <img src="/uploads/images/{{ user.profileImage }}" class="card-img-top zoom" alt="...">
+                        {% if attendance.getUser().profileImage %}
+                            <img src="/uploads/images/{{ attendance.getUser().profileImage }}" class="card-img-top zoom" alt="...">
                         {% else %}
                             <img src="/images/inconnu.jpg" class="card-img-top zoom" alt="...">
                         {% endif %}
@@ -70,13 +70,13 @@
         </div>
 
         <center>
-            <div class="pt-2">
+            <div class="pt-4">
                 <label for="attendanceDate">Date et heure :</label>
                 <input id="attendanceDate" type="datetime-local">
             </div>
         </center>
 
-        <div class="g-4 pt-5 row">
+        <div class="g-4 pt-4 row">
             <div class="col text-end" style="text-align: start;">
                 <a class="btn btn-success" id="modifierAppel">
                     <i class="fa-solid fa-check"></i>
@@ -89,13 +89,13 @@
             </div>
         </div>
 
-        <div class="g-4 pt-3 pb-3">
+        {# <div class="g-4 pt-3 pb-3">
             <div class="col text-center" style="text-align: start;">
                 <a href="/" class="btn btn-info">
                     <i class="fa-solid fa-house"></i>
                     Accueil</a>
             </div>
-        </div>
+        </div> #}
 
         <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
             <div class="d-flex">

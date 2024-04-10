@@ -12,6 +12,8 @@ use App\Repository\TestsRepository;
 use App\Repository\PalierRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\HeightVerificationService;
+use App\Service\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,17 +29,24 @@ class TestsController extends AbstractController
 {
 
     private $userVerificationService;
+    private $heightVerificationService;
+    private $weightVerificationService;
+    private $entityManager;
 
-    public function __construct(UserVerificationService $userVerificationService, TestsRepository $testsRepository){
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService, EntityManagerInterface $entityManager){
         $this->userVerificationService = $userVerificationService;
+        $this->heightVerificationService = $heightVerificationService;
+        $this->weightVerificationService = $weightVerificationService; 
+        $this->entityManager = $entityManager;
     }
 
+    
     #[Route('/', name: 'app_tests_index')]
-    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, PalierRepository $palierRepository): Response
+    public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository): Response
     {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
 
         $tests = $testsRepository->findAll();
         
@@ -47,17 +56,17 @@ class TestsController extends AbstractController
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
 
-        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH')) {
             $selectedUser = $userRepository->find($selectedUserId);
             $tests = $selectedUser ? $selectedUser->getTests() : [];
-        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
             if ($selectedCategory) {
                 $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
                 $tests = $this->getTestsByCategory($userRepository, $selectedCategory);
             } else {
                 $usersByCategory = $this->getUsersGroupedByCategory($userRepository);
-                $tests = $this->getDoctrine()->getRepository(Tests::class)->findAll();
+                $tests = $this->entityManager->getRepository(Tests::class)->findAll();
             }
         } else {
             $tests = $user ? $user->getTests() : [];
@@ -78,25 +87,38 @@ class TestsController extends AbstractController
             }
         });
 
-        // Passage des tests triés au template Twig
-        return $this->render('tests/index.html.twig', [
-            'controller_name' => 'TestsController',
-            'location' => 'c',
-            'tests' => $testsArray,
-            'users' => $userRepository->findAll(),
-            'user' => $user,
-            'selectedUserId' => $selectedUserId,
-            'usersByCategory' => $usersByCategory, // Passer la variable usersByCategory au template Twig
-            'order' => $order, // Passer l'ordre de tri au template Twig
-        ]);
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    // Passage des tests triés au template Twig
+                    return $this->render('tests/index.html.twig', [
+                        'controller_name' => 'TestsController',
+                        'location' => 'c',
+                        'tests' => $testsArray,
+                        'users' => $userRepository->findAll(),
+                        'user' => $user,
+                        'selectedUserId' => $selectedUserId,
+                        'usersByCategory' => $usersByCategory, // Passer la variable usersByCategory au template Twig
+                        'order' => $order, // Passer l'ordre de tri au template Twig
+                    ]);
+                }
+            }
+        }
 
     }
     
     #[Route('/new', name: 'app_tests_new', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function new(Request $request, TestsRepository $testsRepository, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
 
         if (!$this->userVerificationService->verifyUser()) {
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
@@ -110,10 +132,10 @@ class TestsController extends AbstractController
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
 
-        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH')) {
             $selectedUser = $userRepository->find($selectedUserId);
             $tests = $selectedUser ? $selectedUser->getTests() : [];
-        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        } elseif ($this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH')) {
             // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
             if ($selectedCategory) {
                 $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
@@ -200,9 +222,12 @@ class TestsController extends AbstractController
 
 
     #[Route('/tests/{id}/edit', name: 'app_tests_edit', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function edit(Request $request, TestsRepository $testsRepository, $id): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -217,7 +242,7 @@ class TestsController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($this->isGranted("ROLE_SUPER_ADMIN")) {
+        if ($this->isGranted("ROLE_SUPER_ADMIN") || $this->isGranted('ROLE_COACH')) {
             // Si c'est un superadmin, utilisez l'id du joueur sélectionné depuis le formulaire
             $selectedUser = $form->get('user')->getData();
             $playerId = $selectedUser->getId();
@@ -241,9 +266,12 @@ class TestsController extends AbstractController
         ]);
     }
     #[Route('/{id}/delete', name: 'app_tests_delete', methods: ['GET', 'POST', 'DELETE'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function delete(Request $request, TestsRepository $testsRepository, $id): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -323,6 +351,10 @@ class TestsController extends AbstractController
     #[Route('/cancel-test/{id}', name: 'app_cancel_test', methods: ['GET', 'POST'])]
     public function cancelTest(Request $request, EntityManagerInterface $entityManager, $id): JsonResponse
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         // Récupérez le test à partir de l'ID
         $test = $entityManager->getRepository(Tests::class)->find($id);
         

@@ -7,7 +7,7 @@
 {% block body %}
     <link href="/css/attendance.css" rel="stylesheet"/>
     <style>
-        img {
+        .absent img {
             filter: grayscale(100%) brightness(50%);
             background-size: cover;
             object-fit: cover;
@@ -90,13 +90,13 @@
             </div>
         </div>
 
-        <div class="g-4 pt-3 pb-3">
+        {# <div class="g-4 pt-3 pb-3">
             <div class="col text-center" style="text-align: start;">
                 <a href="/" class="btn btn-info">
                     <i class="fa-solid fa-house"></i>
                     Accueil</a>
             </div>
-        </div>
+        </div> #}
         
         <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
             <div class="d-flex">

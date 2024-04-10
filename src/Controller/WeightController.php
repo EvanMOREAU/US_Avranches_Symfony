@@ -17,6 +17,10 @@ class WeightController extends AbstractController
     #[Route('/', name: 'app_weight_index', methods: ['GET'])]
     public function index(WeightRepository $weightRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         return $this->render('weight/index.html.twig', [
             'weights' => $weightRepository->findAll(),
             'location' => '',
@@ -52,6 +56,10 @@ class WeightController extends AbstractController
     #[Route('/{id}', name: 'app_weight_show', methods: ['GET'])]
     public function show(Weight $weight): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         return $this->render('weight/show.html.twig', [
             'weight' => $weight,
             'location' => '',
@@ -61,6 +69,10 @@ class WeightController extends AbstractController
     #[Route('/{id}/edit', name: 'app_weight_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Weight $weight, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         $form = $this->createForm(WeightType::class, $weight);
         $form->handleRequest($request);
 
@@ -79,6 +91,10 @@ class WeightController extends AbstractController
     #[Route('/{id}', name: 'app_weight_delete', methods: ['POST'])]
     public function delete(Request $request, Weight $weight, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+        
         if ($this->isCsrfTokenValid('delete'.$weight->getId(), $request->request->get('_token'))) {
             $entityManager->remove($weight);
             $entityManager->flush();

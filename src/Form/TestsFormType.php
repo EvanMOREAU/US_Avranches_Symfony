@@ -95,8 +95,10 @@ class TestsFormType extends AbstractType
             'placeholder' => 'Choisir un utilisateur',
             'query_builder' => function (EntityRepository $er) {
                 return $er->createQueryBuilder('u')
-                    ->orderBy('u.first_name', 'ASC') // Tri par prénom d'utilisateur par ordre alphabétique
-                    ->addOrderBy('u.last_name', 'ASC'); // Ensuite, tri par nom de famille d'utilisateur par ordre alphabétique
+                    ->andWhere('u.roles LIKE :role')
+                    ->setParameter('role', '%"ROLE_PLAYER"%')
+                    ->orderBy('u.first_name', 'ASC')
+                    ->addOrderBy('u.last_name', 'ASC');
             },
         ]);
     }

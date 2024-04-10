@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Entity\Category;
 use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
 use App\Repository\HeightRepository;
@@ -11,22 +12,27 @@ use App\Repository\WeightRepository;
 use App\Services\ImageUploaderHelper;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\HeightVerificationService;
+use App\Service\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use App\Entity\Category;
 
 #[Route('/user')]
 class UserController extends AbstractController
 {
 
     private $userVerificationService;
+    private $heightVerificationService;
+    private $weightVerificationService;
 
-    public function __construct(UserVerificationService $userVerificationService)
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService)
     {
         $this->userVerificationService = $userVerificationService;
+        $this->heightVerificationService = $heightVerificationService;
+        $this->weightVerificationService = $weightVerificationService; 
     }
   
     #[Route('/poste/set-poste-principal/{id}', name: 'app_set_poste_principal')]
@@ -67,6 +73,10 @@ class UserController extends AbstractController
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -76,23 +86,14 @@ class UserController extends AbstractController
             'location' => 'n',
         ]);
     }
-    
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user): Response
-    {
-        if(!$this->userVerificationService->verifyUser()){
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('user/show.html.twig', [
-            'user' => $user,
-            'location' => 'n',
-        ]);
-    }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserRepository $userRepository, ImageUploaderHelper $imageUploaderHelper, UserPasswordHasherInterface $passwordHasher): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -108,11 +109,10 @@ class UserController extends AbstractController
         $category = $categoryRepository->findOneBy(['name' => $anneeNaissance]);
 
             
-        // Créer le formulaire
         $form = $this->createForm(UserType::class, $user, [
             'category' => $category->getId(),
         ]);
-
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form->get('plainPassword')->getData();
     
@@ -145,6 +145,10 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager, WeightRepository $weightRepository, HeightRepository $heightRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
@@ -167,39 +171,58 @@ class UserController extends AbstractController
     #[Route('/{id}/poste-cache', name: 'app_user_cacheposte', methods: ['GET'])]
     public function poste_cache(user $user, LoggerInterface $logger): Response
     {
-        if (!$this->isAccessGranted($user)) {
-            throw $this->createAccessDeniedException('Access denied.');
+        if (!$this->isGranted('ROLE_PLAYER')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
 
-        return $this->render('user/hiddenposte.html.twig', [
-            'user' => $user,
-            'location' => 'e',
-        ]);
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    return $this->render('user/hiddenposte.html.twig', [
+                        'user' => $user,
+                        'location' => 'e',
+                    ]);
+                }
+            }
+        }
     }
 
     #[Route('/{id}/poste', name: 'app_user_poste', methods: ['GET'])]
     public function poste(user $user, LoggerInterface $logger): Response
     {
-        if (!$this->isAccessGranted($user)) {
-            throw $this->createAccessDeniedException('Access denied.');
+        if (!$this->isGranted('ROLE_PLAYER')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
-
-        return $this->render('user/poste.html.twig', [
-            'user' => $user,
-            'location' => 'e',
-        ]);
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    return $this->render('user/poste.html.twig', [
+                        'user' => $user,
+                        'location' => 'e',
+                    ]);
+                }
+            }
+        }
     }
 
-    private function isAccessGranted(User $user): bool
-    {
-        $currentUser = $this->getUser();
-
-        if ($this->isGranted('ROLE_ADMIN')) {
-            return true;
-        }
-        
-        return $currentUser && $currentUser->getId() === $user->getId();
-    }
 
     #[Route('/poste/poste-coach', name: 'app_user_coach', methods: ['GET'])]
     public function poste_coach(LoggerInterface $logger): Response

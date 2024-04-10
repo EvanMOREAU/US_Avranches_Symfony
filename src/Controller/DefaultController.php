@@ -3,11 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\PalierRepository;
-use App\Repository\TestsRepository;
 use App\Repository\UserRepository;
+use App\Repository\TestsRepository;
+use App\Repository\PalierRepository;
 use App\Repository\WeightRepository;
 use App\Service\UserVerificationService;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Service\HeightVerificationService;
 use App\Service\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +31,7 @@ class DefaultController extends AbstractController
 
 
     #[Route('/', name: 'app_default')]
-    public function index(TestsRepository $testsRepository, UserRepository $userRepository, PalierRepository $palierRepository, WeightRepository $weightRepository): Response
+    public function index(TestsRepository $testsRepository, UserRepository $userRepository, PalierRepository $palierRepository, WeightRepository $weightRepository, EntityManagerInterface $entityManager): Response
     {
         $userVerif = $this->userVerificationService->verifyUser();
         $heightVerif = $this->heightVerificationService->verifyHeight();
@@ -39,7 +40,7 @@ class DefaultController extends AbstractController
         $user = $this->getUser();
         if ($user) {
             $user->setLastConnection(new \DateTime());
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
             $playerId = $user->getId();
             // $playerElementsCount = $testsRepository->countPlayerElements($playerId);
             $equipe = $user->getEquipe();
@@ -69,7 +70,6 @@ class DefaultController extends AbstractController
         }else{
             return $this->render('/login/index.html.twig', ['controller_name' => 'SecurityController','location' => 'a',]);
         }
-
         if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
         else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
         else if($userVerif == 1) {
@@ -91,8 +91,8 @@ class DefaultController extends AbstractController
                         'paliers' => $palierRepository->findAll(),
                         'weightIn' => $latestWeightDate,
                         'coachUsers' => $coachUsers,
- 
-                    ]);}
+                    ]);
+                }
                 return $this->render('base.html.twig', [
                     'controller_name' => 'DefaultController',
                     'location' => 'a',

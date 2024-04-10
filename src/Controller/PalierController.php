@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 
-use App\Entity\User;
 use App\Entity\Palier;
 use App\Form\PalierType;
 use App\Repository\UserRepository;
 use App\Repository\PalierRepository;
+use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\HeightVerificationService;
+use App\Service\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,6 +24,17 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 #[Route('/palier')]
 class PalierController extends AbstractController
 {
+    private $userVerificationService;
+    private $heightVerificationService;
+    private $weightVerificationService;
+
+    
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService)
+    {
+        $this->userVerificationService = $userVerificationService;
+        $this->heightVerificationService = $heightVerificationService;
+        $this->weightVerificationService = $weightVerificationService; 
+    }
 
     #[Route('/', name: 'app_palier_index', methods: ['GET', 'POST'])]
     public function index(PalierRepository $palierRepository, UserRepository $userRepository): Response
@@ -38,7 +51,7 @@ class PalierController extends AbstractController
             $videosToValidate[$palier->getId()] = $this->countVideosByPalier($palier);
         }
 
-        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($this->isGranted('ROLE_SUPER_ADMIN') or $this->isGranted('ROLE_COACH')) {
             return $this->render('palier/index_admin.html.twig', [
                 'paliers' => $paliers,
                 'users' => $userRepository->findAll(),
@@ -46,19 +59,34 @@ class PalierController extends AbstractController
                 'location' => 'd',
             ]);
         } else {
-            return $this->render('palier/index_user.html.twig', [
-                'paliers' => $paliers,
-                'location' => 'd',
-            ]);
+            $userVerif = $this->userVerificationService->verifyUser();
+            $heightVerif = $this->heightVerificationService->verifyHeight();
+            $weightVerif = $this->weightVerificationService->verifyWeight();
+            if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+            else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+            else if($userVerif == 1) {
+                if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+                else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+                else if($heightVerif == 1){
+                    if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                    else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                    else if($weightVerif == 1){
+                        return $this->render('palier/index_user.html.twig', [
+                            'paliers' => $paliers,
+                            'location' => 'd',
+                        ]);
+            		}
+                }
+            }
         }
     }
 
     #[Route('/new', name: 'app_palier_new', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
-
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
         // Récupérer le numéro passé en paramètre
         $numero = $request->query->getInt('numero', 0);
 
@@ -91,24 +119,12 @@ class PalierController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_palier_show', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
-    public function show(Palier $palier): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
-
-        return $this->render('palier/show.html.twig', [
-            'palier' => $palier,
-            'location' => 'd',
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_palier_edit', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function edit(Request $request, Palier $palier, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
-
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
         $form = $this->createForm(PalierType::class, $palier);
         $form->handleRequest($request);
 
@@ -128,12 +144,12 @@ class PalierController extends AbstractController
 
 
     #[Route('/palier/{id}', name: 'app_palier_delete', methods: ['POST'])]
-    #[IsGranted("ROLE_SUPER_ADMIN")]
     public function delete(Request $request, Palier $palier, EntityManagerInterface $entityManager): Response
 
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
-
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
         $response = ['success' => false];
 
         if ($this->isCsrfTokenValid('delete' . $palier->getId(), $request->request->get('_token'))) {
@@ -164,6 +180,9 @@ class PalierController extends AbstractController
     #[Route('uploads/videos', name: 'upload_video', methods: ['POST'])]
     public function handleVideoUpload(Request $request): Response
     {
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
         // Récupérer le fichier vidéo téléchargé à partir de la requête
         $videoFile = $request->files->get('video');
 
@@ -176,15 +195,29 @@ class PalierController extends AbstractController
         $uploadedFileName = $this->uploadVideo($videoFile, $videoName);
 
         // Faites tout autre traitement nécessaire, par exemple, enregistrez le chemin du fichier dans la base de données
-
-        // Redirigez où vous le souhaitez après le téléchargement
-        return $this->redirectToRoute('app_palier_index');
+        if($userVerif == 0 ){return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);}
+        else if($userVerif == -1) {return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);} 
+        else if($userVerif == 1) {
+            if($heightVerif == -1){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 0){return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);}
+            else if($heightVerif == 1){
+                if($weightVerif == -1){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 0){return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);}
+                else if($weightVerif == 1){
+                    return $this->redirectToRoute('app_palier_index');
+                }
+            }
+        }
     }
 
     
     #[Route('/users/{palierNumero}', name: 'app_validation', methods: ['GET', 'POST'])]
     public function validation(Request $request, $palierNumero, UserRepository $userRepository, PalierRepository $palierRepository, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
+        }
+
         // Récupérer le palier correspondant au numéro donné
         $palier = $palierRepository->findOneBy(['numero' => $palierNumero]);
 
@@ -259,23 +292,6 @@ class PalierController extends AbstractController
         ]);
     }
 
-    private function countVideos(): int
-    {
-        // Chemin du dossier contenant les vidéos
-        $videoDirectory = 'uploads/videos/';
-
-        // Compteur pour stocker le nombre total de vidéos
-        $videoCount = 0;
-
-        // Vérifiez si le dossier existe
-        if (file_exists($videoDirectory)) {
-            // Comptez les fichiers dans le dossier (à l'exclusion des répertoires)
-            $videoCount = count(glob($videoDirectory . '/*.{mp4}', GLOB_BRACE));
-        }
-
-        // Retournez le nombre total de vidéos
-        return $videoCount;
-    }
     private function countVideosByPalier(Palier $palier): int
     {
         // Chemin du dossier contenant les vidéos
