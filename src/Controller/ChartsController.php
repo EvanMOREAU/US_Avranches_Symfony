@@ -16,6 +16,7 @@ use App\Service\HeightVerificationService;
 use App\Service\WeightVerificationService;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ChartConfigurationRepository;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/charts', name: 'app_charts')]
@@ -118,7 +119,7 @@ class ChartsController extends AbstractController
         $latestDate = null;
         $earliestDateWithType = null;
         $latestDateWithType = null;
-        $sixLastRecord = $this->getLastSixRecordsForUser();
+        $sixLastRecord = $this->getLastSixRecordsForUser($entityManager);
         foreach (['Height', 'Weight', 'Tests'] as $entityClass) {
             $entities = $entityManager->getRepository('App\\Entity\\'.$entityClass)->findBy(['user' => $user]);
             
@@ -209,7 +210,7 @@ class ChartsController extends AbstractController
         ];
     }
 
-    private function getLastSixRecordsForUser()
+    private function getLastSixRecordsForUser($entityManager)
     {
         
         $user = $this->getUser();
@@ -219,19 +220,19 @@ class ChartsController extends AbstractController
 
         $records = [];
 
-        $weightRecords = $this->getDoctrine()->getRepository(Weight::class)->findBy(['user' => $user], ['date' => 'DESC'], 6);
+        $weightRecords = $entityManager->getRepository(Weight::class)->findBy(['user' => $user], ['date' => 'DESC'], 6);
         foreach ($weightRecords as $record) {
             $record->type = 'Weight';
             $records[] = $record;
         }
     
-        $heightRecords = $this->getDoctrine()->getRepository(Height::class)->findBy(['user' => $user], ['date' => 'DESC'], 6);
+        $heightRecords = $entityManager->getRepository(Height::class)->findBy(['user' => $user], ['date' => 'DESC'], 6);
         foreach ($heightRecords as $record) {
             $record->type = 'Height';
             $records[] = $record;
         }
     
-        $testRecords = $this->getDoctrine()->getRepository(Tests::class)->findBy(['user' => $user], ['date' => 'DESC'], 6);
+        $testRecords = $entityManager->getRepository(Tests::class)->findBy(['user' => $user], ['date' => 'DESC'], 6);
         foreach ($testRecords as $record) {
             $record->type = 'Tests';
             $records[] = $record;
