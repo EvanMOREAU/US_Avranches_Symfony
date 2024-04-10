@@ -5,3 +5,18 @@ index:
 verif_code_page:
     path: /verif-code
     controller: App\Controller\CodeController::enterCode
+
+app_charts_details:
+    path: /charts/
+    controller: App\Controller\ChartsController::test
+    methods: GET
+
+app_charts_update_scale:
+    path: '/charts/updatescale'
+    controller: 'App\Controller\ChartsController::updateChartScale'
+    methods: ['POST']
+
+app_charts_update_palier:
+    path: '/charts/updatepalier'
+    controller: 'App\Controller\ChartsController::updateChartPalier'
+    methods: ['POST']

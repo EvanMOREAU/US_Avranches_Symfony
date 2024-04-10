@@ -8,19 +8,35 @@
     <div class="container">
             <script src="/js/redirect.js"></script>
             <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const conduiteBalleInput = document.querySelector('#{{ form.conduiteballe.vars.id }}');
-                    const vitesseInput = document.querySelector('#{{ form.vitesse.vars.id }}');
+            document.addEventListener('DOMContentLoaded', function () {
+                const userDropdown = document.querySelector('#userDropdown');
+                const formDataInputs = {
+                    vma: document.querySelector('#{{ form.vma.vars.id }}'),
+                    cooper: document.querySelector('#{{ form.cooper.vars.id }}'),
+                    demicooper: document.querySelector('#{{ form.demicooper.vars.id }}'),
+                    jongle_droit: document.querySelector('#{{ form.jongle_droit.vars.id }}'),
+                    jongle_gauche: document.querySelector('#{{ form.jongle_gauche.vars.id }}'),
+                    jongle_tete: document.querySelector('#{{ form.jongle_tete.vars.id }}'),
+                    conduiteballe: document.querySelector('#{{ form.conduiteballe.vars.id }}'),
+                    vitesse: document.querySelector('#{{ form.vitesse.vars.id }}'),
+                };
 
-                    conduiteBalleInput.addEventListener('input', function () {
-                        formatTimeInput(this);
-                    });
+                userDropdown.addEventListener('change', function () {
+                    const selectedUserId = this.value;
 
-                    vitesseInput.addEventListener('input', function () {
-                        formatTimeInput(this);
-                    });
+                    fetch(`/tests/last/${userId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            for (const key in data) {
+                                if (data.hasOwnProperty(key) && formDataInputs.hasOwnProperty(key)) {
+                                    formDataInputs[key].value = data[key];
+                                }
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
                 });
-            </script>
+            });
+        </script>
         {% endif %}
        {{ form_start(form, {'method': 'POST'}) }}
        <div class="container-fluid pt-3">
@@ -33,7 +49,7 @@
                         <div class="col-8">
                             <div class="form-group">
                                 {{ form_label(form.user, 'Utilisateur :', {'label_attr': {'class': 'form-control-label'}}) }}
-                                {{ form_widget(form.user, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_widget(form.user, {'attr': {'class': 'form-control', 'id': 'userDropdown'}}) }}
                                 {{ form_errors(form.user, {'attr': {'class': 'error-message'}}) }}
                             </div>
                         </div>

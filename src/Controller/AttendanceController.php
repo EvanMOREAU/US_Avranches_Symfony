@@ -54,6 +54,9 @@ class AttendanceController extends AbstractController
     #[Route('/appel/choix/{category}', name: 'app_attendance_choice')]
     public function choice(string $category): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException();
+        }
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -71,6 +74,9 @@ class AttendanceController extends AbstractController
     #[Route('/appel/entraînement/{category}', name: 'app_attendance_training')]
     public function training(string $category, UserRepository $UserRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException();
+        }
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -97,6 +103,9 @@ class AttendanceController extends AbstractController
     #[Route('/appel/match/{category}', name: 'app_attendance_match_choice')]
     public function choiceMatch(string $category, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException();
+        }
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -137,6 +146,9 @@ class AttendanceController extends AbstractController
     #[Route('/appel/match/{category}/{team}/{teamid}', name: 'app_attendance_match')]
     public function match(string $category, string $team, string $teamid, UserRepository $UserRepository, EquipeRepository $equipeRepository, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException();
+        }
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -167,6 +179,9 @@ class AttendanceController extends AbstractController
     #[Route('/create-training-attendance-{category}', name: 'create_training_attendance', methods: ['POST'])]
     public function createTrainingAttendance(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException();
+        }
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -252,6 +267,9 @@ class AttendanceController extends AbstractController
     #[Route('/modify-attendance/{gathering}', name: 'modify_attendance', methods: ['GET'])]
     public function modifyAttendance(string $gathering, UserRepository $UserRepository, AttendanceRepository $attendanceRepository, GatheringRepository $gatheringRepository): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException();
+        }
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -289,6 +307,9 @@ class AttendanceController extends AbstractController
     #[Route('/update-attendance/{gathering}', name: 'update_attendance', methods: ['POST'])]
     public function updateAttendance(string $gathering, UserRepository $userRepository, AttendanceRepository $attendanceRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw new AccessDeniedException();
+        }
         // Vérifie si l'utilisateur a le rôle ROLE_SUPER_ADMIN
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');

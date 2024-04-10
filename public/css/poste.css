@@ -1,3 +1,9 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
 
 /* Fond bouton de selection (base de la page) */
 td {
@@ -122,4 +128,3 @@ td {
     top: 29%;
     left: 45%;
 }
-
