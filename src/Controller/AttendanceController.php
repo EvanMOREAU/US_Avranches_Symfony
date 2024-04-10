@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\AttendanceRepository;
+use App\Repository\GatheringRepository;
 use App\Repository\EquipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -264,7 +265,7 @@ class AttendanceController extends AbstractController
 
     // Affichage la page permettant la modification d'appel
     #[Route('/modify-attendance/{gathering}', name: 'modify_attendance', methods: ['GET'])]
-    public function modifyAttendance(string $gathering, UserRepository $UserRepository, AttendanceRepository $attendanceRepository, ): Response
+    public function modifyAttendance(string $gathering, UserRepository $UserRepository, AttendanceRepository $attendanceRepository, GatheringRepository $gatheringRepository): Response
     {
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException();
@@ -286,6 +287,10 @@ class AttendanceController extends AbstractController
             return $user->getCategory() === $category;
         });
 
+        $gatheringEntity = $gatheringRepository->find($gathering);
+
+        $gatheringHapennedDate = $gatheringEntity->getGatheringHappenedDate();
+
         // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/modify_attendance.html.twig', [
             'controller_name' => 'AttendanceController',
@@ -294,6 +299,7 @@ class AttendanceController extends AbstractController
             'users' => $usersInCategory,
             'gathering' => $gathering,
             'attendances' => $attendances,
+            'gathering_happened_date' => $gatheringHapennedDate
         ]);
     }
 
