@@ -56,10 +56,10 @@ class TestsController extends AbstractController
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
 
-        if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH')) {
+        if ($selectedUserId && ($this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH'))) {
             $selectedUser = $userRepository->find($selectedUserId);
             $tests = $selectedUser ? $selectedUser->getTests() : [];
-        } elseif ($this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
+        } elseif (($this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH'))) {
             // Si la catégorie est définie, récupérez les joueurs en fonction de la catégorie
             if ($selectedCategory) {
                 $usersByCategory = $this->getUsersByCategory($userRepository, $selectedCategory);
@@ -367,6 +367,23 @@ class TestsController extends AbstractController
 
         // Répondez avec un JSON indiquant le succès de l'opération
         return new JsonResponse(['success' => true]);
+    }
+
+
+    #[Route('/tests/last/{userId}', name: 'app_cancel_last', methods: ['GET', 'POST'])]
+    public function getLastTestForUser(TestRepository $testRepository, $userId)
+    {
+        // Recherche du dernier test de l'utilisateur spécifié
+        $lastTest = $testRepository->findOneBy(['user' => $userId], ['date' => 'DESC']);
+
+        // Vérifier si un test a été trouvé
+        if (!$lastTest) {
+            // Aucun test trouvé, retourner une réponse JSON avec un message d'erreur
+            return $this->json(['message' => 'Aucun test trouvé pour cet utilisateur.'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Test trouvé, retourner les données du test au format JSON
+        return $this->json($lastTest, Response::HTTP_OK, [], ['groups' => 'test_details']);
     }
 
 }

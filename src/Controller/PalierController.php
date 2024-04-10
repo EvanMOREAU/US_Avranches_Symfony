@@ -51,7 +51,7 @@ class PalierController extends AbstractController
             $videosToValidate[$palier->getId()] = $this->countVideosByPalier($palier);
         }
 
-        if ($this->isGranted('ROLE_SUPER_ADMIN') or $this->isGranted('ROLE_COACH')) {
+        if ($this->isGranted('ROLE_SUPER_ADMIN')||$this->isGranted('ROLE_COACH')) {
             return $this->render('palier/index_admin.html.twig', [
                 'paliers' => $paliers,
                 'users' => $userRepository->findAll(),
