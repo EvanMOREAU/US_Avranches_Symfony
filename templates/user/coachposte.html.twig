@@ -58,7 +58,7 @@
             <h1>Position des joueurs</h1>
             <img src="/images/terrain.jpg" alt="terrain" id="terrain">
             {% for user in users %}
-                {% if user.posteCoordX is not null %}
+                {% if user.posteCoordX is not null and user.equipe is not null %}
                     <img
                         src="/images/cercle.png"
                         alt="cercle"

@@ -238,8 +238,12 @@ class UserController extends AbstractController
     #[Route('/poste/poste-coach', name: 'app_user_coach', methods: ['GET'])]
     public function poste_coach(EntityManagerInterface $entityManager): Response
     {
-        $users = $entityManager->getRepository(user::class)->findAll();
-        $equipes = $entityManager->getRepository(Equipe::class)->findAll();
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw $this->createAccessDeniedException('Access denied.');
+        }
+        
+        $users = $this->getDoctrine()->getRepository(user::class)->findAll();
+        $equipes = $this->getDoctrine()->getRepository(Equipe::class)->findAll();
 
         return $this->render('user/coachposte.html.twig', [
             'users' => $users,
