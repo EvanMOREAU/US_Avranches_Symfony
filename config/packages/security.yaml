@@ -47,7 +47,12 @@ security:
     access_control:
         - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/conditions-utilisation$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/reset-password$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/check-email$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/reset$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+
 
 when@test:
     security:

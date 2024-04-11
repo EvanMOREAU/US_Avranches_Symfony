@@ -46,8 +46,67 @@ Commencer u10 jusqu’en u17 —> permettre à l’administrateur de créer une 
 ===========================================================
 
 
+
 En cours: 
 
 Upload d'image de profile.
 Extension installé : vich/uploader-bundle
 
+
+Modal pour supprimer des cruds
+
+A faire : 
+ Bouton "active" dans la barre des tâches -> Fait
+ Gestion A2F -> Fait
+ Utilisateur -> Edit + Index -> Fait
+ Parameter -> Fait
+
+==========================================================
+
+Tableau de bord 
+    -> Si Coach 
+        -> Afficher tous les users étant coach à la place de l'équipe
+        -> Afficher tous les paliers (Validés d'office)
+
+Graphique
+    -> Si coach
+        -> Afficher tous les paliers (Validés d'office)
+        -> Voir tous les graphiques
+        -> Ajouter les possibilité de voir les graphiques d'un joueur
+Paliers
+    -> Si coach
+        -> Possibilité d'accéder au CRUD
+
+Poste
+    -> Si Coach
+        -> Ne pas y avoir accès ( Valeurs restent en NULL)
+
+PDF
+    -> Si Coach
+        -> Accéder à les liste des joueurs et choisir le pdf d'un joueur
+        -> Déplacer le bouton dans "Administration"
+
+ALL
+    -> revoir la sécurité
+    -> Installer les sécu Poid/Taille partout
+
+
+lien redirection page login non fonctionnels -> Résolu
+Tester reset password
+Refaire front de la selection de date
+Refaire les modals pour les CRUD
+Changer invalid credentials du Login
+Changer les plain password dans les paramètres (Frontend)
+
+<<<<<<< HEAD
+Ajouter le lien vers la doc utilisateur dans la personalisation de la page.
+=======
+
+
+
+
+
+
+===============
+composer require intervention/image -> En test (PDF)
+>>>>>>> 6b69fad984dad2ff6585b37e41e57f69ce90560c

@@ -4,75 +4,75 @@ namespace App\Controller;
 
 use App\Entity\Pdf;
 use App\Entity\User;
+use App\Entity\Player;
+use App\Entity\Height;
 use App\Entity\Weight;
 use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
 use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\HeightVerificationService;
+use App\Service\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\ChartConfigurationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+#[Route('/pdf', name: 'app_pdf')]
 class PdfController extends AbstractController
 {
     private $userVerificationService;
+    private $heightVerificationService;
+    private $weightVerificationService;
+    private $tokenStorage;
 
-    public function __construct(UserVerificationService $userVerificationService)
+    public function __construct(UserVerificationService $userVerificationService, HeightVerificationService $heightVerificationService, WeightVerificationService $weightVerificationService, TokenStorageInterface $tokenStorage)
     {
         $this->userVerificationService = $userVerificationService;
+        $this->heightVerificationService = $heightVerificationService;
+        $this->weightVerificationService = $weightVerificationService;
+        $this->tokenStorage = $tokenStorage;
+
     }
 
-    #[Route('/pdf', name: 'app_pdf')]
-
-    public function pdf(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, EntityManagerInterface $entityManager): Response
+    #[Route('/', name: 'app_pdf_index')]
+    public function pdf(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, ChartConfigurationRepository $chartConfigurationRepository, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->userVerificationService->verifyUser()) {
-            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
-        }
+        // Récupérer l'ID de l'utilisateur à partir de la route
+        $userId = $request->attributes->get('userId');
 
-        // Récupérez le token d'authentification de l'utilisateur actuellement connecté.
-        $token = $this->get('security.token_storage')->getToken();
+        // Vérifier le rôle de l'utilisateur
+        if ($this->isGranted('ROLE_COACH') || $this->isGranted('ROLE_SUPER_ADMIN')) {
+            // L'utilisateur a le rôle ROLE_COACH ou ROLE_SUPER_ADMIN, récupérer les données du joueur ciblé
+            $user = $userRepository->find($userId);
 
-        // Vérifiez le rôle de l'utilisateur
-        if ($this->isGranted('ROLE_COACH')) {
-            // L'utilisateur est super admin, vérifiez s'il a sélectionné un autre utilisateur
-            $selectedUserId = $request->query->get('userId'); // Use 'userId' as the parameter name
-    
-            if ($selectedUserId) {
-                $selectedUser = $userRepository->find($selectedUserId);
-    
-                if (!$selectedUser) {
-                    throw $this->createNotFoundException('Utilisateur non trouvé');
-                }
-    
-                $user = $selectedUser;
+            if (!$user) {
+                throw $this->createNotFoundException('Utilisateur non trouvé');
             }
-        } elseif ($token instanceof TokenInterface) {
-            // Si ce n'est pas un super admin, utilisez l'utilisateur du token
-            $user = $token->getUser();
+        } else {
+            // Utilisateur ordinaire, utiliser les données de l'utilisateur actuellement connecté
+            $user = $this->getUser();
+            if (!$user) {
+                // Rediriger vers une page d'erreur ou afficher un message d'erreur
+                throw new \Exception('Token d\'authentification non trouvé');
+            }
         }
 
-        // Créez une nouvelle instance de la classe PDF.
         $pdf = new Pdf();
 
-        if ($token instanceof TokenInterface) {
-            // Récupérez l'utilisateur à partir du token d'authentification.
-            $user = $token->getUser();
-
+        if ($user !== null) {
             if ($user instanceof User) {
-
                 $tests = $testsRepository->findBy(['user' => $user]);
 
-                // Récupérez les tests triés par date décroissante
+                // Récupérer les tests triés par date décroissante
                 $tests = $testsRepository->findBy(['user' => $user], ['date' => 'DESC']);
 
                 // Configuration du PDF
                 $pdf->SetAuthor('SIO TEAM ! 💻');
                 $pdf->SetTitle('Fiche joueur');
                 $pdf->SetFont('times', '', 14);
-
 
                 // Ajout d'une nouvelle page
                 $pdf->AddPage();
@@ -82,34 +82,106 @@ class PdfController extends AbstractController
                 $largeurPage = $pdf->getPageWidth() + 30;
                 $hauteurPage = $pdf->getPageHeight() - 25;
 
+                $pdf->SetX(10); // Définir la position X pour les informations du joueur
                 // Configuration de la police et des couleurs
                 $pdf->SetFont('helvetica', '', 20);
                 $pdf->SetTextColor(0, 0, 0);
 
-                // Ajout du titre de la fiche du joueur
-                $pdf->MultiCell(80, 10, "FICHE DU JOUEUR", 0, '', 0, 1, '', '', false, 0, false, false, 0, '');
+                $pdf->MultiCell(70, 10, $user->getFirstName() . ' ' . $user->getLastName(), 0, 'C', 0, 1, '10', '45', true);
+                $pdf->SetFont('helvetica', '', 15);
 
-                // Ajout du nom du joueur
-                $pdf->MultiCell(70, 10, $user->getFirstName() . ' ' . $user->getLastName(), 0, 'C', 0, 1, '', '', true);
+                $pdf->MultiCell(70, 0, $user->getDateNaissance()->format('d/m/Y') . ' ' . '(' . $user->getCategory() . ')', 0, 'C', 0, 1, '10', '55', true);
 
                 // Configuration de la police et des couleurs pour le contenu du joueur
                 $pdf->SetFont('helvetica', 'B', 20);
                 $pdf->SetTextColor(0, 0, 0);
 
+                // Récupérer les données de taille et de poids associées à l'utilisateur
+                $heights = $entityManager->getRepository(Height::class)->findBy(['user' => $user], ['date' => 'ASC']);
+                $weights = $entityManager->getRepository(Weight::class)->findBy(['user' => $user], ['date' => 'ASC']);
+
+                // Construction du contenu des tailles
+                $contentHeights = '';
+                $lastFiveHeights = array_slice($heights, -3); // Obtenir les 5 dernières tailles
+                foreach ($lastFiveHeights as $height) {
+                    $contentHeights .= '<b>Taille :</b> ' . $height->getValue() . ' cm (' . $height->getDate()->format('d/m/Y') . ')<br>';
+                    $contentHeights .= '<br>'; // Ajout d'un espace entre chaque ligne de taille
+                }
+
+                $pdf->SetFont('helvetica', 'B', 20);
+                $pdf->SetTextColor(0, 0, 0);
+
+                // Construction du contenu des poids
+                $contentWeights = '';
+                $lastFiveWeights = array_slice($weights, -3); // Obtenir les 5 derniers poids
+                foreach ($lastFiveWeights as $weight) {
+                    $contentWeights .= '<b>Poids :</b> ' . $weight->getValue() . ' kg (' . $weight->getDate()->format('d/m/Y') . ')<br>';
+                    $contentWeights .= '<br>'; // Ajout d'un espace entre chaque ligne de poids
+                }
+
                 // Contenu du joueur (avec HTML)
                 $contentInfos = '
                     <style>.link { color: rgb(42, 56, 114) }</style>
-                    <br><br><br>
-                    <b><i>  Informations du joueur : </i></b>
-                    <br><br>
-                    <p><b>Date de naissance : </b>' . $user->getDateNaissance()->format('d/m/Y') . '
-                    <br><hr><br><div></div>
-                    <b>Catégorie : </b>' . $user->getCategory() . '
-                    <br><hr><br><div></div>
-                    <b>Nombre de matchs joués :</b> 2
-                    <br><hr><br><div></div>
-                    </p>
-                    <p><b> Contact :</b>
+                    <br><br><br><br><br><br><br><br><br><br><br><br>
+                    <b><i>Informations du joueur : </i></b>
+                    <br><hr><br><div></div><div></div><div></div>
+                    <u>Email de contact</u> : ' . $user->getEmail() . '
+                    </p>';
+
+                // Ajout du contenu du joueur au PDF
+                $pdf->SetFont('helvetica', '', 10);
+                $pdf->writeHTMLCell(70, 230, '', '', $contentInfos, 0, 0, 0, true, '', true);
+
+                // Déplacer le curseur pour afficher le tableau
+                $pdf->SetY(150);
+                $pdf->SetX(110);
+                $pdf->SetFont('helvetica', '', 12);
+
+                // Définir les largeurs des colonnes
+                $heightColumnWidth = 140; // Largeur de la colonne des tailles
+                $weightColumnWidth = 140; // Largeur de la colonne des poids
+
+                // Créer le tableau HTML
+                $htmlTable = '
+                    <table border="0" cellpadding="6">
+                        <thead>
+                            <tr align="center">
+                                <th width="' . $heightColumnWidth . '"><b>Tailles</b></th>
+                                <th width="' . $weightColumnWidth . '"><b>Poids</b></th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+
+                // Compteur pour limiter l'affichage à un maximum de trois données
+                $count = 0;
+
+                // Ajouter les données des tailles et des poids dans le tableau
+                foreach ($lastFiveHeights as $index => $height) {
+                    if ($count >= 3) {
+                        break; // Arrêter la boucle une fois que trois données ont été ajoutées
+                    }
+
+                    $weight = $lastFiveWeights[$index]; // Récupérer le poids correspondant
+                    $htmlTable .= '
+                    <tr align="center">
+                        <td width="' . $heightColumnWidth . '">' . $height->getValue() . ' cm (' . $height->getDate()->format('d/m/Y') . ')</td>
+                        <td width="' . $weightColumnWidth . '">' . $weight->getValue() . ' kg (' . $weight->getDate()->format('d/m/Y') . ')</td>
+                    </tr>';
+
+                    $count++; // Incrémenter le compteur
+                }
+                $htmlTable .= '
+                        </tbody>
+                    </table>';
+                // Afficher le tableau HTML dans le PDF
+                $pdf->writeHTML($htmlTable, true, false, false, false, '');
+
+                // Déplacer le curseur vers le bas de la page
+                $pdf->SetY($hauteurPage - 80); // Ajustez la valeur en fonction de la position souhaitée
+                $pdf->SetFont('helvetica', '', 10);
+                // Contenu du paragraphe "Contact"
+                $contentContact = '
+                    <p><b> Contact :</b><br>
                     <br> Christelle DELARUE<br>
                     <br>
                     Club House US Avranches MSM<br>
@@ -122,15 +194,23 @@ class PdfController extends AbstractController
                     <span class="link"><u>us.avranches@orange.fr</u></span>
                     </p>';
 
-                // Ajout du contenu du joueur au PDF
-                $pdf->SetFont('helvetica', '', 10);
-                $pdf->writeHTMLCell(65, 230, '', '', $contentInfos, 0, 0, 0, true, '', true);
+                // Ajout du contenu du paragraphe "Contact" au PDF
+                $pdf->writeHTMLCell(0, 0, '', '', $contentContact, 0, 1, 0, true, '', true);
 
-                // Ajout d'une image au PDF
-                $pdf->Image('img/anonyme.jpg', 130, 33.3, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                $profileImagePath = 'uploads/images/' . $user->getId() . '.jpg';
+
+                $posX = 138;
+                $posY = 60;
+
+                if (file_exists($profileImagePath)) {
+                    // Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false)
+                    $pdf->Image($profileImagePath, $posX, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                } else {
+                    // Utilisez une image anonyme
+                    $pdf->Image('img/anonyme.jpg', 130, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                }
 
                 foreach ($tests as $test) {
-
                     // Ajout d'une nouvelle page pour chaque test
                     $pdf->AddPage();
                     $pdf->setJPEGQuality(75);
@@ -139,127 +219,268 @@ class PdfController extends AbstractController
                     $largeurPage = $pdf->getPageWidth() + 30;
                     $hauteurPage = $pdf->getPageHeight() - 25;
 
-                    $pdf->SetFontSize(16); // Définir la taille de police à 16 points (ajustez selon vos besoins)
-                    $pdf->MultiCell(70, 10, $user->getFirstName() . ' ' . $user->getLastName(), 0, 'C', 0, 1, '', '', true);
-                    $pdf->SetFontSize(10); // Rétablir la taille de police à la valeur par défaut (si nécessaire)
-
-                    // --- Contenu du pdf ---
-                    $contentTests = '<br><br><br>';
-                    // Afficher les poids
-                    $weights = $this->getWeightsForUser($user, $entityManager);
-                    foreach ($weights as $weight) {
-                        // Utilisez la fonction pour récupérer la date du poids la plus proche
-                        // $nearestWeightDate = $this->getNearestWeightDate($user, $test->getDate(), $entityManager);
-                        $date = $weight->getDate();
-                        $contentTests .= '<br><hr><br><div></div>';
-                        $contentTests .= '<b>Poids le </b>';
-
-                        //Affichez la date du poids sur le PDF si elle est disponible
-                        if ($date) {
-                            $formatted_date = $date->format("d-m-Y");
-
-                            $contentTests .= '<b>' . $formatted_date . ' :</b> ' . $weight->getValue() . ' kg';
-                        }else {
-                            $contentTests .= "fail";
-                        }
-                            // } else {
-                        //     $contentTests .= $weight->getValue() . ' kg';
-                        // }
-                        // Affichez la date du poids sur le PDF si elle est disponible
-                        // if ($nearestWeightDate) {
-                        //     $contentTests .= '<b>' . $nearestWeightDate->format('d/m/Y') . ' :</b> ' . $weight->getValue() . ' kg';
-                        // } else {
-                        //     $contentTests .= $weight->getValue() . ' kg';
-                        // }
-                        // N'affichez qu'une seule fois, car vous avez déjà récupéré tous les poids en dehors de cette boucle
-                        break;
-                    }
-                    $contentTests .= '<br><hr><br><div></div>
-                    <b>Taille :</b> 173 cm
-                    <br><hr><br><div></div>
-                    <p><b>VMA : </b>' . $test->getVma() . ' km/h 
-                    <br><hr><br><div></div>
-                    <b>Cooper : </b>' . $test->getCooper() . ' mètres
-                    <br><hr><br><div></div>
-                    <b>Demi-cooper : </b>' . $test->getDemiCooper() . ' mètres
-                    <br><hr><br><div></div>
-                    <b>Jongles pied gauche : </b>' . $test->getJongleGauche() . ' 
-                    <br><hr><br><div></div>
-                    <b>Jongles pied droit : </b>' . $test->getJongleDroit() . ' 
-                    <br><hr><br><div></div>
-                    <b>Jongles tête : </b>' . $test->getJongleTete() . ' 
-                    <br><hr><br><div></div>
-                    <b>Date des tests : </b>' . $test->getDate()->format('d/m/Y') . ' 
-                    <br><hr><br><div></div>
-                    <b>Conduite de balle : </b>' . $test->getConduiteBalle() . ' secondes
-                    <br><hr><br><div></div>
-                    <b>Vitesse : </b>' . $test->getVitesse() . ' secondes
-                    </p>';
-
-                    $pdf->writeHTMLCell(65, 230, '', '', $contentTests, 0, 0, 0, true, '', true);
-                    // Ajout d'une image au PDF
-                    $pdf->Image('img/graph_' . $user->getFirstName() . '.jpg', 95, 150, 100, 100, '', '', '', false, 300, '', false, false, 1, false, false, false);
-
-                    // Insérer la date au dessus de l'image et faire en sorte qu'elle soit bien visible.
-                    $posX = 145;
-                    $posY = 33.3;
-                    $pdf->SetTextColor(255, 255, 255);
-                    $pdf->SetFontSize(20);
-                    $pdf->MultiCell($posX, $posY, $test->getDate()->format('d/m/Y, H:i:s'), 0, 'C', 0, 1, '', '', true);
-                    $pdf->SetFontSize(10);
+                    $pdf->SetX(10); // Définir la position X pour les informations du joueur
+                    // Configuration de la police et des couleurs
+                    $pdf->SetFont('helvetica', '', 20);
                     $pdf->SetTextColor(0, 0, 0);
 
-                    $pdf->Image('img/joueur.jpg', 130, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                    $pdf->MultiCell(70, 10, $user->getFirstName() . ' ' . $user->getLastName(), 0, 'C', 0, 1, '10', '45', true);
+                    $pdf->SetFont('helvetica', '', 15);
 
+                    $pdf->MultiCell(70, 0, $user->getDateNaissance()->format('d/m/Y') . ' ' . '(' . $user->getCategory() . ')', 0, 'C', 0, 1, '10', '55', true);
+                    $pdf->SetFontSize(10); // Rétablir la taille de police à la valeur par défaut (si nécessaire)
+
+                    $pdf->MultiCell(70, 0, 'Date du test : ' . $test->getDate()->format('d/m/Y'), 0, 'C', 0, 1, '10', '65', true);
+                    $pdf->SetFontSize(10); // Rétablir la taille de police à la valeur par défaut (si nécessaire)
+
+                    $profileImagePath = 'uploads/images/' . $user->getId() . '.jpg';
+
+                    $posX = 138;
+                    $posY = 60;
+
+                    if (file_exists($profileImagePath)) {
+                        // Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false)
+                        $pdf->Image($profileImagePath, $posX, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                    } else {
+                        // Utilisez une image anonyme
+                        $pdf->Image('img/anonyme.jpg', 130, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                    }
+
+                    // Contenu du joueur (avec HTML)
+                    $contentInfos = '
+                    <style>.link { color: rgb(42, 56, 114) }</style>
+                    <br><br><br><br><br><br><br><br><br><br><br><br>
+                    <b><i>Informations du joueur : </i></b>
+                    <br><hr><br><div></div><div></div><div></div>
+                    <u>Email de contact</u> : ' . $user->getEmail() . '
+                    </p>';
+
+                    // Ajout du contenu du joueur au PDF
+                    $pdf->SetFont('helvetica', '', 10);
+                    $pdf->writeHTMLCell(70, 230, '', '', $contentInfos, 0, 0, 0, true, '', true);
+
+                    // Définir les largeurs des colonnes pour le tableau des tests
+                    $vmaColumnWidth = 50;
+                    $cooperColumnWidth = 80;
+                    $demiCooperColumnWidth = 80;
+                    $jongleGaucheColumnWidth = 50;
+                    $jongleDroitColumnWidth = 50;
+                    $jongleTeteColumnWidth = 50;
+                    $conduiteBalleColumnWidth = 90;
+                    $vitesseColumnWidth = 70;
+
+                    // Créer le tableau HTML pour les tests (partie 1)
+                    $htmlTableTestsPart1 = '
+                    <table border="0.5" cellpadding="4">
+                        <thead>
+                            <tr align="center">
+                                <th width="' . $vmaColumnWidth . '"><b>VMA (km/h)</b></th>
+                                <th width="' . $cooperColumnWidth . '"><b>Cooper (mètres)</b></th>
+                                <th width="' . $demiCooperColumnWidth . '"><b>Demi-cooper (mètres)</b></th>
+                                <th width="' . $jongleGaucheColumnWidth . '"><b>Jongles pied gauche</b></th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+                    // Ajouter les données des tests dans le tableau (partie 1)
+                    $htmlTableTestsPart1 .= '
+                            <tr align="center">
+                                <td width="' . $vmaColumnWidth . '">' . $test->getVma() . '</td>
+                                <td width="' . $cooperColumnWidth . '">' . $test->getCooper() . '</td>
+                                <td width="' . $demiCooperColumnWidth . '">' . $test->getDemiCooper() . '</td>
+                                <td width="' . $jongleGaucheColumnWidth . '">' . $test->getJongleGauche() . '</td>
+                            </tr>';
+                    $htmlTableTestsPart1 .= '
+                        </tbody>
+                    </table>';
+
+                    // Créer le tableau HTML pour les tests (partie 2)
+                    $htmlTableTestsPart2 = '
+                    <table border="0.5" cellpadding="4">
+                        <thead>
+                            <tr align="center">
+                                <th width="' . $jongleDroitColumnWidth . '"><b>Jongles pied droit</b></th>
+                                <th width="' . $jongleTeteColumnWidth . '"><b>Jongles tête</b></th>
+                                <th width="' . $conduiteBalleColumnWidth . '"><b>Conduite de balle (secondes)</b></th>
+                                <th width="' . $vitesseColumnWidth . '"><b>Vitesse (secondes)</b></th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+                    // Ajouter les données des tests dans le tableau (partie 2)
+                    $htmlTableTestsPart2 .= '
+                            <tr align="center">
+                                <td width="' . $jongleDroitColumnWidth . '">' . $test->getJongleDroit() . '</td>
+                                <td width="' . $jongleTeteColumnWidth . '">' . $test->getJongleTete() . '</td>
+                                <td width="' . $conduiteBalleColumnWidth . '">' . $test->getConduiteBalle() . '</td>
+                                <td width="' . $vitesseColumnWidth . '">' . $test->getVitesse() . '</td>
+                            </tr>';
+                    $htmlTableTestsPart2 .= '
+                        </tbody>
+                    </table>';
+
+                    // Calculer la hauteur estimée des deux tableaux
+                    $htmlTableTestsPart1Height = count($tests) * 20;
+                    $htmlTableTestsPart2Height = count($tests) * 20;
+
+                    // Calculer la position Y du premier tableau pour le centrer verticalement
+                    $htmlTableTestsPart1Y = ($pdf->getPageHeight() - $htmlTableTestsPart1Height - $htmlTableTestsPart2Height) / 2;
+
+                    // Position Y du premier tableau
+                    $htmlTableTestsPart1Y = 130;
+
+                    // Position Y du deuxième tableau
+                    $htmlTableTestsPart2Y = $htmlTableTestsPart1Y + $htmlTableTestsPart1Height + 25;
+
+                    // Déplacer le curseur pour afficher le premier tableau
+                    $pdf->SetY($htmlTableTestsPart1Y);
+                    $pdf->SetX(110); // Assurez-vous que cela correspond à la position X que vous souhaitez
+
+                    // Afficher le premier tableau HTML dans le PDF
+                    $pdf->writeHTML($htmlTableTestsPart1, true, false, false, false, '');
+
+                    // Déplacer le curseur pour afficher le deuxième tableau
+                    $pdf->SetY($htmlTableTestsPart2Y); // Définir la position Y du deuxième tableau sous le premier
+                    $pdf->SetX(110); // Assurez-vous que cela correspond à la position X que vous souhaitez
+
+                    // Afficher le deuxième tableau HTML dans le PDF
+                    $pdf->writeHTML($htmlTableTestsPart2, true, false, false, false, '');
+
+                    // Déplacer le curseur vers le bas de la page
+                    $pdf->SetY($hauteurPage - 80); // Ajustez la valeur en fonction de la position souhaitée
+                    $pdf->SetFont('helvetica', '', 10);
+                    // Contenu du paragraphe "Contact"
+                    $contentContact = '
+                        <p><b> Contact :</b><br>
+                        <br> Christelle DELARUE<br>
+                        <br>
+                        Club House US Avranches MSM<br>
+                        Allée Jacques Anquetil<br>
+                        50300 Avranches.<br><br>
+                        <b>Téléphone :</b> 02.33.48.30.78 <br><br>
+                        <b>Mails :</b><br>
+                        <span class="link"><u>communication@us-avranches.fr</u></span><br>
+                        <span class="link"><u>partenaires@us-avranches.fr</u></span><br>
+                        <span class="link"><u>us.avranches@orange.fr</u></span>
+                        </p>';
+
+                    // Ajout du contenu du paragraphe "Contact" au PDF
+                    $pdf->writeHTMLCell(0, 0, '', '', $contentContact, 0, 1, 0, true, '', true);
+
+                    $profileImagePath = 'uploads/images/' . $user->getId() . '.jpg';
+
+                    $posX = 138;
+                    $posY = 60;
+
+                    if (file_exists($profileImagePath)) {
+                        // Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false)
+                        $pdf->Image($profileImagePath, $posX, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                    } else {
+                        // Utilisez une image anonyme
+                        $pdf->Image('img/anonyme.jpg', 130, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
+                    }
+
+
+
+
+                    // // --- Contenu du pdf ---
+                    // $contentTests = '<br><br><br>';
+
+                    // $contentTests .= '
+                    // <br><hr><br><div></div>
+                    // <p><b>VMA : </b>' . $test->getVma() . ' km/h 
+                    // <br><hr><br><div></div>
+                    // <b>Cooper : </b>' . $test->getCooper() . ' mètres
+                    // <br><hr><br><div></div>
+                    // <b>Demi-cooper : </b>' . $test->getDemiCooper() . ' mètres
+                    // <br><hr><br><div></div>
+                    // <b>Jongles pied gauche : </b>' . $test->getJongleGauche() . ' 
+                    // <br><hr><br><div></div>
+                    // <b>Jongles pied droit : </b>' . $test->getJongleDroit() . ' 
+                    // <br><hr><br><div></div>
+                    // <b>Jongles tête : </b>' . $test->getJongleTete() . ' 
+                    // <br><hr><br><div></div>
+
+                    // <br><hr><br><div></div>
+                    // <b>Conduite de balle : </b>' . $test->getConduiteBalle() . ' secondes
+                    // <br><hr><br><div></div>
+                    // <b>Vitesse : </b>' . $test->getVitesse() . ' secondes
+                    // </p>';
+
+                    // $pdf->writeHTMLCell(65, 230, '', '', $contentTests, 0, 0, 0, true, '', true);
+                    // // Ajout d'une image au PDF
                 }
 
                 // Génération du PDF et envoi en réponse
                 ob_clean(); // Efface la sortie tampon
-                return $pdf->Output('US-Avranches-' . '.pdf', 'I');
+                $pdfContent = $pdf->Output('US-Avranches-' . '.pdf', 'S');
+
+                $response = new Response($pdfContent, Response::HTTP_OK, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="US-Avranches.pdf"',
+                ]);
+
+                return $response;
             }
         }
+
         // Gestion des cas d'erreur
         return new Response('Erreur');
     }
 
-    private function getWeightsForUser(User $user, EntityManagerInterface $entityManager): array
+    #[Route('/list-players', name: 'app_pdf_list_players')]
+    public function listPlayers(UserRepository $userRepository): Response
     {
-        // Utilisez le repository de l'entité Weight pour récupérer tous les poids triés par date
-        $weights = $entityManager->getRepository(Weight::class)->findBy(['user' => $user], ['date' => 'ASC']);
+        $userVerif = $this->userVerificationService->verifyUser();
+        $heightVerif = $this->heightVerificationService->verifyHeight();
+        $weightVerif = $this->weightVerificationService->verifyWeight();
 
-        return $weights;
+        // Récupérez la liste des utilisateurs ayant le rôle ROLE_PLAYER
+        $players = $userRepository->findByRole('ROLE_PLAYER');
+        if ($userVerif == 0) {
+            return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
+        } else if ($userVerif == -1) {
+            return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);
+        } else if ($userVerif == 1) {
+            if ($heightVerif == -1) {
+                return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);
+            } else if ($heightVerif == 0) {
+                return $this->redirectToRoute('app_height_new', [], Response::HTTP_SEE_OTHER);
+            } else if ($heightVerif == 1) {
+                if ($weightVerif == -1) {
+                    return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);
+                } else if ($weightVerif == 0) {
+                    return $this->redirectToRoute('app_weight_new', [], Response::HTTP_SEE_OTHER);
+                } else if ($weightVerif == 1) {
+                    // Affichez la liste des joueurs dans une vue
+                    return $this->render('pdf/list.players.html.twig', [
+                        'players' => $players,
+                        'location' => 'f',
+                    ]);
+                }
+            }
+        }
     }
 
-    private function getNearestWeightDate(User $user, \DateTimeInterface $testDate, EntityManagerInterface $entityManager): ?\DateTimeInterface
+
+    #[Route('/{userId}', name: 'app_pdf_view_pdf')]
+    public function viewPdf(int $userId, Request $request, UserRepository $userRepository, TestsRepository $testsRepository, ChartConfigurationRepository $chartConfigurationRepository, EntityManagerInterface $entityManager): Response
     {
-        // Utilisez le repository de l'entité Weight
-        $queryBuilder = $entityManager->createQueryBuilder();
+        // Récupérez l'utilisateur
+        $user = $userRepository->find($userId);
 
-        $nearestWeightDate = $queryBuilder
-            ->select('w.date')
-            ->from(Weight::class, 'w')
-            ->where('w.user = :user')
-            ->andWhere('w.date <= :testDate')
-            ->setParameter('user', $user)
-            ->setParameter('testDate', $testDate)
-            ->orderBy('w.date', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult(\Doctrine\ORM\Query::HYDRATE_SINGLE_SCALAR);
+        // Vérifiez si l'utilisateur existe et a le rôle ROLE_PLAYER
+        if (!$user || !in_array('ROLE_PLAYER', $user->getRoles(), true)) {
+            // Redirigez vers une page d'erreur ou affichez un message d'erreur
+            throw $this->createNotFoundException('Utilisateur non trouvé ou n\'a pas le rôle de joueur.');
+        }
 
-        return $nearestWeightDate ? new \DateTimeImmutable($nearestWeightDate) : null;
+        // Créez une nouvelle instance de la classe Request avec les paramètres appropriés
+        $request = new Request([], [], ['userId' => $userId]);
+
+        // Appel de la méthode pdf avec le nouvel objet Request
+        $pdfResponse = $this->pdf($request, $userRepository, $testsRepository, $chartConfigurationRepository, $entityManager, $userId);
+
+        // Retournez la réponse du PDF
+        return $pdfResponse;
     }
 
-    #[Route('/choose-user-pdf', name: 'app_choose_user_pdf')]
-    public function chooseUserPdf(UserRepository $userRepository): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_COACH');
-
-        $users = $userRepository->findBy([], ['last_name' => 'ASC']);
-
-        return $this->render('pdf/choose_user_pdf.html.twig', [
-            'users' => $users,
-            'location' => 'f',
-        ]);
-    }
 }

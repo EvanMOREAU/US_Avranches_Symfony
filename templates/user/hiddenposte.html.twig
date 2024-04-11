@@ -1,8 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Selection du poste
-
-{% endblock %}
+{% block title %}Selection du poste{% endblock %}
 
 {% block body %}
 <script>
@@ -48,18 +46,28 @@ h4{
 
 </style>
 
-<center>
-    <div class="terrain">
-        <h1>Où souhaitez-vous jouer ?</h1>
-        <h4>🠕 On attaque dans ce sens 🠕</h4>
-        <img src="/images/terrain.jpg" alt="terrain" id="terrain">
-        <img src="/images/cercle.png" alt="cercle" id="cercle" {% if user.posteCoordX != null %}style="visibility:visible;"{% else %}style="visibility:hidden;"{% endif %}>
-        <p class="texte">{{ user.getfirstname }} {{ user.getlastname }}</p>
+<div class="container-fluid pt-3">
+    <div class="row removable">
+        <div class="col-lg-12">
+            <div class="card mb-4 h-100">
+                <div class="card-body p-3">
+                    <center>
+                        <div class="terrain">
+                            <h1 class="text-black">Où souhaitez-vous jouer ?</h1>
+                            <h4 class="text-black">🠕 On attaque dans ce sens 🠕</h4>
+                            <img src="/images/terrain.jpg" alt="terrain" id="terrain">
+                            <img src="/images/cercle.png" alt="cercle" id="cercle" {% if user.posteCoordX != null %}style="visibility:visible;"{% else %}style="visibility:hidden;"{% endif %}>
+                            <p class="texte">{{ user.getfirstname }} {{ user.getlastname }}</p>
+                        </div><br><br>
+                        <button id="confirmerButton" class="btn btn-info">Confirmer</button>
+
+
+                    </center>
+                </div>
+            </div>
+        </div>
     </div>
-    <button id="confirmerButton">Confirmer</button>
-
-
-</center>
+</div>
 
 <script src="/js/hiddenposte.js"></script>
 

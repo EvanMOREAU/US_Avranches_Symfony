@@ -1,0 +1,108 @@
+{{ form_start(form) }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+<script src="/js/redirect.js"></script>
+<style>
+    .form-control {
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-select {
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+    .form-select:focus {
+        outline: none;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .date-select:hover {
+        cursor: pointer;
+    }
+</style>
+<div class="container-fluid pt-3">
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="mt-3 text-center">
+                <h1 class="h1 mb-2 display-4">Créer un Coach</h1>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-8">
+                    <div class="form-group">
+                        {{ form_label(form.username, 'Nom d\'utilisateur :', {'label_attr': {'class': 'form-control-label'}}) }}
+                        {{ form_widget(form.username, {'attr': {'class': 'form-control', 'placeholder': "Nom d'utilisateur"}}) }}
+                        {{ form_errors(form.username, {'attr': {'class': 'error-message'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="form-control-label" for="input-username">Mot de passe</label>
+                        {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': 'Entrez un mot de passe', 'type': 'password'}}) }}
+                        {{ form_errors(form.password, {'attr': {'class': 'error-message'}}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <h6 class="heading-small text-muted mb-4">Informations</h6>
+            <div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="form-control-label" for="input-email">Prénom</label>
+                        {{ form_widget(form.first_name, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+                        {{ form_errors(form.first_name, {'attr': {'class': 'error-message'}}) }}
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label class="form-control-label" for="input-first-name">Nom</label>
+                        {{ form_widget(form.last_name, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+                        {{ form_errors(form.last_name, {'attr': {'class': 'error-message'}}) }}
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label class="form-control-label" for="input-email">Email</label>
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+                        {{ form_errors(form.email, {'attr': {'class': 'error-message'}}) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group {% if form.date_naissance.vars.errors|length > 0 %}has-error{% endif %}">
+                            {{ form_label(form.date_naissance, 'Date de naissance : ', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.date_naissance, {'attr': {'class': 'form-control date-select'}}) }}
+                            {{ form_errors(form.date_naissance, {'attr': {'class': 'error-message'}}) }}
+                        </div>
+                    </div>
+                </div><br>
+                <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Créer</button>
+                <button onClick='redirectToPage("/coach-account")' class="btn btn-primary"><i class="fas fa-arrow-left"></i> Retour</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    flatpickr('.date-select', {
+        dateFormat: 'Y-m-d',   // Format de la date
+        allowInput: false ,       // Permettre la saisie manuelle de la date
+        locale : 'fr'
+    });
+</script>
+{{ form_end(form) }}

@@ -1,56 +1,81 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Éditer un Palier{% endblock %}
+{% block title %}Nouveau palier{% endblock %}
 
 {% block body %}
-    <div class="container mt-5 text-white">
-        <h1 class="mb-4">Éditer un Palier</h1>
-        
-        {{ include('palier/_form.html.twig', {'button_label': 'Mettre à jour', 'form_title': 'Modifier le Palier'}) }}
+<style>
+.form-control {
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
 
-        {# Bouton Supprimer à droite avec une classe pour le style #}
-        <div class="float-end">
-            {% include 'palier/_delete_form.html.twig' with {'palier': palier} %}
+.form-control:focus {
+    outline: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.form-select {
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.form-select:focus {
+    outline: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+</style>
+<script src="/js/redirect.js"></script>
+<div class="container mt-4 text-white">
+    <div class="container-fluid pt-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="mt-3 text-center">
+                    <h1 class="h1 mb-2 display-4" style="color: black">Modification du palier</h1>
+                </div>
+                <form method="post"> {# Ajouter cette balise <form> #}
+                {{ form_widget(form._token) }}
+                    <div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group {% if form.numero.vars.errors|length > 0 %}has-error{% endif %}">
+                                    <label class="form-control-label" for="input-username">Numéro</label>
+                                    {{ form_widget(form.numero, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.numero, {'attr': {'class': 'error-message'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group {% if form.name.vars.errors|length > 0 %}has-error{% endif %}">
+                                    <label class="form-control-label" for="input-username">Titre</label>
+                                    {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.name, {'attr': {'class': 'error-message'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group {% if form.objectif.vars.errors|length > 0 %}has-error{% endif %}">
+                                    <label class="form-control-label" for="input-username">Objectif</label>
+                                    {{ form_widget(form.objectif, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.objectif, {'attr': {'class': 'error-message'}}) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onClick='redirectToPage("/palier")' class="btn btn-primary"><i class="fas fa-arrow-left"></i> Retour</button>
+                        <button type="submit" class="btn btn-info"><i class="fas fa-save"></i></button>                        
+                    </div>
+                </form>
+            </div>
         </div>
+    </div>  
+</div>
 
-        <a href="{{ path('app_palier_index') }}" class="btn btn-secondary mt-3">
-            <i class="fas fa-arrow-left"></i> Retour à la liste
-        </a>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const deleteForm = document.querySelector('.delete-form');
-
-            if (deleteForm) {
-                deleteForm.addEventListener('submit', function (event) {
-                    event.preventDefault();
-                    const confirmDelete = confirm('Êtes-vous sûr de vouloir supprimer ce palier?');
-
-                    if (confirmDelete) {
-                        const formData = new FormData(deleteForm);
-
-                        fetch(deleteForm.action, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-CSRF-Token': formData.get('_token'),
-                            },
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.href = '{{ path('app_palier_index') }}'; // Redirect to the index page
-                            } else {
-                                alert('Erreur lors de la suppression du palier.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erreur AJAX:', error);
-                        });
-                    }
-                });
-            }
-        });
-    </script>
 {% endblock %}

@@ -17,18 +17,18 @@
         <div class="text-center d-grid gap-2 col-xl-4 col-md-6 mx-auto mt-5 mb-5">
         {% set sortedTeams = teams|sort((a, b) => a.name <=> b.name) %}
             {% for team in sortedTeams %}
-                {# <a href="{{ path('app_team_detail', {'id': team.id}) }}" class="btn btn-primary btn-block">{{ team.name }}</a> #}
-                <a href="/appel/match/{{ category }}/{{ team.name }}" class="btn btn-primary">{{ team.name }}</a>
+                {# <a href="{{ path('app_team_detail', {'id': team.id}) }}" class="btn btn-info btn-block">{{ team.name }}</a> #}
+                <a href="/appel/match/{{ category }}/{{ team.name }}/{{ team.id }}" class="btn btn-info">{{ team.name }}</a>
             {% endfor %}
 		</div>
 
-        <div class="g-4 pt-3 pb-3">
+        {# <div class="g-4 pt-3 pb-3">
             <div class="col text-center" style="text-align: start;">
-                <a href="/" class="btn btn-secondary">
+                <a href="/" class="btn btn-info">
                     <i class="fa-solid fa-house"></i>
                     Accueil</a>
             </div>
-        </div>        
+        </div>         #}
     </div>
 
 {% endblock %}

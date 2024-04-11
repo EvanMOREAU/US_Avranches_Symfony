@@ -1,13 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit PlayerCode{% endblock %}
+{% block title %}Modifier le code de connexion{% endblock %}
 
 {% block body %}
-    <h1>Edit PlayerCode</h1>
 
-    {{ include('player_code/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('player_code/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
-    <a href="{{ path('app_player_code_index') }}">back to list</a>
-
-    {{ include('player_code/_delete_form.html.twig') }}
 {% endblock %}

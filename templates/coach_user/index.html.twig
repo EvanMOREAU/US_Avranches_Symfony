@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Coach Index
+{% endblock %}
+
+{% block body %}
+<script src="/js/redirect.js"></script>
+	<div class="container-fluid pt-3">
+		<div class="row removable">
+			<div class="col-lg-12">
+				<div class="card mb-4 h-100">
+					<div class="card-body p-3">
+						<div class="mt-3 text-center">
+							<h1 class="h1 mb-2 display-4">Liste des Coachs</h1>
+                            <a href="{{ path('app_coach_user_new') }}" class="btn btn-info">Créer un compte Coach</a>
+						</div>
+						<table class="table table-striped table-hover text-center">
+							<thead class="table-dark">
+								<tr>
+									<th>Nom d'utilisateur</th>
+									<th>Prénom</th>
+									<th>Nom</th>
+									<th>actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for user in users %}
+									<tr>
+										<td>{{ user.username }}</td>
+										<td>{{ user.firstName }}</td>
+										<td>{{ user.lastName }}</td>
+										<td class="align-middle" style="text-align: center;">
+											<div style="display: flex; justify-content: center; align-items: center;">
+												<button class="btn btn-warning mt-2" onclick="redirectToPage('/user/{{ user.id }}/edit')">
+													<i class="fa-solid fa-pen"></i>
+												</button>
+												<span style="margin-left: 5px;">{{ include('user/_delete_form.html.twig') }}</span>
+											</div>
+										</td>
+									</tr>
+								{% else %}
+									<tr>
+										<td colspan="4">Il n'y a aucun utilisateur !</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

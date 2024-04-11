@@ -26,9 +26,9 @@ $black:    #000 !default;
 $blue:    #63B3ED !default;
 $indigo:  #596CFF !default;
 $purple:  #6f42c1 !default;
-$pink:    #d63384 !default;
+$pink:    #0099ff !default;
 $red:     #F56565 !default;
-$rose:    #e91e63 !default;
+$rose:    #0044ff !default;
 $orange:  #fd7e14 !default;
 $yellow:  #FBD38D !default;
 $green:   #81E6D9 !default;
@@ -53,7 +53,7 @@ $colors: (
 ) !default;
 // scss-docs-end colors-map
 
-$primary:       #e91e63 !default;
+$primary:       #0044ff !default;
 $secondary:     #7b809a !default;
 $info:          #1A73E8 !default;
 $success:       #4CAF50 !default;
@@ -429,14 +429,14 @@ $box-shadow-inset:            inset 0 1px 2px rgba($black, .075) !default;
 
 // colored Shadows
 
-$box-shadow-primary:          0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(233, 30, 99, .4) !default;
+$box-shadow-primary:          0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(32, 99, 233 .4) !default;
 $box-shadow-secondary:        0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(210, 210, 210, .4) !default;
 $box-shadow-info:             0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(0, 188, 212, .4) !default;
 $box-shadow-warning:          0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(255, 152, 0, .4) !default;
 $box-shadow-success:          0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(76, 175, 80, .4) !default;
 $box-shadow-danger:           0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(244, 67, 54, .4) !default;
 $box-shadow-dark:             0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(64, 64, 64, .4) !default;
-$box-shadow-light:            0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(233, 30, 99, .4) !default;
+$box-shadow-light:            0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(32, 99, 233 .4) !default;
 
 $component-active-color:      $white !default;
 $component-active-bg:         $primary !default;

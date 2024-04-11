@@ -1,19 +1,41 @@
 {{ form_start(form) }}
     {{ form_widget(form._token) }}
-    <div class="row">
-        <div class="col-md-10 col-lg-5 mx-auto d-flex flex-column justify-content-center vh-100">
-            <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary" action="{{ path('app_login') }}" method="post">
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Nom de l'équipe</label>
-                    {{ form_widget(form.name, { 'id': form.name.vars.id, 'attr': {'class': 'form-control', 'onchange': 'handleFileSelect(event)'} }) }}
+
+    <div class="container mt-4 text-white">
+        <div class="container-fluid pt-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mt-3 text-center">
+                        <h1 class="h1 mb-2 display-4" style="color: black">Gestion d'équipe</h1>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Categorie à laquelle elle appartient</label>
-                    {{ form_widget(form.category, { 'id': form.category.vars.id, 'attr': {'class': 'form-select', 'onchange': 'handleFileSelect(event)'} }) }}
+                <div class="card-body">
+                    <form>
+                        <h6 class="heading-small text-muted mb-4">Informations</h6>
+                        <div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="{{form.name.vars.id}}">Nom de l'équipe</label>
+                                        {{ form_widget(form.name, { 'id': form.name.vars.id, 'attr': {'class': 'form-control', 'onchange': 'handleFileSelect(event)'} }) }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="{{form.category.vars.id}}">Catégorie</label>
+                                        {{ form_widget(form.category, { 'id': form.category.vars.id, 'attr': {'class': 'form-select', 'onchange': 'handleFileSelect(event)'} }) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-info">{{ button_label|default('Enregistrer') }}</button>
+                        </div>
+                    </form>
                 </div>
-                <button class="w-100 btn btn-lg btn-success" type="submit">Enregistrer</button>
-            </form>
+            </div>
         </div>
     </div>
-    <button class="btn">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}
+
+<link rel="stylesheet" href="/assets/css/form.css">

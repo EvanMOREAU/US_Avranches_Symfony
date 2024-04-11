@@ -6,9 +6,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\TeamRepository;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[UniqueEntity(fields: ['name'], message: 'There is already a category with this name')]
@@ -26,15 +24,8 @@ class Category
     #[ORM\OneToMany(mappedBy: 'Category', targetEntity: Gathering::class)]
     private Collection $gatherings;
 
-    #[ORM\OneToMany(mappedBy: 'Category', targetEntity: User::class)]
-    private Collection $users;
-
     #[ORM\Column(length: 255)]
     private ?string $image = null;
-
-    #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'users')]
-    #[ORM\JoinColumn(name: 'team_id', referencedColumnName: 'id')]
-    private $team;
 
     #[ORM\Column(length: 255)]
     private ?string $color = null;
@@ -45,7 +36,6 @@ class Category
     public function __construct()
     {
         $this->gatherings = new ArrayCollection();
-        $this->users = new ArrayCollection();
         $this->equipes = new ArrayCollection();
     }
 
@@ -90,6 +80,8 @@ class Category
 
     public function setName(string $name): static
     {
+        $name = substr($name, 1);
+
         $this_year = new \DateTime('now');
         $result = $this_year->format('Y');
         $year = $result - $name + 1;
@@ -128,33 +120,6 @@ class Category
 
         return $this;
     }
-    
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): static
-    {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setCategory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getCategory() === $this) {
-                $user->setCategory(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getImage(): ?string
     {
@@ -164,18 +129,6 @@ class Category
     public function setImage(string $image): self
     {
         $this->image = $image;
-        return $this;
-    }
-
-    public function getTeam(): ?Team
-    {
-        return $this->team;
-    }
-
-    public function setTeam(?Team $team): self
-    {
-        $this->team = $team;
-
         return $this;
     }
 

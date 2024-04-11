@@ -66,9 +66,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: Attendance::class)]
     private Collection $attendances;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Category $Category = null;
-
     #[ORM\OneToMany(mappedBy: 'MadeBy', targetEntity: Gathering::class)]
     private Collection $gatherings;
 
@@ -86,8 +83,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    #[ORM\Column(nullable: true)]
-    private ?float $weight = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profile_image = null;
@@ -282,13 +277,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $attendance->setUser(null);
             }
         }
-
-        return $this;
-    }
-
-    public function setCategory(?Category $Category): static
-    {
-        $this->Category = $Category;
 
         return $this;
     }
