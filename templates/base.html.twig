@@ -157,7 +157,7 @@
 
         {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH") %}
           <li class="nav-item">
-              <a class="nav-link text-white {% if location == "e" %} active bg-gradient-primary{% endif %}" href="/user/poste/poste-coach">
+              <a class="nav-link text-white {% if location == "e" %} active bg-gradient-info{% endif %}" href="/user/poste/poste-coach">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                   <i class="fa-solid fa-signs-post"></i>
                 </div>
@@ -166,7 +166,7 @@
           </li>
         {% else %}
           <li class="nav-item">
-              <a class="nav-link text-white {% if location == "e" %} active bg-gradient-primary{% endif %}" href="/user/{{ app.user.id }}/poste-cache">
+              <a class="nav-link text-white {% if location == "e" %} active bg-gradient-info{% endif %}" href="/user/{{ app.user.id }}/poste-cache">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                   <i class="fa-solid fa-signs-post"></i>
                 </div>
