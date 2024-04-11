@@ -287,9 +287,11 @@ class AttendanceController extends AbstractController
             return $user->getCategory() === $category;
         });
 
+        // Trouver l'entité rassemblement
         $gatheringEntity = $gatheringRepository->find($gathering);
 
-        $gatheringHapennedDate = $gatheringEntity->getGatheringHappenedDate();
+        // Trouver la date du rassemblement
+        $gatheringHappenedDate = $gatheringEntity->getGatheringHappenedDate()->format('Y-m-d\TH:i:s');
 
         // Rendre le modèle en fonction de la catégorie
         return $this->render('attendance/modify_attendance.html.twig', [
@@ -299,7 +301,7 @@ class AttendanceController extends AbstractController
             'users' => $usersInCategory,
             'gathering' => $gathering,
             'attendances' => $attendances,
-            'gathering_happened_date' => $gatheringHapennedDate
+            'gathering_happened_date' => $gatheringHappenedDate
         ]);
     }
 

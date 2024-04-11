@@ -69,14 +69,14 @@
             {% endfor %}
         </div>
 
+        <div style="color: black;">test : {{ gathering_happened_date }}</div>
+        
         <center>
             <div class="pt-4">
                 <label for="attendanceDate">Date et heure :</label>
-                <input id="attendanceDate" type="datetime-local">
+                <input id="attendanceDate" type="datetime-local" value={{ gathering_happened_date }}>
             </div>
         </center>
-
-        {# test : {{ gathering_happened_date }} #}
 
         <div class="g-4 pt-4 row">
             <div class="col text-end" style="text-align: start;">
@@ -120,19 +120,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Date et heure
-            const convertToDateTimeLocalString = (date) => {
-            const year = date.getFullYear();
-            const month = (date.getMonth() + 1).toString().padStart(2, "0");
-            const day = date.getDate().toString().padStart(2, "0");
-            const hours = date.getHours().toString().padStart(2, "0");
-            const minutes = date.getMinutes().toString().padStart(2, "0");
-
-            return `${year}-${month}-${day}T${hours}:${minutes}`;
-            }
-            const currentTime = new Date()
-            document.getElementById('attendanceDate').value = convertToDateTimeLocalString(currentTime)
-
             // Absences
             const abss = document.querySelectorAll('.abs');
             const presentUserIds = [];
