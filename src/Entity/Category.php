@@ -84,9 +84,9 @@ class Category
 
         $this_year = new \DateTime('now');
         $result = $this_year->format('Y');
-        $year = $result - $name + 1;
+        $year = $result - $name;
         
-        $this->name = $year;
+        $this->name = $year + 1;
 
         return $this;
     }

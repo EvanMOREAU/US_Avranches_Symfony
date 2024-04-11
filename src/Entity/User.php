@@ -124,6 +124,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Game::class)]
     private Collection $games;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $Classement = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -248,7 +251,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this_year = new \DateTime('first day of January next year');
         $diff = $this_year->diff($this->date_naissance);
-        return 'U' . $diff->y + 1;
+
+        if ($this->Classement !== null) {
+            $diff->y += $this->Classement;
+        }
+        
+        return 'U' . $diff->y;
     }
 
     /**
@@ -575,5 +583,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getClassement(): ?int
+    {
+        return $this->Classement;
+    }
 
+    public function setClassement(?int $Classement): static
+    {
+        $this->Classement = $Classement;
+
+        return $this;
+    }
 }
