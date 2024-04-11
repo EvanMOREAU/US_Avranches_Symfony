@@ -77,14 +77,27 @@
             <span class="nav-link-text ms-1">Paliers</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link text-white {% if location == "e" %} active bg-gradient-primary{% endif %}" href="/user/{{ app.user.id }}/poste-cache">
-            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fa-solid fa-signs-post"></i>
-            </div>
-            <span class="nav-link-text ms-1">Poste</span>
-          </a>
-        </li>
+
+        {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH") %}
+          <li class="nav-item">
+              <a class="nav-link text-white {% if location == "e" %} active bg-gradient-primary{% endif %}" href="/user/poste/poste-coach">
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                  <i class="fa-solid fa-signs-post"></i>
+                </div>
+                <span class="nav-link-text ms-1">Poste</span>
+              </a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+              <a class="nav-link text-white {% if location == "e" %} active bg-gradient-primary{% endif %}" href="/user/{{ app.user.id }}/poste-cache">
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                  <i class="fa-solid fa-signs-post"></i>
+                </div>
+                <span class="nav-link-text ms-1">Poste</span>
+              </a>
+            </li>
+        {% endif %}
+
         <li class="nav-item">
           <a class="nav-link text-white {% if location == "f" %} active bg-gradient-primary{% endif %}" href="/pdf" target="_blank">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">

@@ -200,6 +200,10 @@ class UserController extends AbstractController
     #[Route('/poste/poste-coach', name: 'app_user_coach', methods: ['GET'])]
     public function poste_coach(LoggerInterface $logger): Response
     {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
+            throw $this->createAccessDeniedException('Access denied.');
+        }
+        
         $users = $this->getDoctrine()->getRepository(user::class)->findAll();
         $equipes = $this->getDoctrine()->getRepository(Equipe::class)->findAll();
 
