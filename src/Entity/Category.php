@@ -75,7 +75,7 @@ class Category
         $result = $this_year->format('Y');
 
         $diff = $result - $this->name;
-        return 'U' . $diff;
+        return 'U' . $diff - 1;
     }
 
     public function setName(string $name): static
@@ -86,7 +86,7 @@ class Category
         $result = $this_year->format('Y');
         $year = $result - $name;
         
-        $this->name = $year + 1;
+        $this->name = $year;
 
         return $this;
     }

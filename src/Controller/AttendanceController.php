@@ -119,7 +119,7 @@ class AttendanceController extends AbstractController
         // Trouver l'entité Category par le nom
         $this_year = new \DateTime('now');
         $result = $this_year->format('Y');
-        $name = $result - $categoryNumber + 1;
+        $name = $result - $categoryNumber;
         $findCategory = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
 
         // Check if category exists
@@ -199,7 +199,7 @@ class AttendanceController extends AbstractController
         // Trouver l'entité Category par le nom
         $this_year = new \DateTime('now');
         $result = $this_year->format('Y');
-        $name = $result - $categoryName + 1;
+        $name = $result - $categoryName;
         $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
 
         if (!$category) {
