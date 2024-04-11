@@ -46,7 +46,7 @@ class HeightController extends AbstractController
             return $this->redirectToRoute('app_default', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('height/new.html.twig', [
+        return $this->render('height/new.html.twig', [
             'height' => $height,
             'form' => $form,
             'location' => 'q',

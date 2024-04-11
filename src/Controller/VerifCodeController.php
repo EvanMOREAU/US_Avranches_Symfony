@@ -37,7 +37,7 @@ class VerifCodeController extends AbstractController
                 
             }
         }
-        return $this->renderForm('verif_code/index.html.twig', [
+        return $this->render('verif_code/index.html.twig', [
             'form' => $form,
             'location' => '',
         ]);

@@ -112,7 +112,7 @@ class PalierController extends AbstractController
             return $this->redirectToRoute('app_palier_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('palier/new.html.twig', [
+        return $this->render('palier/new.html.twig', [
             'palier' => $palier,
             'location' => 'd',
             'form' => $form,
@@ -134,7 +134,7 @@ class PalierController extends AbstractController
             return $this->redirectToRoute('app_palier_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('palier/edit.html.twig', [
+        return $this->render('palier/edit.html.twig', [
             'palier' => $palier,
             'form' => $form,
             'location' => 'd',

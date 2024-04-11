@@ -209,7 +209,7 @@ class TestsController extends AbstractController
         });
 
         // Passez les utilisateurs triés au modèle Twig
-        return $this->renderForm('tests/new.html.twig', [
+        return $this->render('tests/new.html.twig', [
             'test' => $test,
             'location' => 'c',
             'form' => $form,
@@ -259,7 +259,7 @@ class TestsController extends AbstractController
             return $this->redirectToRoute('app_tests_index');
         }
         
-        return $this->renderForm('tests/edit.html.twig', [
+        return $this->render('tests/edit.html.twig', [
             'test' => $test,
             'location' => 'c',
             'form' => $form,

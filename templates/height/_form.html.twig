@@ -1,19 +1,35 @@
 <link rel="stylesheet" href="{{ asset('css/testsnew.css') }}">
 
-<div class="container">
-    <h1>Enregistrement de taille</h1>
+<div
+	class="container">
+	<!--
+    =========================================================
+    * Material Dashboard 2 - v3.1.0
+    =========================================================
 
-    {{ form_start(form, {'method': 'POST'}) }}
-    
-    <div class="form-group {% if form.value.vars.errors|length > 0 %}has-error{% endif %}">
-        {{ form_label(form.value, 'Taille (cm)', {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.value, {'attr': {'class': 'form-input'}}) }}
-        {{ form_errors(form.value, {'attr': {'class': 'error-message'}}) }}
-    </div>
-    <br>
-    {# <button onClick='redirectToPage("/height")' class="form-button btn-gray"><i class="fas fa-arrow-left"></i> Retour</button> #}
-    <button type="submit" class="form-button"><i class="fas fa-plus"></i> Enregistrer</button>
-            
-    {{ form_end(form) }}
+    * Product Page: https://www.creative-tim.com/product/material-dashboard
+    * Copyright 2023 Creative Tim (https://www.creative-tim.com)
+    * Licensed under MIT (https://www.creative-tim.com/license)
+    * Coded by Creative Tim
+
+    =========================================================
+
+    * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    -->
+	<h1>Enregistrement de taille</h1>
+
+	{{ form_start(form, {'method': 'POST'}) }}
+
+	<div class="form-group {% if form.value.vars.errors|length > 0 %}has-error{% endif %}">
+		{{ form_label(form.value, 'Taille (cm)', {'label_attr': {'class': 'form-label'}}) }}
+		{{ form_widget(form.value, {'attr': {'class': 'form-input'}}) }}
+		{{ form_errors(form.value, {'attr': {'class': 'error-message'}}) }}
+	</div>
+	<br>
+	{# <button onClick='redirectToPage("/height")' class="form-button btn-gray"><i class="fas fa-arrow-left"></i> Retour</button> #}
+	<button type="submit" class="form-button">
+		<i class="fas fa-plus"></i>
+		Enregistrer</button>
+
+	{{ form_end(form) }}
 </div>
-

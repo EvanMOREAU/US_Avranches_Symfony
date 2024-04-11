@@ -46,7 +46,7 @@ class WeightController extends AbstractController
             return $this->redirectToRoute('app_default', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('weight/new.html.twig', [
+        return $this->render('weight/new.html.twig', [
             'weight' => $weight,
             'form' => $form,
             'location' => 'r',
