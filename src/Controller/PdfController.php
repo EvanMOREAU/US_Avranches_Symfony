@@ -143,36 +143,52 @@ class PdfController extends AbstractController
 
                 // Créer le tableau HTML
                 $htmlTable = '
-                    <table border="0" cellpadding="6">
-                        <thead>
-                            <tr align="center">
-                                <th width="' . $heightColumnWidth . '"><b>Tailles</b></th>
-                                <th width="' . $weightColumnWidth . '"><b>Poids</b></th>
-                            </tr>
-                        </thead>
-                        <tbody>';
+                <table border="0" cellpadding="6">
+                    <thead>
+                        <tr align="center">
+                            <th width="' . $heightColumnWidth . '"><b>Tailles</b></th>
+                            <th width="' . $weightColumnWidth . '"><b>Poids</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>';
 
-                // Compteur pour limiter l'affichage à un maximum de trois données
-                $count = 0;
+                // Vérifier s'il y a des données disponibles
+                if (!empty($lastFiveHeights) && !empty($lastFiveWeights)) {
+                    // Compteur pour limiter l'affichage à un maximum de trois données
+                    $count = 0;
 
-                // Ajouter les données des tailles et des poids dans le tableau
-                foreach ($lastFiveHeights as $index => $height) {
-                    if ($count >= 3) {
-                        break; // Arrêter la boucle une fois que trois données ont été ajoutées
+                    // Ajouter les données des tailles et des poids dans le tableau
+                    foreach ($lastFiveHeights as $index => $height) {
+                        if ($count >= 3) {
+                            break; // Arrêter la boucle une fois que trois données ont été ajoutées
+                        }
+
+                        $weight = isset($lastFiveWeights[$index]) ? $lastFiveWeights[$index] : null; // Récupérer le poids correspondant
+                        $htmlTable .= '
+                        <tr align="center">
+                            <td width="' . $heightColumnWidth . '">' . $height->getValue() . ' cm (' . $height->getDate()->format('d/m/Y') . ')</td>';
+                        if ($weight) {
+                            $htmlTable .= '<td width="' . $weightColumnWidth . '">' . $weight->getValue() . ' kg (' . $weight->getDate()->format('d/m/Y') . ')</td>';
+                        } else {
+                            $htmlTable .= '<td width="' . $weightColumnWidth . '">-</td>'; // Afficher un tiret si aucune donnée de poids n'est disponible
+                        }
+                        $htmlTable .= '
+                        </tr>';
+
+                        $count++; // Incrémenter le compteur
                     }
-
-                    $weight = $lastFiveWeights[$index]; // Récupérer le poids correspondant
+                } else {
+                    // Afficher un message indiquant qu'il n'y a pas de données disponibles
                     $htmlTable .= '
                     <tr align="center">
-                        <td width="' . $heightColumnWidth . '">' . $height->getValue() . ' cm (' . $height->getDate()->format('d/m/Y') . ')</td>
-                        <td width="' . $weightColumnWidth . '">' . $weight->getValue() . ' kg (' . $weight->getDate()->format('d/m/Y') . ')</td>
+                        <td colspan="2">Aucune donnée disponible</td>
                     </tr>';
-
-                    $count++; // Incrémenter le compteur
                 }
+
                 $htmlTable .= '
-                        </tbody>
-                    </table>';
+                </tbody>
+                </table>';
+
                 // Afficher le tableau HTML dans le PDF
                 $pdf->writeHTML($htmlTable, true, false, false, false, '');
 
