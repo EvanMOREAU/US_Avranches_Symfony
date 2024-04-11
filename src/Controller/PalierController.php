@@ -39,6 +39,8 @@ class PalierController extends AbstractController
     #[Route('/', name: 'app_palier_index', methods: ['GET', 'POST'])]
     public function index(PalierRepository $palierRepository, UserRepository $userRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         // Récupérer tous les paliers
         $paliers = $palierRepository->findAll();
 

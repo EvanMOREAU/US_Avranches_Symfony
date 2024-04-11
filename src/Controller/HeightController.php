@@ -31,6 +31,8 @@ class HeightController extends AbstractController
     #[Route('/new', name: 'app_height_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         $height = new Height();
         $form = $this->createForm(HeightType::class, $height);
         $form->handleRequest($request);

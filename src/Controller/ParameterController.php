@@ -20,6 +20,8 @@ class ParameterController extends AbstractController
     #[Route('/', name: 'app_parameter')]
     public function modify(Request $request, EntityManagerInterface $entityManager, ImageUploaderHelper $imageUploaderHelper, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository): Response // Injection de la classe Request
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         $user = $this->getUser();
 
         $form = $this->createForm(ParameterType::class, $user);

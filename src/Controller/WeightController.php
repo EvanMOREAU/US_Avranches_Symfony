@@ -31,6 +31,8 @@ class WeightController extends AbstractController
     #[Route('/new', name: 'app_weight_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         $weight = new Weight();
         $form = $this->createForm(WeightType::class, $weight);
         $form->handleRequest($request);
@@ -56,6 +58,7 @@ class WeightController extends AbstractController
     #[Route('/{id}', name: 'app_weight_delete', methods: ['POST'])]
     public function delete(Request $request, Weight $weight, EntityManagerInterface $entityManager): Response
     {
+        
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }

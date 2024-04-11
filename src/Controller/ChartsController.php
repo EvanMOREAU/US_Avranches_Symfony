@@ -36,6 +36,8 @@ class ChartsController extends AbstractController
     #[Route('/details', name: 'app_charts_details', methods: ['GET'])]
     public function index(ChartConfigurationRepository $configRepository, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         // Récupérer l'utilisateur connecté
         $user = $this->getUser();
 
@@ -97,6 +99,8 @@ class ChartsController extends AbstractController
     #[Route('/', name: 'app_charts_index', methods: ['GET'])]
     public function test(ChartConfigurationRepository $configRepository, EntityManagerInterface $entityManager, PalierRepository $palierRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         $user = $this->getUser();
 
         $userVerif = $this->userVerificationService->verifyUser();
