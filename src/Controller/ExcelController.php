@@ -73,9 +73,9 @@ class ExcelController extends AbstractController
                 $numTest = 0;
 
                 // Créez une nouvelle feuille pour chaque test
-                $testSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $user->getLastName() . ' ' . $user->getFirstName() . ' - Tests');
+                $testSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $user->getLastName() . ' ' . $user->getFirstName());
                 $spreadsheet->addSheet($testSheet);
-                $spreadsheet->setActiveSheetIndexByName($user->getLastName() . ' ' . $user->getFirstName() . ' - Tests');
+                $spreadsheet->setActiveSheetIndexByName($user->getLastName() . ' ' . $user->getFirstName());
                 $testRow = 1;
 
                 // Ajoutez les en-têtes de colonnes pour les tests
@@ -90,10 +90,10 @@ class ExcelController extends AbstractController
                 $testSheet->setCellValue('I1', 'Conduite de balle (secondes)');
                 $testSheet->setCellValue('J1', 'Vitesse (secondes)');
                 $testSheet->setCellValue('K1', '');
-                $testSheet->setCellValue('L1', 'Date');
+                $testSheet->setCellValue('L1', 'Date poids');
                 $testSheet->setCellValue('M1', 'Poids (kilogrammes)');
                 $testSheet->setCellValue('N1', '');
-                $testSheet->setCellValue('O1', 'Date');
+                $testSheet->setCellValue('O1', 'Date taille');
                 $testSheet->setCellValue('P1', 'Taille (centimètres)');
                 
                 $testRow++;
@@ -142,7 +142,7 @@ class ExcelController extends AbstractController
                 }
                 //--------------------------POIDS--------------------------------
                 // Ajoutez les en-têtes de colonnes pour les tests
-                $testSheet->setCellValue('L1', 'Date');
+                $testSheet->setCellValue('L1', 'Date poids');
                 $testSheet->setCellValue('M1', 'Poids (kilogrammes)');
 
                 $weightRow = 2; // Commencez à partir de la ligne .
@@ -162,7 +162,7 @@ class ExcelController extends AbstractController
                 }
                 //--------------------TAILLE--------------------
                 // Ajoutez les en-têtes de colonnes pour les tests
-                $testSheet->setCellValue('O1', 'Date');
+                $testSheet->setCellValue('O1', 'Date taille');
                 $testSheet->setCellValue('P1', 'Taille (centimètres)');
 
                 $heightRow = 2; // Commencez à partir de la ligne .
