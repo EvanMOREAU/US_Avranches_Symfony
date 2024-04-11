@@ -19,17 +19,17 @@ services:
             - '../src/Kernel.php'
 
     app.service.user_verification:
-        class: App\Service\UserVerificationService
+        class: App\Services\UserVerificationService
         arguments: ['@security.token_storage', '@router']
 
     # Ajoutez l'alias ici
-    'App\Service\UserVerificationService': '@app.service.user_verification'
+    'App\Services\UserVerificationService': '@app.service.user_verification'
     
-    App\Service\HeightVerificationService:
+    App\Services\HeightVerificationService:
         arguments:
             $tokenStorage: '@security.token_storage'
             $entityManager: '@doctrine.orm.entity_manager' 
-    App\Service\WeightVerificationService:
+    App\Services\WeightVerificationService:
         arguments:
             $tokenStorage: '@security.token_storage'
             $entityManager: '@doctrine.orm.entity_manager'

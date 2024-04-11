@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\PlayerCode;
 use App\Form\PlayerCodeType;
 use App\Repository\PlayerCodeRepository;
-use App\Service\UserVerificationService;
+use App\Services\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
