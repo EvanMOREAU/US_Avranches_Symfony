@@ -1,5 +1,5 @@
 <?php
-namespace App\Form\DataTransformer;
+namespace App\Form;
 
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\HttpFoundation\File\File;
