@@ -6,6 +6,7 @@ use App\Repository\ChartConfigurationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ChartConfigurationRepository::class)]
+#[ORM\Table(name: 'tbl_chart_configuration')]
 class ChartConfiguration
 {
     #[ORM\Id]
