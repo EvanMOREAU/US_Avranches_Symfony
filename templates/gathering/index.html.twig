@@ -20,27 +20,55 @@
   <script src='/js/daygrid.js'></script>
   <script src='/js/timegrid.js'></script>
   <script src='/js/list.js'></script>
+  <style>
+    .form-select {
+        border: none; /* Supprimer la bordure par défaut */
+        border-radius: 8px; /* Ajouter des coins arrondis */
+        padding: 10px; /* Ajouter un espacement à l'intérieur du champ de sélection */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Ajouter une ombre douce */
+        transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Ajouter une transition fluide */
+    }
 
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6 mx-auto">
-          <div class="form-group">
-            <label for="filter-select">Catégorie(s)</label>
-            <select class="form-select" id="filter-select">
-              <option value="all" selected>Toutes</option>
-              {% for category in categories %}
-                <option value='{{ category.name }}'>{{ category.name }}</option>
-              {% endfor %}
-            </select>
+    /* Style pour la bordure inférieure lorsqu'un champ de sélection est en focus */
+    .form-select:focus {
+        outline: none; /* Supprimer l'effet d'ombre en focus */
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Ajouter une ombre plus prononcée en focus */
+    }
+</style>
+<div class="container-fluid pt-3">
+		<div class="row removable">
+			<div class="col-lg-12">
+				<div class="card mb-4">
+					<div class="card-body p-3">
+						<div class="mt-3 text-center">
+							<h1 class="h1 mb-2 display-4">Calendrier</h1>
+						</div>
+                <div class="container">
+                  <div class="row">
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6 mx-auto">
+                      <div class="form-group">
+                        <label for="filter-select">Catégorie(s)</label>
+                        <select class="form-select" id="filter-select">
+                          <option value="all" selected>Toutes</option>
+                          {% for category in categories %}
+                            <option value='{{ category.name }}'>{{ category.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id='calendar-container' class="col-10" style="margin-left: auto; margin-right: auto;">
+                <div id='calendar'>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div id='calendar-container' class="col-10" style="margin-left: auto; margin-right: auto;">
-    <div id='calendar'></div>
-  </div>
+</div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
