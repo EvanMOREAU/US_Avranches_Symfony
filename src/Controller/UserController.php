@@ -242,8 +242,8 @@ class UserController extends AbstractController
             throw $this->createAccessDeniedException('Access denied.');
         }
         
-        $users = $this->getDoctrine()->getRepository(user::class)->findAll();
-        $equipes = $this->getDoctrine()->getRepository(Equipe::class)->findAll();
+        $users = $entityManager->getRepository(user::class)->findAll();
+        $equipes = $entityManager->getRepository(Equipe::class)->findAll();
 
         return $this->render('user/coachposte.html.twig', [
             'users' => $users,
