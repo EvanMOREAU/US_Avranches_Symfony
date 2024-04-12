@@ -88,7 +88,7 @@ class DefaultController extends AbstractController
                         'usercount' => $userRepository->count([]),
                         'equipeuser' => $usersInSameTeam,
                         'equipeusercount' => $countUsersInSameTeam,
-                        'paliers' => $palierRepository->findAll(),
+                        'paliers' => $palierRepository->findInRange($currentPalierNumber - 2, $currentPalierNumber + 2),
                         'weightIn' => $latestWeightDate,
                         'coachUsers' => $coachUsers,
                     ]);

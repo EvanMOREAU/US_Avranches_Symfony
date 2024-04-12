@@ -147,6 +147,7 @@ class ChartsController extends AbstractController
         $allowedIds = [1, 2, 7];
         $configurations = $configRepository->findById($allowedIds);
         $chartData = [];
+        $currentPalierNumber =  $user->getPalier()->getNumero();
 
         foreach ($configurations as $config) {
             $entity = $config->getConfigData()['entity'];
@@ -187,7 +188,7 @@ class ChartsController extends AbstractController
                         'latestDate' => $latestDate,
                         'earliestDateWithType' => $earliestDateWithType,
                         'latestDateWithType' => $latestDateWithType,
-                        'paliers' => $palierRepository->findAll(),
+                        'paliers' => $palierRepository->findInRange($currentPalierNumber - 2, $currentPalierNumber + 2),
                         'sixLastRecord' => $sixLastRecord,
 
                     ]);

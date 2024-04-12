@@ -24,7 +24,9 @@ class WeightVerificationService
 
         if ($this->tokenStorage->getToken()) {
             $user = $this->tokenStorage->getToken()->getUser();
-            $userId = $user->getId();
+            if (in_array('ROLE_COACH', $user->getRoles())) {
+                return 1; // Renvoie 1 immédiatement pour les utilisateurs avec le rôle ROLE_COACH
+            }  
 
             $entityManager = $this->entityManager;
 
@@ -52,9 +54,7 @@ class WeightVerificationService
                 return 0; // N'a pas d'entrées
             }
         }
-
-        return $userId;
-
+        
         return 1; // Bon code (1)
     }
 }

@@ -30,6 +30,16 @@ class PalierRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findInRange($start, $end)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.numero >= :start')
+            ->andWhere('p.numero <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return Palier[] Returns an array of Palier objects
 //     */
