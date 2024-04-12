@@ -61,7 +61,7 @@ class CategoryController extends AbstractController
         }
 
         // Affiche le formulaire de création de nouvelle catégorie
-        return $this->renderForm('category/new.html.twig', [
+        return $this->render('category/new.html.twig', [
             'category' => $category,
             'form' => $form,
             'location' => 'k',
@@ -96,7 +96,7 @@ class CategoryController extends AbstractController
         }
 
         // Affiche le formulaire de modification de la catégorie
-        return $this->renderForm('category/edit.html.twig', [
+        return $this->render('category/edit.html.twig', [
             'category' => $category,
             'form' => $form,
             'location' => 'k',

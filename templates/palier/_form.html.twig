@@ -1,6 +1,8 @@
 {# palier/_form.html.twig #}
 {{ form_start(form) }}
 {{ form_widget(form._token) }}
+
+
     <div class="mb-3">
         {{ form_label(form.numero, formLabels.numero|default('Numéro')) }}
         {{ form_widget(form.numero, { 'attr': {'class': 'form-control'} }) }}
