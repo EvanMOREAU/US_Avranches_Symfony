@@ -79,7 +79,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tests = new ArrayCollection();
         $this->weights = new ArrayCollection();
         $this->heights = new ArrayCollection();
-        $this->games = new ArrayCollection();
     }
 
 
@@ -121,8 +120,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Palier $palier = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Game::class)]
-    private Collection $games;
 
     #[ORM\Column(nullable: true)]
     private ?int $Classement = null;
@@ -549,37 +546,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->lastConnection = $lastConnection;
     
-        return $this;
-    }
-    
-
-    /**
-     * @return Collection<int, Game>
-     */
-    public function getGames(): Collection
-    {
-        return $this->games;
-    }
-
-    public function addGame(Game $game): static
-    {
-        if (!$this->games->contains($game)) {
-            $this->games->add($game);
-            $game->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGame(Game $game): static
-    {
-        if ($this->games->removeElement($game)) {
-            // set the owning side to null (unless already changed)
-            if ($game->getUser() === $this) {
-                $game->setUser(null);
-            }
-        }
-
         return $this;
     }
 

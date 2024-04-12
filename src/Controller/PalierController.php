@@ -243,7 +243,7 @@ class PalierController extends AbstractController
             }
 
             // Récupérer le chemin de la vidéo à supprimer
-            $videoPath = 'uploads/videos/' . $user->getUsername() . '_palier.mp4';
+            $videoPath = '/uploads/videos/' . $user->getUsername() . '_palier.mp4';
 
             // Vérifier si le fichier vidéo existe
             if (file_exists($videoPath)) {
