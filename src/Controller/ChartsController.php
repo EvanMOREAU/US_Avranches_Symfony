@@ -10,10 +10,10 @@ use App\Entity\Height;
 use App\Entity\Weight;
 use App\Entity\ChartConfiguration;
 use App\Repository\PalierRepository;
-use App\Service\UserVerificationService;
+use App\Services\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Service\HeightVerificationService;
-use App\Service\WeightVerificationService;
+use App\Services\HeightVerificationService;
+use App\Services\WeightVerificationService;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ChartConfigurationRepository;
 use Doctrine\ORM\EntityManager;
@@ -36,6 +36,8 @@ class ChartsController extends AbstractController
     #[Route('/details', name: 'app_charts_details', methods: ['GET'])]
     public function index(ChartConfigurationRepository $configRepository, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         // Récupérer l'utilisateur connecté
         $user = $this->getUser();
 
@@ -97,6 +99,8 @@ class ChartsController extends AbstractController
     #[Route('/', name: 'app_charts_index', methods: ['GET'])]
     public function test(ChartConfigurationRepository $configRepository, EntityManagerInterface $entityManager, PalierRepository $palierRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         $user = $this->getUser();
 
         $userVerif = $this->userVerificationService->verifyUser();
@@ -143,6 +147,7 @@ class ChartsController extends AbstractController
         $allowedIds = [1, 2, 7];
         $configurations = $configRepository->findById($allowedIds);
         $chartData = [];
+        $currentPalierNumber =  $user->getPalier()->getNumero();
 
         foreach ($configurations as $config) {
             $entity = $config->getConfigData()['entity'];
@@ -183,7 +188,7 @@ class ChartsController extends AbstractController
                         'latestDate' => $latestDate,
                         'earliestDateWithType' => $earliestDateWithType,
                         'latestDateWithType' => $latestDateWithType,
-                        'paliers' => $palierRepository->findAll(),
+                        'paliers' => $palierRepository->findInRange($currentPalierNumber - 2, $currentPalierNumber + 2),
                         'sixLastRecord' => $sixLastRecord,
 
                     ]);

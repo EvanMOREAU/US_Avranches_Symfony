@@ -56,6 +56,20 @@ class UserType extends AbstractType
             ])
             ->add('first_name')
             ->add('last_name')
+            ->add('classement', ChoiceType::class, [
+                'label' => 'Surclassement / Sous-classement',
+                'choices' => [
+                    'Dans la moyenne' => Null,
+                    'Sous-classé(e) d\'un an' => -1,
+                    'Surclassé(e) d\'un an' => 1,
+                    'Surclassé(e) de deux ans' => 2,
+                ],
+                'placeholder' => 'Choisir un classement', // Optional placeholder
+                'required' => false, // Optional, set to true if the field is required
+                'attr' => [
+                    'class' => 'form-control', // Optional CSS class
+                ],
+            ])
             ->add('date_naissance', DateType::class, [
                 'label' => 'Date de naissance',
                 'widget' => 'single_text', // Affichage en un seul champ de texte

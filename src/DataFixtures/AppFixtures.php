@@ -2,11 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Player;
-use App\Repository\TeamRepository;
-use DateTime;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
 {
@@ -14,5 +11,7 @@ class AppFixtures extends Fixture
     {
         // $product = new Product();
         // $manager->persist($product);
+
+        $manager->flush();
     }
 }

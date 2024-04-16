@@ -21,10 +21,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class TestsFormType extends AbstractType
 {
 
-    public function __construct(UserRepository $userRepository, Security $security, ParameterBagInterface $parameterBag)
+    public function __construct(UserRepository $userRepository, ParameterBagInterface $parameterBag)
     {
         $this->userRepository = $userRepository;
-        $this->security = $security;
     }
     
     public function buildForm(FormBuilderInterface $builder, array $options): void

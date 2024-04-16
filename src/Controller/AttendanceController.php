@@ -38,6 +38,8 @@ class AttendanceController extends AbstractController
     #[Route('/appel', name: 'app_attendance')]
     public function index(CategoryRepository $CategoryRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
         }
@@ -54,6 +56,8 @@ class AttendanceController extends AbstractController
     #[Route('/appel/choix/{category}', name: 'app_attendance_choice')]
     public function choice(string $category): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException();
         }
@@ -119,7 +123,7 @@ class AttendanceController extends AbstractController
         // Trouver l'entité Category par le nom
         $this_year = new \DateTime('now');
         $result = $this_year->format('Y');
-        $name = $result - $categoryNumber + 1;
+        $name = $result - $categoryNumber;
         $findCategory = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
 
         // Check if category exists
@@ -199,7 +203,7 @@ class AttendanceController extends AbstractController
         // Trouver l'entité Category par le nom
         $this_year = new \DateTime('now');
         $result = $this_year->format('Y');
-        $name = $result - $categoryName + 1;
+        $name = $result - $categoryName;
         $category = $entityManager->getRepository(Category::class)->findOneBy(['name' => $name]);
 
         if (!$category) {

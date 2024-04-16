@@ -79,7 +79,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tests = new ArrayCollection();
         $this->weights = new ArrayCollection();
         $this->heights = new ArrayCollection();
-        $this->games = new ArrayCollection();
     }
 
 
@@ -121,8 +120,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Palier $palier = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Game::class)]
-    private Collection $games;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $Classement = null;
 
     public function getId(): ?int
     {
@@ -248,7 +248,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this_year = new \DateTime('first day of January next year');
         $diff = $this_year->diff($this->date_naissance);
-        return 'U' . $diff->y + 1;
+
+        if ($this->Classement !== null) {
+            $diff->y += $this->Classement;
+        }
+        
+        return 'U' . $diff->y;
     }
 
     /**
@@ -543,37 +548,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     
         return $this;
     }
-    
 
-    /**
-     * @return Collection<int, Game>
-     */
-    public function getGames(): Collection
+    public function getClassement(): ?int
     {
-        return $this->games;
+        return $this->Classement;
     }
 
-    public function addGame(Game $game): static
+    public function setClassement(?int $Classement): static
     {
-        if (!$this->games->contains($game)) {
-            $this->games->add($game);
-            $game->setUser($this);
-        }
+        $this->Classement = $Classement;
 
         return $this;
     }
-
-    public function removeGame(Game $game): static
-    {
-        if ($this->games->removeElement($game)) {
-            // set the owning side to null (unless already changed)
-            if ($game->getUser() === $this) {
-                $game->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-
 }

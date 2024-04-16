@@ -75,7 +75,7 @@ class Category
         $result = $this_year->format('Y');
 
         $diff = $result - $this->name;
-        return 'U' . $diff;
+        return 'U' . $diff - 1;
     }
 
     public function setName(string $name): static
@@ -84,7 +84,7 @@ class Category
 
         $this_year = new \DateTime('now');
         $result = $this_year->format('Y');
-        $year = $result - $name + 1;
+        $year = $result - $name;
         
         $this->name = $year;
 

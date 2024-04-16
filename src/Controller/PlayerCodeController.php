@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\PlayerCode;
 use App\Form\PlayerCodeType;
 use App\Repository\PlayerCodeRepository;
-use App\Service\UserVerificationService;
+use App\Services\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,7 +60,7 @@ class PlayerCodeController extends AbstractController
             return $this->redirectToRoute('app_player_code_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('player_code/edit.html.twig', [
+        return $this->render('player_code/edit.html.twig', [
             'player_code' => $playerCode,
             'form' => $form,
             'location' => 'm',

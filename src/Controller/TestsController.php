@@ -10,10 +10,10 @@ use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
 use App\Repository\PalierRepository;
-use App\Service\UserVerificationService;
+use App\Services\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Service\HeightVerificationService;
-use App\Service\WeightVerificationService;
+use App\Services\HeightVerificationService;
+use App\Services\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,6 +44,8 @@ class TestsController extends AbstractController
     #[Route('/', name: 'app_tests_index')]
     public function index(Request $request, UserRepository $userRepository, TestsRepository $testsRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         $userVerif = $this->userVerificationService->verifyUser();
         $heightVerif = $this->heightVerificationService->verifyHeight();
         $weightVerif = $this->weightVerificationService->verifyWeight();
@@ -209,7 +211,7 @@ class TestsController extends AbstractController
         });
 
         // Passez les utilisateurs triés au modèle Twig
-        return $this->renderForm('tests/new.html.twig', [
+        return $this->render('tests/new.html.twig', [
             'test' => $test,
             'location' => 'c',
             'form' => $form,
@@ -259,7 +261,7 @@ class TestsController extends AbstractController
             return $this->redirectToRoute('app_tests_index');
         }
         
-        return $this->renderForm('tests/edit.html.twig', [
+        return $this->render('tests/edit.html.twig', [
             'test' => $test,
             'location' => 'c',
             'form' => $form,
@@ -370,7 +372,7 @@ class TestsController extends AbstractController
 
 
     #[Route('/tests/last/{userId}', name: 'app_cancel_last', methods: ['GET', 'POST'])]
-    public function getLastTestForUser(TestRepository $testRepository, $userId)
+    public function getLastTestForUser(TestsRepository $testRepository, $userId)
     {
         // Recherche du dernier test de l'utilisateur spécifié
         $lastTest = $testRepository->findOneBy(['user' => $userId], ['date' => 'DESC']);

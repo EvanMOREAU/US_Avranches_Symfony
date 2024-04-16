@@ -9,10 +9,10 @@ use App\Entity\Height;
 use App\Entity\Weight;
 use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
-use App\Service\UserVerificationService;
+use App\Services\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Service\HeightVerificationService;
-use App\Service\WeightVerificationService;
+use App\Services\HeightVerificationService;
+use App\Services\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,6 +23,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 #[Route('/pdf', name: 'app_pdf')]
 class PdfController extends AbstractController
 {
+    
     private $userVerificationService;
     private $heightVerificationService;
     private $weightVerificationService;
@@ -40,6 +41,8 @@ class PdfController extends AbstractController
     #[Route('/', name: 'app_pdf_index')]
     public function pdf(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, ChartConfigurationRepository $chartConfigurationRepository, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         // Récupérer l'ID de l'utilisateur à partir de la route
         $userId = $request->attributes->get('userId');
 

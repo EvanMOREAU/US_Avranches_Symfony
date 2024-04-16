@@ -7,10 +7,10 @@ use App\Entity\Palier;
 use App\Form\PalierType;
 use App\Repository\UserRepository;
 use App\Repository\PalierRepository;
-use App\Service\UserVerificationService;
+use App\Services\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Service\HeightVerificationService;
-use App\Service\WeightVerificationService;
+use App\Services\HeightVerificationService;
+use App\Services\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,6 +39,8 @@ class PalierController extends AbstractController
     #[Route('/', name: 'app_palier_index', methods: ['GET', 'POST'])]
     public function index(PalierRepository $palierRepository, UserRepository $userRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         // Récupérer tous les paliers
         $paliers = $palierRepository->findAll();
 
@@ -112,7 +114,7 @@ class PalierController extends AbstractController
             return $this->redirectToRoute('app_palier_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('palier/new.html.twig', [
+        return $this->render('palier/new.html.twig', [
             'palier' => $palier,
             'location' => 'd',
             'form' => $form,
@@ -134,7 +136,7 @@ class PalierController extends AbstractController
             return $this->redirectToRoute('app_palier_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('palier/edit.html.twig', [
+        return $this->render('palier/edit.html.twig', [
             'palier' => $palier,
             'form' => $form,
             'location' => 'd',
@@ -243,7 +245,7 @@ class PalierController extends AbstractController
             }
 
             // Récupérer le chemin de la vidéo à supprimer
-            $videoPath = 'uploads/videos/' . $user->getUsername() . '_palier.mp4';
+            $videoPath = '/uploads/videos/' . $user->getUsername() . '_palier.mp4';
 
             // Vérifier si le fichier vidéo existe
             if (file_exists($videoPath)) {

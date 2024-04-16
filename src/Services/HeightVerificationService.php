@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Services;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
@@ -24,8 +24,9 @@ class HeightVerificationService
 
         if ($this->tokenStorage->getToken()) {
             $user = $this->tokenStorage->getToken()->getUser();
-            $userId = $user->getId();
-
+            if (in_array('ROLE_COACH', $user->getRoles())) {
+                return 1; // Renvoie 1 immédiatement pour les utilisateurs avec le rôle ROLE_COACH
+            }    
             $entityManager = $this->entityManager;
 
             $heightRepository = $entityManager->getRepository(\App\Entity\Height::class);
@@ -53,7 +54,6 @@ class HeightVerificationService
             }
         }
 
-        return $userId;
 
         return 1; // Bon code (1)
     }

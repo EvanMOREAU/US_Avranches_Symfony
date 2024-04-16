@@ -2,19 +2,17 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
 use App\Repository\PalierRepository;
 use App\Repository\WeightRepository;
-use App\Service\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Service\HeightVerificationService;
-use App\Service\WeightVerificationService;
+use App\Services\UserVerificationService;
+use App\Services\HeightVerificationService;
+use App\Services\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 
 class DefaultController extends AbstractController
 {
@@ -33,7 +31,9 @@ class DefaultController extends AbstractController
     #[Route('/', name: 'app_default')]
     public function index(TestsRepository $testsRepository, UserRepository $userRepository, PalierRepository $palierRepository, WeightRepository $weightRepository, EntityManagerInterface $entityManager): Response
     {
-        $userVerif = $this->userVerificationService->verifyUser();
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
+         $userVerif = $this->userVerificationService->verifyUser();
         $heightVerif = $this->heightVerificationService->verifyHeight();
         $weightVerif = $this->weightVerificationService->verifyWeight();
 
@@ -88,7 +88,7 @@ class DefaultController extends AbstractController
                         'usercount' => $userRepository->count([]),
                         'equipeuser' => $usersInSameTeam,
                         'equipeusercount' => $countUsersInSameTeam,
-                        'paliers' => $palierRepository->findAll(),
+                        'paliers' => $palierRepository->findInRange($currentPalierNumber - 2, $currentPalierNumber + 2),
                         'weightIn' => $latestWeightDate,
                         'coachUsers' => $coachUsers,
                     ]);
@@ -100,6 +100,5 @@ class DefaultController extends AbstractController
                 ]);
             }
         }
-
     }
 }

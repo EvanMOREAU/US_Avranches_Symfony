@@ -71,7 +71,7 @@ class CoachUserController extends AbstractController
             return $this->redirectToRoute('app_coach_user_index', [], Response::HTTP_SEE_OTHER);
         }
     
-        return $this->renderForm('coach_user/new.html.twig', [
+        return $this->render('coach_user/new.html.twig', [
             'user' => $user,
             'form' => $form,
             'location' => 'p',

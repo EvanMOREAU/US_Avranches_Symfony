@@ -3,6 +3,7 @@
 {% block title %}Selection du poste{% endblock %}
 
 {% block body %}
+
     <link rel="stylesheet" href="/css/poste.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -27,7 +28,22 @@
             visibility: hidden;
             background-color: rgba(13, 82, 139, 1);
         }
+            /* Style pour centrer le texte des options */
+        #equipe option {
+            text-align: center;
+        }
+        .form-select {
+            border: none; /* Supprimer la bordure par défaut */
+            border-radius: 8px; /* Ajouter des coins arrondis */
+            padding: 10px; /* Ajouter un espacement à l'intérieur du champ de sélection */
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Ajouter une ombre douce */
+            transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Ajouter une transition fluide */
+        }
 
+        /* Style pour la bordure inférieure lorsqu'un champ de sélection est en focus */
+        .form-select:focus {
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Ajouter une ombre plus prononcée en focus */
+        }
         {% for user in users %}
             {% if user.posteCoordX is not null %}
                 .texte[data-coord-x="{{ user.posteCoordX }}"][data-coord-y="{{ user.posteCordY }}"] {
@@ -41,18 +57,19 @@
                 }
             {% endif %}
         {% endfor %}
+        
     </style>
 
     <center>
-        <div>
-            <label for="equipe">Sélectionnez une équipe :</label>
-            <select id="equipe">
-                <option value="">Toutes les équipes</option>
-                {% for equipe in equipes %}
-                    <option value="{{ equipe.id }}">{{ equipe.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="equipe">Équipe :</label>
+                <select id="equipe" class="form-control custom-select" style="width: 200px;">
+                    <option value="">Toutes les équipes</option>
+                    {% for equipe in equipes %}
+                        <option value="{{ equipe.id }}">{{ equipe.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
         <div class="terrain">
             <h1>Position des joueurs</h1>

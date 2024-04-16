@@ -83,6 +83,15 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group {% if form.classement.vars.errors|length > 0 %}has-error{% endif %}">
+                                {{ form_label(form.classement, 'Surclassement / Sous-classement : ', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.classement, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.classement, {'attr': {'class': 'error-message'}}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group {% if form.date_naissance.vars.errors|length > 0 %}has-error{% endif %}">
                                 {{ form_label(form.date_naissance, 'Date de naissance : ', {'label_attr': {'class': 'form-label'}}) }}

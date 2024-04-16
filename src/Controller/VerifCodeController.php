@@ -17,6 +17,7 @@ class VerifCodeController extends AbstractController
     #[Route('/', name: 'app_verif_code', methods: ['GET','POST'])]
     public function index(PlayerCodeRepository $playerCodeRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
         $user = $this->getUser();
         $form = $this->createForm(VerifCodeType::class);
@@ -37,7 +38,7 @@ class VerifCodeController extends AbstractController
                 
             }
         }
-        return $this->renderForm('verif_code/index.html.twig', [
+        return $this->render('verif_code/index.html.twig', [
             'form' => $form,
             'location' => '',
         ]);
