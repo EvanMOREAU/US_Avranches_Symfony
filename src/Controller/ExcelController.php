@@ -2,8 +2,6 @@
 namespace App\Controller; // Assurez-vous que le namespace correspond à l'emplacement de votre contrôleur
 
 use App\Entity\User;
-use App\Entity\Height;
-use App\Entity\Weight;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -89,12 +87,6 @@ class ExcelController extends AbstractController
                 $testSheet->setCellValue('H1', 'Date test');
                 $testSheet->setCellValue('I1', 'Conduite de balle (secondes)');
                 $testSheet->setCellValue('J1', 'Vitesse (secondes)');
-                $testSheet->setCellValue('K1', '');
-                $testSheet->setCellValue('L1', 'Date poids');
-                $testSheet->setCellValue('M1', 'Poids (kilogrammes)');
-                $testSheet->setCellValue('N1', '');
-                $testSheet->setCellValue('O1', 'Date taille');
-                $testSheet->setCellValue('P1', 'Taille (centimètres)');
                 
                 $testRow++;
 
@@ -127,62 +119,19 @@ class ExcelController extends AbstractController
 
                     $numTest++; // Incrémentez le numéro du test à chaque itération
                     $testSheet->setCellValue('A' . $testRow, 'n°' . $numTest);
-                    $testSheet->setCellValue('B' . $testRow, $test->getVma() . ' km/h');
-                    $testSheet->setCellValue('C' . $testRow, $test->getCooper() . ' mètres');
-                    $testSheet->setCellValue('D' . $testRow, $test->getDemiCooper() . ' mètres');
+                    $testSheet->setCellValue('B' . $testRow, $test->getVma() . '');
+                    $testSheet->setCellValue('C' . $testRow, $test->getCooper() . '');
+                    $testSheet->setCellValue('D' . $testRow, $test->getDemiCooper() . '');
                     $testSheet->setCellValue('E' . $testRow, $test->getJongleGauche());
                     $testSheet->setCellValue('F' . $testRow, $test->getJongleDroit());
                     $testSheet->setCellValue('G' . $testRow, $test->getJongleTete());
                     $testSheet->setCellValue('H' . $testRow, $test->getDate());
-                    $testSheet->setCellValue('I' . $testRow, $test->getConduiteBalle() . ' secondes');
-                    $testSheet->setCellValue('J' . $testRow, $test->getVitesse() . ' secondes');
+                    $testSheet->setCellValue('I' . $testRow, $test->getConduiteBalle() . '');
+                    $testSheet->setCellValue('J' . $testRow, $test->getVitesse() . '');
 
                     // Continuez à ajouter les données nécessaires dans les colonnes suivantes
                     $testRow++;
                 }
-                //--------------------------POIDS--------------------------------
-                // Ajoutez les en-têtes de colonnes pour les tests
-                $testSheet->setCellValue('L1', 'Date poids');
-                $testSheet->setCellValue('M1', 'Poids (kilogrammes)');
-
-                $weightRow = 2; // Commencez à partir de la ligne .
-                foreach ($user->getWeights() as $weight) {
-
-                    // Récupérez les informations de poids
-                    // $weight = $entityManagerInterface->getRepository(Weight::class)->findOneBy(['user' => $user]);
-
-                    // $numWeight++; // Incrémentez le numéro du poids à chaque itération
-                    $testSheet->setCellValue('L' . $weightRow, $weight->getDate()->format('d/m/Y'));
-
-                    // Vérifiez si l'objet Weight n'est pas null avant d'appeler getValue()
-                    $testSheet->setCellValue('M' . $weightRow, $weight ? $weight->getValue() . ' kg' : '');
-
-                    // Continuez à ajouter les données nécessaires dans les colonnes suivantes
-                    $weightRow++;
-                }
-                //--------------------TAILLE--------------------
-                // Ajoutez les en-têtes de colonnes pour les tests
-                $testSheet->setCellValue('O1', 'Date taille');
-                $testSheet->setCellValue('P1', 'Taille (centimètres)');
-
-                $heightRow = 2; // Commencez à partir de la ligne .
-
-                // Déclarez la variable $height avant la boucle
-                $height = null;
-                foreach ($user->getHeights() as $height) {
-                    // Récupérez les informations de poids
-                    // $entityManagerInterface->getRepository(Height::class)->findOneBy(['user' => $user]);
-
-                    // $numHeight++; // Incrémentez le numéro du poids à chaque itération
-                    $testSheet->setCellValue('O' . $heightRow, $height->getDate()->format('d/m/Y'));
-
-                    // Vérifiez si l'objet Height n'est pas null avant d'appeler getValue()
-                    $testSheet->setCellValue('P' . $heightRow, $height ? $height->getValue() . ' cm' : '');
-
-                    // Continuez à ajouter les données nécessaires dans les colonnes suivantes
-                    $heightRow++;
-                }
-
             }
 
             // Sélectionnez la première feuille pour la prochaine itération
