@@ -108,7 +108,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white {% if location == "f" %} active bg-gradient-info{% endif %}"{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH") %} href="/pdf/list-players" {% else %} href="/pdf/{{ app.user.id }}"{% endif %}>
+            <a class="nav-link text-white {% if location == "f" %} active bg-gradient-info{% endif %}"{% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_COACH") %} href="/pdf/{{ app.user.getId() }}" {% else %} href="/pdf/{{ app.user.id }}"{% endif %}>
               <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="fa-solid fa-file-pdf"></i>
               </div>

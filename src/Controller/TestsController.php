@@ -134,6 +134,9 @@ class TestsController extends AbstractController
         $selectedCategory = $request->query->get('category');
         $usersByCategory = null;
 
+        if ($selectedUserId == null){ $selectedUserId = 0;}
+        if ($selectedCategory == null){$selectedCategory = 0;}
+        
         if ($selectedUserId && $this->isGranted('ROLE_SUPER_ADMIN') || $this->isGranted('ROLE_COACH')) {
             $selectedUser = $userRepository->find($selectedUserId);
             $tests = $selectedUser ? $selectedUser->getTests() : [];
@@ -201,7 +204,7 @@ class TestsController extends AbstractController
             $entityManager->persist($test);
             $entityManager->flush();
         
-            return $this->redirectToRoute('app_tests_index', ['id' => $test->getId()]);
+            return $this->redirectToRoute('app_tests_index');
         }
 
         // Récupérez tous les utilisateurs et triez-les par ordre alphabétique
