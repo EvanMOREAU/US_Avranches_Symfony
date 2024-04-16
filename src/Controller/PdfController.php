@@ -200,9 +200,7 @@ class PdfController extends AbstractController
                 $pdf->SetFont('helvetica', '', 10);
                 // Contenu du paragraphe "Contact"
                 $contentContact = '
-                    <p><b> Contact :</b><br>
-                    <br> Christelle DELARUE<br>
-                    <br>
+                    <p><b> Contact :</b><br><br>
                     Club House US Avranches MSM<br>
                     Allée Jacques Anquetil<br>
                     50300 Avranches.<br><br>
@@ -368,9 +366,7 @@ class PdfController extends AbstractController
                     $pdf->SetFont('helvetica', '', 10);
                     // Contenu du paragraphe "Contact"
                     $contentContact = '
-                        <p><b> Contact :</b><br>
-                        <br> Christelle DELARUE<br>
-                        <br>
+                        <p><b> Contact :</b><br><br>
                         Club House US Avranches MSM<br>
                         Allée Jacques Anquetil<br>
                         50300 Avranches.<br><br>
@@ -396,36 +392,6 @@ class PdfController extends AbstractController
                         // Utilisez une image anonyme
                         $pdf->Image('img/anonyme.jpg', 130, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
                     }
-
-
-
-
-                    // // --- Contenu du pdf ---
-                    // $contentTests = '<br><br><br>';
-
-                    // $contentTests .= '
-                    // <br><hr><br><div></div>
-                    // <p><b>VMA : </b>' . $test->getVma() . ' km/h 
-                    // <br><hr><br><div></div>
-                    // <b>Cooper : </b>' . $test->getCooper() . ' mètres
-                    // <br><hr><br><div></div>
-                    // <b>Demi-cooper : </b>' . $test->getDemiCooper() . ' mètres
-                    // <br><hr><br><div></div>
-                    // <b>Jongles pied gauche : </b>' . $test->getJongleGauche() . ' 
-                    // <br><hr><br><div></div>
-                    // <b>Jongles pied droit : </b>' . $test->getJongleDroit() . ' 
-                    // <br><hr><br><div></div>
-                    // <b>Jongles tête : </b>' . $test->getJongleTete() . ' 
-                    // <br><hr><br><div></div>
-
-                    // <br><hr><br><div></div>
-                    // <b>Conduite de balle : </b>' . $test->getConduiteBalle() . ' secondes
-                    // <br><hr><br><div></div>
-                    // <b>Vitesse : </b>' . $test->getVitesse() . ' secondes
-                    // </p>';
-
-                    // $pdf->writeHTMLCell(65, 230, '', '', $contentTests, 0, 0, 0, true, '', true);
-                    // // Ajout d'une image au PDF
                 }
 
                 // Génération du PDF et envoi en réponse
