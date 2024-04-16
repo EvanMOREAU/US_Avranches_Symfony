@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 
+use App\Entity\User;
 use App\Entity\Palier;
 use App\Form\PalierType;
 use App\Repository\UserRepository;
 use App\Repository\PalierRepository;
-use App\Services\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Services\UserVerificationService;
 use App\Services\HeightVerificationService;
 use App\Services\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
@@ -326,5 +327,24 @@ class PalierController extends AbstractController
         // Retournez le nombre total de vidéos restantes à valider pour ce palier
         return $videoCount;
     }
+    #[Route('/reset', name: 'app_palier_reset', methods: ['GET','POST'])]
+    public function resetPaliers(EntityManagerInterface $entityManager, UserRepository $userRepository, PalierRepository $palierRepository)
+    {
+        // Récupérer le palier avec l'ID le plus petit
+        $defaultPalier = $palierRepository->findOneBy([], ['id' => 'ASC']);
 
+        // Récupérer tous les utilisateurs
+        $users = $userRepository->findAll();
+
+        // Parcourir chaque utilisateur pour définir le palier sur le palier par défaut
+        foreach ($users as $user) {
+            $user->setPalier($defaultPalier);
+            $entityManager->persist($user);
+        }
+
+        // Enregistrer les modifications dans la base de données
+        $entityManager->flush();
+        return $this->redirectToRoute('app_palier_index');
+
+    }
 }
