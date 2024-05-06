@@ -47,7 +47,11 @@ class UserController extends AbstractController
         $logger->debug('setPostePrincipal() user->getFirstname() = ' . $user->getFirstname());
 
         // Récupérez les données de la requête AJAX
-        $postePrincipal = $_POST["postePrincipal"];
+        if(isset($_POST["postePrincipal"])){
+            $postePrincipal = $_POST["postePrincipal"];
+        }else{
+            $postePrincipal = '';
+        }
         $logger->debug('setPostePrincipal() postePrincipal = ' . $postePrincipal);
 
         // Mettez à jour l'entité user
@@ -67,7 +71,11 @@ class UserController extends AbstractController
         $logger->debug('setPosteSecondaire() user->getFirstname() = ' . $user->getFirstname());
 
         // Récupérez les données de la requête AJAX
-        $posteSecondaire = $_POST["posteSecondaire"];
+        if(isset($_POST["posteSecondaire"])){
+            $posteSecondaire = $_POST["posteSecondaire"];
+        }else{
+            $posteSecondaire = '';
+        }
         $logger->debug('setPosteSecondaire() posteSecondaire = ' . $posteSecondaire);
 
         // Mettez à jour l'entité user
