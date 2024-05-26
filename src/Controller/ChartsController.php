@@ -252,7 +252,7 @@ class ChartsController extends AbstractController
         return $lastSixRecords;
     }
     
-    #[Route('/charts/updatescale', name: 'app_charts_update_scale', methods: ['POST'])]
+    #[Route('/updatescale', name: 'app_charts_update_scale', methods: ['POST'])]
     public function updateChartScale(Request $request, EntityManagerInterface $entityManager): Response 
     {
         // Récupérer l'ID du graphique et les nouvelles valeurs d'échelle du formulaire
@@ -285,7 +285,7 @@ class ChartsController extends AbstractController
  
     }
 
-    #[Route('/charts/updatepalier', name: 'app_charts_update_palier', methods: ['POST'])]
+    #[Route('/updatepalier', name: 'app_charts_update_palier', methods: ['POST'])]
     public function updateChartPalier(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Récupérer l'ID du graphique et les nouvelles valeurs d'échelle du formulaire

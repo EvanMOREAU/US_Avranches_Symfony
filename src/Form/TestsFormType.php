@@ -40,14 +40,6 @@ class TestsFormType extends AbstractType
                 'min' => 0,   // Valeur minimale
                 'max' => 10000,  // Valeur maximale
             ],
-            'constraints' => [
-                new Range([
-                    'min' => 0,
-                    'max' => 100000,
-                    'minMessage' => 'La distance parcourue ne doit pas être négative.',
-                    'maxMessage' => 'La distance parcourue ne doit pas être supérieure à 100000 mètres.',
-                ]),
-            ],
         ])       
         ->add('cooper', NumberType::class, [
             'label' => 'Cooper',
@@ -55,14 +47,6 @@ class TestsFormType extends AbstractType
             'attr' => [
                 'min' => 0,   // Valeur minimale
                 'max' => 100000,  // Valeur maximale
-            ],
-            'constraints' => [
-                new Range([
-                    'min' => 0,
-                    'max' => 100000,
-                    'minMessage' => 'La distance parcourue ne doit pas être négative.',
-                    'maxMessage' => 'La distance parcourue ne doit pas être supérieure à 100000 mètres.',
-                ]),
             ],
         ])          
         ->add('jongle_gauche', NumberType::class, [
