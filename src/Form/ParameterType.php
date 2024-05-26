@@ -20,6 +20,7 @@ class ParameterType extends AbstractType
     {
         $builder       
             ->add('username')
+            ->add('resp_phone')
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les mots de passe doivent correspondre.',

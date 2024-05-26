@@ -24,7 +24,7 @@ class Category
     #[ORM\OneToMany(mappedBy: 'Category', targetEntity: Gathering::class)]
     private Collection $gatherings;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column(length: 255)]

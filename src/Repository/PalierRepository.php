@@ -40,6 +40,14 @@ class PalierRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findLowestIdPalier(): ?Palier
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.id', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 //    /**
 //     * @return Palier[] Returns an array of Palier objects
 //     */

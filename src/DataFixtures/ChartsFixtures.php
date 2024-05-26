@@ -46,7 +46,7 @@ class ChartsFixtures extends Fixture
 
         $controlConfig = new ChartConfiguration();
         $controlConfig->setChartType('line');
-        $controlConfig->setName('Controle de balle');
+        $controlConfig->setName('Conduite de balle');
         $controlConfig->setConfigData(['entity' => 'App\Entity\Tests', 'min' => 5, 'max' => 20, 'paliermin' => 10, 'paliermax' => 15, 'field' => 'conduiteballe', 'date_field' => 'date']);
         $manager->persist($controlConfig);
 

@@ -89,8 +89,13 @@
 											<div class="card-overlay">
 												<h1 class="display-2 text-white" style="background-color: {{ categorie.color }}">{{ categorie.name }}</h1>
 											</div>
-											<img class="img-fluid" src="/uploads/images/{{ categorie.image }}" alt="{{ categorie.id }}">
+											{% if categorie.image != "" %}
+												<img class="img-fluid" src="/uploads/images/{{ categorie.image }}" alt="{{ categorie.id }}">
+											{% else %}
+												<img class="img-fluid" src="/img/default_category.jpg" alt="{{ categorie.id }}">
+											{% endif %}
 										</div>
+
 									</a>
 								</div>
 							{% else %}

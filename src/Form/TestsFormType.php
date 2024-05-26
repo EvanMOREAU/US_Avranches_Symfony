@@ -44,8 +44,6 @@ class TestsFormType extends AbstractType
                 new Range([
                     'min' => 0,
                     'max' => 100000,
-                    'minMessage' => 'La distance parcourue ne doit pas être négative.',
-                    'maxMessage' => 'La distance parcourue ne doit pas être supérieure à 100000 mètres.',
                 ]),
             ],
         ])       
@@ -60,8 +58,6 @@ class TestsFormType extends AbstractType
                 new Range([
                     'min' => 0,
                     'max' => 100000,
-                    'minMessage' => 'La distance parcourue ne doit pas être négative.',
-                    'maxMessage' => 'La distance parcourue ne doit pas être supérieure à 100000 mètres.',
                 ]),
             ],
         ])          

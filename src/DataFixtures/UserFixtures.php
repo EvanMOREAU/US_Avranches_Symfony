@@ -24,7 +24,6 @@ class UserFixtures extends Fixture
         $palier->setObjectif("obj");
         $palier->setNumero(0);
         $manager->persist($palier);
-        /* Utilisateur Dev */
         $dateNaissance = new \DateTime('2004-12-27');
         $superAdmin = new User();
         $superAdmin->setUsername('adminSIO');
@@ -33,6 +32,7 @@ class UserFixtures extends Fixture
         $superAdmin->setDateNaissance($dateNaissance);
         $superAdmin->setEmail('evan.moreau@etik.com');
         $superAdmin->setPalier($palier);
+        $superAdmin->setRespPhone('0638344893');
         $plaintextPassword = "admin";
         $hashedPassword = $this->passwordHasher->hashPassword(
             $superAdmin,
@@ -57,6 +57,7 @@ class UserFixtures extends Fixture
             $player->setEmail($randomEmail);
             $player->setWeight(0);
             $player->setPalier($palier);
+            $player->setRespPhone('0638344893');
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $player,
@@ -79,6 +80,7 @@ class UserFixtures extends Fixture
             $coach->setDateNaissance($randomBirthdate);
             $coach->setWeight(0);
             $coach->setPalier($palier);
+            $coach->setRespPhone('0638344893');
             $randomEmail = $faker->safeEmail;
             $coach->setEmail($randomEmail);
             $plaintextPassword = "admin";
