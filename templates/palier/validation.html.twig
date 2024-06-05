@@ -131,8 +131,10 @@
                 // Rafraîchissez le lecteur vidéo
                 document.getElementById('videoPlayer').load();
                 // Affichez la modal
-                document.getElementById('videoModal').classList.add('show');
-                document.getElementById('videoModal').style.display = 'block';
+                var videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
+                videoModal.show();
             }
         </script>
+
+
 {% endblock %}
