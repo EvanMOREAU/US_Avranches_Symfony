@@ -338,6 +338,7 @@ class PalierController extends AbstractController
         // Retournez le nombre total de vidéos restantes à valider pour ce palier
         return $videoCount;
     }
+
     #[Route('/reset', name: 'app_palier_reset', methods: ['GET','POST'])]
     public function resetPaliers(EntityManagerInterface $entityManager, UserRepository $userRepository, PalierRepository $palierRepository)
     {
@@ -350,12 +351,13 @@ class PalierController extends AbstractController
         // Parcourir chaque utilisateur pour définir le palier sur le palier par défaut
         foreach ($users as $user) {
             $user->setPalier($defaultPalier);
+            $user->setPalierEnded(false); // Remettre le champ palier_ended à false
             $entityManager->persist($user);
         }
 
         // Enregistrer les modifications dans la base de données
         $entityManager->flush();
-        return $this->redirectToRoute('app_palier_index');
 
+        return $this->redirectToRoute('app_palier_index');
     }
 }
