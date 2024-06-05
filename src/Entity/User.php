@@ -124,6 +124,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?int $Classement = null;
 
+    #[ORM\Column(length: 10)]
+    private ?string $resp_phone = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -557,6 +560,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setClassement(?int $Classement): static
     {
         $this->Classement = $Classement;
+
+        return $this;
+    }
+
+    public function getRespPhone(): ?string
+    {
+        return $this->resp_phone;
+    }
+
+    public function setRespPhone(string $resp_phone): static
+    {
+        $this->resp_phone = $resp_phone;
 
         return $this;
     }

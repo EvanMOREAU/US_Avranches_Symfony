@@ -21,7 +21,8 @@
                                         <th>Nom</th>
                                         <th>Date de naissance</th>
                                         <th>Image de profile</th>
-                                        <th>Palier</th>
+                                        <th>Palier</th>                                
+                                        <th>Tel. Resp. Légal</th>
                                         <th>Dernière connexion</th>
                                         <th>Actions</th>
                                     </tr>
@@ -35,6 +36,14 @@
                                             <td class="align-middle">{{ user.dateNaissance ? user.dateNaissance|date('Y-m-d') : '' }}</td>
                                             <td class="align-middle">{% if user.profileImage != '' %}Oui{% else %}Non{% endif %}</td>
                                             <td class="align-middle">{{ user.palier }}</td>
+                                            <td class="align-middle">
+                                                {# Vérification si le numéro de téléphone existe #}
+                                                {% if user.respphone is not null %}
+                                                    {# Division du numéro de téléphone en segments de deux caractères #}
+                                                    {% set phoneNumber = user.respphone|chunk_split(2, ' ', true) %}
+                                                    {{ phoneNumber|trim }}
+                                                {% endif %}
+                                            </td>
                                             <td class="align-middle">{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:m:s') : '' }}</td>
                                             <td class="align-middle" style="text-align: center;">
                                                 <div style="display: flex; justify-content: center; align-items: center;">

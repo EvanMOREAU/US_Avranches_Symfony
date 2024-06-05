@@ -154,7 +154,6 @@ class PdfController extends AbstractController
                         </tr>
                     </thead>
                     <tbody>';
-
                 // Vérifier s'il y a des données disponibles
                 if (!empty($lastFiveHeights) && !empty($lastFiveWeights)) {
                     // Compteur pour limiter l'affichage à un maximum de trois données
@@ -226,6 +225,7 @@ class PdfController extends AbstractController
                     // Utilisez une image anonyme
                     $pdf->Image('img/anonyme.jpg', 130, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
                 }
+                $pdf->Image("img/logo.png", 25, 63, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
 
                 foreach ($tests as $test) {
                     // Ajout d'une nouvelle page pour chaque test

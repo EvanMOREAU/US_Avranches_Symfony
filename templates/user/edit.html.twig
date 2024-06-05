@@ -106,6 +106,13 @@
                                 {{ form_errors(form.equipe, {'attr': {'class': 'error-message'}}) }}
                             </div>
                         </div>
+                        <div class="col-lg-4">
+                            <div class="form-group {% if form.equipe.vars.errors|length > 0 %}has-error{% endif %}">
+                                {{ form_label(form.resp_phone, 'Tel. Responsable légal : ', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.resp_phone, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.resp_phone, {'attr': {'class': 'error-message'}}) }}
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-12">

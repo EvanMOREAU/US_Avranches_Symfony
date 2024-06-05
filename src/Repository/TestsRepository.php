@@ -70,4 +70,13 @@ class TestsRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function removeByUser($user){
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'DELETE FROM tbl_tests WHERE user_id = :userId';
+
+        $result = $conn->executeQuery($sql, ['userId' => $user->getId()]);
+        return $result;
+    }
+    
 }

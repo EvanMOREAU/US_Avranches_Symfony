@@ -2,18 +2,20 @@
 namespace App\Controller; // Assurez-vous que le namespace correspond à l'emplacement de votre contrôleur
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Repository\AttendanceRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 class ExcelController extends AbstractController
 {
 
     #[Route('/excel', name: 'app_excel')]
-    public function excel(EntityManagerInterface $entityManagerInterface): Response
+    public function excel(EntityManagerInterface $entityManagerInterface, AttendanceRepository $attendanceRepository): Response
     {
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -41,6 +43,8 @@ class ExcelController extends AbstractController
         $sheet->setCellValue('B1', 'Prénom');
         $sheet->setCellValue('C1', 'Date de Naissance');
         $sheet->setCellValue('D1', 'Catégorie');
+        $sheet->setCellValue('E1', 'Taux de présence entraînement');
+        $sheet->setCellValue('F1', 'Taux de présence match');
 
         // Mettez en gras les en-têtes
         $headerStyle = $sheet->getStyle('A1:D1');
@@ -52,6 +56,8 @@ class ExcelController extends AbstractController
         $sheet->getColumnDimension('B')->setWidth(20); // Par exemple, largeur de la colonne B
         $sheet->getColumnDimension('C')->setWidth(20);
         $sheet->getColumnDimension('D')->setWidth(20);
+        $sheet->getColumnDimension('E')->setWidth(30);
+        $sheet->getColumnDimension('F')->setWidth(30);
 
         // Ajoutez les données à la feuille de calcul
         $row = 2; // Commencez à partir de la ligne 2
@@ -62,6 +68,28 @@ class ExcelController extends AbstractController
             $sheet->setCellValue('C' . $row, $user->getDateNaissance()->format('d/m/Y'));
             $sheet->setCellValue('D' . $row, $user->getCategory());
 
+            $att = $attendanceRepository->findByUserId($user->getId());
+            $countEntMake = 0;
+            $countEnt = 0;
+            $countMatchMake = 0;
+            $countMatch = 0;
+            foreach( $att as $rowatt ){
+                
+                if($rowatt->getGathering()->getType() == "Entraînement"){
+                    $countEnt++;
+                    if($rowatt->isIsPresent() == true){
+                        $countEntMake++;
+                    }
+                }elseif($rowatt->getGathering()->getType() == "Match"){
+                    $countMatch++;
+                    if($rowatt->isIsPresent() == true){
+                        $countMatchMake++;
+                    }
+                }
+
+            }
+            $sheet->setCellValue('E' . $row, $countEntMake.'/'.$countEnt);
+            $sheet->setCellValue('F' . $row, $countMatchMake.'/'.$countMatch);
             //------------------- TESTS -------------------
 
             // Ajoutez une feuille uniquement si l'utilisateur a des tests
