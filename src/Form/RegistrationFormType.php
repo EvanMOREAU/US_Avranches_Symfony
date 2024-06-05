@@ -8,6 +8,7 @@ use App\Form\WeightType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -42,9 +43,17 @@ class RegistrationFormType extends AbstractType
                         'message' => 'Please enter a password',
                     ]),
                     new Length([
-                        'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'min' => 12,
+                        'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
                         'max' => 4096,
+                    ]),
+                    new Regex([
+                        'pattern' => '/[0-9]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 chiffre.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/[\W_]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 caractère spécial.',
                     ]),
                 ],
                 'label' => false, // Cette option supprime le label

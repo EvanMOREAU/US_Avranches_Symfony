@@ -4,13 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Pdf;
 use App\Entity\User;
-use App\Entity\Player;
 use App\Entity\Height;
+use App\Entity\Player;
 use App\Entity\Weight;
 use App\Repository\UserRepository;
 use App\Repository\TestsRepository;
-use App\Services\UserVerificationService;
+use App\Repository\AttendanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Services\UserVerificationService;
 use App\Services\HeightVerificationService;
 use App\Services\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,8 +40,9 @@ class PdfController extends AbstractController
     }
 
     #[Route('/', name: 'app_pdf_index')]
-    public function pdf(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, ChartConfigurationRepository $chartConfigurationRepository, EntityManagerInterface $entityManager): Response
+    public function pdf(Request $request, UserRepository $userRepository, TestsRepository $testsRepository, ChartConfigurationRepository $chartConfigurationRepository, EntityManagerInterface $entityManager, int $userId, AttendanceRepository $attendanceRepository): Response
     {
+        dump($attendanceRepository);
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
         // Récupérer l'ID de l'utilisateur à partir de la route
@@ -68,7 +70,38 @@ class PdfController extends AbstractController
         if ($user !== null) {
             if ($user instanceof User) {
                 $tests = $testsRepository->findBy(['user' => $user]);
-
+                $att = $attendanceRepository->findByUserId($userId);
+                $countEntMake = 0;
+                $countEnt = 0;
+                $countMatchMake = 0;
+                $countMatch = 0;
+                foreach( $att as $rowatt ){
+                
+                    if($rowatt->getGathering()->getType() == "Entraînement"){
+                        $countEnt++;
+                        if($rowatt->isIsPresent() == true){
+                            $countEntMake++;
+                        }
+                    }elseif($rowatt->getGathering()->getType() == "Match"){
+                        $countMatch++;
+                        if($rowatt->isIsPresent() == true){
+                            $countMatchMake++;
+                        }
+                    }
+    
+                }
+                if($countEntMake>0){
+                    $pourcentEnt = ($countEntMake/$countEnt) * 100 . "%";
+                }else{
+                    $pourcentEnt = 'Aucun Entraînement';
+                }
+                if($countMatchMake>0){
+                    $pourcentMatch = ($countMatchMake/$countMatch) * 100 . "%";
+                }else{
+                    $pourcentMatch = 'Aucun Match';
+                }
+                
+     
                 // Récupérer les tests triés par date décroissante
                 $tests = $testsRepository->findBy(['user' => $user], ['date' => 'DESC']);
 
@@ -128,7 +161,8 @@ class PdfController extends AbstractController
                     <br><br><br><br><br><br><br><br><br><br><br><br>
                     <b><i>Informations du joueur : </i></b>
                     <br><hr><br><div></div><div></div><div></div>
-                    <u>Email de contact</u> : ' . $user->getEmail() . '
+                    <u>Tel. Resp. Légal :</u><br> '. $user->getRespPhone() .'<br>
+                    <u>Email de contact</u> : ' . $user->getEmail() . '</u><br>
                     </p>';
 
                 // Ajout du contenu du joueur au PDF
@@ -225,6 +259,12 @@ class PdfController extends AbstractController
                     // Utilisez une image anonyme
                     $pdf->Image('img/anonyme.jpg', 130, $posY, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
                 }
+                $presenceInfo = '<p>
+                <i>Taux de présence Match : <b>'. $pourcentMatch .' </i></b><br>
+                <i>Taux de présence Entraînement :<b> '. $pourcentEnt .' </i></b>
+                </p>';
+                $pdf->writeHTMLCell(100, 0, 115, 105, $presenceInfo, 0, 0, 0, true, '', true);
+
                 $pdf->Image("img/logo.png", 25, 63, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
 
                 foreach ($tests as $test) {
@@ -251,6 +291,7 @@ class PdfController extends AbstractController
                     $pdf->SetFontSize(10); // Rétablir la taille de police à la valeur par défaut (si nécessaire)
 
                     $profileImagePath = 'uploads/images/' . $user->getId() . '.jpg';
+                    $pdf->Image("img/logo.png", 25, 73, 40, 45, '', '', '', false, 300, '', false, false, 1, false, false, false);
 
                     $posX = 138;
                     $posY = 60;
@@ -269,7 +310,8 @@ class PdfController extends AbstractController
                     <br><br><br><br><br><br><br><br><br><br><br><br>
                     <b><i>Informations du joueur : </i></b>
                     <br><hr><br><div></div><div></div><div></div>
-                    <u>Email de contact</u> : ' . $user->getEmail() . '
+                    <u>Email de contact</u> : ' . $user->getEmail() . '</u><br>
+                    <u>Tel. Resp. Légal :</u><br> '. $user->getRespPhone() .'
                     </p>';
 
                     // Ajout du contenu du joueur au PDF
@@ -447,7 +489,7 @@ class PdfController extends AbstractController
 
 
     #[Route('/{userId}', name: 'app_pdf_view_pdf')]
-    public function viewPdf(int $userId, Request $request, UserRepository $userRepository, TestsRepository $testsRepository, ChartConfigurationRepository $chartConfigurationRepository, EntityManagerInterface $entityManager): Response
+    public function viewPdf(int $userId, Request $request, UserRepository $userRepository, TestsRepository $testsRepository, ChartConfigurationRepository $chartConfigurationRepository, EntityManagerInterface $entityManager, AttendanceRepository $attendanceRepository): Response
     {
         // Récupérez l'utilisateur
         $user = $userRepository->find($userId);
@@ -462,7 +504,7 @@ class PdfController extends AbstractController
         $request = new Request([], [], ['userId' => $userId]);
 
         // Appel de la méthode pdf avec le nouvel objet Request
-        $pdfResponse = $this->pdf($request, $userRepository, $testsRepository, $chartConfigurationRepository, $entityManager, $userId);
+        $pdfResponse = $this->pdf($request, $userRepository, $testsRepository, $chartConfigurationRepository, $entityManager, $userId, $attendanceRepository);
 
         // Retournez la réponse du PDF
         return $pdfResponse;
