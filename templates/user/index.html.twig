@@ -72,25 +72,26 @@
     </div>
 
 <script>
-    // JavaScript for filtering users by name
+    // JavaScript for filtering users by all columns
     document.getElementById("searchInput").addEventListener("keyup", function() {
-        var input, filter, table, tr, td, i, txtValue;
+        var input, filter, table, tr, td, i, j, txtValue, visible;
         input = document.getElementById("searchInput");
         filter = input.value.toUpperCase();
         table = document.querySelector("table");
         tr = table.querySelectorAll(".userRow");
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[2]; // Index 2 corresponds to the "Nom" column
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+            tr[i].style.display = "none";  // Hide the row initially
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";  // Show the row if a match is found
+                        break;  // Exit the inner loop
+                    }
                 }
             }
         }
     });
 </script>
-
 {% endblock %}

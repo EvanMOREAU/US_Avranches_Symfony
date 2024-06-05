@@ -61,25 +61,30 @@
     </div>
 
 <script>
-    // JavaScript for filtering users by name
+    // JavaScript for filtering users by all columns
     document.getElementById("searchInput").addEventListener("keyup", function() {
-        var input, filter, table, tr, td, i, txtValue;
+        var input, filter, table, tr, td, i, j, txtValue;
         input = document.getElementById("searchInput");
         filter = input.value.toUpperCase();
         table = document.querySelector("table");
-        tr = table.querySelectorAll(".userRow");
+        tr = table.querySelectorAll("tbody tr"); // Sélectionne toutes les lignes du corps du tableau
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0]; // Index 0 corresponds to the "Utilisateur" column
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+            visible = false; // Initialise le statut de visibilité de la ligne à false
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        visible = true; // Si une correspondance est trouvée, définis la visibilité de la ligne à true
+                        break;  // Sort de la boucle interne
+                    }
                 }
             }
+            // Affiche ou masque la ligne en fonction de son statut de visibilité
+            tr[i].style.display = visible ? "" : "none";
         }
     });
 </script>
+
 
 {% endblock %}

@@ -23,8 +23,14 @@
 			<div class="col-lg-12">
 				<div class="card mb-4">
 					<div class="card-body p-3">
+
 						<div class="mt-3 text-center">
 							<h1 class="h1 mb-2 display-4">Liste des Équipes</h1>
+								<div class="row mb-3">
+									<div class="col-md-6 offset-md-3">
+										<input type="text" id="searchInput" class="form-control" placeholder="Rechercher par nom...">
+									</div>
+								</div>
 							<a href="{{ path('app_equipe_new') }}" class="btn btn-info">
 								<i class="fa-solid fa-plus"></i>
 								Ajouter une équipe</a>
@@ -45,7 +51,7 @@
 										(a.name <=> b.name)
 									) %}
 									{% for equipe in sortedEquipes %}
-										<tr>
+										<tr class="equipeRow">
 											<td class="align-middle">{{ equipe.name }}</td>
 											<td class="align-middle">{{ equipe.getCategory().name }}</td>
 											<td class="align-middle">
@@ -76,5 +82,29 @@
 			</div>
 		</div>
 	</div>
+	<script>
+		// JavaScript for filtering equipes by all columns
+		document.getElementById("searchInput").addEventListener("keyup", function() {
+			var input, filter, table, tr, td, i, j, txtValue, visible;
+			input = document.getElementById("searchInput");
+			filter = input.value.toUpperCase();
+			table = document.querySelector("table");
+			tr = table.querySelectorAll(".equipeRow");
+			for (i = 0; i < tr.length; i++) {
+				tr[i].style.display = "none";  // Hide the row initially
+				td = tr[i].getElementsByTagName("td");
+				for (j = 0; j < td.length; j++) {
+					if (td[j]) {
+						txtValue = td[j].textContent || td[j].innerText;
+						if (txtValue.toUpperCase().indexOf(filter) > -1) {
+							tr[i].style.display = "";  // Show the row if a match is found
+							break;  // Exit the inner loop
+						}
+					}
+				}
+			}
+		});
+	</script>
+
 {% endblock %}
 
