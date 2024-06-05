@@ -56,10 +56,11 @@
                     <canvas id="canvas{{ chartId }}" width="50%" style="background-color : white;"></canvas>
                     
                     <!-- Modifier l'échelle du graphe -->
-                    <center>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalchart{{ chartId }}" data-bs-whatever="@mdo" data-chart-id="{{ chartId }}" data-min="{{ chartData.min }}" data-max="{{ chartData.max }}"><i class="fa-solid fa-ruler-vertical"></i>  Modifier l'échelle du graphe </button>
-                    </center>
-                    
+                    {% if is_granted('ROLE_COACH') or is_granted('ROLE_SUPER_ADMIN') %}
+                        <center>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalchart{{ chartId }}" data-bs-whatever="@mdo" data-chart-id="{{ chartId }}" data-min="{{ chartData.min }}" data-max="{{ chartData.max }}"><i class="fa-solid fa-ruler-vertical"></i>  Modifier l'échelle du graphe </button>
+                        </center>
+                    {% endif %}
                     <form id="updateScaleForm{{ chartId }}" action="{{ path('app_charts_update_scale') }}" method="POST">
                         <input type="hidden" name="chartId" value="{{ chartId }}">
                         <div class="modal fade" id="modalchart{{ chartId }}" tabindex="-1" aria-labelledby="modalchart{{ chartId }}" aria-hidden="true">
@@ -90,10 +91,11 @@
                     </form>
                     
                     <!-- Modifier les paliers du graphe -->
+                    {% if is_granted('ROLE_COACH') or is_granted('ROLE_SUPER_ADMIN') %}
                     <center>
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPalier{{ chartId }}" data-bs-whatever="@mdo" data-chart-id="{{ chartId }}" data-paliermin="{{ chartData.paliermin }}" data-paliiermax="{{ chartData.paliermax }}"><i class="fa-solid fa-stairs"></i>  Modifier les paliers du graphe</button>
                     </center>
-                    
+                    {% endif %}
                     <form id="updatePalierForm{{ chartId }}" action="{{ path('app_charts_update_palier') }}" method="POST">
                         <input type="hidden" name="chartId" value="{{ chartId }}">
                         <div class="modal fade" id="modalPalier{{ chartId }}" tabindex="-1" aria-labelledby="modalPalier{{ chartId }}" aria-hidden="true">
