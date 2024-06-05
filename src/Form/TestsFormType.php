@@ -84,7 +84,7 @@ class TestsFormType extends AbstractType
         ->add('user', EntityType::class, [
             'class' => User::class,
             'choice_label' => function ($user) {
-                return $user->getFirstName() . ' ' . $user->getLastName() . ' - ' . $user->getCategory();
+                return $user->getLastName() . ' ' . $user->getFirstName() . ' - ' . $user->getCategory();
             },
             'label' => 'Utilisateur :',
             'placeholder' => 'Choisir un utilisateur',
@@ -92,8 +92,8 @@ class TestsFormType extends AbstractType
                 return $er->createQueryBuilder('u')
                     ->andWhere('u.roles LIKE :role')
                     ->setParameter('role', '%"ROLE_PLAYER"%')
-                    ->orderBy('u.first_name', 'ASC')
-                    ->addOrderBy('u.last_name', 'ASC');
+                    ->orderBy('u.last_name', 'ASC')
+                    ->addOrderBy('u.first_name', 'ASC');
             },
         ]);
     }

@@ -89,12 +89,12 @@
                                     {% set mergedUsers = mergedUsers|merge(users) %}
                                 {% endfor %}
 
-                                {% set sortedUsers = mergedUsers|sort((a, b) => a.getCategory() <=> b.getCategory() == 0 ? a.getFirstName() ~ a.getLastName() <=> b.getFirstName() ~ b.getLastName() : a.getCategory() <=> b.getCategory()) %}
+                                {% set sortedUsers = mergedUsers|sort((a, b) => a.getCategory() <=> b.getCategory() == 0 ? a.getLastName() ~ a.getFirstName() <=> b.getLastName() ~ b.getFirstName() : a.getCategory() <=> b.getCategory()) %}
 
                                 {% set currentCategory = '' %}
 
                                 {% for user in sortedUsers %}
-                                    {% set userRoles = user.getRoles() %}
+                                {% set userRoles = user.getRoles() %}
                                     {% set includeUser = true %}
                                     {% for role in userRoles %}
                                         {% if role == 'ROLE_SUPER_ADMIN' or role == 'ROLE_COACH' %}
@@ -111,10 +111,11 @@
                                                 {% set currentCategory = user.getCategory() %}
                                         {% endif %}
                                         <option value="{{ user.getId() }}" {% if selectedUserId == user.getId() %}selected{% endif %}>
-                                            {{ user.getFirstName() }} {{ user.getLastName() }}
+                                            {{ user.getLastName() }} {{ user.getFirstName() }}
                                         </option>
                                     {% endif %}
                                 {% endfor %}
+
                             </select>
                         {% endif %}
                     </div>
@@ -158,7 +159,7 @@
                                     <p class="text-gradient text-dark mb-2 text-sm">{{ test.user.getCategory() }}</p>
                                     <a href="javascript:;">
                                         <h5>
-                                            {{ test.getUser().getFirstName() }} {{test.getUser().getLastName()}} - {{ test.date|date('d/m/Y') }}
+                                            {{ test.getUser().getLastName() }} {{test.getUser().getFirstName()}} - {{ test.date|date('d/m/Y') }}
                                         </h5>
                                     </a>
                                     <p class="mb-4 text-sm">

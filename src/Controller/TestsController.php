@@ -85,7 +85,7 @@ class TestsController extends AbstractController
             } elseif ($order === 'desc') {
                 return $b->getDate() <=> $a->getDate();
             } elseif ($order === 'alphabetical') {
-                return $a->getUser()->getFirstName() <=> $b->getUser()->getFirstName();
+                return $a->getUser()->getLastName() <=> $b->getUser()->getLastName();
             }
         });
 
