@@ -189,7 +189,7 @@ class UserController extends AbstractController
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}/poste-cache', name: 'app_user_cacheposte', methods: ['GET'])]
+    #[Route('/{id}/poste-cache', name: 'app_user_cacheposte')]
     public function poste_cache(user $user, LoggerInterface $logger): Response
     {
         if (!$this->isGranted('ROLE_PLAYER')) {
@@ -217,7 +217,7 @@ class UserController extends AbstractController
         }
     }
 
-    #[Route('/{id}/poste', name: 'app_user_poste', methods: ['GET'])]
+    #[Route('/{id}/poste', name: 'app_user_poste')]
     public function poste(user $user, LoggerInterface $logger): Response
     {
         if (!$this->isGranted('ROLE_PLAYER')) {
