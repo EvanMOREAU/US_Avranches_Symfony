@@ -44,7 +44,9 @@ class ExcelController extends AbstractController
         $sheet->setCellValue('C1', 'Date de Naissance');
         $sheet->setCellValue('D1', 'Catégorie');
         $sheet->setCellValue('E1', 'Taux de présence entraînement');
-        $sheet->setCellValue('F1', 'Taux de présence match');
+        $sheet->setCellValue('F1', 'Pourcentage présence entraînement');
+        $sheet->setCellValue('G1', 'Taux de présence match');
+        $sheet->setCellValue('H1', 'Pourcentage présence match');
 
         // Mettez en gras les en-têtes
         $headerStyle = $sheet->getStyle('A1:D1');
@@ -57,7 +59,9 @@ class ExcelController extends AbstractController
         $sheet->getColumnDimension('C')->setWidth(20);
         $sheet->getColumnDimension('D')->setWidth(20);
         $sheet->getColumnDimension('E')->setWidth(30);
-        $sheet->getColumnDimension('F')->setWidth(30);
+        $sheet->getColumnDimension('F')->setWidth(20);
+        $sheet->getColumnDimension('G')->setWidth(30);
+        $sheet->getColumnDimension('H')->setWidth(20);
 
         // Ajoutez les données à la feuille de calcul
         $row = 2; // Commencez à partir de la ligne 2
@@ -88,8 +92,23 @@ class ExcelController extends AbstractController
                 }
 
             }
+
+            if($countEntMake>0){
+                $pourcentEnt = ($countEntMake/$countEnt) * 100;
+                $sheet->setCellValue('F' . $row, $pourcentEnt.'%');
+            }else{
+                $sheet->setCellValue('F' . $row, 'Aucun match');
+            }
+ 
+            if($countMatchMake>0){
+                $pourcentMatch = ($countMatchMake/$countMatch) * 100;
+                $sheet->setCellValue('H' . $row, $pourcentMatch.'%');
+            }else{
+                $sheet->setCellValue('H' . $row, 'Aucun match');
+            }
+            
             $sheet->setCellValue('E' . $row, $countEntMake.'/'.$countEnt);
-            $sheet->setCellValue('F' . $row, $countMatchMake.'/'.$countMatch);
+            $sheet->setCellValue('G' . $row, $countMatchMake.'/'.$countMatch);
             //------------------- TESTS -------------------
 
             // Ajoutez une feuille uniquement si l'utilisateur a des tests

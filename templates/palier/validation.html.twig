@@ -126,15 +126,17 @@
     </div>
 </div>
 
-<script>
-    function openVideoModal(videoPath) {
-        // Mettez à jour la source vidéo avec le chemin passé
-        document.getElementById('videoSource').setAttribute('src', videoPath);
-        // Rafraîchissez le lecteur vidéo
-        document.getElementById('videoPlayer').load();
-        // Affichez la modal
-        $('#videoModal').modal('show');
-    }
+        <script>
+            function openVideoModal(videoPath) {
+                // Mettez à jour la source vidéo avec le chemin passé
+                document.getElementById('videoSource').setAttribute('src', videoPath);
+                // Rafraîchissez le lecteur vidéo
+                document.getElementById('videoPlayer').load();
+                // Affichez la modal
+                var videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
+                videoModal.show();
+            }
+        </script>
 
     $(document).ready(function() {
         $("#searchInput").on("keyup", function() {
