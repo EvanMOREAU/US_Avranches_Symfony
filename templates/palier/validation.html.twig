@@ -20,109 +20,111 @@
         
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <div class="container">
-       {% set users_exist = false %}
-{% for user in users %}
-    {% if videos[user.username] is defined %}
-        {% set users_exist = true %}
-    {% endif %}
-{% endfor %}
+<div class="container">
+    {% set users_exist = false %}
+    {% for user in users %}
+        {% if videos[user.username] is defined %}
+            {% set users_exist = true %}
+        {% endif %}
+    {% endfor %}
 
-{% if users_exist %}
-
-    <h1 class="text-center mb-4">User ayant un palier à valider</h1>
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Username</th>
-                    <th scope="col">Vidéo</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                    {% if videos[user.username] is defined %}
-                        <tr>
-                            <td>{{ user.username }}</td>
-                            <td>
-                                <button class="btn btn-info" onclick="openVideoModal('/uploads/videos/{{ user.username }}_palier.mp4')">Voir la vidéo</button>
-                            </td>
-                            <td>
-                                <form action="{{ path('app_validation', {'palierNumero': palierNumero}) }}" method="post">
-                                    <input type="hidden" name="username" value="{{ user.username }}">
-                                    <button type="submit" class="btn btn-success">Valider la vidéo et augmenter le palier</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% else %}
-<div class="alert alert-danger alert-dismissible text-white text-center" role="alert">Aucun utilisateur n'attend de validation ! </div>
-{% endif %}
-
-
-        <h1 class="text-center mb-4">Users ayant le palier {{ palierNumero }}</h1>
+    {% if users_exist %}
+        <h1 class="text-center mb-4">User ayant un palier à valider</h1>
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th scope="col">Username</th>
                         <th scope="col">Vidéo</th>
-                        <th scope="col">Actions</th> {# Nouvelle colonne pour les actions #}
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
-                        <tr>
-                            <td>{{ user.username }}</td>
-                            <td>
-                                {% if videos[user.username] is defined %}
+                        {% if videos[user.username] is defined %}
+                            <tr>
+                                <td>{{ user.username }}</td>
+                                <td>
                                     <button class="btn btn-info" onclick="openVideoModal('/uploads/videos/{{ user.username }}_palier.mp4')">Voir la vidéo</button>
-                                {% else %}
-                                    Aucune vidéo disponible.
-                                {% endif %}
-                            </td>
-                            <td> {# Ajoutez une colonne pour le bouton d'action #}
-                                {% if videos[user.username] is defined %}
-                                    <form action="{{ path('app_validation', {'palierNumero': palierNumero}) }}" method="post"> {# Formulaire pour soumettre l'action #}
-                                        <input type="hidden" name="username" value="{{ user.username }}"> {# Champ caché pour le nom d'utilisateur #}
+                                </td>
+                                <td>
+                                    <form action="{{ path('app_validation', {'palierNumero': palierNumero}) }}" method="post">
+                                        <input type="hidden" name="username" value="{{ user.username }}">
                                         <button type="submit" class="btn btn-success">Valider la vidéo et augmenter le palier</button>
                                     </form>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="3" class="text-center">Aucun utilisateur pour ce palier.</td>
-                        </tr>
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </div>
+    {% else %}
+        <div class="alert alert-danger alert-dismissible text-white text-center" role="alert">Aucun utilisateur n'attend de validation ! </div>
+    {% endif %}
 
-    <!-- Modal -->
-    <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="videoModalLabel">Vidéo</h5>
-                    <button type="button" class="btn-close btn-danger" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <video id="videoPlayer" width="100%" controls>
-                        <source id="videoSource" src="" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
+    <h1 class="text-center mb-4">Users ayant le palier {{ palierNumero }}</h1>
+    <div class="row mb-3">
+        <div class="col-md-6 offset-md-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par nom d'utilisateur...">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Nom d'utilisateur</th>
+                    <th scope="col">Vidéo</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr class="userRow">
+                        <td>{{ user.username }}</td>
+                        <td>
+                            {% if videos[user.username] is defined %}
+                                <button class="btn btn-info" onclick="openVideoModal('/uploads/videos/{{ user.username }}_palier.mp4')">Voir la vidéo</button>
+                            {% else %}
+                                Aucune vidéo disponible.
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if videos[user.username] is defined %}
+                                <form action="{{ path('app_validation', {'palierNumero': palierNumero}) }}" method="post">
+                                    <input type="hidden" name="username" value="{{ user.username }}">
+                                    <button type="submit" class="btn btn-success">Valider la vidéo et augmenter le palier</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center">Aucun utilisateur pour ce palier.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="videoModalLabel">Vidéo</h5>
+                <button type="button" class="btn-close btn-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <video id="videoPlayer" width="100%" controls>
+                    <source id="videoSource" src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
             </div>
         </div>
     </div>
-
+</div>
 
         <script>
             function openVideoModal(videoPath) {
@@ -136,5 +138,13 @@
             }
         </script>
 
-
+    $(document).ready(function() {
+        $("#searchInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $(".userRow").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
 {% endblock %}

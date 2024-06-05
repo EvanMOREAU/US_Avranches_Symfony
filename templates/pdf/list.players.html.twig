@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste de vos tests
-{% endblock %}
+{% block title %}Liste de vos tests{% endblock %}
 
 {% block body %}
     <!--
@@ -18,55 +17,66 @@
 
         * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
         -->
-		
+        
  <div class="container-fluid pt-3">
-		<div class="row removable">
-			<div class="col-lg-12">
-				<div class="card mb-4">
-					<div class="card-body p-3">
-						<div class="mt-3 text-center">
-							<h1 class="h1 mb-2 display-4">Liste des PDF</h1>
-						</div>
-                                <div class="card-body p-3">
-                                    <div class="row">
-										{% for player in players %}
-											<div class="col-xl-3 col-md-6 mb-4">
-												<div class="card card-blog card-plain">
-													<div class="position-relative">
-														<a class="d-block shadow-xl border-radius-xl">
-															{% if player.getProfileImage() != null %}
-															<img src="/uploads/images/{{ player.getProfileImage()}}"
-																alt="img-blur-shadow" class="img-fluid shadow border-radius-xl">
-															{% else %}
-															<img src="/uploads/defaultpp.jpg" alt="img-blur-shadow"
-																class="img-fluid shadow border-radius-xl">
-															{% endif %}
-														</a>
-													</div>
-													<div class="card-body px-1 pb-0">
-														<p class="text-gradient text-dark mb-2 text-sm">{{ player.getCategory()}}</p>
-														<a href="javascript:;">
-															<h5>
-																{{player.getFirstName}} {{player.getLastName}}
-															</h5>
-														</a>
-														<p class="mb-4 text-sm">
-															{{ player.getDateNaissance|date('d/m/Y') 	}}
-														</p>
-														<div class="d-flex align-items-center justify-content-between">
-															<a href='/pdf/{{player.getId()}}' type="button" class="btn btn-outline-info btn-sm mb-0">Accéder au PDF</a>
-														</div>
-													</div>
-												</div>
-											</div>
-										{% endfor %}                                      
+    <div class="row removable">
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-body p-3">
+                    <div class="mt-3 text-center">
+                        <h1 class="h1 mb-2 display-4">Liste des PDF</h1>
+                    </div>
+					<center><div class="col-md-6 mb-4">
+                        <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par prénom...">
+                    </div></center>
+                    <div class="card-body p-3">
+                        <div class="row">
+                            {% for player in players %}
+                                <div class="col-xl-3 col-md-6 mb-4 playerItem">
+                                    <div class="card card-blog card-plain">
+                                        <div class="position-relative">
+                                            <a class="d-block shadow-xl border-radius-xl">
+                                                {% if player.getProfileImage() != null %}
+                                                <img src="/uploads/images/{{ player.getProfileImage()}}" alt="img-blur-shadow" class="img-fluid shadow border-radius-xl">
+                                                {% else %}
+                                                <img src="/uploads/defaultpp.jpg" alt="img-blur-shadow" class="img-fluid shadow border-radius-xl">
+                                                {% endif %}
+                                            </a>
+                                        </div>
+                                        <div class="card-body px-1 pb-0">
+                                            <p class="text-gradient text-dark mb-2 text-sm">{{ player.getCategory()}}</p>
+                                            <a href="javascript:;">
+                                                <h5>
+                                                    {{player.getFirstName}} {{player.getLastName}}
+                                                </h5>
+                                            </a>
+                                            <p class="mb-4 text-sm">
+                                                {{ player.getDateNaissance|date('d/m/Y') }}
+                                            </p>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <a href='/pdf/{{player.getId()}}' type="button" class="btn btn-outline-info btn-sm mb-0">Accéder au PDF</a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            {% endfor %}                                      
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $("#searchInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $(".playerItem").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
 
 {% endblock %}

@@ -137,17 +137,25 @@
                 if (value >= {{ chartData.paliermax}})          { return 'red'; } 
                 else if (value <= {{ chartData.paliermin }})    { return 'green'; }
                 else                                            { return 'orange'; }
+            } else if ({{ chartId }} === 1 ||{{ chartId }} === 2)  {
+                // dans le cadre des autres tests
+                if (value >= {{ chartData.paliermax }})         { return 'black'; } 
+                else if (value <= {{ chartData.paliermin }})    { return 'black'; }
+                else                                            { return 'black'; }
             } else {
                 // dans le cadre des autres tests
                 if (value >= {{ chartData.paliermax }})         { return 'green'; } 
                 else if (value <= {{ chartData.paliermin }})    { return 'red'; }
                 else                                            { return 'orange'; }
-            }         
+            }    
+       
         });
         
         let borderColor{{ chartId }} = "";
         if ({{ chartId }} === 6 ||{{ chartId }} === 10) {
             borderColor{{ chartId }} = ctx{{ chartId }} => up(ctx{{ chartId }}, 'red') || down(ctx{{ chartId }}, 'green') || equal(ctx{{ chartId }}, 'orange');
+        }  else if ({{ chartId }} === 1 ||{{ chartId }} === 2) {
+            borderColor{{ chartId }} =  ctx{{ chartId }} => up(ctx{{ chartId }}, 'black') || down(ctx{{ chartId }}, 'black') || equal(ctx{{ chartId }}, 'black');
         } else {
             borderColor{{ chartId }} =  ctx{{ chartId }} => up(ctx{{ chartId }}, 'green') || down(ctx{{ chartId }}, 'red') || equal(ctx{{ chartId }}, 'orange');
         }
