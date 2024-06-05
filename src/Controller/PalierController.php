@@ -180,7 +180,7 @@ class PalierController extends AbstractController
         return $newFileName;
     }
 
-    #[Route('/uploads/videos', name: 'upload_video', methods: ['POST'])]
+    #[Route('uploads/videos', name: 'upload_video', methods: ['POST'])]
     public function handleVideoUpload(Request $request): Response
     {
         $userVerif = $this->userVerificationService->verifyUser();
@@ -244,9 +244,9 @@ class PalierController extends AbstractController
             if (!$user) {
                 throw $this->createNotFoundException('Utilisateur non trouvé');
             }
-            $projectDir = $this->getParameter('kernel.project_dir');
+
             // Récupérer le chemin de la vidéo à supprimer
-            $videoPath = $projectDir . '/public/uploads/videos/' . $user->getUsername() . '_palier.mp4';
+            $videoPath = '/uploads/videos/' . $user->getUsername() . '_palier.mp4';
 
             // Vérifier si le fichier vidéo existe
             if (file_exists($videoPath)) {
