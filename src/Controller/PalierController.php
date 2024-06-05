@@ -109,7 +109,16 @@ class PalierController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Persiste et flush le nouveau palier
             $entityManager->persist($palier);
+            $entityManager->flush();
+
+            // Met à jour tous les utilisateurs avec palier_ended = false
+            $users = $entityManager->getRepository(User::class)->findAll();
+            foreach ($users as $user) {
+                $user->setPalierEnded(false);
+                $entityManager->persist($user);
+            }
             $entityManager->flush();
 
             return $this->redirectToRoute('app_palier_index', [], Response::HTTP_SEE_OTHER);
@@ -121,7 +130,6 @@ class PalierController extends AbstractController
             'form' => $form,
         ]);
     }
-
     #[Route('/{id}/edit', name: 'app_palier_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Palier $palier, EntityManagerInterface $entityManager): Response
     {
@@ -256,14 +264,17 @@ class PalierController extends AbstractController
 
             // Récupérer le palier suivant
             $nextPalier = $palierRepository->findOneBy(['numero' => $palierNumero + 1]);
-
-            // Vérifier si le palier suivant existe
             if (!$nextPalier) {
-                throw $this->createNotFoundException('Palier suivant non trouvé');
+                $user->setPalierEnded(true);
+            }else{
+                $user->setPalier($nextPalier);
             }
-
+            // // Vérifier si le palier suivant existe
+            // if (!$nextPalier) {
+            //     throw $this->createNotFoundException('Palier suivant non trouvé');
+            // }
+            
             // Associer le palier suivant à l'utilisateur
-            $user->setPalier($nextPalier);
 
             // Enregistrer les modifications dans la base de données
             $entityManager->flush();
