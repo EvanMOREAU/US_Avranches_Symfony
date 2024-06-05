@@ -42,6 +42,7 @@ class UserFixtures extends Fixture
         $superAdmin->setRoles([
             "ROLE_SUPER_ADMIN",
         ]);
+        $superAdmin->setPalierEnded(false);
         $manager->persist($superAdmin);
 
         $faker = \Faker\Factory::create();
@@ -66,6 +67,7 @@ class UserFixtures extends Fixture
             $player->setRoles([
                 "ROLE_PLAYER",
             ]);
+            $player->setPalierEnded(false);
             $player->setPassword($hashedPassword);
             $manager->persist($player);
 
@@ -81,6 +83,7 @@ class UserFixtures extends Fixture
             $coach->setWeight(0);
             $coach->setPalier($palier);
             $coach->setRespPhone('0638344893');
+            $coach->setPalierEnded(false);
             $randomEmail = $faker->safeEmail;
             $coach->setEmail($randomEmail);
             $plaintextPassword = "admin";
