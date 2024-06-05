@@ -99,6 +99,36 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="mt-5 text-center">
+                        <h2 class="h2">Utilisateurs avec palier terminé</h2>
+                    </div>
+
+                    <div class="table-responsive mt-3">
+                        <table class="table table-striped table-hover text-center">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="col-lg-2 col-md-2 col-sm-2">Nom</th>
+                                    <th class="col-lg-2 col-md-2 col-sm-2">Email</th>
+                                    <th class="col-lg-2 col-md-2 col-sm-2">Palier Terminé</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    {% if user.isPalierEnded() %}
+                                        <tr>
+                                            <td class="align-middle">{{ user.getFirstName() }} {{ user.getLastName() }}</td>
+                                            <td class="align-middle">{{ user.getEmail() }}</td>
+                                            <td class="align-middle">Oui</td>
+                                        </tr>
+                                    {% endif %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">Aucun utilisateur n'a terminé son palier.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

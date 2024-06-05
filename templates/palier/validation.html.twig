@@ -80,30 +80,28 @@
             </thead>
             <tbody>
                 {% for user in users %}
-                    <tr class="userRow">
-                        <td>{{ user.username }}</td>
-                        <td>
-                            {% if videos[user.username] is defined %}
-                                <button class="btn btn-info" onclick="openVideoModal('/uploads/videos/{{ user.username }}_palier.mp4')">Voir la vidéo</button>
-                            {% else %}
-                                Aucune vidéo disponible.
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if videos[user.username] is defined %}
-                                <form action="{{ path('app_validation', {'palierNumero': palierNumero}) }}" method="post">
-                                    <input type="hidden" name="username" value="{{ user.username }}">
-                                    <button type="submit" class="btn btn-success">Valider la vidéo et augmenter le palier</button>
-                                </form>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="3" class="text-center">Aucun utilisateur pour ce palier.</td>
-                    </tr>
+                    {% if not user.isPalierEnded() %}
+                        <tr class="userRow">
+                            <td>{{ user.username }}</td>
+                            <td>
+                                {% if videos[user.username] is defined %}
+                                    <button class="btn btn-info" onclick="openVideoModal('/uploads/videos/{{ user.username }}_palier.mp4')">Voir la vidéo</button>
+                                {% else %}
+                                    Aucune vidéo disponible.
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if videos[user.username] is defined %}
+                                    <form action="{{ path('app_validation', {'palierNumero': palierNumero}) }}" method="post">
+                                        <input type="hidden" name="username" value="{{ user.username }}">
+                                        <button type="submit" class="btn btn-success">Valider la vidéo et augmenter le palier</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
-            </tbody>
+            </tbody>                      
         </table>
     </div>
 </div>
