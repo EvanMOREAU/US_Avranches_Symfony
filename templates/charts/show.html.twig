@@ -1,89 +1,198 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}graphique{% endblock %}
+{% block title %}Détails de l'utilisateur{% endblock %}
 
 {% block body %}
-    <!--
-        =========================================================
-        * Material Dashboard 2 - v3.1.0
-        =========================================================
-
-        * Product Page: https://www.creative-tim.com/product/material-dashboard
-        * Copyright 2023 Creative Tim (https://www.creative-tim.com)
-        * Licensed under MIT (https://www.creative-tim.com/license)
-        * Coded by Creative Tim
-
-        =========================================================
-
-        * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-        -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <h1>Charts</h1>
-    <br />
-    {# {% for chart in charts %} #}
+<style>
+    canvas{
+        margin-left : 10%;
+        margin-right : 10%;
+        margin-bottom : 5%;
+        margin-top : 5%;
+    }
+</style>
+<script>
+    const up = (ctx, value) => ctx.p0.parsed.y < ctx.p1.parsed.y ? value : undefined;
+    const down = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y ? value : undefined;
+    const equal = (ctx, value) => ctx.p0.parsed.y = ctx.p1.parsed.y ? value : undefined;
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="accordion">
+    <div class="container mt-2 text-white">
+        <div class="container-fluid pt-2">
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="mt-1 text-center">
+                        <h1 style="color:black;">Statistiques de {{ user.firstname }} {{ user.lastname }}</h1>
+                    </div>
+                </div>
+            </div>      
+        </div>
+    </div>
+    {% for chartId, chartData in chartData %}
     
-        <canvas id='{{ chart.data }}' role:"img"></canvas>
-        <script>
-        const ctx = document.getElementById('{{ chart.data }}');
+    <div class="container mt-4 text-white">
+        <div class="container-fluid pt-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mt-3 text-left">
+                        <h3 style="color:black;">{{ chartData.name }}</h3>
+                    </div>
+                    <canvas id="canvas{{ chartId }}" width="50%" style="background-color : white;"></canvas>
+                    
+                    <!-- Modifier l'échelle du graphe -->
+                    {% if is_granted('ROLE_COACH') or is_granted('ROLE_SUPER_ADMIN') %}
+                        <center>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalchart{{ chartId }}" data-bs-whatever="@mdo" data-chart-id="{{ chartId }}" data-min="{{ chartData.min }}" data-max="{{ chartData.max }}"><i class="fa-solid fa-ruler-vertical"></i>  Modifier l'échelle du graphe </button>
+                        </center>
+                    {% endif %}
+                    <form id="updateScaleForm{{ chartId }}" action="{{ path('app_charts_update_scale') }}" method="POST">
+                        <input type="hidden" name="chartId" value="{{ chartId }}">
+                        <div class="modal fade" id="modalchart{{ chartId }}" tabindex="-1" aria-labelledby="modalchart{{ chartId }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="modalchart{{ chartId }}">Modification de l'échelle du graphe {{ chartData.name }}</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body" style="background-color: white;">
+                                        <form>
+                                            <div class="mb-3" style="color: black;">
+                                                <label for="echellemin" class="col-form-label">Echelle Min:</label>
+                                                <input type="number" class="form-control" id="echellemin{{ chartId }}" name="NewMin">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="echellemax" class="col-form-label">Echelle Max:</label>
+                                                <input type="number" class="form-control" id="echellemax{{ chartId }}" name="NewMax">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" form="updateScaleForm{{ chartId }}">Appliquer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Modifier les paliers du graphe -->
+                    {% if is_granted('ROLE_COACH') or is_granted('ROLE_SUPER_ADMIN') %}
+                    <center>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPalier{{ chartId }}" data-bs-whatever="@mdo" data-chart-id="{{ chartId }}" data-paliermin="{{ chartData.paliermin }}" data-paliiermax="{{ chartData.paliermax }}"><i class="fa-solid fa-stairs"></i>  Modifier les paliers du graphe</button>
+                    </center>
+                    {% endif %}
+                    <form id="updatePalierForm{{ chartId }}" action="{{ path('app_charts_update_palier') }}" method="POST">
+                        <input type="hidden" name="chartId" value="{{ chartId }}">
+                        <div class="modal fade" id="modalPalier{{ chartId }}" tabindex="-1" aria-labelledby="modalPalier{{ chartId }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="modalPalier{{ chartId }}">Modification des paliers du graphe {{ chartData.name }}</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body" style="background-color: white;">
+                                        <form>
+                                            <div class="mb-3" style="color: black;">
+                                                <label for="paliermin" class="col-form-label">Palier Min:</label>
+                                                <input type="number" class="form-control" id="paliermin{{ chartId }}" name="NewPalierMin">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="paliermax" class="col-form-label">Palier Max:</label>
+                                                <input type="number" class="form-control" id="paliermax{{ chartId }}" name="NewPalierMax">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" form="updatePalierForm{{ chartId }}">Appliquer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>      
+        </div>
+    </div>
+    
+    <script>
+        const ctx{{ chartId }} = document.getElementById('canvas{{ chartId }}');
+        const configData{{ chartId }} = {{ chartData.data | json_encode | raw }};
+        const colors{{ chartId }} = configData{{ chartId }}.values.map((value, index) => {
+            const previousValue = configData{{ chartId }}.values[index - 1];
+            if ({{ chartId }} === 6 || {{ chartId }} === 10){
+                // dans le cadre des tests de vitesse
+                if (value >= {{ chartData.paliermax}})          { return 'red'; } 
+                else if (value <= {{ chartData.paliermin }})    { return 'green'; }
+                else                                            { return 'orange'; }
+            } else if ({{ chartId }} === 1 ||{{ chartId }} === 2)  {
+                // dans le cadre des autres tests
+                if (value >= {{ chartData.paliermax }})         { return 'black'; } 
+                else if (value <= {{ chartData.paliermin }})    { return 'black'; }
+                else                                            { return 'black'; }
+            } else {
+                // dans le cadre des autres tests
+                if (value >= {{ chartData.paliermax }})         { return 'green'; } 
+                else if (value <= {{ chartData.paliermin }})    { return 'red'; }
+                else                                            { return 'orange'; }
+            }    
+       
+        });
+        
+        let borderColor{{ chartId }} = "";
+        if ({{ chartId }} === 6 ||{{ chartId }} === 10) {
+            borderColor{{ chartId }} = ctx{{ chartId }} => up(ctx{{ chartId }}, 'red') || down(ctx{{ chartId }}, 'green') || equal(ctx{{ chartId }}, 'orange');
+        }  else if ({{ chartId }} === 1 ||{{ chartId }} === 2) {
+            borderColor{{ chartId }} =  ctx{{ chartId }} => up(ctx{{ chartId }}, 'black') || down(ctx{{ chartId }}, 'black') || equal(ctx{{ chartId }}, 'black');
+        } else {
+            borderColor{{ chartId }} =  ctx{{ chartId }} => up(ctx{{ chartId }}, 'green') || down(ctx{{ chartId }}, 'red') || equal(ctx{{ chartId }}, 'orange');
+        }
 
-        new Chart(ctx, {
-            type: '{{ chart.type }}',
+        new Chart(ctx{{ chartId }}, {
+            type: '{{ chartData.chartType }}',
             data: {
-            labels: ['Red', 'Blue', 'Yellow'],
-            datasets: [{
-                data: [{{ chart.source_data }}],
-                borderWidth: 1
-            }]
+                labels: configData{{ chartId }}.labels,
+                datasets: [{
+                    label: '{{ chartData.name }}',
+                    data: configData{{ chartId }}.values,
+                    borderColor: colors{{ chartId }}, // Utilisez la liste de couleurs déterminée précédemment
+                    backgroundColor : colors{{ chartId }},
+                    borderWidth: 3,
+                    segment: {
+                        borderColor: borderColor{{ chartId }}, 
+                    },
+                    spanGaps: true,
+                    tension: 0.2
+                }]
             },
             options: {
-            scales: {
-                y: {
-                beginAtZero: true
-                }
-            }
+                scales: {
+                    y: {
+                        min: {{ chartData.min }},
+                        max: {{ chartData.max }},
+                        grid: {
+                            color :'rgba(0,0,0,0.5)'
+                        },
+                        title: {
+                            color: 'black',
+                            display: true,
+                            text: 'Résultats des tests'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color :'rgba(0,0,0,0.5)',
+                        },
+                        title: {
+                            color: 'black',
+                            display: true,
+                            text: 'Date de réalisation des tests'
+                        }
+                    }
+                },
             }
         });
-        </script>
-    {# {% endfor %} #}
-
-    <br />
-
-
-    <hr/>
-
-<div>
-  <canvas id="myChart"></canvas>
-</div>
-
-    <script>
-    const ctx2 = document.getElementById('myChart');
-
-    new Chart(ctx2, {
-        type: 'bar',
-        data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            borderWidth: 1
-        }]
-        },
-        options: {
-        scales: {
-            y: {
-            beginAtZero: true
-            }
-        }
-        }
-    });
     </script>
-
-
-
-    <a href="{{ path('app_charts_index') }}">back to list</a>
-<br>
-    <a href="{{ path('app_charts_edit', {'id': chart.id}) }}">edit</a>
-<br />
-    {{ include('charts/_delete_form.html.twig') }}
+    
+    {% endfor %}
+    {# Ajoutez ici le code pour afficher les graphiques #}
 {% endblock %}
