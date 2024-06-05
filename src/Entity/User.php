@@ -127,6 +127,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 10)]
     private ?string $resp_phone = null;
 
+    #[ORM\Column]
+    private ?bool $palier_ended = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -572,6 +575,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRespPhone(string $resp_phone): static
     {
         $this->resp_phone = $resp_phone;
+
+        return $this;
+    }
+
+    public function isPalierEnded(): ?bool
+    {
+        return $this->palier_ended;
+    }
+
+    public function setPalierEnded(bool $palier_ended): static
+    {
+        $this->palier_ended = $palier_ended;
 
         return $this;
     }
