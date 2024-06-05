@@ -54,7 +54,7 @@ class ImageUploaderHelper {
 
         if ($imageFile) {
             $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeFilename = $this->slugger->slug($originalFilename);
+            // $safeFilename = $this->slugger->slug($originalFilename);
             $safeFilename = $category->getRealName();
             $newFilename = $safeFilename.'.'.$imageFile->guessExtension();
 
