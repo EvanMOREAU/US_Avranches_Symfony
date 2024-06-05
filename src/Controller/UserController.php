@@ -8,19 +8,20 @@ use App\Form\UserType;
 use App\Entity\Category;
 use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
+use App\Repository\TestsRepository;
 use App\Repository\HeightRepository;
 use App\Repository\WeightRepository;
 use App\Services\ImageUploaderHelper;
-use App\Services\UserVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Services\UserVerificationService;
 use App\Services\HeightVerificationService;
 use App\Services\WeightVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -162,7 +163,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager, WeightRepository $weightRepository, HeightRepository $heightRepository): Response
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager, WeightRepository $weightRepository, HeightRepository $heightRepository, TestsRepository $testsRepository): Response
     {
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -178,6 +179,7 @@ class UserController extends AbstractController
             // foreach($user->getWeights() as $Weight){
             //     $user->removeWeight($Weight);
             // }
+            $testsRepository->removeByUser($user);
             $heightRepository->removeByUser($user);
             $weightRepository->removeByUser($user);
             $entityManager->remove($user);
@@ -187,7 +189,7 @@ class UserController extends AbstractController
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}/poste-cache', name: 'app_user_cacheposte', methods: ['GET'])]
+    #[Route('/{id}/poste-cache', name: 'app_user_cacheposte')]
     public function poste_cache(user $user, LoggerInterface $logger): Response
     {
         if (!$this->isGranted('ROLE_PLAYER')) {
@@ -215,7 +217,7 @@ class UserController extends AbstractController
         }
     }
 
-    #[Route('/{id}/poste', name: 'app_user_poste', methods: ['GET'])]
+    #[Route('/{id}/poste', name: 'app_user_poste')]
     public function poste(user $user, LoggerInterface $logger): Response
     {
         if (!$this->isGranted('ROLE_PLAYER')) {

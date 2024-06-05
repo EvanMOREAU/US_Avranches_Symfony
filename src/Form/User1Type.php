@@ -20,6 +20,7 @@ class User1Type extends AbstractType
             ])   
             ->add('first_name')
             ->add('last_name')
+            ->add('resp_phone')
             ->add('email')
         ;
     }

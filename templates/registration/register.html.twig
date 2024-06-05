@@ -35,7 +35,7 @@
         <div class="container">
           <div class="row">
             <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
-              <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url('/assets/img/illustrations/illustration-signup.jpg'); background-size: cover;">
+              <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url('/assets/img/illustrations/illustration-signup.png'); background-size: cover;">
               </div>
             </div>
             <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
@@ -63,6 +63,9 @@
                         {{ form_row(registrationForm.last_name, { 'attr': { 'class': 'form-control', 'placeholder' : 'Nom'} }) }}
                     </div>
                     <div class="input-group input-group-outline mb-3 row">
+                        {{ form_row(registrationForm.resp_phone, { 'attr': { 'class': 'form-control', 'placeholder' : 'Tel. Responsable légal'} }) }}
+                    </div>
+                    <div class="input-group input-group-outline mb-3 row">
                         {{ form_row(registrationForm.date_naissance, { 'attr': { 'autocomplete': 'off', 'class': 'form-control datepicker', 'placeholder': 'Date de naissance' } }) }}
                     </div>
                     <div class="form-check form-check-info text-start ps-0">
@@ -73,14 +76,14 @@
                     </div>
 
                     <div class="text-center">
-                      <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Inscription</button>
+                      <button type="submit" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Inscription</button>
                     </div>
                   </form>
                 </div>
                 <div class="card-footer text-center pt-0 px-lg-2 px-1">
                   <p class="mb-2 text-sm mx-auto">
                     Vous possedez déjà un compte ?
-                    <a href="/login" class="text-primary text-gradient font-weight-bold">Connectez vous !</a>
+                    <a href="/login" class="text-info text-gradient font-weight-bold">Connectez vous !</a>
                   </p>
                 </div>
               </div>

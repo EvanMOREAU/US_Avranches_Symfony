@@ -56,6 +56,7 @@ class UserType extends AbstractType
             ])
             ->add('first_name')
             ->add('last_name')
+            ->add('resp_phone')
             ->add('classement', ChoiceType::class, [
                 'label' => 'Surclassement / Sous-classement',
                 'choices' => [

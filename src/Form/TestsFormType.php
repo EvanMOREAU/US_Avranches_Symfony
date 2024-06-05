@@ -40,6 +40,12 @@ class TestsFormType extends AbstractType
                 'min' => 0,   // Valeur minimale
                 'max' => 10000,  // Valeur maximale
             ],
+            'constraints' => [
+                new Range([
+                    'min' => 0,
+                    'max' => 100000,
+                ]),
+            ],
         ])       
         ->add('cooper', NumberType::class, [
             'label' => 'Cooper',
@@ -47,6 +53,12 @@ class TestsFormType extends AbstractType
             'attr' => [
                 'min' => 0,   // Valeur minimale
                 'max' => 100000,  // Valeur maximale
+            ],
+            'constraints' => [
+                new Range([
+                    'min' => 0,
+                    'max' => 100000,
+                ]),
             ],
         ])          
         ->add('jongle_gauche', NumberType::class, [

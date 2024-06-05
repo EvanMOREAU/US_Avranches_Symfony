@@ -19,7 +19,7 @@ use App\Repository\ChartConfigurationRepository;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/charts', name: 'app_charts')]
+#[Route('/charts')]
 class ChartsController extends AbstractController
 {
     private $userVerificationService;

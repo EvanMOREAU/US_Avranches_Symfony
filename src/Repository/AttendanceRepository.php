@@ -20,7 +20,36 @@ class AttendanceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Attendance::class);
     }
-
+    /**
+     * Récupère les entités Attendance associées à un utilisateur dans l'intervalle allant du 1er juillet de l'année courante au 30 juin de l'année suivante.
+     *
+     * @param int $userId L'ID de l'utilisateur
+     * @return Attendance[] Les entités Attendance associées à l'utilisateur dans l'intervalle spécifié
+     */
+    public function findByUserId(int $userId): array
+    {
+        $currentDate = new \DateTime();
+        $currentYear = (int) $currentDate->format('Y');
+    
+        // Calculer les dates de début et de fin
+        if ($currentDate >= new \DateTime("$currentYear-07-01")) {
+            $startDate = new \DateTime("$currentYear-07-01");
+            $endDate = new \DateTime(($currentYear + 1) . "-06-30");
+        } else {
+            $startDate = new \DateTime(($currentYear - 1) . "-07-01");
+            $endDate = new \DateTime("$currentYear-06-30");
+        }
+    
+        return $this->createQueryBuilder('a')
+            ->leftJoin('a.Gathering', 'g')
+            ->andWhere('a.User = :userId')
+            ->andWhere('g.GatheringHappenedDate BETWEEN :startDate AND :endDate')
+            ->setParameter('userId', $userId)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return Attendance[] Returns an array of Attendance objects
 //     */
