@@ -53,6 +53,7 @@ class CoachUserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setRoles(["ROLE_COACH"]);
             $user->setIsCodeValidated(true);
+            $user->setPalierEnded(false);
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,

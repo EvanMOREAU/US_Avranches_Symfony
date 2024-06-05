@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -40,6 +41,24 @@ class UserType extends AbstractType
                 'second_options' => [
                     'label' => 'Répétez le mot de passe',
                     'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
+                ],                
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Entrez un mot de passe',
+                    ]),
+                    new Length([
+                        'min' => 12,
+                        'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
+                        'max' => 4096,
+                    ]),
+                    new Regex([
+                        'pattern' => '/[0-9]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 chiffre.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/[\W_]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 caractère spécial.',
+                    ]),
                 ],
             ])  
             ->add('equipe', EntityType::class, [
