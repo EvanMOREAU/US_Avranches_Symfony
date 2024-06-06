@@ -130,6 +130,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $palier_ended = null;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Nationality $nationality = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -587,6 +591,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPalierEnded(bool $palier_ended): static
     {
         $this->palier_ended = $palier_ended;
+
+        return $this;
+    }
+
+    public function getNationality(): ?Nationality
+    {
+        return $this->nationality;
+    }
+
+    public function setNationality(?Nationality $nationality): static
+    {
+        $this->nationality = $nationality;
 
         return $this;
     }

@@ -13,6 +13,7 @@ use App\Repository\HeightRepository;
 use App\Repository\WeightRepository;
 use App\Services\ImageUploaderHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\NationalityRepository;
 use App\Services\UserVerificationService;
 use App\Services\HeightVerificationService;
 use App\Services\WeightVerificationService;
@@ -88,7 +89,7 @@ class UserController extends AbstractController
    
 
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(UserRepository $userRepository, NationalityRepository $nationalityRepository): Response
     {
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COACH')) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette page');
@@ -100,6 +101,7 @@ class UserController extends AbstractController
 
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
+            'nationalities' => $nationalityRepository->findAll(),
             'location' => 'n',
         ]);
     }

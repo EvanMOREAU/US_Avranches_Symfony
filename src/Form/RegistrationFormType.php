@@ -5,8 +5,10 @@ namespace App\Form;
 use App\Entity\User;
 use App\Form\HeightType;
 use App\Form\WeightType;
+use App\Entity\Nationality;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -86,6 +88,12 @@ class RegistrationFormType extends AbstractType
                         'message' => 'L\'adresse email "{{ value }}" n\'est pas valide.',
                     ]),
                 ],
+            ])
+            ->add('nationality', EntityType::class, [
+                'class' => Nationality::class,
+                'choice_label' => 'name', 
+                'label' => false,
+                'placeholder' => 'Sélectionnez une Nationalité', 
             ])
             
             // // Ajoutez le formulaire Weight

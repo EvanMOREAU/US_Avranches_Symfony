@@ -5,12 +5,13 @@ use App\Entity\User;
 use App\Entity\Equipe;
 use App\Entity\Palier;
 
+use App\Entity\Nationality;
 use App\Repository\EquipeRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Validator\Constraints\File;
 
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\EqualTo;
@@ -28,6 +29,8 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isEdit = $options['is_edit'];
+
         $builder
             ->add('username')
             ->add('plainPassword', RepeatedType::class, [
@@ -42,7 +45,7 @@ class UserType extends AbstractType
                     'label' => 'Répétez le mot de passe',
                     'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
                 ],                
-                'constraints' => [
+                'constraints' => $isEdit ? [] : [
                     new NotBlank([
                         'message' => 'Entrez un mot de passe',
                     ]),
@@ -60,7 +63,7 @@ class UserType extends AbstractType
                         'message' => 'Votre mot de passe doit contenir au moins 1 caractère spécial.',
                     ]),
                 ],
-            ])  
+            ])
             ->add('equipe', EntityType::class, [
                 'class' => Equipe::class,
                 'query_builder' => function (EquipeRepository $er) use ($options) {
@@ -70,7 +73,6 @@ class UserType extends AbstractType
                         ->andWhere('c.id = :category_id')
                         ->setParameter('category_id', $category);
                 },
-                
                 'choice_label' => 'name',
             ])
             ->add('first_name')
@@ -115,16 +117,22 @@ class UserType extends AbstractType
                     ])
                 ],
             ])
-        ;
+            ->add('nationality', EntityType::class, [
+                'class' => Nationality::class,
+                'choice_label' => 'name', 
+                'label' => 'Choose a nationality',
+                'placeholder' => 'Sélectionnez une Nationalité', 
+            ]);
     }
-    
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => User::class,
             'exclude_date_naissance' => false,
             'category' => false,
+            'is_edit' => false,  // Ajouter une option par défaut pour distinguer création et édition
         ]);
-       
     }
 }
+

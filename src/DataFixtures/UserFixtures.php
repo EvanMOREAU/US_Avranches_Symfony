@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Nationality;
 use App\Entity\User;
 use App\Entity\Palier;
 use Doctrine\Persistence\ObjectManager;
@@ -24,6 +25,9 @@ class UserFixtures extends Fixture
         $palier->setObjectif("obj");
         $palier->setNumero(0);
         $manager->persist($palier);
+        $nationality = new Nationality();
+        $nationality->setName('Française');
+        $manager->persist($nationality);
         $dateNaissance = new \DateTime('2004-12-27');
         $superAdmin = new User();
         $superAdmin->setUsername('adminSIO');
@@ -33,6 +37,7 @@ class UserFixtures extends Fixture
         $superAdmin->setEmail('evan.moreau@etik.com');
         $superAdmin->setPalier($palier);
         $superAdmin->setRespPhone('0638344893');
+        $superAdmin->setNationality($nationality);
         $plaintextPassword = "admin";
         $hashedPassword = $this->passwordHasher->hashPassword(
             $superAdmin,
@@ -59,6 +64,7 @@ class UserFixtures extends Fixture
             $player->setWeight(0);
             $player->setPalier($palier);
             $player->setRespPhone('0638344893');
+            $player->setNationality($nationality);
             $plaintextPassword = "admin";
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $player,
@@ -84,6 +90,7 @@ class UserFixtures extends Fixture
             $coach->setPalier($palier);
             $coach->setRespPhone('0638344893');
             $coach->setPalierEnded(false);
+            $coach->setNationality($nationality);
             $randomEmail = $faker->safeEmail;
             $coach->setEmail($randomEmail);
             $plaintextPassword = "admin";

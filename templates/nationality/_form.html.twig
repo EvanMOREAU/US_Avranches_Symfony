@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="/assets/css/form.css">
+<div class="container-fluid pt-3">
+	<div class="row removable">
+		<div class="col-lg-12">
+			<div class="card mb-4">
+				<div class="card-header">
+					<div class="row align-items-center">
+						<div class="col-8">
+							<h6 class="mb-0">Gestion de nationalité</h6>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					{{ form_start(form) }}
+					    {{ form_widget(form._token) }}
+
+					<form>
+						<div>
+							<div class="row">
+								{{ form_row(form.name, { 
+									'label': 'Nom', 
+									'attr': { 'class': 'form-control mb-4', 'id': 'name', 'name': '_name', 'aria-label': 'name' }, 
+									'label_attr': {'class': 'form-label'}, 
+								}) }}
+							</div>
+						</div>
+						<div class="text-center"><br>
+                            <a class="btn btn-danger" href="{{ path('app_nationality_index') }}">Retour à la liste</a>
+							<button class="btn btn-info">{{ button_label|default('Créer') }}</button>
+						</div>
+					</form>
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

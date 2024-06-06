@@ -122,7 +122,14 @@
                                 {{ form_widget(form.profile_image, { 'id': form.profile_image.vars.id, 'attr': {'class': 'form-control', 'onchange': 'handleFileSelect(event)'} }) }}
                             </div>
                         </div>
-                    </div><br>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="form-control-label" for="{{form.nationality.vars.id}}">Catégorie</label>
+                            {{ form_widget(form.nationality, { 'id': form.nationality.vars.id, 'attr': {'class': 'form-select', 'onchange': 'handleFileSelect(event)'} }) }}
+                        </div>
+                    </div>
+                    <br>
                     <button type="submit" class="btn btn-info"><i class="fas fa-plus"></i> Enregistrer</button>
 
                 </div>
