@@ -124,13 +124,18 @@ class UserController extends AbstractController
         // Recherchez dans les catégories celle qui correspond à l'année de naissance
         $categoryRepository = $entityManager->getRepository(Category::class);
         $category = $categoryRepository->findOneBy(['name' => $anneeNaissance]);
-            
-        $formOptions = [];
+
+        // Determine if we are in edit mode
+        $isEdit = $user->getId() !== null;
+
+        // Initialize form options
+        $formOptions = [
+            'is_edit' => $isEdit,
+        ];
+        
         if ($category !== null) {
-            // If category exists, add it to the form options
             $formOptions['category'] = $category->getId();
         }
-        
         $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

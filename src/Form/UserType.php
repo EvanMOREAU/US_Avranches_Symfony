@@ -28,6 +28,8 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isEdit = $options['is_edit'];
+
         $builder
             ->add('username')
             ->add('plainPassword', RepeatedType::class, [
@@ -42,7 +44,7 @@ class UserType extends AbstractType
                     'label' => 'Répétez le mot de passe',
                     'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
                 ],                
-                'constraints' => [
+                'constraints' => $isEdit ? [] : [
                     new NotBlank([
                         'message' => 'Entrez un mot de passe',
                     ]),
@@ -60,7 +62,7 @@ class UserType extends AbstractType
                         'message' => 'Votre mot de passe doit contenir au moins 1 caractère spécial.',
                     ]),
                 ],
-            ])  
+            ])
             ->add('equipe', EntityType::class, [
                 'class' => Equipe::class,
                 'query_builder' => function (EquipeRepository $er) use ($options) {
@@ -70,7 +72,6 @@ class UserType extends AbstractType
                         ->andWhere('c.id = :category_id')
                         ->setParameter('category_id', $category);
                 },
-                
                 'choice_label' => 'name',
             ])
             ->add('first_name')
@@ -114,17 +115,17 @@ class UserType extends AbstractType
                         'mimeTypesMessage' => 'Please upload a valid image file',
                     ])
                 ],
-            ])
-        ;
+            ]);
     }
-    
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => User::class,
             'exclude_date_naissance' => false,
             'category' => false,
+            'is_edit' => false,  // Ajouter une option par défaut pour distinguer création et édition
         ]);
-       
     }
 }
+

@@ -16,26 +16,31 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[Route('/parameter')]
 class ParameterController extends AbstractController
 {
-
     #[Route('/', name: 'app_parameter')]
-    public function modify(Request $request, EntityManagerInterface $entityManager, ImageUploaderHelper $imageUploaderHelper, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository): Response // Injection de la classe Request
+    public function modify(Request $request, EntityManagerInterface $entityManager, ImageUploaderHelper $imageUploaderHelper, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
         $user = $this->getUser();
 
-        $form = $this->createForm(ParameterType::class, $user);
+        // Determine if we are in edit mode
+        $isEdit = $user->getId() !== null;
+
+        // Initialize form options
+        $formOptions = [
+            'is_edit' => $isEdit,
+        ];
+
+        // Create the form with the options
+        $form = $this->createForm(ParameterType::class, $user, $formOptions);
+
         $form->handleRequest($request);
-        // Assurez-vous que l'utilisateur est autorisé à modifier ses propres paramètres
+
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer les valeurs des champs de mot de passe
             $plainPassword = $form->get('plainPassword')->getData();
-        
-            // Assurez-vous que $plainPassword est un tableau
+
             if (!empty($plainPassword)) {
-                // Encoder le nouveau mot de passe
                 $encodedPassword = $passwordHasher->hashPassword($user, $plainPassword);
-                // Définir le mot de passe encodé dans l'entité User
                 $user->setPassword($encodedPassword);
             }
 
@@ -52,15 +57,13 @@ class ParameterController extends AbstractController
 
             return $this->redirectToRoute('app_parameter', [], Response::HTTP_SEE_OTHER);
         }
-        
-        
-
-        $formView = $form->createView();
 
         return $this->render('parameter/modify.html.twig', [
             'controller_name' => 'ParameterController',
-            'form'            => $formView,
+            'form' => $form->createView(),
             'location' => '',
         ]);
     }
 }
+
+    

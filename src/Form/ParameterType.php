@@ -7,19 +7,38 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\EqualTo;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
+// src/Form/ParameterType.php
+
+namespace App\Form;
+
+use App\Entity\User;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
 class ParameterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder       
+        $isEdit = $options['is_edit'];
+
+        $builder
             ->add('username')
             ->add('resp_phone')
             ->add('plainPassword', RepeatedType::class, [
@@ -28,13 +47,13 @@ class ParameterType extends AbstractType
                 'required' => false,
                 'first_options'  => [
                     'label' => 'Mot de passe',
-                    'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
+                    'attr' => ['class' => 'form-control password-field']
                 ],
                 'second_options' => [
                     'label' => 'Répétez le mot de passe',
-                    'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
+                    'attr' => ['class' => 'form-control password-field']
                 ],
-                'constraints' => [
+                'constraints' => $isEdit ? [] : [
                     new NotBlank([
                         'message' => 'Entrez un mot de passe',
                     ]),
@@ -52,7 +71,7 @@ class ParameterType extends AbstractType
                         'message' => 'Votre mot de passe doit contenir au moins 1 caractère spécial.',
                     ]),
                 ],
-            ])            
+            ])
             ->add('profile_image', FileType::class, [
                 'label' => 'Image de profil',
                 'mapped' => false,
@@ -75,7 +94,8 @@ class ParameterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => User::class, // Update this line
+            'data_class' => User::class,
+            'is_edit' => false, // Ajout de l'option is_edit par défaut
         ]);
     }
 }
