@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
 class RegistrationFormType extends AbstractType
 {
@@ -35,12 +36,27 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
-                'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+            ->add('plainPassword', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'invalid_message' => 'Les mots de passe doivent correspondre.',
+                'required' => false,
+                'first_options'  => [
+                    'label' => false,
+                    'attr' => [
+                        'class' => 'form-control custom-password-field',
+                        'placeholder' => 'Entrez votre mot de passe'
+                    ]
+                ],
+                'second_options' => [
+                    'label' => false,
+                    'attr' => [
+                        'class' => 'form-control',
+                        'placeholder' => 'Répétez votre mot de passe'
+                    ]
+                ],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Entrez un mot de passe',
                     ]),
                     new Length([
                         'min' => 12,
@@ -56,8 +72,9 @@ class RegistrationFormType extends AbstractType
                         'message' => 'Votre mot de passe doit contenir au moins 1 caractère spécial.',
                     ]),
                 ],
-                'label' => false, // Cette option supprime le label
+                'label' => false
             ])
+            
             ->add('date_naissance', BirthdayType::class, [
                 'widget' => 'choice', // Utilisez 'single_text' pour un champ de texte unique au lieu de menus déroulants.
                 'format' => 'dd MM yyyy', // Format de la date
