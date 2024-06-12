@@ -14,7 +14,7 @@
                         </div><br>
                         <div class="row mb-3">
                             <div class="col-md-6 offset-md-3">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par nom...">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Rechercher...">
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -47,9 +47,12 @@
                                                     {{ phoneNumber|trim }}
                                                 {% endif %}
                                             </td>
-                                            <td class="align-middle">{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:m:s') : '' }}</td>
+                                            <td class="align-middle">{{ user.lastConnection ? user.lastConnection|date('d-m-Y') : '' }}</td>
                                             <td class="align-middle" style="text-align: center;">
                                                 <div style="display: flex; justify-content: center; align-items: center;">
+                                                    <button  style="margin-right: 5px;" class="btn btn-info mt-2" onclick="redirectToPage('/charts/details/{{ user.id }}')">
+                                                        <i class="fa-solid fa-chart-line"></i>
+                                                    </button>
                                                     <button class="btn btn-warning mt-2" onclick="redirectToPage('/user/{{ user.id }}/edit')">
                                                         <i class="fa-solid fa-pen"></i>
                                                     </button>

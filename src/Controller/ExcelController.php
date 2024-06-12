@@ -194,7 +194,7 @@ class ExcelController extends AbstractController
         $excelUsers = ob_get_clean();
 
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export.xlsx"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="Foot_Performances.xlsx"');
         $response->setContent($excelUsers);
 
         return $response;
