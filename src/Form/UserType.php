@@ -44,18 +44,48 @@ class UserType extends AbstractType
                     'label' => 'Répétez le mot de passe',
                     'attr' => ['class' => 'form-control password-field'] // Ajoutez une classe spécifique ici
                 ],                
-                'constraints' => $isEdit ? [] : [
+                'constraints' => $isEdit ? [
+                    new Length([
+                        'min' => 12,
+                        'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
+                        // La contrainte de longueur maximale de 4096 est déjà configurée
+                    ]),
+                    new Regex([
+                        'pattern' => '/[0-9]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 chiffre.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/[A-Z]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 lettre majuscule.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/[a-z]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 lettre minuscule.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/[\W_]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 caractère spécial.',
+                    ]),
+                ] : [
                     new NotBlank([
                         'message' => 'Entrez un mot de passe',
                     ]),
                     new Length([
                         'min' => 12,
                         'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
-                        'max' => 4096,
+                        // La contrainte de longueur maximale de 4096 est déjà configurée
                     ]),
                     new Regex([
                         'pattern' => '/[0-9]/',
                         'message' => 'Votre mot de passe doit contenir au moins 1 chiffre.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/[A-Z]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 lettre majuscule.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/[a-z]/',
+                        'message' => 'Votre mot de passe doit contenir au moins 1 lettre minuscule.',
                     ]),
                     new Regex([
                         'pattern' => '/[\W_]/',
