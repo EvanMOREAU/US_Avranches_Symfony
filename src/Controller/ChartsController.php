@@ -38,7 +38,7 @@ class ChartsController extends AbstractController
     #[Route('/details', name: 'app_charts_details', methods: ['GET'])]
     public function index(ChartConfigurationRepository $configRepository, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+        $this->denyAccessUnlessGranted('ROLE_PLAYER');
 
         // Récupérer l'utilisateur connecté
         $user = $this->getUser();

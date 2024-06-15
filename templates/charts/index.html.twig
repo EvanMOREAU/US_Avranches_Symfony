@@ -43,67 +43,6 @@
             </div>      
         </div>
     </div>
-
-    {% if is_granted('ROLE_COACH') or is_granted('ROLE_SUPER_ADMIN') %}
-    <div class="container-fluid pt-3">
-        <div class="row removable">
-            <div class="col-lg-12">
-                <div class="card mb-4">
-                    <div class="card-body p-3">
-                        
-                        <center><div class="col-md-6 mb-4">
-                            <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher...">
-                        </div></center>
-                        <div class="card-body p-3">
-                            <div class="row">
-                                {% for player in players %}
-                                    <div class="col-xl-3 col-md-6 mb-4 playerItem">
-                                        <div class="card card-blog card-plain">
-                                            <div class="position-relative">
-                                                <a class="d-block shadow-xl border-radius-xl">
-                                                    {% if player.getProfileImage() != null %}
-                                                    <img src="/uploads/images/{{ player.getProfileImage()}}" alt="img-blur-shadow" class="img-fluid shadow border-radius-xl">
-                                                    {% else %}
-                                                    <img src="/uploads/defaultpp.jpg" alt="img-blur-shadow" class="img-fluid shadow border-radius-xl">
-                                                    {% endif %}
-                                                </a>
-                                            </div>
-                                            <div class="card-body px-1 pb-0">
-                                                <p class="text-gradient text-dark mb-2 text-sm">{{ player.getCategory()}}</p>
-                                                <a href="javascript:;">
-                                                    <h5>
-                                                        {{player.getFirstName}} {{player.getLastName}}
-                                                    </h5>
-                                                </a>
-                                                <p class="mb-4 text-sm">
-                                                    {{ player.getDateNaissance|date('d/m/Y') }}
-                                                </p>
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <a href="{{ path('app_charts_show', {'userId': player.id}) }}">Accéder aux données</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}                                      
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        $(document).ready(function() {
-            $("#searchInput").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $(".playerItem").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-        });
-    </script>
-    {% endif %}
     {% if is_granted('ROLE_PLAYER') %}
 
     {% for chartId, chartData in chartData %}
