@@ -66,6 +66,12 @@
 															<button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
 														</form>
 													</div>
+													
+													<div class="btn-group me-2" role="group">
+														<button href="" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+															<i class="fa-solid fa-users"></i>
+														</button>
+													</div>
 												</div>
 											</td>
 										</tr>
@@ -82,6 +88,23 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="staticBackdropLabel">Ajout de joueurs dans l'équipe</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				à venir...
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				<button type="button" class="btn btn-info">Enregistrer</button>
+			</div>
+			</div>
+		</div>
+			</div>
 	<script>
 		// JavaScript for filtering equipes by all columns
 		document.getElementById("searchInput").addEventListener("keyup", function() {
