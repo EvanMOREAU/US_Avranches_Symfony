@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\RegistrationA2F;
 use App\Form\RegistrationFormType;
 use App\Repository\PalierRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,6 +24,21 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            // Récupérer le code d'inscription
+            $registrationCode = $form->get('registrationCode')->getData();
+
+            // Vérifier si le code est valide
+            $a2fCode = $entityManager->getRepository(RegistrationA2F::class)->findOneBy(['code' => $registrationCode]);
+
+            if (!$a2fCode) {
+                // Ajouter un message d'erreur et réafficher le formulaire
+                $this->addFlash('error', 'Le code d\'inscription est invalide.');
+                return $this->render('registration/register.html.twig', [
+                    'registrationForm' => $form->createView(),
+                ]);
+            }
+
             // encode the plain password
             $user->setPassword(
                     $userPasswordHasher->hashPassword(

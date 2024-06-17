@@ -191,12 +191,20 @@
           </a>
         </li>
         <li class="nav-item">
+          <a class="nav-link text-white {% if location == "x" %} active bg-gradient-info{% endif %} " href="/registration-code">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="fa-solid fa-address-card"></i>
+            </div>
+            <span class="nav-link-text ms-1">A2F inscription</span>
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link text-white {% if location == "m" %} active bg-gradient-info{% endif %} "
             href="/playercode">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="fa-solid fa-lock"></i>
             </div>
-            <span class="nav-link-text ms-1">A2F</span>
+            <span class="nav-link-text ms-1">A2F vérification</span>
           </a>
         </li>
         <li class="nav-item">
@@ -205,14 +213,6 @@
               <i class="fa-solid fa-users"></i>
             </div>
             <span class="nav-link-text ms-1">Utilisateurs</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if location == "b" %} active bg-gradient-info{% endif %} text-white " href="/charts/details">
-            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fa-solid fa-chart-line"></i>
-            </div>
-            <span class="nav-link-text ms-1">Graphiques</span>
           </a>
         </li>
         <li class="nav-item">
