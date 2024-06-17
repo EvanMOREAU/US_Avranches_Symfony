@@ -14,25 +14,25 @@ class wHeightFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $faker = Factory::create();
+        // $faker = Factory::create();
 
-        // Récupérer tous les utilisateurs de la base de données
-        $users = $manager->getRepository(User::class)->findAll();
+        // // Récupérer tous les utilisateurs de la base de données
+        // $users = $manager->getRepository(User::class)->findAll();
 
-        foreach ($users as $user) {
-            // Générer entre 1 et 8 hauteurs aléatoires pour chaque utilisateur
-            $numberOfHeights = $faker->numberBetween(1, 8);
+        // foreach ($users as $user) {
+        //     // Générer entre 1 et 8 hauteurs aléatoires pour chaque utilisateur
+        //     $numberOfHeights = $faker->numberBetween(1, 8);
 
-            for ($i = 0; $i < $numberOfHeights; $i++) {
-                $height = new Height();
-                $height->setValue($faker->numberBetween(150, 200)); // Exemple de valeur aléatoire entre 150 et 200 cm
-                $height->setDate($faker->dateTimeBetween('-1 year', 'now'));
-                $height->setUserId($user);
+        //     for ($i = 0; $i < $numberOfHeights; $i++) {
+        //         $height = new Height();
+        //         $height->setValue($faker->numberBetween(150, 200)); // Exemple de valeur aléatoire entre 150 et 200 cm
+        //         $height->setDate($faker->dateTimeBetween('-1 year', 'now'));
+        //         $height->setUserId($user);
 
-                $manager->persist($height);
-            }
-        }
+        //         $manager->persist($height);
+        //     }
+        // }
 
-        $manager->flush();
+        // $manager->flush();
     }
 }

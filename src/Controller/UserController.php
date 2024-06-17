@@ -97,9 +97,14 @@ class UserController extends AbstractController
         if(!$this->userVerificationService->verifyUser()){
             return $this->redirectToRoute('app_verif_code', [], Response::HTTP_SEE_OTHER);
         }
+        $users = $userRepository->findAll();
 
+        $nonValidatedUsers = array_filter($users, function($user) {
+            return !$user->isIsCodeValidated();
+        });
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $users,
+            'nonValidatedUsers' => $nonValidatedUsers,
             'location' => 'n',
         ]);
     }
@@ -299,6 +304,23 @@ class UserController extends AbstractController
         $entityManager->flush();
     }
 
-    //////////////////////////////
-
+    #[Route('/del-all-users-not-validated', name: 'app_user_del_all', methods: ['GET','POST'])]
+    public function delAllUsers(EntityManagerInterface $entityManager, UserRepository $userRepository)
+    {
+        // Récupérer tous les utilisateurs
+        $users = $userRepository->findAll();
+    
+        // Parcourir chaque utilisateur pour vérifier s'il est validé
+        foreach ($users as $user) {
+            if ($user->isIsCodeValidated() == false) {
+                // Supprimer l'utilisateur validé
+                $entityManager->remove($user);
+            }
+        }
+    
+        // Exécuter les suppressions en base de données
+        $entityManager->flush();
+    
+        return $this->redirectToRoute('app_user_index');
+    }
 }

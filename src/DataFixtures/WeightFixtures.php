@@ -13,25 +13,25 @@ class WeightFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $faker = Factory::create();
+        // $faker = Factory::create();
 
-        // Récupérer tous les utilisateurs de la base de données
-        $users = $manager->getRepository(User::class)->findAll();
+        // // Récupérer tous les utilisateurs de la base de données
+        // $users = $manager->getRepository(User::class)->findAll();
 
-        foreach ($users as $user) {
-            // Générer entre 1 et 8 poids aléatoires pour chaque utilisateur
-            $numberOfWeights = $faker->numberBetween(1, 8);
+        // foreach ($users as $user) {
+        //     // Générer entre 1 et 8 poids aléatoires pour chaque utilisateur
+        //     $numberOfWeights = $faker->numberBetween(1, 8);
 
-            for ($i = 0; $i < $numberOfWeights; $i++) {
-                $weight = new Weight();
-                $weight->setValue($faker->randomFloat(2, 50, 100)); // Exemple de valeur aléatoire entre 50 et 100
-                $weight->setDate($faker->dateTimeBetween('-1 year', 'now'));
-                $weight->setUser($user);
+        //     for ($i = 0; $i < $numberOfWeights; $i++) {
+        //         $weight = new Weight();
+        //         $weight->setValue($faker->randomFloat(2, 50, 100)); // Exemple de valeur aléatoire entre 50 et 100
+        //         $weight->setDate($faker->dateTimeBetween('-1 year', 'now'));
+        //         $weight->setUser($user);
 
-                $manager->persist($weight);
-            }
-        }
+        //         $manager->persist($weight);
+        //     }
+        // }
 
-        $manager->flush();
+        // $manager->flush();
     }
 }
